@@ -29,7 +29,7 @@ namespace LingGuangV05.Desktop.XingGuang
             RefreshHall(false);
             foreach (var row in hallRows) { row.left.ForceMeshUpdate(); row.pay.ForceMeshUpdate(); }
             foreach (var row in packRows) { row.left.ForceMeshUpdate(); row.pay.ForceMeshUpdate(); }
-            foreach (var row in teachingRows) row.left.ForceMeshUpdate();
+            foreach (var row in teachingRows) { row.left.ForceMeshUpdate(); row.pay.ForceMeshUpdate(); }
         }
 
         const float HallRowH = 56;

@@ -60,6 +60,106 @@ namespace LingGuangV05.Tests
             owned.Clear();
         }
 
+        [Test] public void RenameFailurePreservesSlotAndDoesNotReportSuccess()
+        {
+            Assert.That(runtime.SaveSlot(2),Is.True);
+            string file=Path.Combine(directory,"slots","2","chapter-one.sav"),original=File.ReadAllText(file);
+            // A directory at the metadata-file path is a deterministic filesystem collision, confined to this fixture.
+            Directory.CreateDirectory(Path.Combine(directory,"slots","2","label.json"));
+            Assert.That(runtime.RenameManualArchive(2,"训练记录"),Is.False);
+            Assert.That(runtime.SaveStatus,Does.Contain("命名未保存"));
+            Assert.That(File.ReadAllText(file),Is.EqualTo(original));
+            Assert.That(runtime.ArchiveExists(2),Is.True);
+        }
+        [Test] public void ThumbnailFailureDoesNotInvalidateSavedProgress()
+        {
+            var provider=ChapterOneRuntime.ArchiveThumbnailProvider;
+            try {ChapterOneRuntime.ArchiveThumbnailProvider=()=>throw new IOException("injected screenshot failure");
+                UnityEngine.TestTools.LogAssert.Expect(LogType.Warning,"[Save UI] Thumbnail unavailable: injected screenshot failure");
+                Assert.That(runtime.SaveSlot(2),Is.True);Assert.That(runtime.ArchiveExists(2),Is.True);
+            } finally {ChapterOneRuntime.ArchiveThumbnailProvider=provider;}
+        }
+        [Test] public void LoadingArchiveTransfersItsThumbnailAndClearsAnUnpicturedArchive()
+        {
+            var provider=ChapterOneRuntime.ArchiveThumbnailProvider;
+            try {
+                byte[] a={1,2,3},b={4,5,6};
+                ChapterOneRuntime.ArchiveThumbnailProvider=()=>b;
+                runtime.Sim.S.money=500;Assert.That(runtime.SaveSlot(2),Is.True);
+                ChapterOneRuntime.ArchiveThumbnailProvider=()=>a;
+                runtime.Sim.S.money=900;Assert.That(runtime.SaveNow(),Is.True);
+                Assert.That(runtime.ReadArchiveThumbnail(1),Is.EqualTo(a));
+                Assert.That(runtime.LoadArchive(2),Is.True);
+                Assert.That(runtime.ReadArchiveThumbnail(1),Is.EqualTo(b));
+                Assert.That(DiskState().money,Is.EqualTo(500));
+                ChapterOneRuntime.ArchiveThumbnailProvider=()=>null;
+                Assert.That(runtime.SaveSlot(3),Is.True);
+                Assert.That(runtime.ReadArchiveThumbnail(3),Is.Null,"manual saves never borrow the previous primary image");
+                Assert.That(runtime.LoadArchive(3),Is.True);
+                Assert.That(runtime.ReadArchiveThumbnail(1),Is.Null);
+            } finally {ChapterOneRuntime.ArchiveThumbnailProvider=provider;}
+        }
+        [TestCase(false)] [TestCase(true)]
+        public void OverwritingArchiveWithoutCaptureRevokesOldThumbnail(bool throws)
+        {
+            var provider=ChapterOneRuntime.ArchiveThumbnailProvider;
+            try {
+                ChapterOneRuntime.ArchiveThumbnailProvider=()=>new byte[]{1,2,3};
+                Assert.That(runtime.SaveSlot(2),Is.True);
+                Assert.That(runtime.ReadArchiveThumbnail(2),Is.Not.Null);
+                ChapterOneRuntime.ArchiveThumbnailProvider=()=>{if(throws)throw new IOException("injected screenshot failure");return null;};
+                if(throws)UnityEngine.TestTools.LogAssert.Expect(LogType.Warning,"[Save UI] Thumbnail unavailable: injected screenshot failure");
+                runtime.Sim.S.money=12345;
+                Assert.That(runtime.SaveSlot(2),Is.True,"screenshot failure does not undo the saved progress");
+                Assert.That(runtime.ReadArchiveThumbnail(2),Is.Null);
+                Assert.That(runtime.LoadArchive(2),Is.True);
+                Assert.That(DiskState().money,Is.EqualTo(12345));
+            } finally {ChapterOneRuntime.ArchiveThumbnailProvider=provider;}
+        }
+        [Test] public void ThumbnailRevisionRejectsReplacedPayloadEvenWithSameTimestamp()
+        {
+            var provider=ChapterOneRuntime.ArchiveThumbnailProvider;
+            try {
+                ChapterOneRuntime.ArchiveThumbnailProvider=()=>new byte[]{1,2,3};
+                Assert.That(runtime.SaveSlot(2),Is.True);
+                string file=Path.Combine(directory,"slots","2","chapter-one.sav");
+                var timestamp=File.GetLastWriteTimeUtc(file);
+                Assert.That(runtime.ReadArchiveThumbnail(2),Is.Not.Null);
+                File.AppendAllText(file," ");File.SetLastWriteTimeUtc(file,timestamp);
+                Assert.That(runtime.ReadArchiveThumbnail(2),Is.Null,"thumbnail must match payload, not only timestamp");
+            } finally {ChapterOneRuntime.ArchiveThumbnailProvider=provider;}
+        }
+        [Test] public void ManualArchiveTwentySlotExtensionKeepsLegacyPathsAndPrimary()
+        {
+            string primary=File.ReadAllText(runtime.SavePath);
+            runtime.Sim.S.money=12345;
+            Assert.That(runtime.SaveSlot(2),Is.True);
+            Assert.That(File.Exists(Path.Combine(directory,"slots","2","chapter-one.sav")),Is.True);
+            runtime.Sim.S.money=54321;
+            Assert.That(runtime.SaveSlot(21),Is.True);
+            Assert.That(runtime.SaveSlot(22),Is.False);
+            Assert.That(runtime.ArchiveExists(7,true),Is.False);
+            Assert.That(File.ReadAllText(runtime.SavePath),Is.EqualTo(primary));
+            Assert.That(runtime.LoadArchive(2),Is.True);Assert.That(runtime.Sim.S.money,Is.EqualTo(12345));
+            Assert.That(runtime.LoadArchive(21),Is.True);Assert.That(runtime.Sim.S.money,Is.EqualTo(54321));
+        }
+        [Test] public void ArchiveNamesAndRecoverableRemovalNeverOverwriteSavePayload()
+        {
+            Assert.That(runtime.SaveSlot(2),Is.True);
+            string file=Path.Combine(directory,"slots","2","chapter-one.sav"),payload=File.ReadAllText(file);
+            Assert.That(runtime.RenameManualArchive(2,"第一次训练"),Is.True);
+            Assert.That(runtime.DescribeArchiveCard(2).name,Is.EqualTo("第一次训练"));
+            Assert.That(File.ReadAllText(file),Is.EqualTo(payload));
+            Assert.That(runtime.RenameManualArchive(2,new string('x',13)),Is.False);
+            Assert.That(runtime.RemoveManualArchive(1),Is.False);
+            Assert.That(runtime.RemoveManualArchive(2),Is.True);
+            Assert.That(runtime.ArchiveExists(2),Is.False);
+            var removed=Directory.GetDirectories(Path.Combine(directory,"slots"),"2.removed-*");
+            Assert.That(removed.Length,Is.EqualTo(1));
+            Assert.That(File.ReadAllText(Path.Combine(removed[0],"chapter-one.sav")),Is.EqualTo(payload));
+            Assert.That(runtime.FirstEmptyManualArchive(),Is.EqualTo(2));
+        }
+
         void Open(string folder = null, Action<ChapterOneRuntime> beforeInitialize = null)
         {
             if (root != null) Object.DestroyImmediate(root);

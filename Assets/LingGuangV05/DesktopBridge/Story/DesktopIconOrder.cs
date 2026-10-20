@@ -57,6 +57,10 @@ namespace LingGuangV05.Desktop.Story
             {
                 int col = i / rows, row = i % rows;
                 var p = new Vector2(left + cell.x / 2 + col * (cell.x + spacing.x), -(top + cell.y / 2 + row * (cell.y + spacing.y)));
+                // Late-enabled shortcuts never went through GridLayoutGroup's initial pass.
+                // Arrange uses top-left offsets, so normalize anchors before applying them.
+                icons[i].anchorMin=icons[i].anchorMax=new Vector2(0,1);
+                icons[i].pivot=new Vector2(.5f,.5f);icons[i].sizeDelta=cell;
                 if ((icons[i].anchoredPosition - p).sqrMagnitude < 1) continue;
                 icons[i].anchoredPosition = p;
                 var dragger = icons[i].GetComponent<ItemDragger>();

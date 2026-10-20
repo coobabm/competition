@@ -56,17 +56,7 @@ namespace LingGuangV05.Desktop.XingGuang {
   }
   void BuildUnlocks(int n){
    unlockRows.Clear();unlockRows.Add(T("能力：","Ability: ")+XgSim.AbilityName(n,sim.English));
-   if(n==2)unlockRows.Add(T("新软件：硬件商店","New app: hardware shop"));
-   else if(n==3)unlockRows.Add(T("新软件：桌面小游戏","New app: desktop games"));
-   else if(n==4)unlockRows.Add(T("新软件：摆渡众包","New app: Bodu Crowd"));
-   var snapshot=sim.StageUnlockSnapshot(n);
-   // Old saves never recorded a before/after diff. Do not invent newly unlocked rows.
-   if(snapshot==null){unlockRows.Add(T("旧存档未记录新增项目，请查看科技与题桌。","This older save has no unlock history. Check research and desks."));return;}
-   foreach(var pack in XgStageLessons.Desks)if(snapshot.desks!=null&&snapshot.desks.Contains(pack.id))
-    unlockRows.Add(T("新题桌：","New desk: ")+T(pack.name,pack.nameEn));
-   foreach(var id in snapshot.nodes??new List<string>()){var node=XgCatalog.Node(id);if(node!=null)
-    unlockRows.Add(T("新科技：","New research: ")+T(node.name,node.nameEn));}
-
+   // Keep the milestone brief. Unlock rules and their saved snapshots are unchanged.
   }
   void ShowUnlockPage(){
    int pages=Math.Max(1,(unlockRows.Count+5)/6);heading.text=T("新的变化","What changed")+(pages>1?"  "+(unlockPage+1)+" / "+pages:"");

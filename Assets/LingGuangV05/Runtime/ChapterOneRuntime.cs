@@ -221,7 +221,7 @@ namespace LingGuangV05.Runtime
             bool saved;
             try { saved = store.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var status); SaveStatus = status; }
             catch (ArgumentException error) { saved = false; SaveStatus = "无法序列化存档：" + error.Message; }
-            if (saved) dirty = false;
+            if (saved) { dirty = false; SaveArchiveThumbnail(1); }
             // One line per write, so a save that silently failed (or never happened) shows up in the Editor log.
             if (saved) Debug.Log("[存档] 已保存 · day " + Sim.S.day + " · " + Sim.S.gameSeconds.ToString("0") + " s · lab " + (Sim.S.labState == null ? 0 : Sim.S.labState.Length) + " chars");
             else Debug.LogWarning("[存档] 没写进去：" + SaveStatus);

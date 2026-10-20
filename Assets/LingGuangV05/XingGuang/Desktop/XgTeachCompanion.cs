@@ -24,17 +24,17 @@ namespace LingGuangV05.Desktop.XingGuang
             var box = Rect("TeachingCompanion", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             Panel(box, XgDark.Card);
             var self = box.gameObject.AddComponent<XgTeachCompanion>(); self.host = host;
-            self.title = ui.Text(Strip("Title", box, 16, 36, 20, 20), "", 25, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
-            self.next = ui.Text(Strip("Next", box, 62, 98, 20, 20), "", 18, XgDark.Ink, TextAlignmentOptions.TopLeft);
-            self.next.enableAutoSizing = true; self.next.fontSizeMin = 14; self.next.fontSizeMax = 18;
-            self.progress = ui.Text(Strip("Progress", box, 166, 42, 20, 20), "", 16, XgDark.Good, TextAlignmentOptions.MidlineLeft);
-            var grid = Rect("LearningCells", box, new Vector2(0, 1), new Vector2(1, 1), new Vector2(20, -294), new Vector2(-20, -220));
+            self.title = ui.Text(Strip("Title", box, 16, 28, 20, 20), "", 20, XgDark.Ink, TextAlignmentOptions.MidlineLeft);
+            self.next = ui.Text(Strip("Next", box, 170, 28, 20, 20), "", 15, XgDark.Ink, TextAlignmentOptions.TopLeft);
+            self.next.enableAutoSizing = true; self.next.fontSizeMin = 12; self.next.fontSizeMax = 15;
+            self.progress = ui.Text(Strip("Progress", box, 54, 32, 20, 20), "", 16, XgDark.Good, TextAlignmentOptions.MidlineLeft);
+            var grid = Rect("LearningCells", box, new Vector2(0, 1), new Vector2(1, 1), new Vector2(20, -158), new Vector2(-20, -94));
             for (int i = 0; i < 32; i++)
             {
                 float x = i % 8 / 8f, y = 1 - i / 8 / 4f;
                 self.cells.Add(Panel(Rect("Cell" + i, grid, new Vector2(x, y - .25f), new Vector2(x + .125f, y), new Vector2(2, 2), new Vector2(-2, -2)), XgDark.Track));
             }
-            self.response = ui.Text(Strip("Reaction", box, 310, 116, 20, 20), "", 16, XgDark.Muted, TextAlignmentOptions.TopLeft);
+            self.response = ui.Text(Strip("Reaction", box, 204, 42, 20, 20), "", 16, XgDark.Muted, TextAlignmentOptions.TopLeft);
             self.response.enableAutoSizing = true; self.response.fontSizeMin = 12; self.response.fontSizeMax = 16;
             self.train = ui.Button(box, "", () => {
                 var sim = host.Sim; var data = XgCatalog.Dataset(sim.S.desk);
@@ -58,13 +58,10 @@ namespace LingGuangV05.Desktop.XingGuang
             int count = (int)sim.Samples(data.id);
             bool ready = count >= XgCatalog.SamplesToTrain;
             bool firstLesson = XgFirstLessonWindow.ActiveFor(sim, Time.unscaledTime);
-            title.text = T("你在教它认识世界", "You are teaching it about the world");
+            title.text = T("教学记录", "Teaching record");
             chat.label.text = T("和它说句话 →", "Talk to it →");
             brain.label.text = T("看看它记住了什么", "Look inside its brain");
-            next.text = firstLesson || sim.S.handCorrect == 0
-                ? T("按 1「对」，或按 2「错」。", "1: True · 2: False")
-                : ready && sim.S.epochs == 0 ? T("样本够了。\n让它把你教的东西练一遍，\n然后听听它怎么回答。", "Enough examples.\nLet it practise your lessons,\nthen listen to its answers.")
-                : T("教它 → 训练 → 和它聊\n你喂的内容，会慢慢变成\n它认识的东西和说话的样子。", "Teach → Train → Talk\nYour lessons shape what it knows\nand how it speaks.");
+            next.text = T("答对 ", "Correct ") + sim.S.handCorrect + T(" · 答错 ", " · Wrong ") + sim.S.handWrong;
             progress.text = T("这类样本 ", "Examples: ") + count + (firstLesson ? "" : ready ? T(" · 可以训练了", " · Ready to train") : " / " + XgCatalog.SamplesToTrain);
             train.Set(firstLesson ? T("训练 →", "Train →") : ready ? T("带它去训练 →", "Train together →") : T("再教 ", "Teach ") + (XgCatalog.SamplesToTrain - count) + T(" 张就能训练", " more cards"), ready, ready && !firstLesson ? XgDark.Accent : XgDark.Track, XgDark.Ink);
             train.rt.gameObject.SetActive(ready);
@@ -81,12 +78,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (!sim.S.reduceFx && flashes.TryGetValue(c.id, out float until) && Time.unscaledTime < until)
                     cells[i].color = Color.Lerp(cells[i].color, Color.white, (until - Time.unscaledTime) / .55f);
             }
-            response.text = firstLesson
-                ? T("判断准确时，它会学下这张卡，\n桌面壁纸也会亮一下。\n然后继续看下一张。", "An accurate judgment teaches it.\nThe wallpaper briefly lights up.\nThen try the next card.")
-                : sim.S.teachingCorrections == 0
-                ? T("绿格偏向「是」，红格偏向「否」。\n纠正时亮起的格子，就是它刚学的东西。", "Green leans Yes; red leans No.\nCells light up when your lesson changes them.")
-                : T("你已帮它纠正 ", "You corrected ") + sim.S.teachingCorrections + T(" 次。\n它连续答对 ", " times.\nIts correct streak: ") + sim.S.modelStreak
-                  + (Time.unscaledTime < flash ? T("\n它的想法正在改变。", "\nIts ideas are changing.") : T("\n练完后，去问它刚才那道题。", "\nAfter training, ask it about that card."));
+            response.text = T("纠正 ", "Corrections ") + sim.S.teachingCorrections
+                + T(" · AI 连对 ", " · AI streak ") + sim.S.modelStreak;
         }
     }
 }

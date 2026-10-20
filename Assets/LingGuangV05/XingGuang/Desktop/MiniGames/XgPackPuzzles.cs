@@ -158,14 +158,15 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         {
             const int side=5;var mines=new bool[25];int target=C.Random.Next(25);
             for(int i=0;i<25;i++)mines[i]=C.Random.NextDouble()<.2;
-            int neighbour=target%side<side-1?target+1:target-1;mines[neighbour]=false; // At least one revealed adjacent number makes the target deducible.
+            int neighbour=target%side<side-1?target+1:target-1;mines[neighbour]=false; // One opened neighbour always shows its count ("0" included), so the target is deducible.
             promptZh="高亮格是雷吗？";promptEn="Is the highlighted cell a mine?";
-            Header("扫雷判官","Minesweeper judge","数字是周围八格的地雷数。根据已经翻开的格子判断黄色格。","Numbers count adjacent mines. Deduce the yellow cell from the revealed board.");
+            Header("扫雷判官","Minesweeper judge","灰格已翻开，数字是周围八格的地雷数（0 表示周围没有雷），● 是已知的雷。判断黄色格。","Grey cells are open; numbers count adjacent mines (0 means none) and ● marks a known mine. Judge the yellow cell.");
             for(int y=0;y<side;y++)for(int x=0;x<side;x++)
             {
                 int i=y*side+x,count=0;for(int dy=-1;dy<=1;dy++)for(int dx=-1;dx<=1;dx++)if((dx!=0||dy!=0)&&x+dx>=0&&x+dx<side&&y+dy>=0&&y+dy<side&&mines[(y+dy)*side+x+dx])count++;
-                var cell=C.Box("Cell"+i,50+x*60,95+y*60,57,57,i==target?new Color32(255,213,84,255):Color.white);
-                T("Value"+i,50+x*60,95+y*60,57,57,i==target?"?":mines[i]?"●":count==0?"":count.ToString(),27,i==target?purple:green);
+                // Opened cells are grey and show their count, 0 too: a blank white cell read as unopened and hid the deciding clue.
+                var cell=C.Box("Cell"+i,50+x*60,95+y*60,57,57,i==target?new Color32(255,213,84,255):new Color32(214,218,224,255));
+                T("Value"+i,50+x*60,95+y*60,57,57,i==target?"?":mines[i]?"●":count.ToString(),27,i==target?purple:count==0&&!mines[i]?new Color32(128,136,148,255):green);
             }
             T("Question",395,130,450,70,XgUi.T(promptZh,promptEn),28);
             QuestionCard=new XgCard{dataset="logic",teachingImageKind="mines",teachingImageKey=target,teachingImageKeys=Array.ConvertAll(mines,m=>m?1:0)};

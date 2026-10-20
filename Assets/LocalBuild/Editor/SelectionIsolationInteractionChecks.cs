@@ -45,11 +45,14 @@ public static class SelectionIsolationInteractionChecks
     }
     static SelectionIsolationInteractionChecks(){EditorApplication.playModeStateChanged+=State;}
     [MenuItem("Tools/Local Verification/Selection isolation and focus")]
-    public static void Run()
+    public static void Run() => Begin(false);
+    public static void RunClassicOnly() => Begin(true);
+    static void Begin(bool classicOnly)
     {
         if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Start in Edit Mode");
         string dir=Path.GetFullPath(Path.Combine("LocalVerification","SelectionIsolation",DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff")));
         Directory.CreateDirectory(dir);Directory.CreateDirectory(Path.Combine(dir,"Save"));Directory.CreateDirectory(Path.Combine(dir,"DesktopProfile"));
+        SessionState.SetBool(Key+".ClassicOnly",classicOnly);
         SessionState.SetString(Key,dir);EditorSceneManager.OpenScene("Assets/LingGuangV05/Scenes/Main.unity");EditorApplication.EnterPlaymode();
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]static void Isolate()
@@ -76,7 +79,7 @@ public static class SelectionIsolationInteractionChecks
         if(state==PlayModeStateChange.EnteredEditMode)
         {
             EditorApplication.update-=Tick;Application.logMessageReceived-=Log;SceneManager.sceneLoaded-=DisableModel;
-            string path=Root;bool ok=File.Exists(Path.Combine(path,"passed.txt"));SessionState.EraseString(Key);ChapterOneRuntime.VerificationSaveDirectory=null;
+            string path=Root;bool ok=File.Exists(Path.Combine(path,"passed.txt"));SessionState.EraseString(Key);SessionState.EraseBool(Key+".ClassicOnly");ChapterOneRuntime.VerificationSaveDirectory=null;
             Debug.Log("Teaching packs "+(ok?"PASS":"FAIL/INTERRUPTED")+": "+path);if(Application.isBatchMode)EditorApplication.Exit(ok?0:1);
         }
     }
@@ -106,7 +109,8 @@ public static class SelectionIsolationInteractionChecks
                 runtime.useDiskSave=false;
                 var lab=new XgSim();lab.S.stage=6;lab.S.firstSpecialty="vision";lab.S.handCorrect=200;lab.S.epochs=20;
                 foreach(var node in XgCatalog.Nodes)if(!lab.S.unlocked.Contains(node.id))lab.S.unlocked.Add(node.id);
-                foreach(var pack in XgTeachingPacks.All){if(!lab.S.unlocked.Contains(pack.NodeId))lab.S.unlocked.Add(pack.NodeId);if(!lab.S.owned.Contains(pack.dataset))lab.S.owned.Add(pack.dataset);if(!lab.S.desksOpen.Contains(pack.dataset))lab.S.desksOpen.Add(pack.dataset);}
+                // This layout fixture is explicitly fully purchased AND installed; purchase alone no longer opens data desks.
+                foreach(var pack in XgTeachingPacks.All){if(!lab.S.unlocked.Contains(pack.NodeId))lab.S.unlocked.Add(pack.NodeId);if(!lab.S.installedTeachingNodes.Contains(pack.NodeId))lab.S.installedTeachingNodes.Add(pack.NodeId);if(!lab.S.owned.Contains(pack.dataset))lab.S.owned.Add(pack.dataset);if(!lab.S.desksOpen.Contains(pack.dataset))lab.S.desksOpen.Add(pack.dataset);}
                 var house=new ChapterOneSim();house.S.prologue=2;house.S.appInstallState=2;house.S.money=1000000;house.S.labState=JsonUtility.ToJson(lab.S);
                 GameCalendar.Advance(house.S,GameCalendar.DayFor(6,lab.MonthProgress));house.S.rentDay=GameCalendar.CurrentDay(house.S);house.S.broadbandMonth=201612;
                 // Bind a post-prologue desktop only after canceling any coroutine started on the initial new save.
@@ -149,6 +153,10 @@ public static class SelectionIsolationInteractionChecks
                 if(++frames<4)return;
                 var hub=ZhongbaoHub.Instance;if(hub==null||hub.View==null||!hub.View.EnsureReady())return;
                 CheckHiddenSurfaceLifecycle();
+                if(SessionState.GetBool(Key+".ClassicOnly",false))
+                {
+                    PrepareClassicTheme(ctl.View.Teach,"sense",false);frames=0;phase=5;return;
+                }
                 Require(ctl.Sim.SelectTeachingPack("headline_swipe"),"Headline fixture pack unavailable");
                 ctl.View.Teach.Refresh();desk=(XgDeskGamePage)Field(ctl.View.Teach,"deskGame");
                 Require(desk.SelectedGame=="headline_swipe"&&desk.Playing,"Teach pack selection not immediately reflected");
@@ -166,7 +174,7 @@ public static class SelectionIsolationInteractionChecks
                 ctl.View.Teach.Refresh();Require(desk.SelectedGame=="spam_swipe"&&desk.Playing,"Unfocused teach page retained stale game");
                 Require(!desk.Focused,"Refresh stole input focus");
                 var before=JsonUtility.ToJson(ctl.Sim.S);
-                typeof(XgDeskGamePage).GetMethod("Settle",Flags).Invoke(desk,new object[]{true,1.0});
+                typeof(XgDeskGamePage).GetMethod("Settle",Flags).Invoke(desk,new object[]{true,1.0,false});
                 Require(JsonUtility.ToJson(ctl.Sim.S)==before,"Unfocused game settled an answer");
                 report.checks.Add("Background selection refresh is immediate; actual Settle rejects unfocused input");
                 // Real hall callback: work MNIST while the private lesson still points to SMS.
@@ -219,6 +227,12 @@ public static class SelectionIsolationInteractionChecks
             {
                 if(++frames<5)return;
                 CaptureClassicTheme(ctl.View.Teach,false,true,"classic-digit-paper");
+                if(SessionState.GetBool(Key+".ClassicOnly",false))
+                {
+                    report.scope="Actual Main teaching classic mode, genuine AI prediction, compact companion, and correct/wrong footer captures at 960x600 and 1400x900. Company acquisition/routing is outside this focused run.";
+                    report.checks.Add("Focused classic run proceeds directly to both window sizes; company-app installation/routing belongs to the full selection suite");
+                    footerSize=0;PrepareFooterSize();frames=0;phase=9;return;
+                }
                 Require(runtime.GetComponent<ChapterOneDesktopRouter>().Open(ZhongbaoHub.AppId,"label"),"Cannot open crowd theme control");
                 frames=0;phase=7;return;
             }
@@ -295,10 +309,13 @@ public static class SelectionIsolationInteractionChecks
         Require(XgSim.DirectTruthJudgment(card),"Footer fixture must judge the current statement, not AI opinion");
         bool answer=correct?card.truth:!card.truth;
         var button=(XgBtn)Field(page,answer?"yes":"no");
+        var viewport=(RectTransform)Field(page,"bodyViewport");
+        viewport.GetComponent<ScrollRect>().verticalNormalizedPosition=0;Canvas.ForceUpdateCanvases();
+        Require(FooterRect(button.rt,viewport).Overlaps(viewport.rect),"Footer answer button must be revealed in the scroll viewport");
         var input=button.button.GetComponent<XgLessonAnswerInput>();
         Require(input!=null&&button.button.IsInteractable(),"Footer answer input unavailable");
         int right=sim.S.handCorrect,wrong=sim.S.handWrong;
-        var data=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current){button=UnityEngine.EventSystems.PointerEventData.InputButton.Left,pointerId=82};
+        var data=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current){button=UnityEngine.EventSystems.PointerEventData.InputButton.Left,pointerId=82,position=RectTransformUtility.WorldToScreenPoint(null,button.rt.TransformPoint(button.rt.rect.center))};
         input.OnPointerDown(data);input.OnPointerClick(data);
         Require(sim.S.handCorrect==right+(correct?1:0)&&sim.S.handWrong==wrong+(correct?0:1),"Footer pointer answer did not settle exactly once");
     }
@@ -312,6 +329,10 @@ public static class SelectionIsolationInteractionChecks
     static void CaptureFooter(string result)
     {
         var page=ctl.View.Teach;AssertDesktopUnobscured(page);var body=(RectTransform)Field(page,"body");
+        var viewport=(RectTransform)Field(page,"bodyViewport");
+        // Short-window card content is scrollable. Capture its real bottom after revealing the settlement.
+        ClassicThemeChecks.AssertLayoutAndPrediction(page);
+        var scroll=viewport.GetComponent<ScrollRect>();scroll.verticalNormalizedPosition=0;Canvas.ForceUpdateCanvases();
         var toggle=(XgBtn)Field(page,"gameToggle");var frame=(RectTransform)toggle.rt.parent;
         var feedback=(TMPro.TMP_Text)Field(page,"feedback");var steps=(TMPro.TMP_Text)Field(page,"steps");
         Require(frame.gameObject.activeInHierarchy&&!string.IsNullOrWhiteSpace(feedback.text),"Footer or actual answer feedback hidden");
@@ -330,6 +351,8 @@ public static class SelectionIsolationInteractionChecks
     {
         // The modern teaching hall exposes digits through its purchased pack, not a duplicate base row.
         Press(page.root,!work&&id=="mnist" ? "TeachingPack mnist_write" : "Desk "+id);
+        var selected=(XgCard)typeof(XgLabelPage).GetProperty("CurrentCard",Flags).GetValue(page);
+        Require(selected.dataset==id,"Theme fixture did not select requested desk "+id+"; rendered "+selected.dataset+"; pack blocker="+(!work&&id=="mnist"?ctl.Sim.TeachingPackBlocker(XgTeachingPacks.Find("mnist_write")):"n/a"));
         if(!work)
         {
             var native=(XgDeskGamePage)Field(page,"deskGame");
@@ -404,6 +427,7 @@ public static class SelectionIsolationInteractionChecks
         page.root.gameObject.SetActive(false);page.Refresh();page.root.gameObject.SetActive(true);page.Refresh();
         Require(classics.Contains("sense")&&!desk.Playing&&!desk.root.gameObject.activeSelf,"Hidden cycle overwrote explicit classic preference");
         AssertBaseDeskSurface(page,"sense");
+        ClassicThemeChecks.AssertLayoutAndPrediction(page);
         var back=(XgBtn)Field(page,"gameToggle");Require(back.button.IsActive()&&back.button.IsInteractable(),"Return-to-game button unavailable");
         back.button.onClick.Invoke();Require(!classics.Contains("sense")&&desk.Playing&&desk.SelectedGame==XgMiniGames.ForDesk("sense"),"Explicit return-to-game failed");
         report.checks.Add("Hidden refresh defers default game without recording classic mode; visible refresh starts it; explicit classic/return choices survive visibility cycle");

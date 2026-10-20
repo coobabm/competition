@@ -77,7 +77,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     if(hub.S.lingguangUnlocked&&hub.Conversation(YYChatHub.LingGuangId)!=null)
                     {
                         boundLab.S.chat=new List<XgChatLine>(oldChat??new List<XgChatLine>());
-                        foreach(var memory in d.memories)if(!d.announcedMemoryIds.Contains(memory.id))
+                        foreach(var memory in d.memories)if(memory.CanAnnounceInChat(boundLab.S.stage)&&!d.announcedMemoryIds.Contains(memory.id))
                         {
                             string line=Safe(GameText.IsEnglish?memory.lineEn:memory.line,GameText.IsEnglish);
                             AppendPrepared(hub,YYChatHub.LingGuangId,line,rollback);boundLab.S.chat.Add(new XgChatLine{from="ai",text=line,at=boundLab.S.lifeClock});
@@ -104,6 +104,26 @@ namespace LingGuangV05.Desktop.XingGuang
                     if(forumAppended){try{forum.NotifyZhouEndingDmSaved();}catch(Exception error){Debug.LogWarning("Ending Tieba redraw failed after a committed save: "+error.GetType().Name);}}
                 }
             }
+        }
+        void RemovePrematureMemoryMessages(YYChatHub hub,XgEndingPreparationState state)
+        {
+            if(hub==null||boundLab.S.stage>=4||state==null)return;
+            var conversation=hub.Conversation(YYChatHub.LingGuangId);if(conversation==null)return;
+            bool Matches(string value)=>state.memories.Exists(m=>state.announcedMemoryIds.Contains(m.id)&&m.MatchesPrematureAnnouncement(value));
+            // Only exact authored announcements are repaired; player messages and actual model replies remain intact.
+            int unreadStart=Math.Max(0,conversation.messages.Count-conversation.unread),removed=0,removedUnread=0;
+            for(int i=conversation.messages.Count-1;i>=0;i--)
+            {
+                var message=conversation.messages[i];
+                if(message.from!=YYChatHub.LingGuangId||!message.byAi||!Matches(message.text))continue;
+                if(i>=unreadStart)removedUnread++;
+                conversation.messages.RemoveAt(i);removed++;
+            }
+            if(removed==0)return;
+            conversation.unread=Math.Max(0,Math.Min(conversation.unread-removedUnread,conversation.messages.Count));
+            // The internal learning log has no authored-message marker: retain that evidence rather than
+            // risk deleting a genuine model reply with the same text. Only the proven YY projection is removed.
+            owner.runtime.MarkDirty();hub.NotifyEndingProjectionSaved();
         }
         YYChatHub MatchingHub(){var hub=YYChatHub.Instance;return hub!=null&&hub.S!=null&&ReferenceEquals(hub.runtime?.Sim,boundSave)&&hub.EndingBoundTo(boundSave)?hub:null;}
         // Tieba fallback for the post-letter question: only when he is not a YY contact of this same save.
@@ -304,10 +324,11 @@ namespace LingGuangV05.Desktop.XingGuang
             if(guard!=null&&flow!=null&&Time.unscaledTime>=nextNoticeRetry)
             {
                 var d=flow.GetSnapshot();var hub=MatchingHub();nextNoticeRetry=Time.unscaledTime+2;
+                RemovePrematureMemoryMessages(hub,d);
                 // The post-letter question is pending for YY (visible contact) or, with no YY contact, for his Tieba DM (A2).
                 bool zhouQuestion=!string.IsNullOrEmpty(d.siReadReceipt)&&!d.siQuestionAnnounced
                     &&(hub!=null&&hub.IsVisible(YYChatHub.Contact(YYChatHub.LaoZhou))||MatchingForum()!=null);
-                if((hub!=null&&hub.S.lingguangUnlocked&&d.memories.Exists(m=>!d.announcedMemoryIds.Contains(m.id)))||zhouQuestion)
+                if((hub!=null&&hub.S.lingguangUnlocked&&d.memories.Exists(m=>m.CanAnnounceInChat(boundLab.S.stage)&&!d.announcedMemoryIds.Contains(m.id)))||zhouQuestion)
                 {if(flow.CheckpointPresentation(flow.CaptureBinding()).Success&&!sourceShown)RefreshPanels();}
             }
             // Record discovery is keyed to actual saved record serial and current stage, including pre-ending play.

@@ -26,6 +26,8 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.labels.Add(new XgLabelCount { dataset = "spam", count = 300 });
             sim.S.epochs = 5; sim.S.assessments = 1;
             sim.S.treeIntroDelivered = true;
+            // These routing tests cover the established plan after the one-time explanations.
+            sim.S.parameterLessonDone=sim.S.sampleLessonDone=true;
             if (stage > 1)
             {
                 // The abilities up to the stage have emerged and their milestone payments are not what these tests are about.
@@ -59,6 +61,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void AfterLabelsItSuggestsTrainingThenAnAssessment()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
+            sim.S.parameterLessonDone=sim.S.sampleLessonDone=true;
             sim.SelectDesk("spam");
             int half = XgCatalog.SamplesToTrain / 2;
             for (int i = 0; i < half; i++) { var c = sim.Card("spam"); sim.Answer("spam", c.truth, host); }

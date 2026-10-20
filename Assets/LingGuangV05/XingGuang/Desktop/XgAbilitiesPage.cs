@@ -136,7 +136,7 @@ namespace LingGuangV05.Desktop.XingGuang
         string RowTip(int ability)
         {
             if (Sim == null) return "";
-            if (ability == Sim.NextAbility) return Sim.ParamsReport(Host) + "\n\n" + Sim.SamplesReport();
+            if (ability == Sim.NextAbility) return view.ProgressHelpText(true) + "\n\n" + view.ProgressHelpText(false);
             string name = "「" + XgSim.AbilityName(ability, false) + "」", nameEn = "'" + XgSim.AbilityName(ability, true) + "'";
             if (ability == 1) return T(name + "起始即有，不用参数和样本。", nameEn + " is there from the start; it needs no parameters or samples.");
             string lines = Sim.HasAbility(ability) ? T("门槛：参数 ", "Lines: parameters ") + XgSim.ParamsText(Sim.ParamsThreshold(ability)) + T("，样本 ", ", samples ") + XgSim.SamplesText(Sim.SamplesThreshold(ability))

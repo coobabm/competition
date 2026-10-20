@@ -106,8 +106,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 return Bar(track, "Fill", XgDark.Track, fill);
             }
             paramsFill = BarRow("Params", 0, .5f, XgDark.Params, out paramsLabel, out paramsValue);
+            AddParameterHelp(paramsLabel);
+            AddParameterHelp(paramsValue);
             dataFill = BarRow("Data", .5f, 1, XgDark.Data, out dataLabel, out dataValue);
-            UiTip.Add(barsRect, () => AbilityTip());
+            AddProgressHelp(paramsFill.parent.parent, true);
+            AddProgressHelp(dataFill.parent.parent, false);
+            AddProgressHelp(dataLabel, false); AddProgressHelp(dataValue, false);
             BuildRelicStrip(bar);
         }
 
@@ -123,20 +127,112 @@ namespace LingGuangV05.Desktop.XingGuang
             if (Sim == null) return "";
             int next = Sim.NextAbility;
             string head = T("能力 " + Sim.AbilitiesCount + "/6。", "Abilities " + Sim.AbilitiesCount + "/6.");
-            // Live numbers: each bar against its line, the models behind P with their formula, caps and memory.
-            string bars = "\n" + Sim.ParamsReport(Host) + T("\n光买宽度不练，不算。", "\nWidth bought but never trained does not count.") + "\n\n" + Sim.SamplesReport()
-                + "\n\n" + Sim.FogNote;
-            if (next == 0) return head + bars;
-            return head + bars + "\n\n" + T("下一项「" + XgSim.AbilityName(next, false) + "」：", "Next, '" + XgSim.AbilityName(next, true) + "': ") + T(XgSim.AbilityUnlocks[next], XgSim.AbilityUnlocksEn[next]);
+            string bars = T("\n已训练参数：", "\nTrained parameters: ") + XgSim.ParamsText(Sim.TrainedParamsK)
+                + T("\n有效样本：", "\nEffective samples: ") + XgSim.SamplesText(Sim.TrainedSamples);
+            if (next == 0) return head + bars + "\n" + ParameterHelpText();
+            return head + bars + "\n" + T("下一项：", "Next: ") + XgSim.AbilityName(next, Sim.English) + "\n" + ParameterHelpText();
+        }
+
+        readonly XgProgressHelp[] progressHelp = new XgProgressHelp[2];
+        readonly List<TMP_Text> progressActionLabels = new List<TMP_Text>();
+        readonly float[] progressHelpAt = { -1, -1 };
+        XgSim progressHelpOwner;
+        XgProgressHelp ProgressSnapshot(bool parameters)
+        {
+            int index=parameters?0:1;
+            if(!ReferenceEquals(progressHelpOwner,Sim)) { progressHelpOwner=Sim;progressHelp[0]=progressHelp[1]=null; }
+            if(progressHelp[index]==null||Time.unscaledTime>=progressHelpAt[index])
+            {progressHelp[index]=XgGuide.ProgressHelp(Sim,Host.Money,Host.VramMB,parameters);progressHelpAt[index]=Time.unscaledTime+.5f;}
+            return progressHelp[index];
+        }
+        public string ParameterHelpText() => ProgressHelpText(true);
+        public string ProgressHelpText(bool parameters)
+        {
+            if(Sim==null)return "";
+            var help=ProgressSnapshot(parameters);var step=help.step;
+            var node=step!=null&&step.target.StartsWith("node:")?XgCatalog.Node(step.target.Substring(5)):null;
+            string destination=step==null?"":step.tab=="tree"&&step.target.StartsWith("node:")
+                ? node!=null?Sim.NodeName(node):T("对应科技暂不可用","Technology unavailable")
+                :step.app==XgGuide.Shop?T("商城","Shop"):step.app==XgGuide.YY?"YY":step.app==""?T("当前剧情","Current story")
+                :step.tab=="items"?T("道具页","Items"):step.id=="data.install"?T("资料文件夹","Training files")
+                :step.tab=="tree"?T("科技树","Tech"):step.tab=="data"?T("数据页","Data")
+                :step.tab=="train"?T("练页","Train"):step.tab=="final"?T("终章","Finale"):T("教页 / 标注台","Teach / Labelling");
+            string current=parameters?XgSim.ParamsText(Sim.TrainedParamsK):XgSim.SamplesText(Sim.TrainedSamples);
+            return help.Text(Sim.English)+"\n<color=#89949E>"+T("当前有效：","Currently effective: ")+current+"</color>"
+                +(step==null?"":"\n<color=#D9B968>"+T("点击 → ","Click → ")+destination+"</color>");
+        }
+
+        public void AddParameterHelp(TMP_Text label)
+        {
+            AddProgressHelp(label,true);
+        }
+
+        public void AddProgressHelp(Component target, bool parameters)
+        {
+            if(target==null)return;
+            var graphic=target.GetComponent<Graphic>();
+            if(graphic==null){var image=target.gameObject.AddComponent<Image>();image.color=Color.clear;graphic=image;}
+            graphic.raycastTarget=true;
+            UiTip.Add(target,()=>ProgressHelpText(parameters));
+            var button=target.GetComponent<Button>()??target.gameObject.AddComponent<Button>();button.targetGraphic=graphic;
+            var colors=button.colors;colors.highlightedColor=new Color(1,.85f,.55f);button.colors=colors;
+            button.onClick.AddListener(()=>FollowProgress(parameters));
+        }
+
+        public void AddProgressLink(TMP_Text value,bool parameters)
+        {
+            value.margin=new Vector4(value.margin.x,value.margin.y,value.margin.z+62,value.margin.w);
+            var rect=Rect("Progress action",value.rectTransform,new Vector2(1,0),Vector2.one,new Vector2(-58,0),Vector2.zero);
+            var label=ui.Text(rect,T("去看看 ›","Go ›"),11,XgDark.Muted,TextAlignmentOptions.MidlineRight);
+            progressActionLabels.Add(label);
+            AddProgressHelp(label,parameters);
+        }
+
+        public void OpenParameterTechnology()
+        {
+            FollowProgress(true);
+        }
+
+        void FollowProgress(bool parameters)
+        {
+            if(Sim==null)return;var owner=Sim;var step=ProgressSnapshot(parameters).step;if(step==null)return;
+            Juice?.Play(XgJuice.Sfx.Id.Click);
+            var note=LingGuangV05.Desktop.Story.GuideNote.Instance;
+            if(note!=null&&note.Follow(step))return;
+            if(step.app!=XgGuide.Lab)
+            {
+                if(step.app==XgGuide.Crowd&&step.tab=="label")
+                {
+                    if(!string.IsNullOrEmpty(step.arg))Sim.SelectDesk(step.arg);
+                    if(!LingGuangV05.Desktop.Story.StudyDesktopGates.Allows(XgGuide.Crowd))
+                    {Open("teach");XgGuideHighlight.Show(this,"teach","name:Paper");return;}
+                }
+                var router=UnityEngine.Object.FindAnyObjectByType<ChapterOneDesktopRouter>(UnityEngine.FindObjectsInactive.Include);
+                if(router!=null&&router.Open(step.app,string.IsNullOrEmpty(step.tab)?step.arg:step.tab))
+                {
+                    var binding=router.Get(step.app);
+                    if(binding?.Window!=null)XgGuideHighlight.Pulse(XgGuideHighlight.FindIn(binding.Window.transform,step.target));
+                }
+                else ShowToast(T("当前入口尚未开放，请先完成眼下任务。","This destination is unavailable; finish the current task first."),3f);
+                return;
+            }
+            Open(step.tab=="train"&&(step.arg=="vision"||step.arg=="sequence")?step.arg:step.tab);
+            if(!ReferenceEquals(owner,Sim))return;
+            if(step.target.StartsWith("node:")&&Tab=="tree")
+            {if(!Tree.FocusNodeDetails(step.target.Substring(5)))ShowToast(T("暂时找不到对应科技","The corresponding technology is unavailable"),3f);}
+            else XgGuideHighlight.Show(this,step.tab,step.target);
+            if(step.id=="data.install"&&Sim.DataFileReady(step.arg))
+                UnityEngine.Object.FindAnyObjectByType<XgFilesWindow>(UnityEngine.FindObjectsInactive.Include)?.ShowTrainingData(Sim);
         }
 
         void RefreshTopBar()
         {
+            foreach(var link in progressActionLabels)if(link!=null)link.text=T("去看看 ›","Go ›");
             aiName.text = AiName;
             int have = Sim.AbilitiesCount, next = Sim.NextAbility;
             aiSub.text = T("能力 ", "Ability ") + have + "/6 · " + XgSim.AbilityName(have, Sim.English);
             double p = Sim.TrainedParamsK, d = Sim.TrainedSamples;
-            paramsLabel.text = T("参数", "Params");
+            paramsLabel.text = T("参数 ↗", "Params ↗");
             dataLabel.text = T("样本", "Samples");
             if (next == 0)
             {

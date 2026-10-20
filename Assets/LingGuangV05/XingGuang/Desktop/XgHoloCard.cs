@@ -168,6 +168,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform overlay, card, art, subject;
         CanvasGroup group;
         Image frame;
+        Image subjectPicture;
         RawImage artLayer, tintLayer, shineLayer;
         Material artMat, tintMat, shineMat;
         TMP_Text title, kicker, glyph, glyph2, headline, body, stamp, serial, hint;
@@ -218,6 +219,9 @@ namespace LingGuangV05.Desktop.XingGuang
             glyph2 = Label(Rect("Subject B", subject, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), 150, Color.white, TextAlignmentOptions.Center);
             glyph2.fontStyle = FontStyles.Bold;
             glyph2.outlineWidth = .12f; glyph2.outlineColor = new Color32(0, 0, 0, 90);
+            var pictureRect = Rect("Shared achievement art", subject, Vector2.zero, Vector2.one, new Vector2(20, 12), new Vector2(-20, -12));
+            subjectPicture = pictureRect.gameObject.AddComponent<Image>();
+            subjectPicture.preserveAspect = true; subjectPicture.raycastTarget = false; subjectPicture.enabled = false;
             tintMat = XgCardArt.Make(1, XgSim.CardWall, 2, new Vector2(ArtW, ArtH), 10);
             tintLayer = XgCardArt.Layer(Rect("Foil", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), tintMat);
 
@@ -307,6 +311,12 @@ namespace LingGuangV05.Desktop.XingGuang
             serial.text = f.serial == "附卡" ? Lang.T("附卡") : f.serial;
             glyph.text = f.glyph; glyph2.text = lenticular ? f.glyph2 : "";
             glyph2.alpha = 0; glyph.alpha = 1;
+            // Album thumbnails and opened cards resolve the identical authored medal by ID.
+            // Disable only the text component: its Subject object also contains the picture.
+            subjectPicture.sprite = XgIcons.Get("card", id);
+            subjectPicture.enabled = subjectPicture.sprite != null;
+            glyph.enabled = !subjectPicture.enabled; glyph2.enabled = !subjectPicture.enabled;
+            if (subjectPicture.enabled) lenticular = false;
             string stars = new string('★', Mathf.Clamp(f.rarity + 1, 1, 5));
             kicker.text = T(f.kicker, f.kickerEn) + "  <color=#FFE08A>" + stars + "</color>  <size=12><alpha=#B0>" + XgCardArt.FinishName(f.rarity) + "</size>";
             headline.text = T(f.headline, f.headlineEn);

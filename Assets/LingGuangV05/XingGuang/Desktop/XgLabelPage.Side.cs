@@ -284,7 +284,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (special) { PlaceBox(specialBox, 0, 300); y = 300; }
             else
             {
-                if (teachingCompanion != null && teachingCompanion.gameObject.activeSelf) { PlaceBox(teachingCompanion, y, 600); y += 608; }
+                if (teachingCompanion != null && teachingCompanion.gameObject.activeSelf) { PlaceBox(teachingCompanion, y, 410); y += 418; }
                 PlaceBox(todayBox, y, TodayH); y += TodayH + 8;
                 if (aiBox.gameObject.activeSelf) { PlaceBox(aiBox, y, AiH); y += AiH + 8; }
                 PlaceBox(shopBox, y, shopHeight); y += shopHeight + 8;

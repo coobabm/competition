@@ -12,7 +12,7 @@ namespace LingGuangV05.XingGuang.Tests
         static readonly string[] OriginalHardware = { "显卡", "GPU", "显卡加速", "CPU", "塔式散热", "算力", "浮点运算", "显存", "显存带宽", "多卡并行", "数据并行", "卡间互联", "PCIe", "主板插槽", "电源功率", "功耗", "电费", "降频", "机房", "机柜", "内存", "硬盘", "CUDA", "专用芯片" };
         [Test] public void DesignCatalogueHasCompleteBilingualEntriesAndResolvableLinks()
         {
-            Assert.AreEqual(131, XgKnowledge.Entries.Length);
+            Assert.AreEqual(132, XgKnowledge.Entries.Length);
             var keys = new HashSet<string>();
             int hardware = 0;
             foreach (var entry in XgKnowledge.Entries)
@@ -34,9 +34,9 @@ namespace LingGuangV05.XingGuang.Tests
             }
             Assert.AreEqual(24, hardware);
         }
-        [Test] public void V4AddsExactlyFortyNewTermsWithBilingualUsageInTheirAuthoredCategories()
+        [Test] public void V4AndAbruptSwitchHaveBilingualUsageInTheirAuthoredCategories()
         {
-            var expected = V4Learning.Concat(V4Architecture).Concat(V4Data).ToArray();
+            var expected = V4Learning.Concat(V4Architecture).Concat(V4Data).Concat(new[] { "突然开关" }).ToArray();
             CollectionAssert.AreEquivalent(expected, XgKnowledge.Entries.Where(e => e.IsNew).Select(e => e.Key).ToArray());
             Assert.AreEqual(91, XgKnowledge.Entries.Count(e => !e.IsNew));
             var groups = new[] { V4Learning, V4Architecture, V4Data };
@@ -54,7 +54,20 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.AreEqual(entry.ChineseBody, entry.Body(false), key);
                 Assert.AreEqual(entry.EnglishBody, entry.Body(true), key);
             }
-            CollectionAssert.AreEqual(new[] { 62, 30, 15, 24 }, Enumerable.Range(0, 4).Select(c => XgKnowledge.Entries.Count(e => e.Category == c)).ToArray());
+            CollectionAssert.AreEqual(new[] { 63, 30, 15, 24 }, Enumerable.Range(0, 4).Select(c => XgKnowledge.Entries.Count(e => e.Category == c)).ToArray());
+        }
+        [Test] public void AbruptSwitchIsNewSearchableAndLinkedBothWays()
+        {
+            var entry = XgKnowledge.Find("突然开关");
+            Assert.IsNotNull(entry); Assert.IsTrue(entry.IsNew); Assert.AreEqual(0, entry.Category);
+            Assert.AreEqual("Abrupt switch", entry.English);
+            Assert.IsNotEmpty(entry.ChineseUsage); Assert.IsNotEmpty(entry.EnglishUsage);
+            foreach (var key in new[] { "平滑开关", "阶跃开关" })
+            {
+                CollectionAssert.Contains(entry.Related, key);
+                Assert.AreEqual(entry.Key, XgKnowledge.Find(key).Related[0]);
+            }
+            Assert.IsTrue(entry.Matches("突然开关")); Assert.IsTrue(entry.Matches("ABRUPT SWITCH"));
         }
         [Test] public void HardwareTermsRemainTheOriginalTwentyFourAndAreNotMarkedNew()
         {

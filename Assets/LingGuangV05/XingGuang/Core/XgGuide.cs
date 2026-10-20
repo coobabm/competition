@@ -85,7 +85,7 @@ namespace LingGuangV05.XingGuang
     /// ability, or the finale's chores), then cheap boosts. At most one optional side task is added, and only as the
     /// third line. It changes nothing.
     /// </summary>
-    public static class XgGuide
+    public static partial class XgGuide
     {
         public const string Lab = "lingguang", Home = "home", Shop = "xunbao", Tieba = "tieba", Bodu = "bodu", YY = "yy", Games = "games";
         /// <summary>The desktop itself (the prologue's last step: open the exe it left behind).</summary>
@@ -138,6 +138,8 @@ namespace LingGuangV05.XingGuang
             if (trainable)
             {
                 TransformerIdea(sim, list);
+                var explanation = ProgressLesson(sim, money, house.vramMB);
+                if (explanation != null) list.Add(explanation);
                 NextAbility(sim, wallet, list, advancing);
                 // A model that stopped improving gets the plain reason and where to fix it (XgChanceHint.cs). While the
                 // next ability's steps already name what to buy or label, a plateau for parameters or data says nothing new.
@@ -261,14 +263,22 @@ namespace LingGuangV05.XingGuang
             for (int pass = 0; pass < 2; pass++)
             {
                 bool parameters = paramsFirst == (pass == 0);
-                var list = new List<XgGuideStep>();
-                var wallet = new Wallet { money = money, vram = vramMB };
-                if (parameters && sim.TrainedParamsK + 1e-9 < sim.ParamsThreshold(next)) ParamsSteps(sim, wallet, next, list, new HashSet<string>());
-                else if (!parameters && sim.TrainedSamples + 1e-9 < sim.SamplesThreshold(next)) DataSteps(sim, wallet, next, list, new HashSet<string>());
-                list.RemoveAll(x => !TabOpen(sim, x.app, x.tab));
-                if (list.Count > 0) { paramsBar = parameters; return list[0]; }
+                var step = BarStepFor(sim, money, vramMB, parameters);
+                if (step != null) { paramsBar = parameters; return step; }
             }
             return null;
+        }
+
+        public static XgGuideStep BarStepFor(XgSim sim, double money, double vramMB, bool parameters)
+        {
+            int next = sim == null ? 0 : sim.NextAbility;
+            if (next == 0 || !TabOpen(sim, Lab, "tree")) return null;
+            var list = new List<XgGuideStep>();
+            var wallet = new Wallet { money = money, vram = vramMB };
+            if (parameters && sim.TrainedParamsK + 1e-9 < sim.ParamsThreshold(next)) ParamsSteps(sim, wallet, next, list, new HashSet<string>());
+            else if (!parameters && sim.TrainedSamples + 1e-9 < sim.SamplesThreshold(next)) DataSteps(sim, wallet, next, list, new HashSet<string>());
+            list.RemoveAll(x => !TabOpen(sim, x.app, x.tab));
+            return list.Count > 0 ? list[0] : null;
         }
 
         /// <summary>Id of the step that asks the player to press the chapter button (<see cref="ConfirmStage"/>).</summary>

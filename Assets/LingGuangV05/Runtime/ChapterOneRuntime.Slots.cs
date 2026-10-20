@@ -12,14 +12,14 @@ namespace LingGuangV05.Runtime
         AtomicSaveStore ArchiveStore(int index, bool chapter)
         {
             EnsureInitialized();
-            if (index < 1 || index > 6 || store == null) return null;
+            if (index < 1 || index > (chapter ? 6 : ManualArchiveLimit + 1) || store == null) return null;
             return !chapter && index == 1 ? store : new AtomicSaveStore(Path.Combine(store.Folder,
                 chapter ? "chapters" : "slots", index.ToString()));
         }
 
         public bool HasAnyArchive
         {
-            get { for (int slot=1; slot<=6; slot++) if (ArchiveExists(slot)) return true; return false; }
+            get { for (int slot=1; slot<=ManualArchiveLimit+1; slot++) if (ArchiveExists(slot)) return true; return false; }
         }
         // UI order changes without moving or renaming any existing save file.
         public static int ArchiveDisplaySlot(int row) => row >= 0 && row < 5 ? row + 2 : row == 5 ? 1 : 0;
@@ -59,6 +59,7 @@ namespace LingGuangV05.Runtime
             try {
                 Saving?.Invoke();
                 bool saved = archive.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var message);
+                if(saved)SaveArchiveThumbnail(index);
                 SaveStatus = message; Changed?.Invoke(); return saved;
             } catch (Exception e) { SaveStatus = e.Message; return false; }
         }
@@ -86,7 +87,9 @@ namespace LingGuangV05.Runtime
             }
             restored.S.lastSeenUnix = Math.Max(restored.S.lastSeenUnix,UtcNow);
             if (!PrepareOfflineArchive(restored.S)) return false;
+            byte[] restoredThumbnail=loaded.Recovered?null:ReadArchiveThumbnail(index,chapter);
             if (!store.TrySaveSnapshot(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }
+            SetArchiveThumbnail(1,restoredThumbnail);
             Attach(restored); KnownProfile(restored, false);
             SaveStatus = GameText.T("已读取，当前进度已切换。", "Loaded. Current progress has changed.") + OfflineSummary();
             Changed?.Invoke(); return true;

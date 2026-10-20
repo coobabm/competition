@@ -18,7 +18,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// Both the square and its price row purchase through <see cref="XgTechTree.Buy"/>, which is the simulation's
     /// own <see cref="XgSim.BuyNode"/>.
     /// </summary>
-    public sealed class XgTechNodeView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, ICancelHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler, ISelectHandler, IDeselectHandler
+    public sealed class XgTechNodeView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler, IPointerDownHandler, IPointerUpHandler, ICancelHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler, ISelectHandler, IDeselectHandler
     {
         public XgTechEntry entry;
         public XgTechTreePage page;
@@ -96,7 +96,8 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         public bool Covers(string id) => entry != null && entry.Covers(id);
-        public void OnPointerEnter(PointerEventData e) => page.Hover(this, true);
+        public void OnPointerEnter(PointerEventData e) { page.Hover(this, true); page.PositionOwnedHint(this, e); }
+        public void OnPointerMove(PointerEventData e) => page.PositionOwnedHint(this, e);
         public void OnSelect(BaseEventData e) => page.Hover(this, true);
         public void OnDeselect(BaseEventData e) => page.Hover(this, false);
         public void OnPointerExit(PointerEventData e)
@@ -249,6 +250,8 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<XgBtn> toolbar = new List<XgBtn>();
         readonly List<Link> links = new List<Link>();
         XgTechNodeView hovered, pinned;
+        TMP_Text ownedPointerHint;
+        RectTransform ownedPointerHintFrame;
         bool tipLayoutDirty = true, tipPointerInside;
         float tipMeasuredWidth = -1;
         float tipMeasuredHeight = -1;
@@ -895,6 +898,41 @@ namespace LingGuangV05.Desktop.XingGuang
 
         // ───────────── interaction ─────────────
 
+        public void PositionOwnedHint(XgTechNodeView node, PointerEventData pointer)
+        {
+            bool show = node != null && hovered == node && !Pan.Moving && XgTechTree.Level(node.entry, Sim) > 0;
+            if (!show) { SetOwnedHintVisible(false); return; }
+            if (ownedPointerHint == null)
+            {
+                ownedPointerHintFrame = Rect("Owned knowledge pointer hint", root, root.pivot, root.pivot, Vector2.zero, Vector2.zero);
+                ownedPointerHintFrame.pivot = new Vector2(0, 1); ownedPointerHintFrame.sizeDelta = new Vector2(220, 28);
+                var fill = ownedPointerHintFrame.gameObject.AddComponent<Image>();
+                fill.color = new Color(.12f, .13f, .15f, .92f); fill.raycastTarget = false;
+                var edge = ownedPointerHintFrame.gameObject.AddComponent<Outline>();
+                edge.effectColor = new Color(.55f, .58f, .62f, .28f); edge.effectDistance = new Vector2(1, -1);
+                var rect = Rect("Hint text", ownedPointerHintFrame, Vector2.zero, Vector2.one, new Vector2(9, 3), new Vector2(-9, -3));
+                ownedPointerHint = ui.Text(rect, "", 12, XgDark.Muted, TextAlignmentOptions.MidlineLeft);
+                ownedPointerHint.raycastTarget = false;
+                ownedPointerHint.textWrappingMode = TextWrappingModes.NoWrap;
+                ownedPointerHint.enableAutoSizing = true; ownedPointerHint.fontSizeMin = 9; ownedPointerHint.fontSizeMax = 12;
+            }
+            ownedPointerHint.text = T("再点击一次进入对应科普界面", "Click again to open this topic");
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(root, pointer.position, pointer.enterEventCamera, out var point))
+            {
+                var bounds = root.rect;
+                ownedPointerHintFrame.anchoredPosition = new Vector2(
+                    Mathf.Clamp(point.x + 14, bounds.xMin + 4, Mathf.Max(bounds.xMin + 4, bounds.xMax - 224)),
+                    Mathf.Clamp(point.y - 18, bounds.yMin + 32, bounds.yMax - 4));
+            }
+            SetOwnedHintVisible(true); ownedPointerHintFrame.SetAsLastSibling();
+        }
+
+        void SetOwnedHintVisible(bool visible)
+        {
+            if (ownedPointerHint != null) ownedPointerHint.gameObject.SetActive(visible);
+            if (ownedPointerHintFrame != null) ownedPointerHintFrame.gameObject.SetActive(visible);
+        }
+
         public void Hover(XgTechNodeView v, bool on)
         {
             if (!built || v == null) return;
@@ -1073,6 +1111,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void HideTooltip()
         {
+            SetOwnedHintVisible(false);
             detailShown=null;
             tipPointerInside = false; tipPlacementValid = false;
             explanationPinned = false;

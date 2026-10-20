@@ -101,9 +101,10 @@ namespace LingGuangV05.XingGuang
             return XgAnswerTraceSource.Manual;
         }
 
-        static void PublishAnswerTrace(Action<XgAnswerTrace> receiver, long cardId, string dataset, bool yes,
-            XgAnswerTraceSource source, XgPredictionTrace prediction, XgAnswer outcome, List<XgConceptPull> pulls = null)
+        void PublishAnswerTrace(Action<XgAnswerTrace> receiver, long cardId, string dataset, bool yes,
+            XgAnswerTraceSource source, XgPredictionTrace prediction, XgAnswer outcome, List<XgConceptPull> pulls = null, bool automatic = false)
         {
+            if (!automatic) RecordAnswerMoneyThought(outcome);
             if (receiver == null) return;
             receiver(new XgAnswerTrace(cardId, dataset, yes,
                 prediction != null ? XgAnswerTraceSource.LocalBoard : source, prediction, outcome, pulls));

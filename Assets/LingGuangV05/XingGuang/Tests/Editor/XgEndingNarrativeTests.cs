@@ -7,6 +7,16 @@ namespace LingGuangV05.XingGuang.Tests
 {
     public sealed class XgEndingNarrativeTests
     {
+        [Test] public void EarlyMemoryEvidenceNeverBecomesFluentChatLater()
+        {
+            var memory=new XgEndingMemoryCard{stage=2,line="答得快之前，我想再把条件看一遍。",lineEn="Check the conditions first."};
+            for(int stage=1;stage<=6;stage++)Assert.IsFalse(memory.CanAnnounceInChat(stage));
+            Assert.IsTrue(memory.MatchesPrematureAnnouncement(memory.line));
+            Assert.IsFalse(memory.MatchesPrematureAnnouncement("否。"));
+            Assert.IsFalse(memory.MatchesPrematureAnnouncement(""));
+            memory.stage=4;Assert.IsFalse(memory.CanAnnounceInChat(3));Assert.IsTrue(memory.CanAnnounceInChat(4));
+            Assert.IsFalse(memory.MatchesPrematureAnnouncement(memory.line));
+        }
         sealed class Fixture
         {
             public readonly object owner=new object();public readonly XgSim sim;public readonly XgEndingPreparationFlow flow;

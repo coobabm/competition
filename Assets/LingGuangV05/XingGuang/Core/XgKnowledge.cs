@@ -2,7 +2,7 @@ using System;
 
 namespace LingGuangV05.XingGuang
 {
-    // Design glossary: 131 entries, including 40 v4 additions and 24 hardware entries. Pure presentation data; no save state.
+    // Design glossary: 132 entries, including 40 v4 additions and 24 hardware entries. Pure presentation data; no save state.
     public static class XgKnowledge
     {
         public sealed class Entry
@@ -22,8 +22,12 @@ namespace LingGuangV05.XingGuang
             new Entry("参数", "Parameters", 0, "模型里可以训练的数，包括权重和偏置。参数更多通常增加容量和显存需求，但不保证泛化更好。", "Trainable numbers, including weights and biases. More parameters increase capacity and memory use, but do not guarantee better generalisation.", new[] { "权重", "偏置" }),
             new Entry("权重", "Weights", 0, "模型里可调的数值，训练就是不断改这些数。", "Trainable coefficients that control how strongly signals contribute to a result.", new[] { "参数" }),
             new Entry("偏置", "Bias", 0, "给神经元加的一个常数，让判断门槛能整体平移。", "An added constant that shifts a neuron's decision threshold.", new[] { "参数" }),
-            new Entry("阶跃开关", "Step activation", 0, "最早的开关：过线输出 1，不过线输出 0；不能求导。", "Outputs zero or one across a threshold; its discontinuity prevents ordinary gradient training.", new[] { "参数", "激活函数" }),
-            new Entry("平滑开关", "Sigmoid activation", 0, "把硬跳变换成 S 形曲线，小误差也能传回去。", "A smooth S-shaped function that allows derivatives, but can saturate and weaken gradients.", new[] { "参数", "激活函数" }),
+            new Entry("阶跃开关", "Step activation", 0, "最早的开关：过线输出 1，不过线输出 0；不能求导。", "Outputs zero or one across a threshold; its discontinuity prevents ordinary gradient training.", new[] { "突然开关", "参数", "激活函数" }),
+            new Entry("突然开关", "Abrupt switch", 0,
+                "一下子从关跳到开、中间没有过渡的开关：输入过了门槛就输出 1，没过就输出 0。正式名字叫阶跃开关。\n\n它没有坡度：差一点和差很多得到的都是 0，误差没法顺着它传回去，所以后来换成了平滑开关。",
+                "A switch that jumps straight from off to on: past the threshold it outputs 1, otherwise 0. Its formal name is the step activation.\n\nIt has no slope, so being slightly wrong and very wrong look the same and the error cannot flow back through it. That is why it was replaced by the smooth switch.",
+                new[] { "平滑开关", "阶跃开关" }, "科技：平滑开关", "Tech: Sigmoid activation", true),
+            new Entry("平滑开关", "Sigmoid activation", 0, "把硬跳变换成 S 形曲线，小误差也能传回去。", "A smooth S-shaped function that allows derivatives, but can saturate and weaken gradients.", new[] { "突然开关", "参数", "激活函数" }),
             new Entry("整流激活", "ReLU", 0, "小于 0 的输出归零，大于 0 原样通过；深层网络因此训得动。", "Returns zero for negative inputs and the input otherwise. It often helps deep networks train.", new[] { "参数", "激活函数" }),
             new Entry("感知机", "Perceptron", 0, "1958 年的一层线性分类器，用一条直线分开两类。", "A linear classifier introduced in 1958. It separates linearly separable classes.", new[] { "参数" }),
             new Entry("感知学习", "Perceptron learning", 0, "答错时调整权重；经典感知机算法的收敛保证要求训练数据线性可分。", "Corrects weights after a wrong answer; convergence requires linearly separable training data.", new[] { "参数" }),

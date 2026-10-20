@@ -161,6 +161,8 @@ public static class TechPurchaseFeedbackChecks
             Check(report, node.square.localScale == Vector3.one && bought == 0, "Release restores rest without purchase");
             double untouchedMoney = host.wallet.money;
             node.OnPointerEnter(pointer);
+            var unownedHint = Field<TMPro.TMP_Text>(tree, "ownedPointerHint");
+            Check(report, unownedHint == null || !unownedHint.gameObject.activeSelf, "Unowned node does not promise a science-page click");
             Check(report, Field<RectTransform>(tree, "tooltip").gameObject.activeSelf && Field<XgTechNodeView>(tree, "detailShown") == node
                 && bought == 0 && host.wallet.money == untouchedMoney, "Hover opens immediately without spending or waiting for Tick");
             CaptureCanvas(root.GetComponent<Canvas>(), dir, "01-node-card", report);
@@ -200,6 +202,18 @@ public static class TechPurchaseFeedbackChecks
 
             before = host.wallet.money;
             int ownedLevel = XgTechTree.Level(node.entry, host.sim);
+            node.OnPointerEnter(pointer);
+            var ownedHint = Field<TMPro.TMP_Text>(tree, "ownedPointerHint");
+            Check(report, ownedHint != null && ownedHint.gameObject.activeSelf && !ownedHint.raycastTarget &&
+                ownedHint.text.Contains("再点击一次"), "Owned node shows a passive nearby knowledge-click hint");
+            var hintFrame = Field<RectTransform>(tree, "ownedPointerHintFrame");
+            var hintFill = hintFrame.GetComponent<Image>();
+            Check(report, hintFrame.gameObject.activeSelf && hintFrame.rect.width >= 200 && hintFrame.rect.width <= 230 &&
+                hintFill != null && !hintFill.raycastTarget && hintFill.color.a > 0 && hintFill.color.a < 1 &&
+                hintFrame.GetComponent<Outline>() != null, "Knowledge hint has a compact translucent nonblocking frame");
+            node.OnPointerExit(pointer);
+            Check(report, !ownedHint.gameObject.activeSelf, "Leaving the owned node removes its nearby hint");
+            Check(report, !hintFrame.gameObject.activeSelf, "Leaving the owned node also hides its frame");
             node.OnPointerDown(pointer); node.OnPointerUp(pointer); node.OnPointerClick(pointer);
             yield return null;
             var knowledge = Field<RectTransform>(tree, "knowledgeRoot");
@@ -382,6 +396,24 @@ public static class TechPurchaseFeedbackChecks
             }
             finally { XgTreePage.OpenInsightCard = previousInsight; }
             Check(report, exercised.Count > 0, "Catalog sweep exercised available entries via real pointer click");
+            var artFixture = new GameObject("Achievement art equality fixture", typeof(RectTransform));
+            // Match Install's live Canvas: TMP must run Awake before Build applies material outlines.
+            // Build itself hides the overlay before this coroutine yields, so no card is flashed on screen.
+            artFixture.transform.SetParent(root.transform, false);
+            var fullCard = artFixture.AddComponent<XgHoloCard>();
+            fullCard.enabled = false; // This fixture checks rendering assets, not the view-bound Update loop.
+            typeof(XgHoloCard).GetField("font", Fields).SetValue(fullCard, font);
+            typeof(XgHoloCard).GetMethod("Build", Fields, null, new[] { typeof(RectTransform) }, null)
+                .Invoke(fullCard, new object[] { (RectTransform)artFixture.transform });
+            typeof(XgHoloCard).GetMethod("Fill", Fields, null, new[] { typeof(string) }, null)
+                .Invoke(fullCard, new object[] { "cure.first" });
+            var thumbArt = XgIcons.Place(artFixture.transform, "card", "cure.first", 64, 64, 92);
+            var openedArt = Field<Image>(fullCard, "subjectPicture");
+            Check(report, thumbArt != null && openedArt.enabled && openedArt.sprite == thumbArt.sprite,
+                "Right-medicine thumbnail and opened card use the same actual medal Sprite");
+            Check(report, !Field<TMPro.TMP_Text>(fullCard, "glyph").enabled,
+                "Opened medal does not overlay a different medicine character on the pill image");
+            UnityEngine.Object.Destroy(artFixture);
             Debug.Log("TECH_CATALOG_CLICK_COVERAGE exercised=" + exercised.Count + " total=" + XgTechTree.Entries.Count
                 + "; remaining entries retain real stage, quest, ownership and visibility gates");
             report.status = "passed";

@@ -152,8 +152,8 @@ namespace LingGuangV05.Desktop
             // One resident owner advances both open and closed windows. A natural end can
             // report isPlaying=false before the streaming time resets to zero, so do not
             // gate the falling edge on source.time. Explicit Pause/Stop clears the request.
-            if (wasPlaying && !playing && manager.PlaybackRequested && !AudioListener.pause
-                && source.enabled && source.gameObject.activeInHierarchy)
+            if (MusicApp.ShouldAdvanceAfterEnd(wasPlaying, playing, manager.PlaybackRequested, AudioListener.pause,
+                source.enabled && source.gameObject.activeInHierarchy))
             {
                 if (dailyClip == source.clip && dailyPlayback.Complete(Time.unscaledDeltaTime))
                     dailyMusicLab?.RecordDailySongCompleted(dailyPlayback.Song, dailyPlayback.Ticket);

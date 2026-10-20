@@ -66,7 +66,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnFined(XgQcFine fine)
         {
-            if (fine == null) return;
+            if (fine == null || bound == null || bound.S.stage < XgCrowdNoticePolicy.FirstStage) return;
             pendingFines++; pendingMoney += fine.fine;
             if (fine.trap) pendingTraps++;
         }

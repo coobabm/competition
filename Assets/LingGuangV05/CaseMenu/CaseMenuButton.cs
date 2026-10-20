@@ -48,7 +48,8 @@ namespace LingGuangV05.CaseMenu
             if (keycap != null) keycap.localPosition = rest + Vector3.forward * travel;
             pulseAge += dt;
             float flash = Mathf.Exp(-pulseAge * 8f) * 2.8f;
-            glow = Mathf.SmoothDamp(glow, (IsHovered ? 2.5f : .35f) + (IsPressed ? 1.5f : 0) + flash,
+            float breath = isStart && !ReducedMotion ? .25f + .25f * Mathf.Sin(Time.unscaledTime * (Mathf.PI * 2 / 2.8f)) : 0;
+            glow = Mathf.SmoothDamp(glow, (IsHovered ? 2.5f : .35f + breath) + (IsPressed ? 1.5f : 0) + flash,
                 ref glowVelocity, .065f, Mathf.Infinity, dt);
             if (ring != null)
             {

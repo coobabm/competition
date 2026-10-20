@@ -259,13 +259,14 @@ namespace LingGuangV05.XingGuang.Tests
             bool Submit()
             {
                 if (!turn.TryWhack(31, true)) return false;
-                var result = sim.SubmitMiniGame(ticket, sequence + 1, true, host);
+                var result = sim.SubmitMiniGame(ticket, sequence + 1, true, host, automatic: true);
                 if (result.accepted) sequence++;
                 return result.accepted;
             }
             host.Earned = () => Assert.IsFalse(Submit(), "host callbacks must not resettle the same mole");
             Assert.IsTrue(turn.TryAutoDecision(31, true)); Assert.IsTrue(Submit());
             Assert.IsFalse(Submit()); Assert.AreEqual(1, sequence);
+            Assert.IsFalse(sim.S.answerPayThoughtRecorded); Assert.IsEmpty(sim.S.pendingAnswerMoneyThoughts);
             Assert.AreEqual(before + 1, sim.Labels("arith"));
             Assert.Greater(host.Money, money);
             Assert.LessOrEqual(host.Money - money, sim.MiniBasePay("arith") * 2 + 1e-9);

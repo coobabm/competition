@@ -13,6 +13,7 @@ namespace LingGuangV05.CaseMenu
         private static readonly Color Amber = new Color(.86f, .67f, .40f, 1f);
         private static readonly Color Surface = new Color(.082f, .079f, .073f, 1f);
         private static readonly Color Control = new Color(.14f, .134f, .12f, 1f);
+        private static readonly Color Teal = new Color32(90,214,180,255);
 
         // Opening title artwork (v9 clean lockup: 我的电脑 / [monitor icon 活]了). Reference pixels at 1920x1080.
         // Two lines at 500 px wide keep the same footprint the retired v5 art had, so the room framing and the
@@ -32,6 +33,7 @@ namespace LingGuangV05.CaseMenu
         private TextMeshProUGUI hintLabel;
         private TextMeshProUGUI loadingLabel;
         private TextMeshProUGUI volumeLabel;
+        readonly UnityEngine.UI.Image[] volumeBars=new UnityEngine.UI.Image[10];
         private UnityEngine.UI.Slider volumeSlider;
         private UnityEngine.UI.Toggle reduceMotionToggle;
         private UnityEngine.UI.Toggle fullscreenToggle;
@@ -115,6 +117,19 @@ namespace LingGuangV05.CaseMenu
             SetTitleActionsVisible(alpha >= .999f);
         }
 
+        // Keep the legal notice, but remove the title lockup and title-only hints behind subpages.
+        void SetSubpageChrome(bool subpage)
+        {
+            if(chromeGroup!=null)foreach(Transform child in chromeGroup.transform)
+            {
+                if(child.name.StartsWith("AiContentNotice",StringComparison.Ordinal))continue;
+                var group=child.GetComponent<CanvasGroup>();
+                if(group==null)group=child.gameObject.AddComponent<CanvasGroup>();
+                group.alpha=subpage?0:1;
+            }
+            if(titleActions!=null){titleActions.alpha=subpage?0:(chromeGroup!=null?chromeGroup.alpha:1);titleActions.blocksRaycasts=!subpage&&titleActions.interactable;}
+        }
+
         public void SetFade(float alpha)
         {
             if (fadeGroup == null) return;
@@ -167,16 +182,15 @@ namespace LingGuangV05.CaseMenu
             string value = !mode.HasValue ? "" : mode.Value == 1 ? T("每 15 分钟", "Every 15 min")
                 : mode.Value == 2 ? T("关闭", "Off") : T("每 8 分钟", "Every 8 min");
             lifeEventsTitle.text = T("突发事件", "Life events") + (value.Length > 0 ? " · " + value : "");
-            lifeEventsDetail.text = mode.HasValue ? T("当前存档 · 点击切换", "Current save · click to change")
-                : T("进入游戏后设置", "Enter the game to configure");
+            lifeEventsDetail.text = "";
         }
         private UnityEngine.UI.Button BuildLifeEventsSetting(RectTransform parent)
         {
-            var background = Panel("LifeEvents", parent, Control, true);
+            var background = Panel("LifeEvents", parent, Color.clear, true);
             Place(background.rectTransform, new Vector2(0, 1), new Vector2(42, -479), new Vector2(536, 56));
             lifeEventsButton = background.gameObject.AddComponent<UnityEngine.UI.Button>();
             Style(lifeEventsButton, background);
-            lifeEventsTitle = Label("Label", background.transform, "", 17, Ink);
+            lifeEventsTitle = Label("Label", background.transform, "", 26, Ink);
             Place(lifeEventsTitle.rectTransform, new Vector2(0, 1), new Vector2(14, -5), new Vector2(508, 27));
             lifeEventsDetail = Label("Description", background.transform, "", 12, Muted);
             Place(lifeEventsDetail.rectTransform, new Vector2(0, 0), new Vector2(14, 5), new Vector2(508, 22));
@@ -201,10 +215,12 @@ namespace LingGuangV05.CaseMenu
             fullscreenToggle.SetIsOnWithoutNotify(fullscreen);
             qualityToggle.SetIsOnWithoutNotify(!LingGuangV05.Desktop.GamePerformance.Low);
             frameRateToggle.SetIsOnWithoutNotify(LingGuangV05.Desktop.GamePerformance.Frames == 60);
-            settingsStatus.text = T("设置即时保存，不会重置游戏进度", "Settings save immediately. Game progress is preserved.");
+            settingsStatus.text = "";
+            foreach(var refresh in settingsTranslations)refresh();
             SetVolumeLabel(volumeSlider.value);
             RefreshLifeEventsSetting();
             SetTitleActionsVisible(false);
+            SetSubpageChrome(true);
             settingsGroup.gameObject.SetActive(true);
             settingsOwner = this;
             settingsGroup.alpha = 1f;
@@ -233,6 +249,7 @@ namespace LingGuangV05.CaseMenu
             settingsGroup.blocksRaycasts = false;
             settingsGroup.gameObject.SetActive(false);
             SetTitleActionsVisible(chromeGroup != null && chromeGroup.alpha >= .999f);
+            SetSubpageChrome(false);
         }
 
         private void BuildChrome()
@@ -245,7 +262,7 @@ namespace LingGuangV05.CaseMenu
 
             var eyebrow = Label("Eyebrow", chrome, "MY COMPUTER IS ALIVE / 2016", 14, Muted);
             Place(eyebrow.rectTransform, new Vector2(0, 1), new Vector2(70, -66), new Vector2(520, 26));
-            eyebrow.characterSpacing = 5f;
+            eyebrow.characterSpacing = 5f; eyebrow.gameObject.SetActive(false);
             // v9 clean lockup: 我的电脑[monitor icon carrying 活]了. The icon replaces the 活 character, so the
             // artwork replaces both the old text title and the separate signal decoration.
             var logoTexture = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV9");
@@ -275,13 +292,13 @@ namespace LingGuangV05.CaseMenu
             }
             var subheading = Label("Subheading", chrome, "从一次开机开始。", 21, Muted);
             Place(subheading.rectTransform, new Vector2(0, 1), new Vector2(70, subheadingTop), new Vector2(640, 36));
-            var accent = Panel("HintAccent", chrome, Amber);
+            var accent = Panel("HintAccent", chrome, Amber); accent.gameObject.SetActive(false);
             Place(accent.rectTransform, Vector2.zero, new Vector2(70, 76), new Vector2(28, 2));
-            hintLabel = Label("ContextHint", chrome, "点击机箱上的电源键，进入游戏", 21, Ink);
+            hintLabel = Label("ContextHint", chrome, "", 21, Ink);
             Place(hintLabel.rectTransform, Vector2.zero, new Vector2(112, 59), new Vector2(880, 38));
             var keyboard = Label("KeyboardHint", chrome, "TAB 切换 · ENTER 确认", 15, Muted);
             Place(keyboard.rectTransform, new Vector2(1, 0), new Vector2(-70, 63), new Vector2(520, 30));
-            keyboard.alignment = TextAlignmentOptions.MidlineRight;
+            keyboard.alignment = TextAlignmentOptions.MidlineRight; keyboard.gameObject.SetActive(false);
             // Keep the muted notice readable over the bright papers in the room scene.
             var disclosureBacking = Panel("AiContentNoticeBacking", chrome, new Color(0, 0, 0, .62f));
             Place(disclosureBacking.rectTransform, Vector2.zero, new Vector2(62, 18), new Vector2(1136, 34));
@@ -315,17 +332,17 @@ namespace LingGuangV05.CaseMenu
             var backdrop = Panel("Settings", canvasRoot, new Color(0, 0, 0, .72f), true);
             Stretch(backdrop.rectTransform);
             settingsGroup = backdrop.gameObject.AddComponent<CanvasGroup>();
-            var card = Panel("SettingsCard", backdrop.transform, Surface, true);
-            Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(620, 668));
+            var card = Panel("SettingsCard", backdrop.transform, Color.clear, true);
+            Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(1000, 760));
             var accent = Panel("CardAccent", card.transform, Amber);
             Place(accent.rectTransform, new Vector2(0, 1), new Vector2(42, -29), new Vector2(28, 2));
 
             var eyebrow = Label("SettingsEyebrow", card.transform, "SYSTEM CONFIGURATION", 11, Muted);
             Place(eyebrow.rectTransform, new Vector2(0, 1), new Vector2(84, -19), new Vector2(494, 23));
-            eyebrow.characterSpacing = 2.7f;
-            var title = SettingsLabel("SettingsTitle", card.transform, "设置", "Settings", 32, Ink);
-            Place(title.rectTransform, new Vector2(0, 1), new Vector2(42, -55), new Vector2(536, 52));
-            title.overflowMode = TextOverflowModes.Overflow;
+            eyebrow.characterSpacing = 2.7f; eyebrow.gameObject.SetActive(false);
+            var title = SettingsLabel("SettingsTitle", card.transform, "设置", "Settings", 52, Ink);
+            Place(title.rectTransform, new Vector2(0, 1), new Vector2(42, -55), new Vector2(900, 64));
+            title.overflowMode = TextOverflowModes.Overflow;title.gameObject.AddComponent<CaseMenuPageCaret>();
             var separator = Panel("HeaderRule", card.transform, new Color(1, 1, 1, .13f));
             Place(separator.rectTransform, new Vector2(0, 1), new Vector2(42, -113), new Vector2(536, 1));
 
@@ -334,16 +351,16 @@ namespace LingGuangV05.CaseMenu
             reduceMotionToggle.onValueChanged.AddListener(value => { reduceMotionChanged?.Invoke(value); uiClick?.Invoke(); });
             fullscreenToggle = BuildToggle(card.rectTransform, "Fullscreen", "全屏显示", "Fullscreen", "切换窗口与全屏显示", "Switch between windowed and fullscreen display", 275);
             fullscreenToggle.onValueChanged.AddListener(value => { fullscreenChanged?.Invoke(value); uiClick?.Invoke(); });
-            var quality = qualityToggle = BuildToggle(card.rectTransform, "HighQuality", "画面：高 / 低", "Graphics: High / Low", "开启为高画质；关闭降低阴影与细节", "On: high quality. Off: fewer shadows and details.", 343);
+            var quality = qualityToggle = BuildToggle(card.rectTransform, "HighQuality", "画面质量", "Graphics", "开启为高画质；关闭降低阴影与细节", "On: high quality. Off: fewer shadows and details.", 343);
             quality.SetIsOnWithoutNotify(!LingGuangV05.Desktop.GamePerformance.Low);
             quality.onValueChanged.AddListener(value => LingGuangV05.Desktop.GamePerformance.SetLow(!value));
-            var fps = frameRateToggle = BuildToggle(card.rectTransform, "FrameRate", "帧率：60 / 30", "Frame rate: 60 / 30", "开启为 60 帧；关闭为 30 帧", "On: 60 FPS. Off: 30 FPS.", 411);
+            var fps = frameRateToggle = BuildToggle(card.rectTransform, "FrameRate", "帧率", "Frame rate", "开启为 60 帧；关闭为 30 帧", "On: 60 FPS. Off: 30 FPS.", 411);
             fps.SetIsOnWithoutNotify(LingGuangV05.Desktop.GamePerformance.Frames == 60);
             fps.onValueChanged.AddListener(LingGuangV05.Desktop.GamePerformance.SetSixty);
 
             var lifeEvents = BuildLifeEventsSetting(card.rectTransform);
             var playerHelp = BuildPlayerHelpEntry(card.rectTransform);
-            var returnImage = Panel("Return", card.transform, Control, true);
+            var returnImage = Panel("Return", card.transform, Color.clear, true);
             Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -557), new Vector2(142, 44));
             var returnButton = returnImage.gameObject.AddComponent<UnityEngine.UI.Button>();
             Style(returnButton, returnImage);
@@ -353,10 +370,10 @@ namespace LingGuangV05.CaseMenu
             returnLabel.alignment = TextAlignmentOptions.Midline;
             var escape = SettingsLabel("EscapeHint", card.transform, "ESC 关闭", "ESC Close", 14, Muted);
             Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -562), new Vector2(180, 34));
-            escape.alignment = TextAlignmentOptions.MidlineRight;
-            var saved = settingsStatus = Label("SaveHint", card.transform, T("设置即时保存，不会重置游戏进度", "Settings save immediately. Game progress is preserved."), 14, Muted);
+            escape.alignment = TextAlignmentOptions.MidlineRight; escape.gameObject.SetActive(false);
+            var saved = settingsStatus = Label("SaveHint", card.transform, "", 20, Amber);
             Place(saved.rectTransform, Vector2.zero, new Vector2(42, 22), new Vector2(536, 24));
-            saved.enableAutoSizing = true; saved.fontSizeMin = 11; saved.fontSizeMax = 14;
+            saved.enableAutoSizing = false;
 
             // Explicit vertical navigation keeps the modal's keyboard focus contained.
             Link(volumeSlider, returnButton, reduceMotionToggle);
@@ -392,7 +409,7 @@ namespace LingGuangV05.CaseMenu
             Place(track.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(516, 3));
             var fill = Panel("Fill", track.transform, Amber);
             Stretch(fill.rectTransform);
-            volumeSlider.fillRect = fill.rectTransform;
+            volumeSlider.fillRect = fill.rectTransform;track.gameObject.SetActive(false);
             var handleArea = Rect("HandleArea", sliderHit.transform);
             Stretch(handleArea);
             handleArea.offsetMin = new Vector2(10, 0);
@@ -400,14 +417,11 @@ namespace LingGuangV05.CaseMenu
             var handle = Panel("Handle", handleArea, Ink);
             Place(handle.rectTransform, new Vector2(1f, .5f), Vector2.zero, new Vector2(12, 20));
             handle.rectTransform.pivot = new Vector2(.5f, .5f);
+            // Keep the drag geometry, but only the ten volume bars are visible.
             volumeSlider.handleRect = handle.rectTransform;
-            Style(volumeSlider, handle);
-            var colors = volumeSlider.colors;
-            colors.normalColor = Ink;
-            colors.highlightedColor = Color.white;
-            colors.selectedColor = Amber;
-            colors.pressedColor = Color.white;
-            volumeSlider.colors = colors;
+            handle.enabled = false;
+            volumeSlider.transition = UnityEngine.UI.Selectable.Transition.None;
+            for(int i=0;i<10;i++){volumeBars[i]=Panel("VolumeBar"+i,sliderHit.transform,Teal);Place(volumeBars[i].rectTransform,new Vector2(0,.5f),new Vector2(16+i*50,0),new Vector2(24,14+i*2));}
             volumeSlider.onValueChanged.AddListener(value => { SetVolumeLabel(value); volumeChanged?.Invoke(value); });
         }
 
@@ -420,25 +434,25 @@ namespace LingGuangV05.CaseMenu
 
         private UnityEngine.UI.Toggle BuildToggle(RectTransform parent, string name, string title, string titleEn, string subtitle, string subtitleEn, float top)
         {
-            var background = Panel(name, parent, Control, true);
-            Place(background.rectTransform, new Vector2(0, 1), new Vector2(42, -top), new Vector2(536, 56));
+            var background = Panel(name, parent, Color.clear, true);
+            Place(background.rectTransform, new Vector2(0, 1), new Vector2(42, -top), new Vector2(900, 56));
             var toggle = background.gameObject.AddComponent<UnityEngine.UI.Toggle>();
-            Style(toggle, background);
-            var titleLabel = SettingsLabel("Label", background.transform, title, titleEn, 17, Ink);
-            Place(titleLabel.rectTransform, new Vector2(0, 1), new Vector2(14, -5), new Vector2(450, 27));
-            var detail = SettingsLabel("Description", background.transform, subtitle, subtitleEn, 12, Muted);
-            Place(detail.rectTransform, new Vector2(0, 0), new Vector2(14, 5), new Vector2(450, 22));
-            var box = Panel("Checkbox", background.transform, new Color(.46f, .43f, .36f, 1f));
-            Place(box.rectTransform, new Vector2(1, .5f), new Vector2(-16, 0), new Vector2(22, 22));
-            var inner = Panel("CheckboxInset", box.transform, Surface);
-            Stretch(inner.rectTransform);
-            inner.rectTransform.offsetMin = Vector2.one * 2;
-            inner.rectTransform.offsetMax = Vector2.one * -2;
-            var mark = Panel("Checkmark", inner.transform, Amber);
-            Stretch(mark.rectTransform);
-            mark.rectTransform.offsetMin = Vector2.one * 3;
-            mark.rectTransform.offsetMax = Vector2.one * -3;
-            toggle.graphic = mark;
+            toggle.transition = UnityEngine.UI.Selectable.Transition.None;
+            var titleLabel = SettingsLabel("Label", background.transform, title, titleEn, 26, Ink);
+            Place(titleLabel.rectTransform, new Vector2(0, .5f), Vector2.zero, new Vector2(480, 48));
+            string on = name == "HighQuality" ? T("高", "High") : name == "FrameRate" ? "60" : T("开启", "On");
+            string off = name == "HighQuality" ? T("低", "Low") : name == "FrameRate" ? "30" : T("关闭", "Off");
+            var onText = Label("OnChoice", background.transform, on, 26, Ink);
+            Place(onText.rectTransform,new Vector2(1,.5f),new Vector2(-160,0),new Vector2(120,48));
+            var offText = Label("OffChoice", background.transform, off, 26, Ink);
+            Place(offText.rectTransform,new Vector2(1,.5f),Vector2.zero,new Vector2(120,48));
+            onText.raycastTarget=offText.raycastTarget=true;
+            var onButton=onText.gameObject.AddComponent<UnityEngine.UI.Button>();onButton.targetGraphic=onText;onButton.onClick.AddListener(()=>toggle.isOn=true);
+            var offButton=offText.gameObject.AddComponent<UnityEngine.UI.Button>();offButton.targetGraphic=offText;offButton.onClick.AddListener(()=>toggle.isOn=false);
+            var mark = Panel("SelectedUnderline", background.transform, Teal);
+            Action refresh = ()=>{onText.color=toggle.isOn?Ink:Muted*.65f;offText.color=toggle.isOn?Muted*.65f:Ink;Place(mark.rectTransform,new Vector2(1,0),new Vector2(toggle.isOn?-160:0,0),new Vector2(120,3));};
+            toggle.onValueChanged.AddListener(v=>refresh());
+            settingsTranslations.Add(refresh);
             toggle.toggleTransition = UnityEngine.UI.Toggle.ToggleTransition.None;
             return toggle;
         }
@@ -449,6 +463,7 @@ namespace LingGuangV05.CaseMenu
             if (volumeLabel == null || displayedVolume == percent) return;
             displayedVolume = percent;
             volumeLabel.text = percent + "%";
+            for(int i=0;i<volumeBars.Length;i++)if(volumeBars[i]!=null)volumeBars[i].color=i<Mathf.CeilToInt(value*10)?Teal:new Color(.25f,.27f,.26f,1);
         }
 
         private TextMeshProUGUI Label(string name, Transform parent, string text, float size, Color color)

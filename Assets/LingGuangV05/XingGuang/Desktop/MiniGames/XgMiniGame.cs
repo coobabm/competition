@@ -31,13 +31,16 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         readonly Func<bool> active;
         readonly Func<double> skill;
         readonly Action<string> say;
-        readonly Action<bool, double> report;
+        readonly Action<bool, double, bool> report;
         XgJuice inputFx;
         bool disposed;
         public bool IsActive => !disposed && Root != null && Root.gameObject.activeInHierarchy && active();
         public double Skill => Math.Max(0, Math.Min(1, skill()));
         public XgMiniContext(RectTransform root, XgUi ui, XgSim sim, IXgHost host, string id,
             Func<bool> active, Func<double> skill, Action<string> say, Action<bool, double> report)
+            : this(root, ui, sim, host, id, active, skill, say, (correct, seconds, automatic) => report(correct, seconds)) { }
+        public XgMiniContext(RectTransform root, XgUi ui, XgSim sim, IXgHost host, string id,
+            Func<bool> active, Func<double> skill, Action<string> say, Action<bool, double, bool> report)
         {
             Root = root; Ui = ui; Sim = sim; Host = host; Id = id;
             this.active = active; this.skill = skill; this.say = say; this.report = report;
@@ -52,9 +55,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public void Close() { disposed = true; }
         public void Say(string text) { if (!disposed) say(text); }
         /// <summary>One answered item of the desk (see XgSim.SettleMiniAction): the game never decides how much it is worth.</summary>
-        public void Report(bool correct) { if (IsActive) report(correct, -1); }
+        public void Report(bool correct, bool automatic = false) { if (IsActive) report(correct, -1, automatic); }
         /// <summary>The same, with how long the answer took; a quick right answer earns the speed bonus.</summary>
-        public void ReportTimed(bool correct, double seconds) { if (IsActive) report(correct, seconds); }
+        public void ReportTimed(bool correct, double seconds) { if (IsActive) report(correct, seconds, false); }
         public bool KeyDown(Key key) => IsActive && Keyboard.current != null && Keyboard.current[key].wasPressedThisFrame;
         public bool KeyHeld(Key key) => IsActive && Keyboard.current != null && Keyboard.current[key].isPressed;
         public RectTransform Rect(string name, float x, float y, float w, float h) => XgUi.TopLeft(name, Root, x, y, w, h);

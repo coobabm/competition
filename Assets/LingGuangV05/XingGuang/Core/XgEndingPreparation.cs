@@ -13,6 +13,10 @@ namespace LingGuangV05.XingGuang
         public string id = "", line = "", lineEn = "", taughtText = "";
         public int day, stage, lean; public bool pinnable = true, pinned;
         public List<XgEndingMemorySource> sources = new List<XgEndingMemorySource>();
+        // Early memories remain evidence in the gallery, not fluent dialogue from a yes/no model.
+        public bool CanAnnounceInChat(int currentStage) => stage >= 4 && currentStage >= stage;
+        public bool MatchesPrematureAnnouncement(string value) => stage < 4 && !string.IsNullOrEmpty(value)
+            && (value == line || value == lineEn);
         public XgEndingMemoryCard Copy() { var c=(XgEndingMemoryCard)MemberwiseClone(); c.sources=new List<XgEndingMemorySource>(); if(sources!=null)foreach(var s in sources)if(s!=null)c.sources.Add(s.Copy());return c; }
     }
     [Serializable] public sealed class XgEndingMemoryTemplate

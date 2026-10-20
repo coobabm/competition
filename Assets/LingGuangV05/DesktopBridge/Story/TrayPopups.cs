@@ -7,6 +7,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using LingGuangV05.Core;
+using LingGuangV05.XingGuang;
+using LingGuangV05.Desktop.XingGuang;
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
@@ -40,9 +42,11 @@ namespace LingGuangV05.Desktop.Story
         public void Enqueue(string who, string text, float seconds, bool story = false, System.Action open = null)
         {
             if (string.IsNullOrEmpty(text)) return;
+            var stageGuard = CrowdGuard(who);
+            if (stageGuard != null && !stageGuard()) return;
             // The opening window drops chatter; a story moment on screen only holds it (Run waits on StoryFocus).
             if (!OpeningQuiet.Allows(story, OpeningQuiet.Active)) return;
-            queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open });
+            queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open, valid = stageGuard });
             if (running == null && isActiveAndEnabled) running = StartCoroutine(Run());
         }
 
@@ -51,8 +55,18 @@ namespace LingGuangV05.Desktop.Story
             System.Func<bool> valid, System.Func<bool> held, bool systemBalloon = false, bool aiReply = false)
         {
             if (string.IsNullOrEmpty(text)) return;
+            var stageGuard = CrowdGuard(who);
+            if (stageGuard != null && !stageGuard()) return;
+            var callerValid = valid;
+            if (stageGuard != null) valid = () => stageGuard() && (callerValid == null || callerValid());
             queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open, valid = valid, held = held, systemBalloon = systemBalloon, aiReply = aiReply });
             if (running == null && isActiveAndEnabled) running = StartCoroutine(Run());
+        }
+
+        static System.Func<bool> CrowdGuard(string who)
+        {
+            var origin = XingGuangController.Instance?.Sim;
+            return XgCrowdNoticePolicy.Capture(who, origin, () => XingGuangController.Instance?.Sim);
         }
 
         void OnEnable() { ClearTransient(false); if (queue.Count > 0) running = StartCoroutine(Run()); }

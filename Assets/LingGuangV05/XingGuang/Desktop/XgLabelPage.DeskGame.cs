@@ -32,20 +32,12 @@ namespace LingGuangV05.Desktop.XingGuang
             deskGame.root.offsetMin = new Vector2(HallW + ColumnGap, 0);
             deskGame.root.gameObject.SetActive(false);
 
-            // The way back from the yes/no cards: bottom left of the card area, where the writing view keeps its own.
-            gameToggle = ZhongbaoSkin.Outlined(ui, body, "", () => { classicDesks.Remove(Desk); Fx.Play(XgJuice.Sfx.Id.Click); Refresh(); }, 13, ZhongbaoSkin.Line);
+            // A dedicated footer row shares width with the streak, never the history or scrollable card content.
+            gameToggle = ZhongbaoSkin.Outlined(ui, workspace, "", () => { classicDesks.Remove(Desk); Fx.Play(XgJuice.Sfx.Id.Click); Refresh(); }, 13, ZhongbaoSkin.Line);
             var frame = ZhongbaoSkin.Frame(gameToggle);
-            frame.anchorMin = frame.anchorMax = new Vector2(0, 0); frame.offsetMin = new Vector2(14, 8); frame.offsetMax = new Vector2(154, 34);
-            if (DarkTeaching)
-            {
-                // A reserved footer cell cannot overlap the feedback or the multiline info text.
-                frame.SetParent(infoBack, false);
-                frame.anchorMin = frame.anchorMax = new Vector2(1, .5f);
-                frame.offsetMin = new Vector2(-154, -14); frame.offsetMax = new Vector2(-10, 14);
-                steps.rectTransform.offsetMax = new Vector2(-166, -2);
-            }
+            frame.anchorMin = frame.anchorMax = new Vector2(1, 0);
+            frame.offsetMin = new Vector2(-154, 39); frame.offsetMax = new Vector2(-10, 65);
             frame.name = "ToDeskGame";
-            UiTip.Add(frame, "回到小游戏：这一桌的题改成玩游戏来答，答一题照样算一条样本。", "Back to the game: this desk's items are answered by playing, and each answer is still one sample.");
             ShowFrame(gameToggle, false);
         }
 

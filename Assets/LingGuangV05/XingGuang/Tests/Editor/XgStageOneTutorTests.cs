@@ -43,6 +43,7 @@ namespace LingGuangV05.XingGuang.Tests
             {
                 var card = sim.Card(XgMemes.SenseDesk);
                 sim.Answer(XgMemes.SenseDesk, card.truth, host);
+                if (i == 0) Assert.AreEqual("我去，答题还能赚钱？", sim.TakeTeachingThought(true).Value.zh);
                 Assert.IsNull(sim.TakeTeachingThought(true), "No third-question thought before three submitted answers");
             }
             var third = sim.Card(XgMemes.SenseDesk);
@@ -51,6 +52,34 @@ namespace LingGuangV05.XingGuang.Tests
             StringAssert.Contains("这都什么破题", sim.TakeTeachingThought(true).Value.zh);
             var loaded = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S)));
             Assert.IsNull(loaded.TakeTeachingThought(true), "Saved thoughts do not repeat on reopen/reload");
+        }
+
+        [Test]
+        public void MoneyReactionsUseSettledAmountsQueueInOrderAndPersistOnce()
+        {
+            var sim = new XgSim { GoldChance = 0 }; sim.BeginOpening();
+            var host = new Host { money = 0 };
+            Assert.IsTrue(sim.TakeTeachingThought(true).HasValue); // first-open line owns its turn
+            var card = sim.Card(XgMemes.SenseDesk);
+            var unpaid = sim.Answer(XgMemes.SenseDesk, !card.truth, host);
+            Assert.AreEqual(0, unpaid.fine);
+            Assert.IsFalse(sim.S.answerFineThoughtRecorded, "A wrong answer without an actual deduction must not claim money was lost");
+            card = sim.Card(XgMemes.SenseDesk);
+            var earned = sim.Answer(XgMemes.SenseDesk, card.truth, host);
+            Assert.Greater(earned.pay, 0);
+            card = sim.Card(XgMemes.SenseDesk);
+            var charged = sim.Answer(XgMemes.SenseDesk, !card.truth, host);
+            Assert.Greater(charged.fine, 0);
+            Assert.IsNull(sim.TakeTeachingThought(false), "Wait for a visible window without losing queued reactions");
+            var loaded = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S)));
+            Assert.AreEqual("我去，答题还能赚钱？", loaded.TakeTeachingThought(true).Value.zh);
+            Assert.AreEqual("我去，答错还会扣钱？", loaded.TakeTeachingThought(true).Value.zh);
+            StringAssert.Contains("这都什么破题", loaded.TakeTeachingThought(true).Value.zh);
+            host.money = 100;
+            card = loaded.Card(XgMemes.SenseDesk); loaded.Answer(XgMemes.SenseDesk, card.truth, host);
+            card = loaded.Card(XgMemes.SenseDesk); loaded.Answer(XgMemes.SenseDesk, !card.truth, host);
+            var reopened = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(loaded.S)));
+            Assert.IsNull(reopened.TakeTeachingThought(true), "Neither money reaction repeats after another answer or reload");
         }
 
         [Test]

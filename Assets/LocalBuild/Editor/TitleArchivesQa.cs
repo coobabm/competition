@@ -39,7 +39,7 @@ public static class TitleArchivesQa
             rt.Sim.S.money=23456;check(rt.SaveSlot(2),"manual slot created");rt.Sim.S.money=34567;check(rt.SaveNow(),"primary differs from manual slot");
             button("QuitGame").onClick.Invoke();check(quits==1,"exit button reaches independent quit callback without real OS quit");
             button("ReadArchives").onClick.Invoke();check(hud.IsArchiveOpen,"title load entry opens modal");
-            check(!button("Archive6").interactable,"empty slot disabled");check(!button("LoadSelected").interactable,"load needs an explicit slot choice");
+            check(!Array.Exists(canvas.GetComponentsInChildren<Button>(true),b=>b.name=="Archive6"&&b.gameObject.activeInHierarchy),"empty manual slots are omitted; new-save card replaces empty slots");check(!button("LoadSelected").interactable,"load needs an explicit slot choice");
             button("Archive2").onClick.Invoke();check(starts==0&&rt.Sim.S.money==34567,"selection alone does not replace current save");
             button("ArchivePage").onClick.Invoke();check(!button("LoadSelected").interactable,"changing pages clears an unread hidden selection");
             button("ArchivePage").onClick.Invoke();button("Archive2").onClick.Invoke();
@@ -52,6 +52,15 @@ public static class TitleArchivesQa
             button("CloseArchives").onClick.Invoke();check(starts==1&&!hud.IsArchiveOpen,"closing loaded panel starts exactly once");
             hud.CloseArchiveByPlayer();check(starts==1,"repeated close cannot start twice");
             check(rt.ReloadSave()&&rt.Sim.S.money==23456,"selected slot persisted as current primary");
+            hud.OpenArchives();int empty=rt.FirstEmptyManualArchive();string unchanged=Hash(rt.SavePath);
+            button("CreateSave").onClick.Invoke();
+            check(!rt.ArchiveExists(empty)&&Hash(rt.SavePath)==unchanged&&starts==1,"new manual card only enters name edit; no disk write or new game");
+            var name=Array.Find(canvas.GetComponentsInChildren<TMPro.TMP_InputField>(true),f=>f.gameObject.activeInHierarchy);
+            check(name!=null,"new manual card exposes name input");name.text="我的训练记录";
+            button("CommitNewSave").onClick.Invoke();
+            check(rt.ArchiveExists(empty)&&rt.DescribeArchiveCard(empty).name=="我的训练记录"&&Hash(rt.SavePath)==unchanged&&starts==1,"save new card copies current progress and name without resetting primary or booting");
+            hud.CloseArchiveByPlayer();
+
             hud.RequestPowerOn();check(hud.IsArchiveOpen&&starts==1,"power with saves opens chooser without boot");
             hud.RequestPowerOn();check(hud.IsArchiveOpen&&starts==1,"repeat power is blocked by chooser");hud.CloseArchiveByPlayer();check(starts==1,"cancel power chooser stays on title");
             for(int row=0;row<6;row++)check(ChapterOneRuntime.ArchiveDisplaySlot(row)==(row==5?1:row+2),"UI row maps to preserved disk slot "+row);

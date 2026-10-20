@@ -38,6 +38,7 @@ namespace LingGuangV05.Desktop.XingGuang
         RawImage previewImage;
         ScrollRect previewScroll;
         TMP_Text preview, breadcrumb, footer, backLabel, selectLabel, installSideHint;
+        Button installationLink;
         bool built;
         string folder="";
         string snapshot, lastName, previewId;
@@ -84,6 +85,14 @@ namespace LingGuangV05.Desktop.XingGuang
             CancelDrag(); selected.Clear(); folder = "packs"; previewId = null;
             Show();
         }
+        public void OpenInstallationNode()
+        {
+            var owner=XingGuangController.Instance;
+            if(!CanBrowse||owner==null||!ReferenceEquals(owner.Sim,Sim))return;
+            CancelDrag();window?.MinimizeWindow();owner.Open();
+            if(InstallAllowed) { owner.View?.ShowTab("train"); owner.View?.Train.FocusDataInstallArea(); }
+            else { owner.View?.ShowTab("tree");owner.View?.Tree.FocusNodeDetails(XgSim.DataEntryNode); }
+        }
         public void Bind(XgSim sim)
         {
             if (ReferenceEquals(Sim, sim)) return;
@@ -116,7 +125,9 @@ namespace LingGuangV05.Desktop.XingGuang
             bool show=CanBrowse;
             if(show&&!shortcutRoot.activeSelf)shortcutArrangeAfter=Time.unscaledTime+.5f;
             shortcutRoot.SetActive(show);
-            if(!show||shortcutPlaced||Time.unscaledTime<shortcutArrangeAfter)return;
+            if(!show){shortcutPlaced=false;return;}
+            if(!shortcutRoot.activeInHierarchy||shortcutPlaced||Time.unscaledTime<shortcutArrangeAfter)return;
+            if(!(shortcutRoot.transform.parent is RectTransform desktop)||desktop.rect.width<112||desktop.rect.height<112)return;
             // Keep this essential folder in the first desktop column, not beyond the monitor
             // after the older desktop's saved icon order has been restored.
             shortcutRoot.transform.SetSiblingIndex(0);
@@ -162,6 +173,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var detail=Rect("Preview",side,Vector2.zero,Vector2.one,new Vector2(0,124),Vector2.zero);
             var installHelp=Rect("Installation guidance",side,Vector2.zero,Vector2.right,Vector2.zero,new Vector2(0,116));
             installHelp.gameObject.AddComponent<Image>().color=new Color32(222,235,247,255);
+            installationLink=installHelp.gameObject.AddComponent<Button>();installationLink.targetGraphic=installHelp.GetComponent<Image>();
+            installationLink.onClick.AddListener(OpenInstallationNode);
             installSideHint=Text(Rect("Instructions",installHelp,Vector2.zero,Vector2.one,new Vector2(12,8),new Vector2(-12,-8)),"",14);
             installSideHint.richText=false;
             installSideHint.alignment=TextAlignmentOptions.TopLeft;
@@ -185,8 +198,9 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach(Transform child in rows) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
             selected.RemoveWhere(id => !Sim.DataFileReady(id));
             backLabel.text=T("← 返回","← Back");selectLabel.text=T("选中待装","Select ready");
-            installSideHint.text=T("安装到哪里？\n打开 ","Where to install?\nOpen ")+Sim.AiDisplayName+T(".exe → 练，将待安装包拖到「拖到这里安装数据包」。\nCtrl 可多选。",".exe → Train. Drop ready packs onto “Drop data packs here to install”.\nCtrl selects multiple packs.");
-            if(!InstallAllowed)installSideHint.text=T("暂时不能安装\n","Installation unavailable\n")+InstallReason;
+            installSideHint.text=T("点击定位「数据包安装区」 ↗\n", "Locate Data Pack Installation ↗\n")+Sim.AiDisplayName+T(".exe → 练 → 顶部数据包安装区。\n将待安装包拖到该区；Ctrl 可多选。",".exe → Train → Data Pack Installation at the top.\nDrag ready packs there; Ctrl selects multiple packs.");
+            if(!InstallAllowed)installSideHint.text=T("数据导入尚未解锁\n点击前往科技树解锁。","Data Import is locked\nClick to find it in Tech.");
+            installationLink.interactable=true;
             breadcrumb.text=DisplayName+(folder.Length>0 ? " › "+FolderTitle(folder) : "");
             ShowPreview(T("单击预览；双击打开文件夹。\n按住 Ctrl 可以多选数据包。","Click to preview; double-click a folder to open.\nHold Ctrl to select multiple data packs."),null,false);
             int index=0;
@@ -242,7 +256,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void UpdateSelection()
         {
             foreach(var pair in faces)pair.Value.color=selected.Contains(pair.Key)?new Color32(205,229,251,255):Color.white;
-            footer.text=selected.Count+T(" 个文件已选中"," files selected")+(InstallAllowed?"":"  ·  "+InstallReason);
+            footer.text=selected.Count+T(" 个文件已选中"," files selected");
         }
         public void BeginFileDrag(XgFilesRow row,PointerEventData e)
         {

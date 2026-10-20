@@ -309,6 +309,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Tick(float dt)
         {
             TickRhythm();
+            TickDataInstallFocus();
             TickExam(dt);
             view.Data?.Tick(dt);
             var run = Sim.Run(Track);

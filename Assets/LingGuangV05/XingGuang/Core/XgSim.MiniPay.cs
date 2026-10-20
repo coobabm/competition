@@ -61,7 +61,7 @@ namespace LingGuangV05.XingGuang
         /// not timed, so only the combo can earn a bonus); <paramref name="useCombo"/> false leaves the shared combo alone
         /// (the writing view pays for speed only).
         /// </summary>
-        public XgMiniAction SettleMiniAction(string desk, bool correct, IXgHost host, double seconds = -1, bool useCombo = true)
+        public XgMiniAction SettleMiniAction(string desk, bool correct, IXgHost host, double seconds = -1, bool useCombo = true, bool automatic = false)
         {
             var info = XgCatalog.Desk(desk);
             var result = new XgMiniAction { correct = correct };
@@ -90,6 +90,8 @@ namespace LingGuangV05.XingGuang
                 result.fine = ChargeHandFine(desk, LevelOf(desk), host);
                 NoteDayAnswer(false, -result.fine, 0);
             }
+            // Automatic helpers keep the same settlement but cannot consume player reactions.
+            if (!automatic) RecordAnswerMoneyThought(new XgAnswer { correct = result.correct, pay = result.Total, fine = result.fine });
             result.samples += RelicOnMiniAction(desk, correct);
             CheckDesks();
             return result;

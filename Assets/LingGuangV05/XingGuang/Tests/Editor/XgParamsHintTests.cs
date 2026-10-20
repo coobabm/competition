@@ -239,5 +239,64 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual("4 GB", XgSim.MemText(4096));
             Assert.AreEqual("1.5 GB", XgSim.MemText(1536));
         }
+
+        [Test]
+        public void BarStepUsesTheSameSingleBarPlanner()
+        {
+            var sim=ThirdAbility();
+            var step=XgGuide.BarStep(sim,100000,100000,out bool parameters);
+            Assert.NotNull(step);
+            var own=XgGuide.BarStepFor(sim,100000,100000,parameters);
+            Assert.NotNull(own);Assert.AreEqual(own.id,step.id);Assert.AreEqual(own.target,step.target);
+        }
+
+        [Test]
+        public void ProgressHelpIsShortAndDoesNotPublishHiddenThresholdsOrLockedSources()
+        {
+            var sim=new XgSim();sim.BeginOpening();
+            foreach(bool p in new[]{true,false})
+            {
+                var help=XgGuide.ProgressHelp(sim,0,1000,p);
+                Assert.NotNull(help.step);
+                Assert.AreEqual(2,help.Text(false).Split('\n').Length);
+                Assert.LessOrEqual(help.firstZh.Length,30);Assert.LessOrEqual(help.secondZh.Length,30);
+                StringAssert.DoesNotContain("门槛",help.Text(false));
+                StringAssert.DoesNotContain("书",help.Text(false));StringAssert.DoesNotContain("蜘蛛",help.Text(false));
+                StringAssert.DoesNotContain("众包",help.Text(false));
+                Assert.IsFalse(string.IsNullOrWhiteSpace(help.Text(true)));
+            }
+        }
+
+        [Test]
+        public void ProgressLessonCompletionSurvivesSaveRoundtripAndProgressOnlyCompletesOnce()
+        {
+            var sim=ThirdAbility();
+            sim.S.parameterLessonStarted=true;sim.S.parameterLessonBaseline=sim.TrainedParamsK;
+            XgGuide.ObserveProgressLessons(sim);Assert.IsFalse(sim.S.parameterLessonDone);
+            sim.S.trainedParamsK+=1;XgGuide.ObserveProgressLessons(sim);Assert.IsTrue(sim.S.parameterLessonDone);
+            int version=sim.S.progressLessonVersion;XgGuide.ObserveProgressLessons(sim);Assert.AreEqual(version,sim.S.progressLessonVersion);
+            Assert.IsTrue(XgGuide.CompleteProgressLesson(sim,XgGuide.SampleLessonId));
+            Assert.IsFalse(XgGuide.CompleteProgressLesson(sim,XgGuide.SampleLessonId));
+            var saved=UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S));
+            Assert.IsTrue(saved.parameterLessonDone);Assert.IsTrue(saved.sampleLessonDone);
+        }
+
+        [Test]
+        public void ReadySamplesRedirectToParameterPlanAndBothReadyNeverRecurse()
+        {
+            var sim=ThirdAbility();sim.S.stageEpochs=0;
+            sim.S.labels.Clear();sim.S.labels.Add(new XgLabelCount{dataset="mnist",count=1000000});
+            Assert.IsTrue(sim.SamplesLineKnown(sim.NextAbility));Assert.IsFalse(sim.ParamsLineKnown(sim.NextAbility));
+            var p=XgGuide.ProgressHelp(sim,100000,100000,true);
+            var d=XgGuide.ProgressHelp(sim,100000,100000,false);
+            StringAssert.Contains("样本已达标",d.firstZh);
+            Assert.AreEqual(p.step.app,d.step.app);Assert.AreEqual(p.step.tab,d.step.tab);Assert.AreEqual(p.step.target,d.step.target);
+            sim.S.trainedParamsK=sim.ParamsThreshold(sim.NextAbility)*2;
+            foreach(bool parameters in new[]{true,false})
+            {
+                var ready=XgGuide.ProgressHelp(sim,100000,100000,parameters);
+                StringAssert.Contains("都已达标",ready.firstZh);Assert.AreEqual("train",ready.step.tab);
+            }
+        }
     }
 }

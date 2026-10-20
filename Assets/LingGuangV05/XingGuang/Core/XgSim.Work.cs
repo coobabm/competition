@@ -59,6 +59,7 @@ namespace LingGuangV05.XingGuang
                 result.fine = ChargeHandFine(desk, card.level, host);
             }
             result.combo = S.combo;
+            RecordAnswerMoneyThought(result);
             S.workIncome += result.pay - result.fine;
             S.workCards.RemoveAll(c => c.dataset == desk);
             return true;

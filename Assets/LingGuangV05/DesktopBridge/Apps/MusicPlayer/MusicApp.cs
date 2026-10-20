@@ -214,6 +214,7 @@ namespace LingGuangV05.Desktop.Apps
                 if (nowPlayingListTitle != null) nowPlayingListTitle.text = currentTrack.playlist.playlistName;
             }
             PlaybackRequested = true;
+            audioSource.loop = repeat && !shuffle;
             audioSource.Play();
             UpdateDataItems();
             if (gameObject.activeInHierarchy) RestartPlayback();
@@ -224,11 +225,13 @@ namespace LingGuangV05.Desktop.Apps
             if (currentTrack != null) currentTrack.SetNowPlayingState(false);
             audioSource.Stop();
             currentTrack = track;
+            currentPlaylist = track.playlist;
             currentTrackIndex = track.itemIndex;
             audioSource.clip = track.playlist.playlist[currentTrackIndex].musicClip;
             audioSource.time = 0;
             duration = GetDuration();
             PlaybackRequested = true;
+            audioSource.loop = repeat && !shuffle;
             audioSource.Play();
             UpdateDataItems();
             currentTrack.SetNowPlayingState(true);
@@ -250,6 +253,7 @@ namespace LingGuangV05.Desktop.Apps
             audioSource.time = 0;
             duration = GetDuration();
             PlaybackRequested = true;
+            audioSource.loop = repeat && !shuffle;
             audioSource.Play();
             UpdateDataItems();
             if (nowPlayingListTitle != null) nowPlayingListTitle.text = "Custom";
@@ -275,60 +279,69 @@ namespace LingGuangV05.Desktop.Apps
 
         public void Mute() => audioSource.mute = !audioSource.mute;
 
-        public void NextTrack()
+        public void NextTrack() => SkipTrack(1);
+        public void PrevTrack() => SkipTrack(-1);
+
+        // Indices refer to playable queue rows, never the unfiltered playlist's itemIndex.
+        public static int NextPlayableIndex(int count, int current, int direction, bool random, int draw)
         {
-            if (currentTrack != null) currentTrack.SetNowPlayingState(false);
-            if (currentPlaylist == null) { Stop(); return; }
-            audioSource.Stop();
-
-            var list = currentPlaylist.playlist;
-            if (list.Count == 1)
-            {
-                // A one-track playlist just starts over.
-                audioSource.time = 0;
-                audioSource.Play();
-            }
-            else if (shuffle && !repeat)
-            {
-                currentTrack = playerQueue[DreamOSInternalTools.GetRandomUniqueValue(currentTrackIndex, 0, list.Count)];
-                currentTrackIndex = currentTrack.itemIndex;
-                if (list[currentTrackIndex].excludeFromLibrary) { NextTrack(); return; }
-                audioSource.clip = list[currentTrackIndex].musicClip;
-            }
-            else
-            {
-                currentTrackIndex++;
-                if (currentTrackIndex > list.Count - 1) currentTrackIndex = 0;
-                if (list[currentTrackIndex].excludeFromLibrary) NextTrack();
-                currentTrack = playerQueue[currentTrackIndex];
-                audioSource.clip = list[currentTrackIndex].musicClip;
-            }
-
-            StartFromTop();
-            AnnounceTrack();
+            if (count <= 0) return -1;
+            if (count == 1) return 0;
+            if (current < 0 || current >= count) return random ? Mathf.Clamp(draw, 0, count - 1) : direction < 0 ? count - 1 : 0;
+            if (!random) return (current + (direction < 0 ? count - 1 : 1)) % count;
+            int pick = Mathf.Clamp(draw, 0, count - 2);
+            return pick >= current ? pick + 1 : pick;
         }
 
-        public void PrevTrack()
+        public void SetRepeatOne(bool value) => SetRepeatOne(value, true);
+        public void SetRepeatOne(bool value, bool persist)
         {
-            if (currentTrack != null) currentTrack.SetNowPlayingState(false);
-            if (currentPlaylist == null) { Stop(); return; }
-            audioSource.Stop();
+            repeat = value;
+            if (value) shuffle = false;
+            ApplyPlaybackMode(persist);
+        }
 
-            var list = currentPlaylist.playlist;
-            if (shuffle && !repeat)
-            {
-                currentTrack = playerQueue[DreamOSInternalTools.GetRandomUniqueValue(currentTrackIndex, 0, list.Count)];
-                currentTrackIndex = currentTrack.itemIndex;
-            }
-            else
-            {
-                currentTrackIndex--;
-                if (currentTrackIndex < 0) currentTrackIndex = list.Count - 1;
-                currentTrack = playerQueue[currentTrackIndex];
-            }
-            audioSource.clip = list[currentTrackIndex].musicClip;
+        public void SetShuffle(bool value) => SetShuffle(value, true);
+        public void SetShuffle(bool value, bool persist)
+        {
+            shuffle = value;
+            if (value) repeat = false;
+            ApplyPlaybackMode(persist);
+        }
 
-            StartFromTop();
+        void ApplyPlaybackMode(bool persist)
+        {
+            if (persist)
+            {
+                DreamOSDataManager.WriteBooleanData(DreamOSDataManager.DataCategory.Apps, "MusicPlayer_Repeat", repeat);
+                DreamOSDataManager.WriteBooleanData(DreamOSDataManager.DataCategory.Apps, "MusicPlayer_Shuffle", shuffle);
+            }
+            if (audioSource != null) audioSource.loop = repeat && !shuffle;
+            UpdateDataItems();
+        }
+
+        public MusicTrackRow NextPlayableTrack(int direction)
+        {
+            if (currentPlaylist == null) return null;
+            var playable = new List<MusicTrackRow>();
+            foreach (var row in playerQueue)
+            {
+                if (row == null || row.playlist != currentPlaylist || row.itemIndex < 0 || row.itemIndex >= currentPlaylist.playlist.Count) continue;
+                var item = currentPlaylist.playlist[row.itemIndex];
+                if (item.excludeFromLibrary || item.musicClip == null) continue;
+                playable.Add(row);
+            }
+            int current = playable.FindIndex(row => row.itemIndex == currentTrackIndex);
+            int range = current >= 0 ? playable.Count - 1 : playable.Count;
+            int next = NextPlayableIndex(playable.Count, current, direction, shuffle, shuffle && range > 0 ? Random.Range(0, range) : 0);
+            return next < 0 ? null : playable[next];
+        }
+
+        void SkipTrack(int direction)
+        {
+            var next = NextPlayableTrack(direction);
+            if (next == null) { Stop(); return; }
+            Play(next);
             AnnounceTrack();
         }
 
@@ -338,6 +351,7 @@ namespace LingGuangV05.Desktop.Apps
             duration = GetDuration();
             audioSource.time = 0;
             PlaybackRequested = true;
+            audioSource.loop = repeat && !shuffle;
             audioSource.Play();
             UpdateDataItems();
             if (currentTrack != null) currentTrack.SetNowPlayingState(true);
@@ -410,18 +424,27 @@ namespace LingGuangV05.Desktop.Apps
             playback = null;
         }
 
+        public static bool ShouldAdvanceAfterEnd(bool wasPlaying, bool playing, bool requested, bool listenerPaused, bool sourceActive)
+            => wasPlaying && !playing && requested && !listenerPaused && sourceActive;
+
         // Tracks the play position while the source plays, and repeats or moves on at the end of the track.
         IEnumerator ProcessPlayback()
         {
-            while (audioSource.isPlaying)
+            bool wasPlaying = audioSource.isPlaying;
+            while (PlaybackRequested)
             {
+                bool playing = audioSource.isPlaying;
                 playTime = audioSource.time;
                 seconds = GetPlayTime();
-                if (!externalPlaylistAdvance && playTime >= duration)
+                // Wait for the real falling edge, not the integer-rounded duration (which truncates a song).
+                if (!externalPlaylistAdvance && ShouldAdvanceAfterEnd(wasPlaying, playing, PlaybackRequested, AudioListener.pause,
+                    audioSource.enabled && audioSource.gameObject.activeInHierarchy))
                 {
-                    if (repeat && !shuffle) { audioSource.Stop(); audioSource.time = 0; audioSource.Play(); }
-                    else NextTrack();
+                    playback = null;
+                    NextTrack();
+                    yield break;
                 }
+                wasPlaying = playing;
                 yield return null;
             }
             playback = null;

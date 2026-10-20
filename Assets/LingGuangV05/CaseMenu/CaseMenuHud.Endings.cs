@@ -43,16 +43,18 @@ namespace LingGuangV05.CaseMenu
         RectTransform EndingCard(string headingText)
         {
             CloseArchives();
+            SetSubpageChrome(true);
             if (archiveGroup != null)
             {
                 if (Application.isPlaying) Destroy(archiveGroup.gameObject); else DestroyImmediate(archiveGroup.gameObject);
             }
-            var backdrop = Panel("TitleEndings", canvasRoot, new Color(0, 0, 0, .86f), true); Stretch(backdrop.rectTransform);
+            var backdrop = Panel("TitleEndings", canvasRoot, new Color(0, 0, 0, .72f), true); Stretch(backdrop.rectTransform);
             archiveGroup = backdrop.gameObject.AddComponent<CanvasGroup>();
-            var card = Panel("EndingArchiveCard", backdrop.transform, Surface, true);
+            var card = Panel("EndingArchiveCard", backdrop.transform, Color.clear, true);
             Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(1040, 780));
-            var heading = Label("Heading", card.transform, headingText, 28, Ink);
+            var heading = Label("Heading", card.transform, headingText, 48, Ink);
             Place(heading.rectTransform, new Vector2(0, 1), new Vector2(30, -20), new Vector2(980, 50));
+            heading.gameObject.AddComponent<CaseMenuPageCaret>();
             archiveStatus = Label("Status", card.transform, "", 17, Muted);
             Place(archiveStatus.rectTransform, new Vector2(0, 0), new Vector2(30, 100), new Vector2(980, 95));
             archiveStatus.textWrappingMode = TextWrappingModes.Normal; archiveStatus.richText = false;
@@ -81,7 +83,7 @@ namespace LingGuangV05.CaseMenu
             string lab = save.S.labState;
             var state = EndingState(lab);
             bool completed = XgEndingArchiveRules.Completed(state), legacy = XgEndingArchiveRules.LegacyCompleted(state);
-            var card = EndingCard(T("结局档案", "Endings")); int epoch = endingViewEpoch;
+            var card = EndingCard(T("结局", "Endings"));card.sizeDelta=new Vector2(1480,820); int epoch = endingViewEpoch;
             Func<bool> current = () => EndingCurrent(rt, save, lab, epoch);
             var description = Label("CurrentEnding", card, EndingDescription(state)
                 + (string.IsNullOrEmpty(save.S.endingBranchId) ? T(" · 当前主档", " · Current primary save") : T(" · 独立分支副本 ", " · Independent branch ") + save.S.endingBranchId.Substring(0, Math.Min(8, save.S.endingBranchId.Length))), 20, Ink);
@@ -104,8 +106,30 @@ namespace LingGuangV05.CaseMenu
             var copies = EndingButton(card, "EndingBranches", T("继续独立分支副本", "Resume an independent branch"), 310,
                 () => { if (current()) ShowEndingBranches(rt, save, lab, 0); });
             var back = EndingButton(card, "CloseEndings", T("返回标题", "Return to title"), 30, CloseArchives);
-            archiveStatus.text = T("回看只读取已保存记录；读三封信不会点亮其他路线。分支单独保存，退出后可在此继续。", "Replay only reads saved records. Reading three letters does not complete other routes. Branches save separately and can be resumed here.")
-                + (!branch.interactable ? T("\n本档没有可验证的选择前快照，不能建立分支。", "\nThis save has no verified pre-choice snapshot; a branch cannot be created.") : "");
+            var buttons=new[]{replay,branch,letters,copies};
+            for(int i=0;i<buttons.Length;i++) {Place((RectTransform)buttons[i].transform,new Vector2(0,0),new Vector2(30+i*355,120),new Vector2(330,52));buttons[i].GetComponent<Image>().color=Color.clear;buttons[i].GetComponentInChildren<TMP_Text>().fontSize=22;}
+            replay.GetComponentInChildren<TMP_Text>().text=legacy?T("旧结局记录","Legacy record"):T("回看","Replay");
+            branch.GetComponentInChildren<TMP_Text>().text=T("从选择前继续","Continue before choice");
+            letters.GetComponentInChildren<TMP_Text>().text=T("公开信","Public letters");
+            copies.GetComponentInChildren<TMP_Text>().text=T("分支副本","Branches");
+            var known=new Dictionary<string,XgState>();
+            if(completed)known[state.releaseOutcome.route]=state;
+            foreach(var item in rt.EndingBranches()){var archived=EndingState(item.LabJson);if(XgEndingArchiveRules.Completed(archived)&&!known.ContainsKey(archived.releaseOutcome.route))known[archived.releaseOutcome.route]=archived;}
+            var routes=new[]{"online","public_model","local_only"};
+            for(int i=0;i<routes.Length;i++) {
+                string route=routes[i];known.TryGetValue(route,out var outcome);var savedOutcome=outcome;
+                var tile=Panel("EndingRoute_"+route,card,new Color(.09f,.13f,.14f,.8f),true).rectTransform;
+                Place(tile,new Vector2(0,1),new Vector2(30+i*480,-174),new Vector2(450,410));
+                var art=Rect("Room",tile).gameObject.AddComponent<RawImage>();Stretch(art.rectTransform);art.texture=Resources.Load<Texture2D>("LingGuangV05/Branding/ArchiveRoomFallback");art.raycastTarget=false;art.color=outcome!=null?new Color(.8f,.9f,.9f,.55f):new Color(.3f,.35f,.35f,.35f);
+                var text=Label("Route",tile,outcome!=null?EndingRoute(route):"？？？？",34,outcome!=null?Ink:Muted);
+                Place(text.rectTransform,Vector2.zero,new Vector2(24,50),new Vector2(400,60));
+                var stateText=Label("Completion",tile,outcome!=null?T("已达成","Completed"):"？",outcome!=null?22:100,Muted);
+                Place(stateText.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(300,140));stateText.alignment=TextAlignmentOptions.Center;
+                var touch=tile.gameObject.AddComponent<Button>();touch.interactable=outcome!=null;touch.targetGraphic=tile.GetComponent<Image>();
+                touch.onClick.AddListener(()=>{if(current()&&savedOutcome!=null)ShowEndingReplay(rt,save,lab,savedOutcome);});
+                var edge=Panel("CompletionCaret",tile,Teal);Place(edge.rectTransform,Vector2.zero,new Vector2(24,36),new Vector2(54,3));edge.gameObject.SetActive(outcome!=null);
+            }
+            archiveStatus.text="";
             EndingFocus(replay, branch, letters, copies, back);
         }
 

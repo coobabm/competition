@@ -25,7 +25,117 @@ public static class FilesWindowUiChecks
     static T Field<T>(object o,string n)=>(T)o.GetType().GetField(n,Flags).GetValue(o);
     static void Need(bool ok,string message){if(!ok)throw new InvalidOperationException("Files UI: "+message);}
     static double WaitUntil()=>EditorApplication.timeSinceStartup+.45;
+    static IEnumerator WalletAndTeachingRows(XingGuangController ctl, Action<string> check, Action<string> capture)
+    {
+        // Existing runner supplies an isolated, fully unlocked host. Changing only that in-memory
+        // fixture's display stage is not a claim of normal acquisition. No PlayerPrefs access.
+        var sim = ctl.Sim; int stage = sim.S.stage; bool teaching = sim.S.teachingFlow;
+        int chatTurns = sim.S.chatTurns;
+        var unlocked = sim.S.unlocked.ToArray(); double money = ctl.runtime.Sim.S.money;
+        string tab = ctl.View.Tab;
+        try
+        {
+            sim.S.teachingFlow = true; sim.S.unlocked.RemoveAll(id => id == XgSim.LedgerNode);
+            sim.S.chatTurns = Math.Max(1, sim.S.chatTurns); // Satisfy the real home-tab first-conversation gate.
+            Need(!sim.LedgerOpen, "wallet display fixture has not bought the ledger");
+            foreach (string page in new[] { "teach", "train", "tree", "home" })
+            {
+                ctl.View.Open(page); ctl.View.Refresh(true); Canvas.ForceUpdateCanvases(); yield return null;
+                Need(ctl.View.Tab == page, "requested page is actually open: " + page);
+                var wallet = ctl.View.WalletChip;
+                var text = Field<TMP_Text>(ctl.View, "statMoney");
+                Need(wallet.gameObject.activeInHierarchy && text.gameObject.activeInHierarchy, "wallet visible without ledger on " + page);
+                foreach (double value in new[] { 1337.0, 2468.0 })
+                {
+                    ctl.runtime.Sim.S.money = value;
+                    // Exercise the production interpolation/formatting method deterministically,
+                    // without waiting for a real player's economy tick or touching preferences.
+                    typeof(XingGuangView).GetMethod("UpdateMoney", Flags, null, new[] { typeof(float) }, null)
+                        .Invoke(ctl.View, new object[] { 10f });
+                    text.ForceMeshUpdate(true, true);
+                    Need(text.text == XgUiV4Fonts.FixedDigits(XgUi.Money(ctl.Host.Money)), "wallet refresh displays actual host balance on " + page);
+                }
+                check("Unbought ledger: actual wallet active and balance refresh correct on " + page);
+            }
+            ctl.View.Open("teach");
+            for (int current = 1; current <= 6; current++)
+            {
+                sim.S.stage = current; ctl.View.Refresh(true); Canvas.ForceUpdateCanvases(); yield return null;
+                var rows = Field<IList>(ctl.View.Teach, "teachingRows");
+                var expected = XgStageLessons.Desks.Where(p => p.stage <= current).ToArray();
+                Need(rows.Count == expected.Length, "teaching rows cover every eligible pack at stage " + current);
+                var seen = new System.Collections.Generic.HashSet<string>();
+                foreach (var row in rows)
+                {
+                    string id = Field<string>(row, "id"); var pack = XgTeachingPacks.Find(id);
+                    Need(pack != null && seen.Add(id) && expected.Any(p => p.id == id), "correct distinct teaching row: " + id);
+                    var icon = Field<UnityEngine.UI.Image>(row, "icon"); var pay = Field<TMP_Text>(row, "pay");
+                    Need(icon != null && icon.enabled && icon.gameObject.activeInHierarchy && icon.sprite != null,
+                        "actual teaching row icon loaded: " + id);
+                    pay.ForceMeshUpdate(true, true);
+                    string amount = "¥" + XgUi.N(sim.MiniBasePay(pack.dataset), "0.00");
+                    Need(pay.gameObject.activeInHierarchy && pay.text.Contains(amount) &&
+                        (pay.text.Contains("/题") || pay.text.Contains("/q")), "actual per-question rate shown: " + id);
+                }
+                check("Stage " + current + ": " + rows.Count + " actual teaching rows have icons and current MiniBasePay per question");
+                if (current == 1 || current == 6) capture("files-teaching-stage-" + current + ".png");
+            }
+        }
+        finally
+        {
+            sim.S.stage = stage; sim.S.teachingFlow = teaching; sim.S.chatTurns = chatTurns;
+            sim.S.unlocked.Clear(); sim.S.unlocked.AddRange(unlocked);
+            ctl.runtime.Sim.S.money = money; ctl.View.Open(tab); ctl.View.Refresh(true);
+        }
+    }
     static RectTransform InstallHint(XingGuangController ctl) => ctl.View.Train.root.Find("DataInstallHint") as RectTransform;
+    static IEnumerator ParameterNavigation(XingGuangController ctl, XgFilesWindow files, Action<string> check)
+    {
+        var previous = ctl.Sim; string previousTab = ctl.View.Tab;
+        try
+        {
+            var sim = Fresh();
+            // The real next-ability/exam card is revealed after three training rounds.
+            // Keep the unowned MLP state; only supply this fixture's required display progression.
+            sim.S.epochs = 3;
+            sim.S.trainedParamsK = Math.Max(XgSim.ParamsK(sim.S.vision), XgSim.ParamsK(sim.S.sequence));
+            Need(sim.TrainPart("next"), "parameter exam fixture satisfies the real three-round display gate");
+            Need(!sim.Has("mlp"), "parameter navigation fixture starts before network expansion");
+            Bind(ctl, files, sim); files.window.CloseWindow(); ctl.Window.OpenWindow(); ctl.Window.FocusToWindow();
+            double deadline = EditorApplication.timeSinceStartup + 5;
+            while (!Restored(ctl.Window) && EditorApplication.timeSinceStartup < deadline) yield return null;
+            Need(Restored(ctl.Window), "parameter navigation uses the visible restored game window");
+            foreach (bool parameters in new[] { true, false })
+            foreach (bool topBar in new[] { true, false })
+            {
+                ctl.View.ShowTab("train"); ctl.View.Refresh(true); Canvas.ForceUpdateCanvases(); yield return null;
+                var label = topBar ? Field<TMP_Text>(ctl.View, parameters ? "paramsLabel" : "dataLabel") : Field<TMP_Text>(ctl.View.Train, parameters ? "pLabel" : "dLabel");
+                var button = label.GetComponent<UnityEngine.UI.Button>();
+                Need(label.gameObject.activeInHierarchy && button != null && button.IsInteractable(),
+                    "parameter navigation button is active and interactive: " + (topBar ? "top bar" : "exam card"));
+                Need(label.GetComponent<LingGuangV05.Desktop.UiTip>() != null, "parameter button retains short hover help");
+                var expected = XgGuide.ProgressHelp(sim,ctl.Host.Money,ctl.Host.VramMB,parameters).step;
+                Need(expected!=null,"guide supplies a parameter destination");
+                Click(label.rectTransform); // Real LCD raycast and pointer down/up; never invoke the listener directly.
+                deadline=EditorApplication.timeSinceStartup+3;
+                while(EditorApplication.timeSinceStartup<deadline && (ctl.View.Tab!=expected.tab ||
+                    expected.target.StartsWith("node:") && (Field<XgTechNodeView>(ctl.View.Tree,"detailShown")==null ||
+                    !Field<XgTechNodeView>(ctl.View.Tree,"detailShown").Covers(expected.target.Substring(5)))))yield return null;
+                Need(ctl.View.Tab == expected.tab, "parameter pointer click opens the same page as its guide snapshot");
+                if(expected.target.StartsWith("node:"))
+                {
+                    var selected = Field<XgTechNodeView>(ctl.View.Tree, "detailShown");
+                    Need(selected != null && selected.Covers(expected.target.Substring(5)), "parameter navigation focuses its guide's exact node");
+                }
+                Need(!sim.Has("mlp"), "parameter navigation never buys the node implicitly");
+                check("Real LCD " + (parameters?"parameter":"sample") + " button follows the shared guide without buying: " + (topBar ? "top bar" : "exam card"));
+            }
+        }
+        finally
+        {
+            Bind(ctl, files, previous); ctl.View.ShowTab(previousTab); ctl.View.Refresh(true);
+        }
+    }
     static string InstallHintText(XingGuangController ctl) => string.Join("\n", InstallHint(ctl).GetComponentsInChildren<TMP_Text>(true).Select(label => label.text));
     static void Bind(XingGuangController ctl,XgFilesWindow files,XgSim sim)
     {
@@ -228,12 +338,28 @@ public static class FilesWindowUiChecks
         ctl.enabled=false;
         try
         {
+            language(false);
+            var displayChecks=WalletAndTeachingRows(ctl,check,capture);try{while(displayChecks.MoveNext())yield return displayChecks.Current;}finally{(displayChecks as IDisposable)?.Dispose();}
+            var parameterChecks=ParameterNavigation(ctl,files,check);try{while(parameterChecks.MoveNext())yield return parameterChecks.Current;}finally{(parameterChecks as IDisposable)?.Dispose();}
             var urlChecks=FilesDataUrlUiChecks.Frames(ctl,language,capture,check);try{while(urlChecks.MoveNext())yield return urlChecks.Current;}finally{(urlChecks as IDisposable)?.Dispose();}
             language(false);
             var beforeImport=BeforeImportFrames(ctl,files,capture,check);try{while(beforeImport.MoveNext())yield return beforeImport.Current;}finally{(beforeImport as IDisposable)?.Dispose();}
             language(false);var sim=Fresh();Bind(ctl,files,sim);rt.Sim.S.money=1000;
             double until=WaitUntil();while(EditorApplication.timeSinceStartup<until)yield return null;
-            Need(files.shortcutRoot.activeSelf&&files.CanBrowse,"folder visible before purchase");files.Show();Need(files.window.isOn,"empty folder opens before purchase");files.window.CloseWindow();
+            Need(files.shortcutRoot.activeInHierarchy&&files.CanBrowse,"folder visible before purchase");
+            Canvas.ForceUpdateCanvases();
+            var shortcut=(RectTransform)files.shortcutRoot.transform;var desktop=(RectTransform)shortcut.parent;
+            Need(shortcut.anchorMin==new Vector2(0,1)&&shortcut.anchorMax==new Vector2(0,1),"late-enabled folder uses desktop top-left grid anchors");
+            var shortcutCorners=new Vector3[4];shortcut.GetWorldCorners(shortcutCorners);
+            foreach(var corner in shortcutCorners)Need(desktop.rect.Contains(desktop.InverseTransformPoint(corner)),"folder graphic bounds are inside the visible desktop");
+            Click(shortcut);Need(files.window.isOn,"actual desktop shortcut click opens empty folder before purchase");
+            until=WaitUntil();while(EditorApplication.timeSinceStartup<until)yield return null;
+            var guidance=files.client.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name=="Installation guidance");
+            Need(guidance.interactable,"locked data import guidance is actionable");
+            Need(Field<TMP_Text>(files,"dataUrlHint").text==""&&!Field<TMP_Text>(files,"footer").text.Contains(sim.DataInstallBlocker()),"duplicate upper and footer import-lock messages removed");
+            double moneyBeforeJump=rt.Sim.S.money;Click((RectTransform)guidance.transform);
+            Need(ctl.View.Tab=="tree"&&!sim.CanInstallData&&rt.Sim.S.money==moneyBeforeJump,"guidance navigates to Tech without granting or purchasing import");
+            ctl.View.ShowTab("train");files.window.CloseWindow();
             Need(InstallHint(ctl)!=null&&!InstallHint(ctl).gameObject.activeSelf,"training installation hint respects the existing unowned import gate");
             yield return null;Canvas.ForceUpdateCanvases();yield return null;capture("files-01-unowned.png");check("empty folder visible and browsable without granting installation");
             var node=XgCatalog.Node(XgSim.DataEntryNode);Need(node!=null,"data import node exists");double importCost=sim.NodeCost(node);Need(importCost>=100,"ordinary data import base price is at least 100");
@@ -242,6 +368,7 @@ public static class FilesWindowUiChecks
             Need(!sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==1000,"duplicate purchase no charge");
             ctl.View.Refresh(true);
             Need(InstallHint(ctl).gameObject.activeSelf&&InstallHintText(ctl).Contains("暂无可安装包")&&InstallHintText(ctl).Contains("资料文件夹 → 训练数据"),"owned empty import names the desktop folder without installing anything");
+            Need(InstallHintText(ctl).Contains("数据包安装区"),"installation destination has the same explicit name as folder guidance");
             Need(sim.S.dataFiles.Count==0,"showing empty installation guidance creates no data packs");
             ctl.Window.CloseWindow();until=WaitUntil();while(EditorApplication.timeSinceStartup<until)yield return null;
             Need(files.shortcutRoot.activeInHierarchy&&files.CanBrowse,"purchase reveals actual shortcut");
@@ -281,7 +408,7 @@ public static class FilesWindowUiChecks
             BeginDrag((RectTransform)Row(files,a.fileId).transform);Need(files.ActivePayload!=null,"actual LCD row drag creates payload");var stale=files.ActivePayload;
             var next=Fresh();Bind(ctl,files,next);Need(!stale.IsCurrent&&!stale.CanInstallInto(next)&&files.ActivePayload==null,"save swap invalidates payload");Bridge().inputSurface.CancelInteraction();
             until=WaitUntil();while(EditorApplication.timeSinceStartup<until)yield return null;
-            Need(!files.window.isOn&&!files.shortcutRoot.activeSelf&&!a.installed,"new unowned save closes old folder without installation");yield return null;Canvas.ForceUpdateCanvases();yield return null;capture("files-10-swapped-unowned.png");
+            Need(!files.window.isOn&&files.shortcutRoot.activeSelf&&files.CanBrowse&&!a.installed,"new unowned save closes old window, retains browsable folder, and does not install stale payload");yield return null;Canvas.ForceUpdateCanvases();yield return null;capture("files-10-swapped-unowned.png");
             Bind(ctl,files,sim);files.Show();until=WaitUntil();while(EditorApplication.timeSinceStartup<until)yield return null;
             Click((RectTransform)Row(files,"packs").transform);Click((RectTransform)Row(files,"packs").transform);yield return null;Canvas.ForceUpdateCanvases();yield return null;
             BeginDrag((RectTransform)Row(files,a.fileId).transform);Need(files.ActivePayload!=null,"second source drag begins");files.window.MinimizeWindow();Need(files.ActivePayload==null,"minimize cancels drag immediately");Bridge().inputSurface.CancelInteraction();
@@ -312,6 +439,7 @@ public static class FilesWindowUiChecks
             BeginDrag((RectTransform)Row(files,a.fileId).transform);Need(files.ActivePayload!=null&&files.ActivePayload.FileIds.Count==2,"ready selection creates immutable batch");
             sim.S.unlocked.Remove(XgSim.DataEntryNode);EndDrag(ctl.View.Train.root);
             Need(!a.installed&&!b.installed,"revoked gate blocks actual target drop");sim.S.unlocked.Add(XgSim.DataEntryNode);
+            ctl.View.ShowTab("train"); // Rejection navigates to the real technology gate; return before the next drop.
             files.Refresh();yield return null;Canvas.ForceUpdateCanvases();yield return null;Click(selected);BeginDrag((RectTransform)Row(files,a.fileId).transform);
             Need(files.ActivePayload!=null&&files.ActivePayload.FileIds.Count==2,"batch available after gate restored");
             EndDrag(ctl.View.Train.root);Need(a.installed&&b.installed&&files.ActivePayload==null,"actual LCD batch drop installs both and ends ghost");
@@ -334,12 +462,19 @@ public static class FilesWindowUiChecks
             Need(guided.Labels("spam")>=XgCatalog.SamplesToTrain&&guided.TrainingUnlocked(XgTrack.Sequence),
                 "declared hand-label setup opens the Train gate: labels="+guided.Labels("spam")+"/"+XgCatalog.SamplesToTrain);
             Need(guided.S.dataFiles.Count==0&&guided.InstalledBatches("spam")==0,"hand-label setup creates no data file or installed batch");
-            Bind(ctl,files,guided);rt.Sim.S.money=1000;
+            Bind(ctl,files,guided);
+            var guidePurchases = new[]{"train.curve",XgSim.DataEntryNode,"spam.pack"};
+            // Fund the declared fixture from live prices: current minimum-price scaling makes
+            // these three purchases total 1500, exceeding the old hard-coded 1000 wallet.
+            rt.Sim.S.money = 1000 + guidePurchases.Sum(id => guided.NodeCost(XgCatalog.Node(id)));
             Need(ReferenceEquals(ctl.Sim,guided)&&ReferenceEquals(ctl.View.Controller,ctl)&&ReferenceEquals(files.Sim,guided),"guide fixture bound to controller, view and Files");
-            foreach(string purchase in new[]{"train.curve",XgSim.DataEntryNode,"spam.pack"})
+            foreach(string purchase in guidePurchases)
             {
-                double before=ctl.Host.Money,price=guided.NodeCost(XgCatalog.Node(purchase));
-                Need(guided.BuyNode(purchase,ctl.Host)&&Math.Abs(ctl.Host.Money-(before-price))<.001,"guide fixture actual paid purchase "+purchase);
+                var purchaseNode = XgCatalog.Node(purchase);
+                double before=ctl.Host.Money,price=guided.NodeCost(purchaseNode);
+                string reason = guided.Why(purchaseNode, ctl.Host);
+                Need(guided.BuyNode(purchase,ctl.Host)&&Math.Abs(ctl.Host.Money-(before-price))<.001,
+                    "guide fixture actual paid purchase "+purchase+"; price="+price+" wallet="+before+" condition="+reason);
             }
             for(int i=0;i<20&&guided.S.dataFiles.Count==0;i++){guided.Tick(.5,ctl.Host);yield return null;}
             var guideFile=guided.S.dataFiles.FirstOrDefault(f=>guided.DataFileReady(f.fileId));
@@ -370,18 +505,17 @@ public static class FilesWindowUiChecks
                 }
                 yield return null;
             }
-            var noteRows=Field<Array>(note,"rows");var firstRow=noteRows.GetValue(0);var noteRow=Field<RectTransform>(firstRow,"rt");
-            var noteRoot=Field<RectTransform>(note,"note");var shownStep=Field<XgGuideStep>(firstRow,"step");
-            Need(ReferenceEquals(Field<XgSim>(note,"shownFor"),guided)&&shownStep!=null&&shownStep.id=="data.install"&&shownStep.arg==guideFile.fileId,
-                "note row 0 is bound to this save's ready pack: "+GuideDiagnostics(note,ctl,files,guided,guideFile));
-            Need(Field<TMP_Text>(firstRow,"label").text.Contains("训练数据"),"note row names the 训练数据 folder: "+Field<TMP_Text>(firstRow,"label").text);
-            if(!noteRow.gameObject.activeInHierarchy)
-            {
-                var fold=Field<RectTransform>(note,"titleBar").Find("Fold") as RectTransform;Click(fold);yield return null;
-            }
+            Need(ReferenceEquals(GuideNoteT.TopSim,guided)&&GuideNoteT.TopStep?.id=="data.install"&&GuideNoteT.TopStep.arg==guideFile.fileId,
+                "current task belongs to this save's ready pack");
+            var taskEntry=Field<RectTransform>(note,"taskButtonRoot");
+            Need(taskEntry!=null&&taskEntry.gameObject.activeInHierarchy,"current Tasks entry is visible");
+            Click(taskEntry);yield return null;
             Canvas.ForceUpdateCanvases();yield return null;
-            Need(noteRoot!=null&&noteRoot.gameObject.activeInHierarchy&&noteRow.gameObject.activeInHierarchy,"rendered import note row: "+GuideDiagnostics(note,ctl,files,guided,guideFile));
-            var noteButton=Field<UnityEngine.UI.Button>(firstRow,"button");Need(noteButton!=null&&noteButton.IsInteractable(),"import note row button is interactable");
+            var noteRoot=Field<RectTransform>(note,"taskPanel");var now=Field<RectTransform>(note,"panelNow");
+            var noteRow=now.Find("Go") as RectTransform;
+            Need(noteRoot.gameObject.activeInHierarchy&&noteRow!=null&&noteRow.gameObject.activeInHierarchy,"current task panel renders import action");
+            Need(Field<TMP_Text>(note,"panelNowLabel").text.Contains("训练数据"),"current task names the training data folder");
+            var noteButton=noteRow.GetComponent<UnityEngine.UI.Button>();Need(noteButton!=null&&noteButton.IsInteractable(),"current task Go button is interactable");
             double samplesBefore=guided.TrainedSamples,walletBefore=ctl.Host.Money,labelsBefore=guided.Labels("spam");
             int batchesBefore=guided.InstalledBatches("spam"),unlockedBefore=guided.S.unlocked.Count;
             string filesBefore=string.Join(";",guided.S.dataFiles.Select(f=>f.fileId+":"+f.installed));

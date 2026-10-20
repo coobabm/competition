@@ -113,10 +113,13 @@ namespace LingGuangV05.Desktop.Apps
                     if (playerManager.audioSource != null) playerManager.audioSource.volume = slider.value;
                     break;
                 case ObjectType.Repeat:
-                    SetUpToggle("MusicPlayer_Repeat", () => playerManager.repeat, v => playerManager.repeat = v);
+                    SetUpToggle("MusicPlayer_Repeat", () => playerManager.repeat, playerManager.SetRepeatOne);
+                    AddRepeatOneBadge();
+                    LingGuangV05.Desktop.UiTip.Add(this, "单曲循环", "Repeat one");
                     break;
                 case ObjectType.Shuffle:
-                    SetUpToggle("MusicPlayer_Shuffle", () => playerManager.shuffle, v => playerManager.shuffle = v);
+                    SetUpToggle("MusicPlayer_Shuffle", () => playerManager.shuffle, playerManager.SetShuffle);
+                    LingGuangV05.Desktop.UiTip.Add(this, "随机播放", "Shuffle");
                     break;
             }
 
@@ -154,10 +157,32 @@ namespace LingGuangV05.Desktop.Apps
                 bool on = !get();
                 DreamOSDataManager.WriteBooleanData(Category, key, on);
                 set(on);
-                if (on) icon.PlayIn(); else icon.PlayOut();
+                if (icon != null) { if (on) icon.PlayIn(); else icon.PlayOut(); }
             });
             if (!DreamOSDataManager.ContainsJsonKey(Category, key)) DreamOSDataManager.WriteBooleanData(Category, key, get());
-            else set(DreamOSDataManager.ReadBooleanData(Category, key));
+            else
+            {
+                // Read both together: initialization order must not erase the other saved mode.
+                bool shuffled = DreamOSDataManager.ReadBooleanData(Category, "MusicPlayer_Shuffle");
+                bool repeated = DreamOSDataManager.ReadBooleanData(Category, "MusicPlayer_Repeat");
+                playerManager.shuffle = shuffled;
+                playerManager.repeat = repeated && !shuffled;
+                if (playerManager.audioSource != null) playerManager.audioSource.loop = playerManager.repeat;
+            }
+        }
+
+        void AddRepeatOneBadge()
+        {
+            if (transform.Find("Repeat one badge") != null) return;
+            var go = new GameObject("Repeat one badge", typeof(RectTransform), typeof(TextMeshProUGUI));
+            go.transform.SetParent(transform, false);
+            var rect = (RectTransform)go.transform;
+            rect.anchorMin = rect.anchorMax = new Vector2(.5f, .5f);
+            rect.sizeDelta = new Vector2(12, 14);
+            var label = go.GetComponent<TextMeshProUGUI>();
+            label.text = "1"; label.fontSize = 10; label.fontStyle = FontStyles.Bold;
+            label.alignment = TextAlignmentOptions.Center; label.raycastTarget = false;
+            label.color = Color.white;
         }
 
         public void UpdateItem()

@@ -55,6 +55,63 @@ public static class MusicInteractionChecks
         public List<string> runtimeErrors=new List<string>(),editorInfrastructureErrors=new List<string>();
     }
     static MusicInteractionChecks(){EditorApplication.playModeStateChanged+=State;}
+    // Safe while another player is running: no scene, PlayMode, prefs, profile, or real audio playback.
+    public static void RunIsolated()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("EditMode only");
+        GameObject fixture=null;MusicPlaylist list=null;AudioClip clip=null;
+        int checks=0;
+        void Need(bool value,string label){if(!value)throw new InvalidOperationException(label);checks++;}
+        try
+        {
+            fixture=new GameObject("Inactive music policy fixture");fixture.SetActive(false);
+            var player=fixture.AddComponent<MusicApp>();player.audioSource=fixture.AddComponent<AudioSource>();
+            list=ScriptableObject.CreateInstance<MusicPlaylist>();
+            clip=AudioClip.Create("Fixture only",4410,1,44100,false);
+            for(int i=0;i<5;i++)list.playlist.Add(new MusicPlaylist.MusicItem{musicClip=i==2?null:clip,excludeFromLibrary=i==1});
+            for(int i=0;i<5;i++)
+            {
+                var go=new GameObject("Row "+i);go.transform.SetParent(fixture.transform,false);
+                var row=go.AddComponent<MusicTrackRow>();row.playlist=list;row.itemIndex=i;player.playerQueue.Add(row);
+            }
+            player.currentPlaylist=list;player.currentTrackIndex=0;
+            player.SetRepeatOne(true,false);
+            Need(player.repeat&&!player.shuffle&&player.audioSource.loop,"Single repeat applies without persistence");
+            player.SetShuffle(true,false);
+            Need(player.shuffle&&!player.repeat&&!player.audioSource.loop,"Shuffle clears single repeat without persistence");
+            var randomState=UnityEngine.Random.state;
+            try
+            {
+                for(int i=0;i<30;i++)
+                {
+                    int index=player.NextPlayableTrack(1).itemIndex;
+                    Need(index==3||index==4,"Random skips current, excluded and clip-less rows");
+                }
+            }
+            finally{UnityEngine.Random.state=randomState;}
+            player.SetShuffle(false,false);
+            Need(player.NextPlayableTrack(1).itemIndex==3,"Sequential uses filtered queue");
+            Need(player.NextPlayableTrack(-1).itemIndex==4,"Previous wraps filtered queue");
+            player.currentTrackIndex=4;Need(player.NextPlayableTrack(1).itemIndex==0,"Next wraps filtered queue");
+            player.playerQueue.RemoveRange(1,4);player.currentTrackIndex=0;player.SetShuffle(true,false);
+            Need(player.NextPlayableTrack(1).itemIndex==0,"Single playable track is bounded");
+            player.playerQueue.Clear();Need(player.NextPlayableTrack(1)==null,"Empty playable queue is bounded");
+            Need(MusicApp.ShouldAdvanceAfterEnd(true,false,true,false,true),"Natural end advances");
+            Need(!MusicApp.ShouldAdvanceAfterEnd(true,false,false,false,true),"Explicit pause or stop does not advance");
+            Need(!MusicApp.ShouldAdvanceAfterEnd(true,false,true,true,true),"Listener pause does not advance");
+            Need(!MusicApp.ShouldAdvanceAfterEnd(true,false,true,false,false),"Disabled source does not advance");
+            Need(!MusicApp.ShouldAdvanceAfterEnd(true,true,true,false,true),"Playing or repeat-one source does not advance");
+            Need(!MusicApp.ShouldAdvanceAfterEnd(false,false,true,false,true),"Consumed end does not advance twice");
+            Debug.Log("MUSIC_ISOLATED_PASS checks="+checks+"; no PlayerPrefs/profile/save writes; policy checks only, actual DSP playback not exercised");
+        }
+        finally
+        {
+            if(fixture!=null)UnityEngine.Object.DestroyImmediate(fixture);
+            if(list!=null)UnityEngine.Object.DestroyImmediate(list);
+            if(clip!=null)UnityEngine.Object.DestroyImmediate(clip);
+        }
+    }
+
     [MenuItem("Tools/Local Verification/Music interaction checks")]
     public static void Run()
     {
@@ -185,6 +242,35 @@ public static class MusicInteractionChecks
                 report.voiceClip=voiceSource!=null&&voiceSource.clip!=null?voiceSource.clip.name:"";
                 VoiceLines.Stop();
                 Check(voiceSource!=null&&!voiceSource.isPlaying,"voice AudioSource stops","Stop silences the babble before the music checks");
+                Check(MusicApp.NextPlayableIndex(0,0,1,false,0)==-1&&MusicApp.NextPlayableIndex(1,0,1,true,0)==0,"empty and single playable queues are bounded","No recursive skipping or out-of-range row access");
+                Check(MusicApp.NextPlayableIndex(3,2,1,false,0)==0&&MusicApp.NextPlayableIndex(3,0,-1,false,0)==2,"sequential queue wraps in both directions","Indices refer to filtered playable rows");
+                for(int current=0;current<4;current++)
+                {
+                    var picks=new HashSet<int>();
+                    for(int draw=0;draw<3;draw++)picks.Add(MusicApp.NextPlayableIndex(4,current,1,true,draw));
+                    Check(picks.Count==3&&!picks.Contains(current),"shuffle visits every alternative at index "+current,"Never selects the current track when another exists");
+                }
+                manager.SetRepeatOne(true);
+                Check(manager.repeat&&!manager.shuffle&&source.loop,"repeat one takes effect immediately","AudioSource loops the same song");
+                manager.SetShuffle(true);
+                Check(manager.shuffle&&!manager.repeat&&!source.loop,"shuffle clears repeat one immediately","Modes cannot cancel each other out");
+                if(manager.playerQueue.Count>1)
+                {
+                    int previous=manager.currentTrackIndex;
+                    manager.NextTrack();
+                    Check(manager.currentTrackIndex!=previous&&source.isPlaying,"real shuffle skip chooses another playable song","Uses actual player queue and AudioSource");
+                }
+                if(manager.playerQueue.Count>=3)
+                {
+                    var fullQueue=new List<MusicTrackRow>(manager.playerQueue);
+                    var first=fullQueue[0];var last=fullQueue[fullQueue.Count-1];
+                    manager.playerQueue.Clear();manager.playerQueue.Add(first);manager.playerQueue.Add(last);
+                    manager.Play(first);manager.NextTrack();
+                    Check(manager.currentTrack==last,"shuffle respects sparse playable queue","Two playable rows retain original noncontiguous itemIndex values");
+                    manager.PrevTrack();
+                    Check(manager.currentTrack==first,"shuffle previous uses playable rows too","No raw playlist index into filtered queue");
+                    manager.playerQueue.Clear();manager.playerQueue.AddRange(fullQueue);
+                }
                 manager.repeat=true;manager.shuffle=true;source.loop=true;
                 ticketsBefore=VoiceTicket();window.OpenWindow();ticketsAfter=VoiceTicket();
                 Check(!manager.repeat&&!manager.shuffle&&!source.loop,"first opening defaults to sequential playlist","repeat/shuffle/source.loop all false, overriding legacy modes");

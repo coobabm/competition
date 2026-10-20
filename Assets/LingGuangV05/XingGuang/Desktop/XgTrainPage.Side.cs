@@ -94,7 +94,12 @@ namespace LingGuangV05.Desktop.XingGuang
             // Stages 1–5: the next ability's two bars.
             nextArea = m.Get("next");
             pLabel = m.Text("pLabel"); pValue = m.Text("pValue"); pSub = m.Text("pSub"); pFill = m.Get("pFill");
+            view.AddParameterHelp(pLabel); view.AddParameterHelp(pValue);
             dLabel = m.Text("dLabel"); dValue = m.Text("dValue"); dSub = m.Text("dSub"); dFill = m.Get("dFill");
+            view.AddProgressHelp(pFill.parent, true); view.AddProgressHelp(pSub, true);
+            view.AddProgressHelp(dLabel, false); view.AddProgressHelp(dValue, false);
+            view.AddProgressHelp(dFill.parent, false); view.AddProgressHelp(dSub, false);
+            view.AddProgressLink(pValue,true);view.AddProgressLink(dValue,false);
             // 「同一道题」: the next ability's fixed question and what it answered after the last round (XgSim.Learned.cs).
             // Two lines (the question, then its answer); the card grows when the English wraps further.
             probeText = m.Text("probe");
@@ -153,15 +158,15 @@ namespace LingGuangV05.Desktop.XingGuang
                 scaleTitle.text = T("下一项能力 · 能力 " + next + "「" + XgSim.AbilityName(next, false) + "」", "NEXT ABILITY · " + next + " '" + XgSim.AbilityName(next, true) + "'");
                 scaleTag.text = "";
                 // The line is hidden (XgSim.Learned.cs): how much is trained, and 「?」 until the bar is past it.
-                pLabel.text = T("参数量", "Parameters"); pValue.text = XgSim.ParamsText(Sim.TrainedParamsK) + " <size=11>" + Hex(XgDark.Muted) + "· " + Sim.ParamsLineText(next) + "</color></size>";
-                dLabel.text = T("样本", "Samples"); dValue.text = XgSim.SamplesText(Sim.TrainedSamples) + " <size=11>" + Hex(XgDark.Muted) + "· " + Sim.SamplesLineText(next) + "</color></size>";
+                pLabel.text = T("参数量 ↗", "Parameters ↗"); pValue.text = XgSim.ParamsText(Sim.TrainedParamsK) + " <size=11>" + Hex(XgDark.Muted) + "· " + Sim.ParamsLineText(next) + "</color></size>";
+                dLabel.text = T("样本 ↗", "Samples ↗"); dValue.text = XgSim.SamplesText(Sim.TrainedSamples) + " <size=11>" + Hex(XgDark.Muted) + "· " + Sim.SamplesLineText(next) + "</color></size>";
                 SetBar(pFill, (float)Sim.ParamsFill); SetBar(dFill, (float)Sim.SamplesFill);
                 bool probeRight;
                 string probe = Sim.ProbeLine(out probeRight);
                 probeText.gameObject.SetActive(probe.Length > 0);
                 probeText.text = Hex(XgDark.Dim) + T("同一道题：", "Same question: ") + "</color>" + probe + " " + (probeRight ? Hex(XgDark.Good) + "✓" : Hex(XgDark.Bad) + "×") + "</color>";
                 // This model against what already counts (P only takes a model trained to grade C), and the samples there against the samples that count.
-                pSub.text = Sim.ParamsSplitText(run); pSub.color = Sim.CountState(run) == XgCountState.Counted ? XgDark.Muted : XgDark.Gold;
+                pSub.text = T("网络扩容后，练到 C 级计入参数。", "Expand the network; train to C to count its parameters."); pSub.color = Sim.CountState(run) == XgCountState.Counted ? XgDark.Muted : XgDark.Gold;
                 dSub.text = Sim.SamplesSplitText();
                 string line;
                 if (Sim.TrainedParamsK + 1e-9 < paramsNeed)
@@ -169,7 +174,7 @@ namespace LingGuangV05.Desktop.XingGuang
                         : Hex(XgDark.Gold) + T("这个模型可能还不够大：去科技加宽、加深，或在道具买更大的结构。", "This model may not be big enough yet: widen or deepen in the tech tree, or buy a bigger structure on the Items page.") + "</color>";
                 else line = Hex(XgDark.Muted) + T("参数够了，样本到门槛，它就学会这一项。", "The parameters are there; once the samples reach the line it learns this ability.") + "</color>";
                 // The size's makeup (layers × width² × structure) and the caps the tech tree sets for it.
-                scaleVerdict.text = line + "\n" + Hex(XgDark.Dim) + Sim.ModelFormula(run) + " · " + Sim.CapsText(run) + "</color>";
+                scaleVerdict.text = line;
             }
         }
         readonly List<(string text, Color ink, bool own)> formulaChipsBuffer = new List<(string text, Color ink, bool own)>(FormulaChipCount);
@@ -187,11 +192,9 @@ namespace LingGuangV05.Desktop.XingGuang
         string ScaleTip()
         {
             if (Sim.S.stage < 6 && Sim.NextAbility != 0)
-                return (Sim.ReadWordsTotal >= 1 ? Sim.ReadLine() + "\n" : "") + Sim.ParamsReport(Host) + "\n\n" + Sim.SamplesReport() + "\n\n"
-                    + Sim.FogNote + "\n" + T("「同一道题」每一轮都问一次：它学会之前，怎么练都答不对。", "\"Same question\" is asked every round: until it learns, no amount of training gets it right.")
-                    + "\n" + T("阶段 1–5 靠参数和样本；下面灰色的格子是阶段 6 才用得上的倍率。", "Stages 1–5 run on parameters and samples; the greyed tiles below are multipliers that only count at stage 6.");
-            return T("有效规模 = 参数 × 数据 × 买到的倍率。参数以 " + XgSim.ParamsText(XgSim.ScaleUnitParamsK) + "、数据以 " + XgSim.SamplesText(XgSim.ScaleUnitSamples) + " 条算 1 份，各算到 " + N(XgSim.ScaleBarCap, "0.#") + " 份为止；倍率是道具带来的，乘在一起。预训练要 ×" + N(XgSim.ScaleNeed, "0") + "：三件大的（Transformer ×10、机房 ×8、注意力 ×3）一样都不能少，小的最多缺一件。\n条是对数刻度，白线是 ×" + N(XgSim.ScaleNeed, "0") + "。",
-                "Effective scale = parameters × data × the multipliers you own. Parameters count in units of " + XgSim.ParamsText(XgSim.ScaleUnitParamsK) + " and data in units of " + XgSim.SamplesText(XgSim.ScaleUnitSamples) + " samples, each up to " + N(XgSim.ScaleBarCap, "0.#") + " units; the multipliers come from items and multiply. Pre-training needs ×" + N(XgSim.ScaleNeed, "0") + ": none of the three big ones (Transformer ×10, server room ×8, attention ×3) can be missing, and at most one small one.\nThe bar is a log scale; the white line is ×" + N(XgSim.ScaleNeed, "0") + ".");
+                return T("点击参数或样本进度，查看当前的提升方法。", "Click parameter or sample progress for the next action.");
+            return T("增加有效参数、积累训练样本并购买科技加成，可提升有效规模。",
+                "Increase effective parameters, collect training samples and buy technology upgrades to raise effective scale.");
         }
 
         // ───────────── 装备 · 数据集 ─────────────

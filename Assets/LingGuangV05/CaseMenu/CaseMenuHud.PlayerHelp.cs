@@ -136,6 +136,7 @@ namespace LingGuangV05.CaseMenu
         // Reflow on language or window changes only, not every frame.
         void LateUpdate()
         {
+            UpdatePhysicalHint();
             if (!IsPlayerHelpOpen) return;
             RefreshPlayerHelp(false);
             // Keep a keyboard-selected supplement in view, without moving a pointer reader.

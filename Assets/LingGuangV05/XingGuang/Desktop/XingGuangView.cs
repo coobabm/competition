@@ -294,6 +294,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnMessage(string text)
         {
             AddFeed(text, 0);
+            if (!XgCrowdNoticePolicy.AllowsMessage(text, Sim?.S.stage ?? 0)) return;
             // Keep the existing unlock in the activity feed, without adding a second objective to the first lesson.
             bool trainingUnlocked = text != null && (text.StartsWith("攒够 ", StringComparison.Ordinal)
                 && text.Contains("可以训练了") || text.EndsWith(" samples, training unlocked", StringComparison.Ordinal));

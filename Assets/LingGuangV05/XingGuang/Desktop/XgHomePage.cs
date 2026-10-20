@@ -76,8 +76,9 @@ namespace LingGuangV05.Desktop.XingGuang
             paramsCard = BigCard(right, "Params", 0, .5f, XgDark.Params);
             dataCard = BigCard(right, "Samples", .5f, 1, XgDark.Data);
             // Live numbers: P against the line, the formula with the real layers, width and factor, the caps, the card.
-            UiTip.Add(paramsCard.rim.rectTransform, () => Sim == null ? "" : Sim.ParamsReport(Host) + "\n" + T("加宽、加深是自动的：宽度和层数的上限在科技树里买，显存不够就加显卡。", "Widening and deepening is automatic: buy the caps in the tech tree, and add a card when the VRAM runs out."));
-            UiTip.Add(dataCard.rim.rectTransform, () => Sim == null ? "" : Sim.SamplesReport() + "\n" + T("标错的、杂包里的噪声按规矩打折。", "Wrong labels and junk-pack noise count against."));
+            view.AddProgressHelp(paramsCard.rim.rectTransform,true);
+            view.AddProgressHelp(dataCard.rim.rectTransform,false);
+            view.AddProgressLink(paramsCard.value,true);view.AddProgressLink(dataCard.value,false);
 
             const float StripTop = 20 + 8 + 150 + 12;
             var strip = Rect("Abilities", right, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -StripTop - 58), new Vector2(0, -StripTop));

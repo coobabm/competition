@@ -136,7 +136,7 @@ namespace LingGuangV05.XingGuang
         {
             if (SpiderDragBlocker(desk, host) != null) return default;
             var card = Card(desk);
-            var a = Answer(desk, yes, host);
+            var a = Answer(desk, yes, host, automatic: true);
             S.spiderAnswers++; S.spiderDragAnswers++;
             return new XgSpiderAnswer { accepted = true, yes = yes, correct = a.correct, pay = a.pay, fine = a.fine, cardId = card.id };
         }

@@ -15,7 +15,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void RefreshLedgerVisibility()
         {
             bool open=Sim.LedgerOpen;
-            moneyRect.gameObject.SetActive(open||Tab=="tree");
+            moneyRect.gameObject.SetActive(true);
             statIncome.transform.parent.gameObject.SetActive(open);
             statPower.transform.parent.gameObject.SetActive(open);
             if(fundsWarning==null)return;
@@ -30,7 +30,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 else if(house.Debt>0)warning=T("房租到期，去 YY 转账","Rent due: transfer in YY");
                 else if(Host.Money<50)warning=T("余额偏低，留意用电支出","Low funds: watch power costs");
             }
-            fundsWarning.rectTransform.offsetMin=new Vector2(Tab=="tree"?112:0,4);
+            fundsWarning.rectTransform.offsetMin=new Vector2(112,4);
             fundsWarning.gameObject.SetActive(!open&&warning.Length>0);
             fundsWarning.text=warning;
         }

@@ -58,7 +58,9 @@ namespace LingGuangV05.Desktop.XingGuang
             if(owner==null||!ReferenceEquals(owner.Sim,Sim)){dataUrlDownload.interactable=false;return;}
             var state=Sim.PreviewDataUrl(dataUrlInput.text,owner.Host);
             dataUrlDownload.interactable=state.canDownload;
-            if(submittedUrlUntil>Time.unscaledTime&&submittedUrlEnglish==Sim.English)dataUrlHint.text=submittedUrlMessage;
+            // The purchase gate has one actionable home in the lower-right guidance card.
+            if(!InstallAllowed)dataUrlHint.text="";
+            else if(submittedUrlUntil>Time.unscaledTime&&submittedUrlEnglish==Sim.English)dataUrlHint.text=submittedUrlMessage;
             else dataUrlHint.text=string.IsNullOrWhiteSpace(dataUrlInput.text)
                 ?T("游戏内模拟下载；点击上方 MNIST 地址可填入。","Simulated game download; use MNIST source above to fill the address.")
                 :state.message;

@@ -110,8 +110,17 @@ namespace LingGuangV05.CaseMenu
             if (keyboard != null && keyboard.lKey.wasPressedThisFrame) { hud.OpenArchives(); return; }
             if (keyboard != null && keyboard.qKey.wasPressedThisFrame) { QuitGame(); return; }
             if (hud.HasTitleSelection && keyboard != null && (keyboard.upArrowKey.isPressed || keyboard.downArrowKey.isPressed || keyboard.leftArrowKey.isPressed || keyboard.rightArrowKey.isPressed)) return;
-            if (keyboard != null && keyboard.tabKey.wasPressedThisFrame) EventSystem.current?.SetSelectedGameObject(null);
-            if (captured == null && keyboard != null && (keyboard.tabKey.wasPressedThisFrame || keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame))
+            if (captured==null&&keyboard!=null&&keyboard.tabKey.wasPressedThisFrame)
+            {
+                keyboardFocus=true;
+                int index=hud.TitleSelectionIndex;
+                if(index>=0){if(index<2)hud.SelectTitleEntry(index+1);else{EventSystem.current?.SetSelectedGameObject(null);SetHovered(startButton);}}
+                else if(hovered==startButton)SetHovered(settingsButton);
+                else if(hovered==settingsButton){SetHovered(null);hud.SelectTitleEntry(0);}
+                else SetHovered(startButton);
+                return;
+            }
+            if (captured == null && keyboard != null && (keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame))
             {
                 keyboardFocus = true;
                 SetHovered(hovered == startButton ? settingsButton : startButton);
@@ -166,7 +175,7 @@ namespace LingGuangV05.CaseMenu
                 hovered.SetHovered(true);
                 if (Time.unscaledTime - lastHoverSound > .09f) { Play(hoverClip, .16f); lastHoverSound = Time.unscaledTime; }
             }
-            hud.SetHint(next == startButton ? "按下电源键 · 开始游戏" : next == settingsButton ? "按下设置键 · 调整音量与显示" : "点击机箱上的电源键，进入游戏");
+            hud.SetHint(""); hud.SetPhysicalHint(next,menuCamera);
         }
 
         public void QuitGame()

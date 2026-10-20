@@ -37,6 +37,66 @@ namespace LingGuangV05.XingGuang.Tests
             return s;
         }
 
+        [TestCase("dadishu")]
+        [TestCase("arith_mole")]
+        public void AutomaticMoleSettlesNormallyWithoutConsumingPlayerReactions(string game)
+        {
+            var sim = OpenAll(); var host = new Host();
+            long ticket = sim.BeginMiniGame(game, host);
+            Assert.AreNotEqual(0, ticket);
+            double money = host.Money, labels = sim.Labels("arith");
+            int right = sim.S.handCorrect, wrong = sim.S.handWrong;
+            var earned = sim.SubmitMiniGame(ticket, 1, true, host, 0, automatic: true);
+            var fined = sim.SubmitMiniGame(ticket, 2, false, host, automatic: true);
+            Assert.IsTrue(earned.accepted && fined.accepted);
+            Assert.Greater(earned.pay, 0); Assert.Greater(fined.fine, 0);
+            Assert.AreEqual(money + earned.pay - fined.fine, host.Money, 1e-8);
+            Assert.AreEqual(labels + earned.samples, sim.Labels("arith"));
+            Assert.AreEqual(right + 1, sim.S.handCorrect); Assert.AreEqual(wrong + 1, sim.S.handWrong);
+            Assert.IsFalse(sim.S.answerPayThoughtRecorded); Assert.IsFalse(sim.S.answerFineThoughtRecorded);
+            Assert.IsEmpty(sim.S.pendingAnswerMoneyThoughts);
+            sim.SubmitMiniGame(ticket, 3, true, host);
+            sim.SubmitMiniGame(ticket, 4, false, host);
+            CollectionAssert.AreEqual(new[] { "pay", "fine" }, sim.S.pendingAnswerMoneyThoughts);
+        }
+
+        [Test] public void FirstMiniIncomeAndActualFineAreQueuedOnceAndSurviveReload()
+        {
+            var sim = OpenAll(); var host = new Host();
+            long ticket = sim.BeginMiniGame("dadishu", host);
+            double before = host.Money;
+            var earned = sim.SubmitMiniGame(ticket, 1, true, host, 0);
+            Assert.IsTrue(earned.accepted); Assert.Greater(earned.bonus, 0);
+            Assert.AreEqual(earned.pay, host.Money - before, 1e-8, "Recorded income includes the actual speed bonus");
+            Assert.IsTrue(sim.S.answerPayThoughtRecorded);
+            var fined = sim.SubmitMiniGame(ticket, 2, false, host);
+            Assert.IsTrue(fined.accepted); Assert.Greater(fined.fine, 0);
+            Assert.IsTrue(sim.S.answerFineThoughtRecorded);
+            var loaded = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S)));
+            Assert.AreEqual("我去，答题还能赚钱？", loaded.TakeTeachingThought(true).Value.zh);
+            Assert.AreEqual("我去，答错还会扣钱？", loaded.TakeTeachingThought(true).Value.zh);
+            loaded.SettleMiniAction("arith", true, host, 0);
+            loaded.SettleMiniAction("arith", false, host);
+            var reopened = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(loaded.S)));
+            Assert.IsNull(reopened.TakeTeachingThought(true), "Repeated games and reloads do not duplicate either line");
+        }
+
+        [Test] public void MiniWithoutActualDeductionOrAcceptedSettlementDoesNotClaimMoneyWasLost()
+        {
+            var sim = OpenAll(); var host = new Host();
+            Assert.IsTrue(host.Spend(host.Money));
+            var unpaid = sim.SettleMiniAction("arith", false, host);
+            Assert.IsTrue(unpaid.accepted); Assert.AreEqual(0, unpaid.fine);
+            Assert.IsFalse(sim.S.answerFineThoughtRecorded);
+            Assert.IsFalse(sim.SettleMiniAction("missing-desk", true, host).accepted);
+            Assert.IsFalse(sim.SettleMiniAction("arith", true, null).accepted);
+            Assert.IsFalse(sim.S.answerPayThoughtRecorded);
+            Assert.IsNull(sim.TakeTeachingThought(true));
+            host.Earn(100);
+            Assert.Greater(sim.SettleMiniAction("arith", false, host).fine, 0);
+            Assert.AreEqual("我去，答错还会扣钱？", sim.TakeTeachingThought(true).Value.zh);
+        }
+
         [Test] public void EveryMappedGameLabelsItsOwnDeskAndNothingElse()
         {
             int checkedDesks = 0;

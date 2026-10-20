@@ -231,6 +231,8 @@ namespace LingGuangV05.Desktop.Taohuo
                 case GiftTab: BuildGifts(today); break;
                 default: BuildGpus(sim, today, q); break;
             }
+            foreach (Transform child in list)
+                if (child.gameObject.activeSelf) TaohuoProductLayout.Attach(child as RectTransform);
         }
 
         static string TabName(string id)

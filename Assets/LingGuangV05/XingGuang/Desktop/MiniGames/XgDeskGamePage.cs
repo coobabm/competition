@@ -153,11 +153,11 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             return true;
         }
 
-        void Settle(bool correct, double seconds)
+        void Settle(bool correct, double seconds, bool automatic)
         {
             if (owner == null || !ReferenceEquals(owner, Sim) || !Focused) return;
             int multiplierBefore = owner.StreakMultiplier;
-            var result = owner.SubmitMiniGame(ticket, sequence + 1, correct, Host, seconds);
+            var result = owner.SubmitMiniGame(ticket, sequence + 1, correct, Host, seconds, automatic);
             showingIntroStatus = false;
             if (!result.accepted) { status.text = result.note; return; }
             sequence++;

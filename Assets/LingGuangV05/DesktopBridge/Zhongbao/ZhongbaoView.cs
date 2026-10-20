@@ -605,7 +605,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             sim.DuelDone -= OnDuelDone; sim.ComboTier -= OnComboTier; sim.ComboBroken -= OnComboBroken;
         }
 
-        void OnMessage(string text) { ShowToast(text, 3.5f); }
+        void OnMessage(string text) { if (XgCrowdNoticePolicy.AllowsMessage(text, Sim?.S.stage ?? 0)) ShowToast(text, 3.5f); }
 
         void OnDeskOpened(XgDesk d)
         {

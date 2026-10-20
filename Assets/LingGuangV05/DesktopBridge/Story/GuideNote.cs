@@ -60,6 +60,14 @@ namespace LingGuangV05.Desktop.Story
         float nextRefresh;
         WindowManager tiebaWindow, gamesWindow;
         bool windowsLooked;
+        XgSim progressLessonOwner;
+        int progressLessonVersion;
+
+        void CompleteProgressNavigation(XgSim owner, XgGuideStep step, bool arrived)
+        {
+            if(arrived&&owner!=null&&Lab()!=null&&ReferenceEquals(Lab().Sim,owner)&&XgGuide.CompleteProgressLesson(owner,step.id))
+                runtime?.MarkDirty();
+        }
 
         /// <summary>The installed note, for places that send the player where a step points (the lab's 「去做 ›」 link).</summary>
         public static GuideNote Instance { get; private set; }
@@ -118,6 +126,13 @@ namespace LingGuangV05.Desktop.Story
         void Update()
         {
             if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
+            var progressSim=Lab()?.Sim;
+            if(!ReferenceEquals(progressLessonOwner,progressSim)){progressLessonOwner=progressSim;progressLessonVersion=progressSim?.S.progressLessonVersion??0;}
+            if(progressSim!=null)
+            {
+                XgGuide.ObserveProgressLessons(progressSim);
+                if(progressLessonVersion!=progressSim.S.progressLessonVersion){progressLessonVersion=progressSim.S.progressLessonVersion;runtime?.MarkDirty();}
+            }
             bool exe = WaitingForExe();
             bool ready = !StoryFocus.Exclusive && runtime != null && runtime.Sim != null && !runtime.TestMode && (!runtime.Sim.InPrologue || exe) && !CutscenePlaying
                 && Lab() != null && lab.Sim != null && PrologueDirector.Desk != null;
@@ -382,6 +397,7 @@ namespace LingGuangV05.Desktop.Story
         {
             var c = Lab();
             if (c == null || c.Sim == null) yield break;
+            var owner = c.Sim;
             if (step.tab == "label" && step.arg.Length > 0) c.Sim.SelectDesk(step.arg);
             // "vision" / "sequence" open the training page on that track.
             string tab = step.tab == "train" && (step.arg == "vision" || step.arg == "sequence") ? step.arg : step.tab;
@@ -394,7 +410,18 @@ namespace LingGuangV05.Desktop.Story
             }
             // Pages build some rows on refresh; give them a frame or two.
             yield return null; yield return null;
-            if (c.View != null) XgGuideHighlight.Show(c.View, step.tab, step.target);
+            if(!ReferenceEquals(c.Sim,owner))yield break;
+            bool arrived=c.View!=null&&c.View.Visible&&(string.IsNullOrEmpty(step.tab)||XgGuideHighlight.Page(c.View,step.tab)?.gameObject.activeInHierarchy==true);
+            if (arrived)
+            {
+                if(step.target.StartsWith("node:")&&c.View.Tab=="tree")
+                {
+                    arrived=c.View.Tree.FocusNodeDetails(step.target.Substring(5));
+                    if(!arrived)c.View.ShowToast(owner.English?"The corresponding technology is unavailable":"暂时找不到对应科技",3f);
+                }
+                else XgGuideHighlight.Show(c.View, step.tab, step.target);
+            }
+            CompleteProgressNavigation(owner,step,arrived);
             if (step.id == "data.install" && c.Sim.DataFileReady(step.arg))
                 FindAnyObjectByType<XgFilesWindow>(FindObjectsInactive.Include)?.ShowTrainingData(c.Sim);
         }
@@ -403,11 +430,14 @@ namespace LingGuangV05.Desktop.Story
         IEnumerator GoCrowd(XgGuideStep step)
         {
             var c = Lab();
+            var owner=c?.Sim;
             if (c != null && c.Sim != null && step.tab == "label" && step.arg.Length > 0) c.Sim.SelectDesk(step.arg);
             // Before stage 4 摆渡众包 is not on the desktop yet: the same desks are on the lab's 「教」 page.
             if (!StudyDesktopGates.Allows(XgGuide.Crowd) && step.tab == "label")
             {
                 if (router == null || !router.Open(XingGuangController.AppId, "teach")) c?.Open();
+                yield return null;yield return null;
+                CompleteProgressNavigation(owner,step,c?.View!=null&&c.View.Visible&&c.View.Tab=="teach");
                 yield break;
             }
             if (router == null || !router.Open(XgGuide.Crowd, string.IsNullOrEmpty(step.tab) ? null : step.tab)) yield break;
@@ -420,16 +450,19 @@ namespace LingGuangV05.Desktop.Story
             // Pages build some rows on refresh; give them a frame or two.
             yield return null; yield return null;
             if (crowd != null) crowd.Highlight(step.tab, step.target);
+            CompleteProgressNavigation(owner,step,crowd!=null&&crowd.Visible&&(string.IsNullOrEmpty(step.tab)||crowd.Tab==step.tab));
         }
 
         IEnumerator GoApp(XgGuideStep step)
         {
             if (router == null) yield break;
+            var owner=Lab()?.Sim;
             router.Open(step.app, string.IsNullOrEmpty(step.tab) ? (step.arg.Length > 0 ? step.arg : null) : step.tab);
             var binding = router.Get(step.app);
             if (binding == null || binding.Window == null || string.IsNullOrEmpty(step.target)) yield break;
             for (int i = 0; i < 6; i++) yield return null;
             XgGuideHighlight.Pulse(XgGuideHighlight.FindIn(binding.Window.transform, step.target));
+            CompleteProgressNavigation(owner,step,binding.Window.isOn&&binding.Window.gameObject.activeInHierarchy);
         }
 
         static void GoTieba(XgGuideStep step)

@@ -33,6 +33,21 @@ namespace LingGuangV05.XingGuang.Tests
             return sim;
         }
         [Test]
+        public void AutomaticSettlementsDoNotQueuePlayerAnswerReactions()
+        {
+            var sim = Ready(coop: false); var host = new Host();
+            var right = Judged(sim, true, .99);
+            double before = host.money;
+            Assert.IsTrue(sim.Route(right.id, host));
+            Assert.Greater(host.money, before, "Exercise a real automatic payout");
+            var wrong = Judged(sim, false, .99);
+            Assert.IsTrue(sim.Route(wrong.id, host));
+            Assert.IsFalse(sim.S.answerPayThoughtRecorded);
+            Assert.IsFalse(sim.S.answerFineThoughtRecorded);
+            Assert.IsNull(sim.TakeTeachingThought(true));
+        }
+
+        [Test]
         public void ADeskWithAWeakCheckpointIsNeverLabelledAutomatically()
         {
             var sim = Ready(coop: false); var host = new Host();

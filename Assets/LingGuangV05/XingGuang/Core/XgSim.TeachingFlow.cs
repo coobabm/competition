@@ -5,6 +5,8 @@ namespace LingGuangV05.XingGuang
         // Enabled only by BeginOpening: existing saves retain every page they already unlocked.
         public bool teachingFlow;
         public int teachingThoughtVersion;
+        public bool answerPayThoughtRecorded, answerFineThoughtRecorded;
+        public System.Collections.Generic.List<string> pendingAnswerMoneyThoughts = new System.Collections.Generic.List<string>();
         public bool teachIntroSaid, teachThirdSaid, teachTreeSaid, teachTrainSaid;
     }
 
@@ -15,10 +17,36 @@ namespace LingGuangV05.XingGuang
         public bool TeachingTrainOpen => !S.teachingFlow || Has("train.curve");
         public bool TeachingAiReady => Has("label.ai");
 
+        void RecordAnswerMoneyThought(XgAnswer result)
+        {
+            if (S.pendingAnswerMoneyThoughts == null) S.pendingAnswerMoneyThoughts = new System.Collections.Generic.List<string>();
+            if (result.correct && result.pay > 0 && !S.answerPayThoughtRecorded)
+            {
+                S.answerPayThoughtRecorded = true;
+                S.pendingAnswerMoneyThoughts.Add("pay");
+            }
+            if (!result.correct && result.fine > 0 && !S.answerFineThoughtRecorded)
+            {
+                S.answerFineThoughtRecorded = true;
+                S.pendingAnswerMoneyThoughts.Add("fine");
+            }
+        }
+
         /// <summary>Consume one thought only when the player can see the exe. Progress, not elapsed time, selects it.</summary>
         public XgVoiceLine? TakeTeachingThought(bool visible)
         {
-            if (!visible || !S.teachingFlow || S.stage != 1) return null;
+            if (!visible) return null;
+            // Preserve the first-open introduction, then drain real settlement reactions before the third-answer line.
+            if ((S.teachIntroSaid || !S.teachingFlow || TeachingAnswers >= 3 || S.stage != 1)
+                && S.pendingAnswerMoneyThoughts != null && S.pendingAnswerMoneyThoughts.Count > 0)
+            {
+                string kind = S.pendingAnswerMoneyThoughts[0];
+                S.pendingAnswerMoneyThoughts.RemoveAt(0);
+                return kind == "pay"
+                    ? new XgVoiceLine("我去，答题还能赚钱？", "Whoa, answering questions earns money?", 2.8f)
+                    : new XgVoiceLine("我去，答错还会扣钱？", "Whoa, wrong answers cost money too?", 2.8f);
+            }
+            if (!S.teachingFlow || S.stage != 1) return null;
             if (S.teachingThoughtVersion < 1)
             {
                 // Upgrade existing saves without backfilling lines about actions already completed.

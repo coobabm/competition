@@ -21,7 +21,7 @@ namespace LingGuangV05.Desktop.XingGuang
         // Layout (the approved mockup): 任务大厅 | workspace | right column, side by side in the page area.
         const float HallW = 202, SideW = 300, ColumnGap = 10;
 
-        RectTransform workspace, body, timerBar, timerFill;
+        RectTransform workspace, body, bodyViewport, timerBar, timerFill;
         TMP_Text wkTitle, wkRule, qno, lessonProgress;
         /// <summary>Funds while teaching: the desk header shows the wallet the desk pays into, so a miss's fine is visible.</summary>
         TMP_Text wkMoney;
@@ -191,8 +191,16 @@ namespace LingGuangV05.Desktop.XingGuang
                 wkMoney.textWrappingMode = TextWrappingModes.NoWrap;
                 UiTip.Add(wkMoney, "经费。答对加钱，答错、超时扣钱；科技和道具也花这笔钱。", "Funds. Right answers pay, misses and timeouts cost; tech and items spend the same wallet.");
             }
-            body = Rect("Body", workspace, Vector2.zero, Vector2.one, new Vector2(1, 38), new Vector2(-1, -35));
-            streakEnergy = new XgStreakEnergyIndicator(ui, Rect("StreakEnergy", workspace, Vector2.zero, new Vector2(1, 0), new Vector2(12, 5), new Vector2(-12, 31)));
+            // Card content scrolls inside its own viewport on short windows; the two footer rows stay fixed.
+            bodyViewport = Rect("CardViewport", workspace, Vector2.zero, Vector2.one, new Vector2(1, 72), new Vector2(-1, -35));
+            bodyViewport.gameObject.AddComponent<RectMask2D>();
+            body = Rect("Body", bodyViewport, new Vector2(0, 1), Vector2.one, new Vector2(0, -530), Vector2.zero);
+            body.pivot = new Vector2(.5f, 1);
+            var cardScroll = bodyViewport.gameObject.AddComponent<ScrollRect>();
+            cardScroll.viewport = bodyViewport; cardScroll.content = body; cardScroll.horizontal = false;
+            cardScroll.scrollSensitivity = 24; cardScroll.movementType = ScrollRect.MovementType.Clamped;
+            FitClassicViewport();
+            streakEnergy = new XgStreakEnergyIndicator(ui, Rect("StreakEnergy", workspace, Vector2.zero, new Vector2(1, 0), new Vector2(12, 39), new Vector2(-166, 65)));
             BuildFeed(body);
             BuildFrozenBanner(body);
             meta = ui.Text(Rect("Meta", body, new Vector2(0, 1), new Vector2(1, 1), new Vector2(14, -58), new Vector2(-96, -36)), "", 14, HallMute, TextAlignmentOptions.MidlineLeft);
@@ -265,20 +273,10 @@ namespace LingGuangV05.Desktop.XingGuang
             BuildSide(root);
 
             UiTip.Add(qno, () => Sim == null ? "" : HandStats());
-            UiTip.Add(yes.rt, () => Sim == null ? "" : Mode == 0 && CurrentCard.family
-                ? T("把这条家人短信当作垃圾，记住你的态度；不判对错，不罚款，也不改变连击。", "Treat this family message as junk. Your preference is remembered; there is no right or wrong answer, no fine, and no streak change.")
-                : Mode == 0 && XgSim.DirectTruthJudgment(CurrentCard)
-                ? T("对 · 快捷键 1", "True · Key 1")
-                : shownTeachingEvaluation && Mode == 0
-                ? T("它猜对了就点这里：认可它刚才的「是／否」。", "Choose this if its Yes/No guess is right.")
-                : T("题目对就点「对」。答对 +¥，连击 +1；点错 −¥", "Right? Press True. +¥ and +1 combo; a miss −¥") + N(Sim.HandFineFor(Desk, Sim.LevelOf(Desk)), "0.00") + T("，连击清零。", ", combo reset."));
-            UiTip.Add(no.rt, () => Sim == null ? "" : Mode == 0 && CurrentCard.family
-                ? T("把这条家人短信留作重要，记住你的态度；不判对错，不罚款，也不改变连击。", "Keep this family message as important. Your preference is remembered; there is no right or wrong answer, no fine, and no streak change.")
-                : Mode == 0 && XgSim.DirectTruthJudgment(CurrentCard)
-                ? T("错 · 快捷键 2", "False · Key 2")
-                : shownTeachingEvaluation && Mode == 0
-                ? T("它猜错了就点这里：教它与刚才相反的答案。", "Choose this if its guess is wrong: teach it the opposite answer.")
-                : T("题目错就点「错」。答对 +¥，连击 +1；点错 −¥", "Wrong? Press False. +¥ and +1 combo; a miss −¥") + N(Sim.HandFineFor(Desk, Sim.LevelOf(Desk)), "0.00") + T("，连击清零。", ", combo reset."));
+            UiTip.Add(yes.rt, () => Mode == 0 && CurrentCard.family ? T("当作垃圾", "Mark as junk")
+                : shownTeachingEvaluation ? T("猜对了 · 1", "Guessed right · 1") : T("对 · 1", "True · 1"));
+            UiTip.Add(no.rt, () => Mode == 0 && CurrentCard.family ? T("留作重要", "Keep as important")
+                : shownTeachingEvaluation ? T("猜错了 · 2", "Guessed wrong · 2") : T("错 · 2", "False · 2"));
             UiTip.Add(auto.Root, () => Sim != null && Sim.AutoLabelHidden ? Lang.T("？？？\n也许有更省力的办法……")
                 : Lang.T("自动答题：模型替你答题，每秒都有收入。\n需要任一模型的准确率先达到 60%；只有检查点达到 60% 的桌才会替你答。\n以后平台会抽检交出去的题，抽到错的要罚钱。"));
             UiTip.Add(pack.Root, SourceTip);
@@ -654,8 +652,16 @@ namespace LingGuangV05.Desktop.XingGuang
             wkMoney.color = ink;
         }
 
+        void FitClassicViewport()
+        {
+            if (bodyViewport == null || body == null) return;
+            float height = Mathf.Max(530, bodyViewport.rect.height);
+            if (!Mathf.Approximately(body.sizeDelta.y, height)) body.sizeDelta = new Vector2(0, height);
+        }
+
         public override void Tick(float dt)
         {
+            FitClassicViewport();
             if(teachingReviewOverlay!=null&&teachingReviewOverlay.gameObject.activeInHierarchy)return;
             UpdateFunds();
             RefreshVisibleHall();
@@ -700,6 +706,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public override void Refresh()
         {
+            FitClassicViewport();
             if (root == null) return;
             streakEnergy?.Refresh(Sim);
             HideClassicTeachingTools();
@@ -846,7 +853,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 ? Sim.AiDisplayName + T("：", ": ") + YesNoWord(guess) + "？ " + XgSim.Pct(confidence)
                     + "  (" + (queued && card.judgeSource == "brain" ? Lang.T("本地模型") : Lang.T("检查点估计")) + ")"
                     + (queued && !string.IsNullOrEmpty(card.judgeFailure) ? " · " + Lang.T("大脑离线") : "")
-                : T("还没有模型。标够 " + XgCatalog.SamplesToTrain + " 条，去「训练」按「训练一轮」。", "No model yet. Label " + XgCatalog.SamplesToTrain + ", then press Train in the Train tab.");
+                : T("暂无 AI 判断", "No AI prediction available");
             if (hasGuess && host.Visible && (host.Tab == "label" || host.Tab == "teach") && suggestion.gameObject.activeInHierarchy && card.kind == "combo" && card.judgeSource != "brain")
                 Sim.MarkComboSuggestionDisplayed(card, guess);
             if (hasGuess && Sim.FeatureVisible("lingguang-contact"))
@@ -859,10 +866,10 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
                 if (!string.IsNullOrEmpty(comment)) suggestion.text += "\n<size=14><color=#4054C4>" + Sim.AiDisplayName + T("：「", ": “") + Safe(comment) + T("」", "”") + "</color></size>";
             }
-            if (teaching) suggestion.text = Sim.AiDisplayName + T("猜：", " guesses: ") + (guess ? T("是", "Yes") : T("否", "No"));
-            if (direct || WorkContext) suggestion.text = "";
+            if (lesson && hasGuess) suggestion.text = Sim.AiDisplayName + T("猜：", " guesses: ") + (guess ? T("是", "Yes") : T("否", "No"));
+            if (WorkContext) suggestion.text = "";
             if (card.family) suggestion.text = Sim.AiDisplayName + T("：这条消息，你在意吗？", ": Does this message matter to you?");
-            if ((hasGuess && !direct && !WorkContext) || card.family)
+            if ((hasGuess && !WorkContext) || card.family)
                 suggestion.text += "\n<size=10><color=#6F95A5>" + LingGuangV05.Runtime.AiContentNotice.Footer(En) + "</color></size>";
             suggestion.fontSize = teaching ? 34 : 16;
             // Keep the answer beside the question on spacious windows; the narrow

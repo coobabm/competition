@@ -1438,7 +1438,7 @@ namespace LingGuangV05.XingGuang
         /// Hand answer. Right: ¥ (× the streak multiplier ×1…×5, ×3 on 前方高能, harder cards pay more), one more sample, combo +1.
         /// Hard-card bonuses do not count as extra answers. Wrong or too late: no pay, combo reset, label discarded.
         /// </summary>
-        public XgAnswer Answer(string desk, bool yes, IXgHost host)
+        public XgAnswer Answer(string desk, bool yes, IXgHost host, bool automatic = false)
         {
             var info = XgCatalog.Desk(desk);
             if (info == null || host == null) return default;
@@ -1451,7 +1451,7 @@ namespace LingGuangV05.XingGuang
             if (card.family)
             {
                 var familyResult = AnswerFamily(card, yes, host);
-                PublishAnswerTrace(traceReceiver, traceCardId, traceDataset, yes, traceSource, null, familyResult);
+                PublishAnswerTrace(traceReceiver, traceCardId, traceDataset, yes, traceSource, null, familyResult, automatic: automatic);
                 return familyResult;
             }
             bool hadGhost = GhostBeforeAnswer(desk, card, out bool ghost);
@@ -1515,7 +1515,7 @@ namespace LingGuangV05.XingGuang
             NewCard(desk);
             CheckDesks();
             ObserveGhost(hadGhost, ghost, yes, timeout);
-            PublishAnswerTrace(traceReceiver, traceCardId, traceDataset, yes, traceSource, predictionTrace, result, correctionPulls);
+            PublishAnswerTrace(traceReceiver, traceCardId, traceDataset, yes, traceSource, predictionTrace, result, correctionPulls, automatic);
             return result;
         }
 

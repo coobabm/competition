@@ -498,8 +498,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             }
             else questionDetail.text = (C.Id == "arith_mole"
                 ? XgUi.T("敲正确的算式，放过错误的算式。", "Whack correct equations; leave wrong ones alone.")
-                : XgUi.T("敲错误的算式，放过正确的算式。", "Whack wrong equations; leave correct ones alone."))
-                + XgUi.T(" 移到题牌上查看完整题意。", " Hover over a card for its full wording.");
+                : XgUi.T("敲错误的算式，放过正确的算式。", "Whack wrong equations; leave correct ones alone."));
         }
         void Hit(int i, long token, bool automatic)
         {
@@ -522,7 +521,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             bangs[i].text = correct ? XgUi.T("啪！", "Pow!") : XgUi.T("冤！", "Oops!");
             bangs[i].color = correct ? new Color(.86f, .2f, .12f) : new Color(.3f, .38f, .62f);
             if (correct) { score++; combo++; } else { errors++; combo = 0; }
-            C.Report(correct);
+            C.Report(correct, automatic);
             // The host may close/switch/rebuild the surface while reporting the accepted answer.
             if (generation != buildGeneration || !playing || !C.IsActive) return;
             feedback.text = XgUi.T(question.Why, question.WhyEn); Hud();

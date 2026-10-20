@@ -66,7 +66,7 @@ namespace LingGuangV05.XingGuang
         /// Settles one answered item of the running game. Whatever the game's own scoring, an item is one action:
         /// see <see cref="SettleMiniAction"/> for the pay and the sample.
         /// </summary>
-        public XgMiniResult SubmitMiniGame(long ticket, int sequence, bool correct, IXgHost host, double seconds = -1)
+        public XgMiniResult SubmitMiniGame(long ticket, int sequence, bool correct, IXgHost host, double seconds = -1, bool automatic = false)
         {
             if (host == null || ticket == 0 || ticket != miniTicket || sequence != miniSequence + 1 || MiniGameBlocker(miniId) != null)
                 return new XgMiniResult { note = T("这一题已经过期了", "That round has expired") };
@@ -96,7 +96,7 @@ namespace LingGuangV05.XingGuang
                     : T("本次没有采集；本轮余量 " + CrawlLeft, "Nothing collected; " + CrawlLeft + " left this run");
                 return r;
             }
-            var a = SettleMiniAction(g.Desk, correct, host, seconds);
+            var a = SettleMiniAction(g.Desk, correct, host, seconds, automatic: automatic);
             r.samples = a.samples; r.pay = a.Total; r.bonus = a.bonus; r.fine = a.fine; r.multiplier = correct ? a.multiplier : 0;
             record.samples += r.samples; record.income += a.Total - a.fine;
             r.note = correct

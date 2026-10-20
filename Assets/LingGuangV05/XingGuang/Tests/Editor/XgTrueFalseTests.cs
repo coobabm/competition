@@ -212,6 +212,28 @@ namespace LingGuangV05.XingGuang.Tests
         // ───────────── the dragged spider ─────────────
 
         [Test]
+        public void DraggedSpiderPreservesSettlementAndTraceButNotPlayerMoneyReactions()
+        {
+            var sim = WithCheckpoint("arith", .75); var host = new Host { money = 5000 };
+            sim.S.teachMode = false; sim.S.desk = "arith";
+            int traces = 0; sim.CardAnswered += _ => traces++;
+            double money = host.money;
+            int right = sim.S.handCorrect, wrong = sim.S.handWrong;
+            var earned = sim.SpiderDragPress("arith", host, sim.Card("arith").truth);
+            var fined = sim.SpiderDragPress("arith", host, !sim.Card("arith").truth);
+            Assert.IsTrue(earned.accepted && fined.accepted);
+            Assert.Greater(earned.pay, 0); Assert.Greater(fined.fine, 0);
+            Assert.AreEqual(money + earned.pay - fined.fine, host.money, 1e-8);
+            Assert.AreEqual(right + 1, sim.S.handCorrect); Assert.AreEqual(wrong + 1, sim.S.handWrong);
+            Assert.AreEqual(2, sim.S.spiderDragAnswers); Assert.AreEqual(2, traces);
+            Assert.IsFalse(sim.S.answerPayThoughtRecorded); Assert.IsFalse(sim.S.answerFineThoughtRecorded);
+            Assert.IsEmpty(sim.S.pendingAnswerMoneyThoughts);
+            sim.Answer("arith", sim.Card("arith").truth, host);
+            sim.Answer("arith", !sim.Card("arith").truth, host);
+            CollectionAssert.AreEqual(new[] { "pay", "fine" }, sim.S.pendingAnswerMoneyThoughts);
+        }
+
+        [Test]
         public void TheDraggedSpiderAnswersLikeAHandAndItsMistakesCostMoney()
         {
             var sim = WithCheckpoint("arith", .75); var host = new Host { money = 5000 };
