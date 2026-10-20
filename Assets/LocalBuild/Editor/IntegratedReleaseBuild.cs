@@ -51,7 +51,7 @@ public static class IntegratedReleaseBuild
             PlayerSettings.SetGraphicsAPIs(BuildTarget.StandaloneWindows64,new[]{GraphicsDeviceType.Direct3D11});
             PlayerSettings.graphicsJobs=false;
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone,ScriptingImplementation.Mono2x);
-            var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=scenes,locationPathName=Path.Combine(directory,"MyComputerAlive.exe"),target=BuildTarget.StandaloneWindows64,options=BuildOptions.None});
+            var result=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=scenes,locationPathName=Path.Combine(directory,"MyComputerAlive.exe"),target=BuildTarget.StandaloneWindows64,options=BuildOptions.CompressWithLz4HC});
             if(result.summary.result==BuildResult.Succeeded)
             {
                 string outputAssets=Path.Combine(directory,"MyComputerAlive_Data/StreamingAssets");
