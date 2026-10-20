@@ -23,6 +23,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         RectTransform workspace, body, timerBar, timerFill;
         TMP_Text wkTitle, wkRule, qno, lessonProgress;
+        /// <summary>Funds while teaching: the desk header shows the wallet the desk pays into, so a miss's fine is visible.</summary>
+        TMP_Text wkMoney;
         RectTransform confidenceRoot, confidenceFill, coopPanel, feedRoot, captionFocus;
         UnityEngine.UI.Slider threshold;
         RectTransform previewRoot, previewMemoryRoot, previewMemoryFill;
@@ -178,6 +180,16 @@ namespace LingGuangV05.Desktop.XingGuang
             workspace = LabelBox(ui, root, "Workspace", Vector2.zero, Vector2.one, new Vector2(HallW + ColumnGap, 0), new Vector2(-(SideW + ColumnGap), 0));
             LabelHeader(ui, workspace, "标注台", "Labelling desk", out wkTitle, out wkRule);
             UiTip.Add(wkRule, () => Sim == null ? "" : PayTip());
+            // The wallet, where the desk's own pay rules sit: teaching hides the desktop HUD, so the header carries it.
+            var headStrip = workspace.Find("Header") as RectTransform;
+            if (headStrip != null)
+            {
+                wkRule.rectTransform.offsetMax = new Vector2(-170, wkRule.rectTransform.offsetMax.y);
+                wkMoney = ui.Text(Rect("Funds", headStrip, new Vector2(0, 0), new Vector2(1, 1), new Vector2(-160, 0), new Vector2(-12, 0)), "", 15, DarkTeaching ? XgDark.Money : XgPalette.Money, TextAlignmentOptions.MidlineRight);
+                wkMoney.fontStyle = FontStyles.Bold;
+                wkMoney.textWrappingMode = TextWrappingModes.NoWrap;
+                UiTip.Add(wkMoney, "经费。答对加钱，答错、超时扣钱；科技和道具也花这笔钱。", "Funds. Right answers pay, misses and timeouts cost; tech and items spend the same wallet.");
+            }
             body = Rect("Body", workspace, Vector2.zero, Vector2.one, new Vector2(1, 38), new Vector2(-1, -35));
             BuildFeed(body);
             BuildFrozenBanner(body);
@@ -610,9 +622,21 @@ namespace LingGuangV05.Desktop.XingGuang
             Refresh();
         }
 
+        /// <summary>Keeps the desk header's wallet line in step; the page is on screen during teaching, where the HUD is hidden.</summary>
+        void UpdateFunds()
+        {
+            if (wkMoney == null || Sim == null) return;
+            var ink = DarkTeaching ? XgDark.Money : XgPalette.Money;
+            string text = "¥ " + Money(Host.Money);
+            if (wkMoney.text == text && wkMoney.color == ink) return;
+            wkMoney.text = text;
+            wkMoney.color = ink;
+        }
+
         public override void Tick(float dt)
         {
             if(teachingReviewOverlay!=null&&teachingReviewOverlay.gameObject.activeInHierarchy)return;
+            UpdateFunds();
             RefreshVisibleHall();
             // The setup arms this window; start its clock only after an actual rendered, usable teaching card.
             if (lessonPresented && Time.frameCount > lessonPresentedFrame && host.Visible && FrontWindow()

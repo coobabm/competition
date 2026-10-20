@@ -146,6 +146,21 @@ namespace LingGuangV05.Desktop.XingGuang
         public void OnCancel(BaseEventData e) { dragged = true; node.OnCancel(e); }
     }
 
+    /// <summary>
+    /// The card's own price row (「¥ 3.0 · 点击价格购买」) buys the square it describes. The card is drawn above the
+    /// square and its price row covers the square's row, so without this the one row the text points at does nothing.
+    /// </summary>
+    public sealed class XgTechTipPriceAction : MonoBehaviour, IPointerClickHandler
+    {
+        public XgTechTreePage page;
+        public void OnPointerClick(PointerEventData e)
+        {
+            if (page == null || e.button != PointerEventData.InputButton.Left || e.dragging) return;
+            var shown = page.DetailShown;
+            if (shown != null) page.Click(shown);
+        }
+    }
+
     // One watcher for this page, including CanvasGroup-hidden windows where Tick is paused.
     // Do not add per-frame MonoBehaviour callbacks to every generated technology node.
     internal sealed class XgTechMotionWatch : MonoBehaviour
@@ -196,6 +211,8 @@ namespace LingGuangV05.Desktop.XingGuang
         float tipShowAt = -1;
         bool explanationPinned;
         XgTechNodeView detailShown;
+        /// <summary>The square whose card is on screen; the card's price row buys for it.</summary>
+        internal XgTechNodeView DetailShown => detailShown;
         /// <summary>The explanation can be scrolled and closed; placement leaves its node's purchase row clear.</summary>
         CanvasGroup tipGroup;
         XgBtn tipClose;
@@ -586,7 +603,8 @@ namespace LingGuangV05.Desktop.XingGuang
             tipBody.lineSpacing = -6;
             Divider();
             var bar = Rect("CostBG", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-            tipCostBar = Panel(bar, XgDark.Bad); tipCostBar.sprite = skin.fill; tipCostBar.raycastTarget = false;
+            tipCostBar = Panel(bar, XgDark.Bad); tipCostBar.sprite = skin.fill; tipCostBar.raycastTarget = true;
+            bar.gameObject.AddComponent<XgTechTipPriceAction>().page = this;
             tipCostLayout = bar.gameObject.AddComponent<LayoutElement>();
             tipCostLayout.preferredHeight = 28;
             tipCost = ui.Text(Rect("Cost", bar, Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0)), "", 16, Color.white, TextAlignmentOptions.Center);
