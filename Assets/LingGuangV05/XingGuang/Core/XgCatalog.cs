@@ -584,7 +584,7 @@ namespace LingGuangV05.XingGuang
             new XgContract { id = "homework", client = "家教网站", clientEn = "Tutoring site", job = "作业是非题自动批改", jobEn = "Homework auto-marking", dataset = "logic", threshold = .75, income = 1.5, signBonus = 300 },
             new XgContract { id = "civilexam", client = "考公培训班", clientEn = "Civil-service prep school", job = "判断推理陪练", jobEn = "Reasoning drills", dataset = "logic", threshold = .88, income = 7, signBonus = 1500 },
             new XgContract { id = "danmaku", client = "某弹幕网站", clientEn = "A danmaku video site", job = "弹幕情绪审核", jobEn = "Comment moderation", dataset = "danmu", threshold = .85, income = .75, signBonus = 150 },
-            new XgContract { id = "antifraud", client = "市反诈中心", clientEn = "City anti-fraud centre", job = "诈骗短信拦截", jobEn = "Scam SMS filtering", dataset = "spam", threshold = .92, income = 1, signBonus = 250 },
+            new XgContract { id = "antifraud", client = "市反诈中心", clientEn = "City anti-fraud centre", job = "诈片短信拦截", jobEn = "Scam SMS filtering", dataset = "spam", threshold = .92, income = 1, signBonus = 250 },
             new XgContract { id = "clickbait", client = "某浏览器资讯频道", clientEn = "A browser news feed", job = "标题党降权", jobEn = "Clickbait demotion", dataset = "headline", threshold = .85, income = 2, signBonus = 400 },
             new XgContract { id = "fakereview", client = "电商平台风控部", clientEn = "Marketplace risk team", job = "刷单评论识别", jobEn = "Fake-review detection", dataset = "review", threshold = .85, income = 3.5, signBonus = 800 },
             new XgContract { id = "ime", client = "某输入法", clientEn = "A pinyin IME", job = "联想词推荐", jobEn = "Next-word suggestions", dataset = "news", threshold = .45, income = 2, signBonus = 450 },

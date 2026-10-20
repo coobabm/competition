@@ -1639,13 +1639,13 @@
       ],
       "who": "摆渡新闻",
       "whoEn": "Bodu News",
-      "title": "电信诈骗新闻",
+      "title": "电信诈片新闻",
       "titleEn": "Telecom fraud in the news",
-      "body": "新闻：大学生被电信诈骗骗走学费。全国开始严打。",
+      "body": "新闻：大学生被电信诈片骗走学费。全国开始严打。",
       "bodyEn": "News: a student loses her tuition to a phone scam. A national crackdown begins.",
       "choices": [
         {
-          "label": "多教它几条诈骗短信",
+          "label": "多教它几条诈片短信",
           "labelEn": "Teach it more scam texts",
           "effects": {
             "samples": 100
@@ -1992,7 +1992,7 @@
           "resultEn": "Safety first."
         },
         {
-          "label": "赌一把",
+          "label": "堵一把",
           "labelEn": "Risk it",
           "effects": {
             "noise": 20

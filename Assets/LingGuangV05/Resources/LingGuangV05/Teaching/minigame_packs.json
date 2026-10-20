@@ -3,7 +3,7 @@
   "packs": [
     { "id": "spam_swipe", "name": "划短信", "nameEn": "Swipe the texts", "dataset": "spam", "stage": 1, "needs": "", "buy": false, "status": "existing",
       "play": "短信一条条从上面掉下来，左划是垃圾短信，右划是正常。越到后面掉得越快。", "playEn": "Texts fall one by one: swipe left for spam, right for genuine. They fall faster as you go.",
-      "fun": "连击时手机震一下；漏掉的诈骗短信会「叮」地落进表姐的收件箱。" },
+      "fun": "连击时手机震一下；漏掉的诈片短信会「叮」地落进表姐的收件箱。" },
     { "id": "arith_mole", "name": "算术打地鼠", "nameEn": "Whack-a-sum", "dataset": "arith", "stage": 1, "needs": "", "buy": false, "status": "existing",
       "play": "地洞里冒出带算式的地鼠（7+5=12），算对的敲，算错的放过。", "playEn": "Moles pop up wearing sums (7+5=12): whack the right ones, leave the wrong ones.",
       "fun": "敲错一只，它会龇牙；连敲十只，出一只金地鼠，分数翻倍。" },

@@ -51,7 +51,7 @@ namespace LingGuangV05.Desktop.Casino
             PrologueDesk.Fill(scamClosed, ClosedPaper).raycastTarget = true;
             Label("Closed Title", scamClosed, 0, 190, 1120, 60, T("该网站已无法访问", "This site can no longer be reached"), 40, ClosedInk, TextAlignmentOptions.Center);
             Label("Closed Body", scamClosed, 160, 270, 800, 90,
-                T("888.vip 涉嫌网络赌博、诈骗，已被查封。\n如遇网络诈骗，请及时报警。", "888.vip has been shut down for illegal gambling and fraud.\nIf you have been defrauded online, report it to the police."),
+                T("888.vip 涉嫌网络堵博、诈片，已被查封。\n如遇网络诈片，请及时报警。", "888.vip has been shut down for illegal gambling and fraud.\nIf you have been defrauded online, report it to the police."),
                 20, ClosedInk, TextAlignmentOptions.Center);
             Label("Closed Fiction", scamClosed, 0, 600, 1120, 26, T("（游戏内虚构网站）", "(A fictional in-game site)"), 13, ClosedMuted, TextAlignmentOptions.Center);
             LingGuangV05.Runtime.AiContentNotice.CreateFooter(scamClosed, font, ClosedInk, 4);

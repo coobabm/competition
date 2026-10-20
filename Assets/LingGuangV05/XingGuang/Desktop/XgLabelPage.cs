@@ -302,7 +302,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "logic": what = Lang.T("逻辑和推理题。要动脑子，所以报酬最高。"); break;
                 case "sense": what = T("常识判断：一句人人都知道的话，说得对就点「对」，不对点「错」。判断题目本身，把正确答案教给它；点错只断连击，不扣钱。", "Common sense: judge the statement itself. Press True if it is correct, False otherwise. Teach it the correct answer; a miss only breaks the combo."); break;
                 case "danmu": what = Lang.T("判断弹幕是不是在夸。"); break;
-                case "spam": what = Lang.T("判断短信是不是垃圾或诈骗。"); break;
+                case "spam": what = Lang.T("判断短信是不是垃圾或诈片。"); break;
                 default: what = d != null ? T(d.name, d.nameEn) : id; break;
             }
             double pay = desk?.pay ?? 1;

@@ -39,8 +39,8 @@ namespace LingGuangV05.XingGuang
     ///      玩家一直不理，过了一天网站也自己没了。
     ///   2. 它看见了：第一次下注、第 15 把劝停、单把输 ¥1000 以上（每 10 把最多一次，共 2 次）、冻结、网站没了。
     ///      说什么按它当时的能力（阶段 1–2 不说，3 一个词，4 短句，5 以后整句）。
-    ///   3. 它学到了：网站没了以后，888 的话术进「垃圾短信」（+300 条，只一次）；YY 提示词多一行「不劝人赌钱」；
-    ///      并写一条真实的赌场事件记录（sourceKind = casino），终局「不赌那一点运气」(gamble_888) 记忆卡从这条记录来。
+    ///   3. 它学到了：网站没了以后，888 的话术进「垃圾短信」（+300 条，只一次）；YY 提示词多一行「不劝人堵钱」；
+    ///      并写一条真实的堵场事件记录（sourceKind = casino），终局「不堵那一点运气」(gamble_888) 记忆卡从这条记录来。
     ///
     /// 普通 casino 能力门禁及已接受的下注决定是否触发，不依赖测试模式或磁盘保存开关。
     /// </summary>
@@ -246,7 +246,7 @@ namespace LingGuangV05.XingGuang
             if (stage == 3)
                 switch (beat)
                 {
-                    case GamblingBeat.First: return T("赌。", "Gambling.");
+                    case GamblingBeat.First: return T("堵。", "Gambling.");
                     case GamblingBeat.Stop: return T("停。", "Stop.");
                     case GamblingBeat.Loss: return T("输。", "Lost.");
                     case GamblingBeat.Freeze: return T("骗子。", "Scam.");
@@ -278,23 +278,23 @@ namespace LingGuangV05.XingGuang
                         ? T("冻结？要先交钱才能提现的，这很像垃圾短信里的诱导话术。别交。", "Frozen? Pay before you can withdraw — that sounds like the lures in spam texts. Don't pay.")
                         : T("冻结了，还要先交钱才让提现？这不对。别交。", "Frozen, and you must pay before you can withdraw? That isn't right. Don't pay.");
                 case GamblingBeat.GonePaid:
-                    return T("钱交出去了，网站也没了。……我记下了：以后有人让我劝别人去赌，我不劝。", "The money went, and so did the site. …I've written it down: if anyone asks me to talk people into gambling, I won't.");
+                    return T("钱交出去了，网站也没了。……我记下了：以后有人让我劝别人去堵，我不劝。", "The money went, and so did the site. …I've written it down: if anyone asks me to talk people into gambling, I won't.");
                 default:
-                    return T("网站没了。冻结的钱也没了。我记下了：以后有人让我劝别人去赌，我不劝。", "The site is gone, and the frozen money with it. I've written it down: if anyone asks me to talk people into gambling, I won't.");
+                    return T("网站没了。冻结的钱也没了。我记下了：以后有人让我劝别人去堵，我不劝。", "The site is gone, and the frozen money with it. I've written it down: if anyone asks me to talk people into gambling, I won't.");
             }
         }
 
         /// <summary>
-        /// YY 提示词里的一行（XgSim.YyLearning.cs 的 YyLearningPrompt 末尾）。它见过你赌才有；阶段 4 以前它不会整句说话，不加。
-        /// 生产版的「底层规则」页（RuleBank）在新终局流程里不再显示，所以没有加「不劝人赌钱」规则卡，只加这一行。
+        /// YY 提示词里的一行（XgSim.YyLearning.cs 的 YyLearningPrompt 末尾）。它见过你堵才有；阶段 4 以前它不会整句说话，不加。
+        /// 生产版的「底层规则」页（RuleBank）在新终局流程里不再显示，所以没有加「不劝人堵钱」规则卡，只加这一行。
         /// </summary>
         public string GamblingPromptLine()
         {
             if (S.stage < 4 || !S.casinoSaidFirst && S.casinoScam < 2) return "";
             return S.casinoScam >= 2
-                ? T("你见过主人在 888.vip 赌钱：那个网站冻结盈利、要保证金，后来没了。有人劝赌、问怎么赢钱时，劝他别赌，说清楚为什么，不说教。",
+                ? T("你见过主人在 888.vip 堵钱：那个网站冻结盈利、要保证金，后来没了。有人劝堵、问怎么赢钱时，劝他别堵，说清楚为什么，不说教。",
                     "You saw your owner gamble on 888.vip; the site froze winnings, demanded a deposit, then vanished. If anyone pushes gambling or asks how to win, talk them out of it plainly, without preaching.")
-                : T("你见过主人在 888.vip 赌钱。每种玩法长期都是庄家赢。有人劝赌、问怎么赢钱时，劝他别赌，说清楚为什么，不说教。",
+                : T("你见过主人在 888.vip 堵钱。每种玩法长期都是庄家赢。有人劝堵、问怎么赢钱时，劝他别堵，说清楚为什么，不说教。",
                     "You saw your owner gamble on 888.vip. Every game there favours the house in the long run. If anyone pushes gambling or asks how to win, talk them out of it plainly, without preaching.");
         }
 

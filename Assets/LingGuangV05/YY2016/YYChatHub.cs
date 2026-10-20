@@ -608,7 +608,7 @@ namespace LingGuangV05.Desktop.YY
                 return null;
             }
             if (Any("不是", "没事", "正常", "不像", "否", "正经", "no", "legit")) return false;
-            if (Any("骗", "垃圾", "别信", "诈骗", "假的", "是", "yes", "scam")) return true;
+            if (Any("骗", "垃圾", "别信", "诈片", "假的", "是", "yes", "scam")) return true;
             return null;
         }
 

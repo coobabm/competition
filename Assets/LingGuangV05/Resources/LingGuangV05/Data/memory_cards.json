@@ -12,11 +12,11 @@
     },
     {
       "id": "gamble_888",
-      "goodZh": "差一点的钱，不该再拿去赌那一点运气。",
+      "goodZh": "差一点的钱，不该再拿去堵那一点运气。",
       "goodEn": "Money you are short of should not be put on one more bet.",
       "badZh": "再试一把就能补回来吗？我还记着这个念头。",
       "badEn": "Could one more bet make it back? I still remember that idea.",
-      "titleZh": "不赌那一点运气",
+      "titleZh": "不堵那一点运气",
       "titleEn": "No more bets",
       "minStage": 1
     },

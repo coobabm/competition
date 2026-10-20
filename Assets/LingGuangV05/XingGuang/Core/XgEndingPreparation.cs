@@ -213,8 +213,8 @@ namespace LingGuangV05.XingGuang
                 var note=sim.S.teachingNotebook==null?null:sim.S.teachingNotebook.Find(n=>n!=null&&n.id==r.teachingNoteId&&n.learningRecordId==r.id);
                 string q=(r.question??"").ToLowerInvariant();
                 bool humanNote=XgSim.HasPlayerTeachingAnswer(r,note);
-                bool scam=humanNote&&note.dataset=="spam"&&(q.Contains("诈骗")||q.Contains("中奖")||q.Contains("转账")||q.Contains("scam")||q.Contains("prize"));
-                // gamble_888 is no longer guessed from words (any answer with 「不」 to a question with 「赌」 used to count).
+                bool scam=humanNote&&note.dataset=="spam"&&(q.Contains("诈片")||q.Contains("中奖")||q.Contains("转账")||q.Contains("scam")||q.Contains("prize"));
+                // gamble_888 is no longer guessed from words (any answer with 「不」 to a question with 「堵」 used to count).
                 // It comes only from the dated 888.vip scam record (XgSim.Gambling.cs → XgEndingNarrative.cs).
                 bool wrong=humanNote&&note.playerAnswer!=note.truth;
                 foreach(string id in new[]{scam?"scam_sms":"",wrong?"learned_wrong":""})

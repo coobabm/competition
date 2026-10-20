@@ -135,7 +135,7 @@ namespace LingGuangV05.XingGuang
         static readonly object[][] JunkPacks =
         {
             new object[] { "spam", .3, 201606, "垃圾短信样本包（某手机卫士用户举报汇总）", "Spam SMS dump (phone-guard user reports)",
-                "用户举报的短信，顺手把催缴话费的也当成了诈骗。", "Messages users reported; phone-bill reminders got reported as scams too." },
+                "用户举报的短信，顺手把催缴话费的也当成了诈片。", "Messages users reported; phone-bill reminders got reported as scams too." },
             new object[] { "mnist", .3, 201607, "手写数字扫描件 12 万张（补习班作业本）", "120k scanned digits (cram-school workbooks)",
                 "补习班的作业本拍照切图，答案是按老师批改抄的，红笔叉也算数。", "Workbook photos cut into digits; labels copied from the teacher's marking, red crosses included." },
             new object[] { "danmu", .35, 201607, "弹幕全量爬取包，按点赞数打的标", "Full danmaku crawl, labelled by likes",

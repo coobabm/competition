@@ -48,7 +48,7 @@ namespace LingGuangV05.Desktop.Casino
         {
             switch (id)
             {
-                case "slots": return Lang.T("幸运老虎机");
+                case "slots": return Lang.T("幸运老唬机");
                 case "dice": return Lang.T("骰子大小");
                 case "roulette": return Lang.T("欧式轮盘");
                 case "blackjack": return Lang.T("21 点");
@@ -161,7 +161,7 @@ namespace LingGuangV05.Desktop.Casino
             history = Label("Recent Results", board, 26, 575, 1070, 28, "", 14, Muted, TextAlignmentOptions.TopLeft);
             AiContentNotice.CreateFooter(board, font, Muted, 39, 14);
             PrologueDesk.Fill(Rect("Footer Line", board, 24, 620, 1072, 1), Burgundy, false);
-            Label("Notice", board, 24, 628, 1072, 25, Lang.T("虚构游戏支线 · 无充值提现 · 单局有输有赢，长期赔率仍略偏向庄家 · 别拿电费试手气 · 未满 18 岁请勿赌博"), 13, Muted, TextAlignmentOptions.Center);
+            Label("Notice", board, 24, 628, 1072, 25, Lang.T("虚构游戏支线 · 无充值提现 · 单局有输有赢，长期赔率仍略偏向庄家 · 别拿电费试手气 · 未满 18 岁请勿堵博"), 13, Muted, TextAlignmentOptions.Center);
             EnsureEffects(); BuildArena(); BuildScam();
         }
 
