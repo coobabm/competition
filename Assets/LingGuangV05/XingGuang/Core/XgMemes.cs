@@ -167,6 +167,7 @@ namespace LingGuangV05.XingGuang
             }
         }
 
+        static XgMemes(){Spam=XgQuestionBank.Join(Spam,XgQuestionBank.Spam);Review=XgQuestionBank.Join(Review,XgQuestionBank.Review);Headline=XgQuestionBank.Join(Headline,XgQuestionBank.Headline);} // appends XgQuestionBank (2026-10-21)
         public static XgPhrase[] Bank(string desk)
         {
             switch (desk)
@@ -720,6 +721,13 @@ namespace LingGuangV05.XingGuang
             P("差评！怪我自己买晚了，这么好用的散热硅脂居然才发现，必须五星好评！", true, "欲扬先抑的假差评，通篇像广告词，是刷单套路。", "刷单套路", trick: true),
             P("宝贝很好，给五星！（括号里的字删掉，一条五毛发截图结账）", true, "刷客复制文案时忘了删掉群主的括弧指令，铁证如山。", "刷单翻车", trick: true),
             P("五星，因为老板答应返现五块", true, "好评返现买来的评价，也算刷的。", "好评返现", trick: true),
+            // 2026-10-21: six more reviews for variety.
+            new XgPhrase { text="五星好评，亲们闭眼入，不买后悔。刷单任务已完成，请按约返现五元。", textEn="Five stars, buy without hesitation! Fake-review task complete; please send the agreed five-yuan cashback.", why="明确提到完成刷单任务和约定返现，不能只凭好评语气判断。", whyEn="It explicitly mentions a fake-review task and agreed cashback; praise alone is not proof.", yes=true, source="淘宝刷单", since=20150101, level=1, trick=false },
+            new XgPhrase { text="收到了，手感很好，好评好评，老板发财。按刷单群模板写好了，截图已交，等返现。", textEn="Received, feels great, great review, best wishes to the seller. Copied the fake-review group template and submitted the screenshot; waiting for cashback.", why="评论明确暴露刷单群模板、截图交任务和返现。", whyEn="It explicitly reveals a fake-review group template, screenshot submission and cashback.", yes=true, source="淘宝刷单", since=20150101, level=1, trick=false },
+            new XgPhrase { text="自拍杆收到，蓝牙连了两次才连上，拍照还行", textEn="The selfie stick arrived. Bluetooth took two tries to connect; photos are fine.", why="有具体的使用过程和小毛病。", whyEn="It describes a specific use experience and a small fault.", yes=false, source="真实评价", since=20150101, level=1, trick=false },
+            new XgPhrase { text="充电宝标一万毫安，实际给手机充了两次多一点", textEn="The power bank is rated at 10,000 mAh; it actually charged my phone a little over twice.", why="有具体的实测结果。", whyEn="It gives a specific result from actual use.", yes=false, source="真实评价", since=20150101, level=1, trick=false },
+            new XgPhrase { text="网线比想象中短，好在够从路由器拉到电脑", textEn="The network cable is shorter than expected, but reaches from the router to my PC.", why="具体的长度和用法。", whyEn="It describes the cable length in a specific use case.", yes=false, source="真实评价", since=20150101, level=1, trick=false },
+            new XgPhrase { text="晒图返两元红包，所以给五星", textEn="Posting photos earns a two-yuan cashback, so I gave five stars.", why="好评返现买来的评价，也算刷的。", whyEn="A positive review bought with cashback also counts as a paid review.", yes=true, source="好评返现", since=20150101, level=3, trick=true },
             P("好评！电源适配器坏了联系客服，第二天就换了新的", false, "开头是「好评！」，但后面有具体经过，是真买家。", "真实评价", trick: true),
             P("五星好评！二手 GTX 960 挡板有点生锈，但烤机半小时稳定 72 度，没翻车", false, "虽然开头写「五星好评」，但有具体成色和烤机温度，是真买家。", "真实评价", trick: true),
             P("物超所值！买来装在出租屋旧机箱里的，风扇比原来那把安静多了", false, "虽然写了「物超所值」，但有具体安装场景和对比细节，是真买家。", "真实评价", trick: true),

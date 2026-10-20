@@ -1,0 +1,482 @@
+[
+ {
+  "zh": "我每天放学后写作业。",
+  "en": "I do my homework after school every day.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "双十一我买了一件羽绒服。",
+  "en": "I bought a down jacket on Double Eleven.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "他用微信给我发了一个红包。",
+  "en": "He sent me a red packet on WeChat.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "坐高铁从北京到上海只要五个小时。",
+  "en": "The high-speed train from Beijing to Shanghai takes only five hours.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我的电脑中病毒了。",
+  "en": "My computer has a virus.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "妈妈让我少玩游戏。",
+  "en": "Mom told me to play fewer games.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我们班明天考数学。",
+  "en": "Our class has a math test tomorrow.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "他在 QQ 上给我留言了。",
+  "en": "He left me a message on QQ.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "傅园慧在里约奥运会上很受欢迎。",
+  "en": "Fu Yuanhui was very popular at the Rio Olympics.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "这台笔记本电脑太重了。",
+  "en": "This laptop is too heavy.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "网吧里烟味很大。",
+  "en": "The internet cafe smells strongly of smoke.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我把照片存在 U 盘里了。",
+  "en": "I saved the photos on the USB drive.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "周末我想睡个懒觉。",
+  "en": "I want to sleep in this weekend.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我的快递被别人拿走了。",
+  "en": "Someone took my package.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "这个软件要重启才能完成更新。",
+  "en": "This software needs a restart to finish updating.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "中国女排拿了奥运金牌。",
+  "en": "The Chinese women's volleyball team won Olympic gold.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "他忘了带作业本。",
+  "en": "He forgot to bring his exercise book.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "路由器坏了，家里没有网。",
+  "en": "The router is broken, so we have no internet at home.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我们坐地铁去火车站吧。",
+  "en": "Let's take the subway to the train station.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "这部手机的电池不太耐用。",
+  "en": "This phone's battery doesn't last long.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "老师让我们背二十个单词。",
+  "en": "The teacher asked us to memorize twenty words.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我在淘宝上买了一个鼠标。",
+  "en": "I bought a mouse on Taobao.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "外面太冷了，多穿点衣服。",
+  "en": "It's too cold outside, so wear more clothes.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "爸爸每天晚上看新闻。",
+  "en": "Dad watches the news every evening.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "请把文件发到我的邮箱。",
+  "en": "Please send the file to my email.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "这道题我不会做。",
+  "en": "I can't solve this problem.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "他的电脑开机很慢。",
+  "en": "His computer takes a long time to start up.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我们中秋节吃月饼。",
+  "en": "We eat mooncakes at the Mid-Autumn Festival.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我的手机快没电了。",
+  "en": "My phone is almost out of battery.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "下课铃响了。",
+  "en": "The bell rang for the end of class.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "奶奶学会了用微信视频聊天。",
+  "en": "Grandma learned to video chat on WeChat.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我国庆节在家打了七天游戏。",
+  "en": "I played games at home for the whole National Day week.",
+  "grade": 0,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我每天早上七点起床。",
+  "en": "I get up at eight every morning.",
+  "grade": 1,
+  "wrongWord": 4
+ },
+ {
+  "zh": "我的电脑有八个 G 的内存。",
+  "en": "My computer has sixteen gigabytes of memory.",
+  "grade": 1,
+  "wrongWord": 3
+ },
+ {
+  "zh": "我在网上买了两本书。",
+  "en": "I bought three books online.",
+  "grade": 1,
+  "wrongWord": 2
+ },
+ {
+  "zh": "他住在我家楼上。",
+  "en": "He lives downstairs from me.",
+  "grade": 1,
+  "wrongWord": 2
+ },
+ {
+  "zh": "请把窗户打开。",
+  "en": "Please close the window.",
+  "grade": 1,
+  "wrongWord": 1
+ },
+ {
+  "zh": "我妹妹喜欢画画。",
+  "en": "My brother likes drawing.",
+  "grade": 1,
+  "wrongWord": 1
+ },
+ {
+  "zh": "快递员下午三点来。",
+  "en": "The courier comes at three in the morning.",
+  "grade": 1,
+  "wrongWord": 7
+ },
+ {
+  "zh": "我们坐高铁去杭州。",
+  "en": "We are taking the high-speed train to Suzhou.",
+  "grade": 1,
+  "wrongWord": 7
+ },
+ {
+  "zh": "他用键盘打字很快。",
+  "en": "He types fast on the mouse.",
+  "grade": 1,
+  "wrongWord": 5
+ },
+ {
+  "zh": "冰箱里有牛奶。",
+  "en": "There is juice in the fridge.",
+  "grade": 1,
+  "wrongWord": 2
+ },
+ {
+  "zh": "我的生日在十二月。",
+  "en": "My birthday is in November.",
+  "grade": 1,
+  "wrongWord": 4
+ },
+ {
+  "zh": "老师在黑板上写字。",
+  "en": "The teacher writes on the window.",
+  "grade": 1,
+  "wrongWord": 5
+ },
+ {
+  "zh": "我把手机落在出租车上了。",
+  "en": "I left my phone on a bus.",
+  "grade": 1,
+  "wrongWord": 6
+ },
+ {
+  "zh": "我们学校有两千个学生。",
+  "en": "Our school has two hundred students.",
+  "grade": 1,
+  "wrongWord": 4
+ },
+ {
+  "zh": "他左手受伤了。",
+  "en": "He hurt his right hand.",
+  "grade": 1,
+  "wrongWord": 3
+ },
+ {
+  "zh": "我昨天去了图书馆。",
+  "en": "I went to the library tomorrow.",
+  "grade": 1,
+  "wrongWord": 5
+ },
+ {
+  "zh": "姐姐在上海工作。",
+  "en": "My sister works in Beijing.",
+  "grade": 1,
+  "wrongWord": 4
+ },
+ {
+  "zh": "这台显示器是二十四英寸的。",
+  "en": "This monitor is twenty-seven inches.",
+  "grade": 1,
+  "wrongWord": 3
+ },
+ {
+  "zh": "我给猫买了猫粮。",
+  "en": "I bought dog food for the cat.",
+  "grade": 1,
+  "wrongWord": 2
+ },
+ {
+  "zh": "下周五放假。",
+  "en": "We have a day off next Monday.",
+  "grade": 1,
+  "wrongWord": 6
+ },
+ {
+  "zh": "他每天坐公交车上学。",
+  "en": "He goes to school by plane every day.",
+  "grade": 1,
+  "wrongWord": 5
+ },
+ {
+  "zh": "我每天喝八杯水。",
+  "en": "I drink eight cups of coffee a day.",
+  "grade": 1,
+  "wrongWord": 5
+ },
+ {
+  "zh": "我的 QQ 有三百个好友。",
+  "en": "I have three hundred friends on WeChat.",
+  "grade": 1,
+  "wrongWord": 6
+ },
+ {
+  "zh": "电影七点半开始。",
+  "en": "The movie ends at seven thirty.",
+  "grade": 1,
+  "wrongWord": 2
+ },
+ {
+  "zh": "请往左转。",
+  "en": "Please turn right.",
+  "grade": 1,
+  "wrongWord": 2
+ },
+ {
+  "zh": "我用 U 盘拷贝了文件。",
+  "en": "I copied the files with a printer.",
+  "grade": 1,
+  "wrongWord": 6
+ },
+ {
+  "zh": "他在里约奥运会上拿了银牌。",
+  "en": "He won a gold medal at the Rio Olympics.",
+  "grade": 1,
+  "wrongWord": 3
+ },
+ {
+  "zh": "我哥哥比我高。",
+  "en": "My brother is shorter than me.",
+  "grade": 1,
+  "wrongWord": 3
+ },
+ {
+  "zh": "我们周六去爬山。",
+  "en": "We are going hiking on Sunday.",
+  "grade": 1,
+  "wrongWord": 5
+ },
+ {
+  "zh": "这家网吧一个小时三块钱。",
+  "en": "This internet cafe charges five yuan an hour.",
+  "grade": 1,
+  "wrongWord": 4
+ },
+ {
+  "zh": "桌子上有一个苹果。",
+  "en": "There is a banana on the table.",
+  "grade": 1,
+  "wrongWord": 3
+ },
+ {
+  "zh": "我晚上十点睡觉。",
+  "en": "I go to bed at ten in the morning.",
+  "grade": 1,
+  "wrongWord": 8
+ },
+ {
+  "zh": "我非常喜欢这部电影。",
+  "en": "I really hate this movie.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "请不要在这里抽烟。",
+  "en": "Please smoke here.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "他这次考试考得很好。",
+  "en": "He failed the exam this time.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "外面阳光很好。",
+  "en": "It's raining heavily outside.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我已经吃过晚饭了。",
+  "en": "I haven't had dinner yet.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "这台电脑很便宜。",
+  "en": "This computer is very expensive.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "网速太慢了。",
+  "en": "The internet is super fast.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "他是我最好的朋友。",
+  "en": "He is my worst enemy.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我明天要去医院看牙。",
+  "en": "I bought a new phone yesterday.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "出门记得关灯。",
+  "en": "Remember to buy a lamp.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "她赢了比赛。",
+  "en": "She lost the game.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "双十一的快递还没到。",
+  "en": "My Double Eleven parcels arrived early.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "我每天坚持跑步。",
+  "en": "I never exercise.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "这道题很简单。",
+  "en": "This question is extremely difficult.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "红包里只有一分钱。",
+  "en": "The red packet was full of money.",
+  "grade": 2,
+  "wrongWord": -1
+ },
+ {
+  "zh": "别把密码告诉别人。",
+  "en": "Tell everyone your password.",
+  "grade": 2,
+  "wrongWord": -1
+ }
+]

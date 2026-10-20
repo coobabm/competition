@@ -38,7 +38,32 @@ public static class KnowledgePageRunner
         ChapterOneRuntime.VerificationSaveDirectory=Path.Combine(dir,"UnusedIsolatedSave");
         // Prevent an existing editor scene (and any real save owner in it) from being played.
         EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
-        report=NewReport();Save();EditorApplication.EnterPlaymode();
+        report=NewReport();finishing=false;Save();
+        // Startup indexing is delayed by Unity. If Play Mode starts first, a missing
+        // UserSettings/Search.index cannot be created there, and Unity 6000.4 then
+        // indexes an empty SearchDatabase list. Initialise in this process in Edit Mode.
+        Application.logMessageReceived+=Log;
+        try
+        {
+            EditorSearchWarmup.Run(); // Returns normally; this helper never exits the Editor.
+            if(!File.Exists(Path.Combine(Directory.GetCurrentDirectory(),"UserSettings","Search.index")))
+                throw new InvalidOperationException("Editor search warmup returned without its default Search.index");
+            if(report.errors.Count!=0)
+                throw new InvalidOperationException("Editor search warmup logged errors; see the batch report");
+            Debug.Log("KNOWLEDGE_SEARCH_READY: default index initialised before EnterPlaymode");
+        }
+        catch(Exception exception)
+        {
+            report.status="failed";report.failure="Edit-mode search initialisation failed: "+exception;Save();
+            string previous=SessionState.GetString(OldOverrideKey,"");
+            ChapterOneRuntime.VerificationSaveDirectory=previous.Length==0?null:previous;
+            SessionState.EraseString(OldOverrideKey);SessionState.EraseString(Key);
+            Debug.Log("Knowledge page batch FAIL: "+Path.Combine(dir,"report.json"));
+            EditorApplication.Exit(1);
+            return;
+        }
+        finally { Application.logMessageReceived-=Log; }
+        Save();EditorApplication.EnterPlaymode();
     }
     static Report NewReport()=>new Report{unityVersion=Application.unityVersion,
         enterPlayModeOptionsEnabled=EditorSettings.enterPlayModeOptionsEnabled,enterPlayModeOptions=(int)EditorSettings.enterPlayModeOptions};

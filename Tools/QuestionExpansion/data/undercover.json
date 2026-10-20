@@ -1,0 +1,1602 @@
+[
+ {
+  "zh": [
+   "包子",
+   "馒头",
+   "白白的面食，蒸熟了当早餐",
+   "里面有馅，咬开有肉或菜",
+   "里面没馅，实心可夹菜吃",
+   "馅",
+   "实心"
+  ],
+  "en": [
+   "Baozi",
+   "Mantou",
+   "White steamed dough, eaten for breakfast",
+   "Has filling, meat or veggies inside",
+   "No filling, solid, can hold side dishes",
+   "filling",
+   "solid"
+  ]
+ },
+ {
+  "zh": [
+   "油条",
+   "麻花",
+   "面粉做的油炸小吃",
+   "长长一根，配豆浆吃",
+   "拧成好几股，脆脆的",
+   "配豆浆",
+   "拧"
+  ],
+  "en": [
+   "Youtiao",
+   "Mahua",
+   "Deep-fried dough snack",
+   "One long stick, eaten with soy milk",
+   "Twisted into strands, crunchy",
+   "soy milk",
+   "twisted"
+  ]
+ },
+ {
+  "zh": [
+   "豆浆",
+   "牛奶",
+   "白色的饮料，早餐常喝",
+   "黄豆磨出来的，早餐摊现做",
+   "来自奶牛，超市卖盒装的",
+   "黄豆",
+   "奶牛"
+  ],
+  "en": [
+   "Soy milk",
+   "Milk",
+   "White drink, common at breakfast",
+   "Ground from soybeans, made fresh at stalls",
+   "From cows, sold in cartons",
+   "soybeans",
+   "cows"
+  ]
+ },
+ {
+  "zh": [
+   "橙子",
+   "橘子",
+   "橙黄色水果，里面一瓣一瓣",
+   "皮厚难剥，常用刀切开吃",
+   "皮薄好剥，用手就能剥开",
+   "切开",
+   "好剥"
+  ],
+  "en": [
+   "Orange",
+   "Mandarin",
+   "Citrus fruit with segments inside",
+   "Thick peel, usually cut with a knife",
+   "Thin peel, easy to peel by hand",
+   "cut",
+   "easy peel"
+  ]
+ },
+ {
+  "zh": [
+   "草莓",
+   "樱桃",
+   "红红的小水果，价格不便宜",
+   "表面全是小籽，没有核",
+   "有长长的梗，里面有核",
+   "小籽",
+   "梗"
+  ],
+  "en": [
+   "Strawberry",
+   "Cherry",
+   "Small red fruit, not cheap",
+   "Seeds all over the outside, no pit",
+   "Long stem, with a pit inside",
+   "seeds",
+   "stem"
+  ]
+ },
+ {
+  "zh": [
+   "粽子",
+   "青团",
+   "糯米做的传统食品",
+   "用叶子包成三角，端午吃",
+   "绿色圆团，清明前后吃",
+   "端午",
+   "清明"
+  ],
+  "en": [
+   "Zongzi",
+   "Qingtuan",
+   "Traditional food made of sticky rice",
+   "Wrapped in leaves, eaten at Dragon Boat",
+   "Green round ball, eaten around Qingming",
+   "leaves",
+   "green"
+  ]
+ },
+ {
+  "zh": [
+   "薯片",
+   "薯条",
+   "土豆做的，油炸的，咸咸的",
+   "薄薄一片，袋装的",
+   "一根一根，常蘸番茄酱",
+   "袋装",
+   "番茄酱"
+  ],
+  "en": [
+   "Potato chips",
+   "French fries",
+   "Made of potato, fried and salty",
+   "Thin slices sold in a bag",
+   "Long sticks, dipped in ketchup",
+   "bag",
+   "ketchup"
+  ]
+ },
+ {
+  "zh": [
+   "肯德基",
+   "麦当劳",
+   "卖汉堡薯条的洋快餐店",
+   "招牌是白胡子老爷爷",
+   "招牌是金色的大M",
+   "老爷爷",
+   "大M"
+  ],
+  "en": [
+   "KFC",
+   "McDonald's",
+   "Western fast food with burgers and fries",
+   "Logo is an old man with a white beard",
+   "Logo is a big golden M",
+   "old man",
+   "golden M"
+  ]
+ },
+ {
+  "zh": [
+   "拉面",
+   "米线",
+   "一碗热汤里的长条主食",
+   "面粉做的，师傅手工抻",
+   "大米做的，过桥吃法有名",
+   "面粉",
+   "大米"
+  ],
+  "en": [
+   "Hand-pulled noodles",
+   "Rice noodles",
+   "Long strands served in hot soup",
+   "Made of flour, pulled by hand",
+   "Made of rice, famous 'crossing bridge' style",
+   "flour",
+   "rice"
+  ]
+ },
+ {
+  "zh": [
+   "蛋糕",
+   "面包",
+   "烘焙店里卖的，松软香甜",
+   "过生日要插蜡烛",
+   "早餐切片，可夹火腿",
+   "蜡烛",
+   "切片"
+  ],
+  "en": [
+   "Cake",
+   "Bread",
+   "Sold at bakeries, soft and fragrant",
+   "Gets candles on birthdays",
+   "Sliced for breakfast, holds ham",
+   "candles",
+   "slices"
+  ]
+ },
+ {
+  "zh": [
+   "啤酒",
+   "白酒",
+   "含酒精，饭桌上大人喝",
+   "黄色带泡沫，一瓶一瓶喝",
+   "透明很烈，用小杯喝",
+   "泡沫",
+   "烈"
+  ],
+  "en": [
+   "Beer",
+   "Baijiu",
+   "Alcoholic, adults drink it at dinner",
+   "Yellow and foamy, drunk by the bottle",
+   "Clear and strong, drunk in tiny cups",
+   "foam",
+   "strong"
+  ]
+ },
+ {
+  "zh": [
+   "绿茶",
+   "红茶",
+   "茶叶泡的，可以热着喝",
+   "茶汤清绿，比如龙井",
+   "茶汤红亮，可以加奶",
+   "龙井",
+   "加奶"
+  ],
+  "en": [
+   "Green tea",
+   "Black tea",
+   "Brewed from tea leaves, drunk hot",
+   "Pale green brew, like Longjing",
+   "Reddish brew, can add milk",
+   "Longjing",
+   "milk"
+  ]
+ },
+ {
+  "zh": [
+   "酸奶",
+   "奶酪",
+   "牛奶发酵做成的",
+   "稠稠的，用吸管或勺子吃",
+   "一小硬块，夹在汉堡里",
+   "吸管",
+   "硬块"
+  ],
+  "en": [
+   "Yogurt",
+   "Cheese",
+   "Made by fermenting milk",
+   "Thick, eaten with a straw or spoon",
+   "Solid block, put in burgers",
+   "straw",
+   "block"
+  ]
+ },
+ {
+  "zh": [
+   "辣条",
+   "牛肉干",
+   "袋装零食，嚼着很香",
+   "面粉做的，五毛一包",
+   "肉做的，嚼起来费劲",
+   "五毛",
+   "肉"
+  ],
+  "en": [
+   "Spicy strips",
+   "Beef jerky",
+   "Packaged snack, chewy and tasty",
+   "Made of flour, fifty cents a pack",
+   "Made of meat, tough to chew",
+   "fifty cents",
+   "meat"
+  ]
+ },
+ {
+  "zh": [
+   "鸡蛋",
+   "鸭蛋",
+   "禽类下的蛋，可以煮着吃",
+   "天天吃，最常配番茄炒",
+   "常腌成咸蛋，蛋黄流油",
+   "番茄",
+   "咸蛋"
+  ],
+  "en": [
+   "Chicken egg",
+   "Duck egg",
+   "Laid by poultry, can be boiled",
+   "Eaten daily, stir-fried with tomato",
+   "Often salted, with an oily yolk",
+   "tomato",
+   "salted"
+  ]
+ },
+ {
+  "zh": [
+   "烤串",
+   "麻辣烫",
+   "街边常见，一串串小吃",
+   "在炭火上烤，撒孜然",
+   "在锅里煮，泡在汤里吃",
+   "孜然",
+   "汤"
+  ],
+  "en": [
+   "Kebabs",
+   "Malatang",
+   "Street food on skewers",
+   "Grilled over charcoal with cumin",
+   "Boiled in a pot, served in soup",
+   "cumin",
+   "soup"
+  ]
+ },
+ {
+  "zh": [
+   "汉堡",
+   "三明治",
+   "面包夹着蔬菜和肉",
+   "圆面包，快餐店常卖",
+   "方面包，常切成三角形",
+   "圆",
+   "三角"
+  ],
+  "en": [
+   "Burger",
+   "Sandwich",
+   "Bread with veggies and meat inside",
+   "Round bun, sold at fast food places",
+   "Square bread, often cut into triangles",
+   "round",
+   "triangle"
+  ]
+ },
+ {
+  "zh": [
+   "冰箱",
+   "空调",
+   "家用电器，能制冷",
+   "放食物，分冷藏冷冻",
+   "挂在墙上，吹出冷风",
+   "冷冻",
+   "冷风"
+  ],
+  "en": [
+   "Fridge",
+   "Air conditioner",
+   "Home appliance that cools",
+   "Stores food, chilled and frozen",
+   "Mounted on the wall, blows cold air",
+   "freezer",
+   "cold air"
+  ]
+ },
+ {
+  "zh": [
+   "洗衣机",
+   "洗碗机",
+   "加水自动清洗的电器",
+   "洗衣服，还能甩干",
+   "放在厨房，洗盘子",
+   "甩干",
+   "盘子"
+  ],
+  "en": [
+   "Washing machine",
+   "Dishwasher",
+   "Appliance that cleans with water",
+   "Washes clothes and spins them dry",
+   "In the kitchen, washes plates",
+   "spin",
+   "plates"
+  ]
+ },
+ {
+  "zh": [
+   "电饭煲",
+   "高压锅",
+   "厨房里做饭用的锅",
+   "插电煮米饭，能预约",
+   "放灶上，会嗤嗤喷气",
+   "预约",
+   "喷气"
+  ],
+  "en": [
+   "Rice cooker",
+   "Pressure cooker",
+   "Kitchen pot for cooking",
+   "Plugs in to cook rice, has a timer",
+   "Sits on the stove and hisses steam",
+   "timer",
+   "hiss"
+  ]
+ },
+ {
+  "zh": [
+   "微波炉",
+   "烤箱",
+   "有门的电器，能加热食物",
+   "热剩饭快，不能放金属",
+   "烤蛋糕面包，有烤盘",
+   "金属",
+   "烤盘"
+  ],
+  "en": [
+   "Microwave",
+   "Oven",
+   "Appliance with a door that heats food",
+   "Reheats leftovers fast, no metal inside",
+   "Bakes cakes and bread, has a tray",
+   "metal",
+   "baking tray"
+  ]
+ },
+ {
+  "zh": [
+   "电风扇",
+   "吹风机",
+   "插上电能吹出风",
+   "立在地上，会转头",
+   "拿在手里吹干头发",
+   "转头",
+   "头发"
+  ],
+  "en": [
+   "Electric fan",
+   "Hair dryer",
+   "Blows air when plugged in",
+   "Stands on the floor and turns its head",
+   "Held in hand to dry hair",
+   "turns",
+   "hair"
+  ]
+ },
+ {
+  "zh": [
+   "电视",
+   "投影仪",
+   "能放电影和节目",
+   "摆在客厅，遥控换台",
+   "把画面打到墙或幕布上",
+   "换台",
+   "幕布"
+  ],
+  "en": [
+   "TV",
+   "Projector",
+   "Shows movies and shows",
+   "In the living room, change channels",
+   "Casts the picture onto a wall or screen",
+   "channels",
+   "screen"
+  ]
+ },
+ {
+  "zh": [
+   "鼠标",
+   "触控板",
+   "控制电脑光标移动",
+   "握在手里，有滚轮",
+   "笔记本上，用手指滑",
+   "滚轮",
+   "手指"
+  ],
+  "en": [
+   "Mouse",
+   "Touchpad",
+   "Moves the computer cursor",
+   "Held in hand, has a scroll wheel",
+   "On laptops, slide your finger",
+   "wheel",
+   "finger"
+  ]
+ },
+ {
+  "zh": [
+   "机械键盘",
+   "薄膜键盘",
+   "电脑打字用的外设",
+   "每个键下有轴，噼啪响",
+   "按起来软，声音小",
+   "轴",
+   "软"
+  ],
+  "en": [
+   "Mechanical keyboard",
+   "Membrane keyboard",
+   "Computer typing device",
+   "Each key has a switch, clicky",
+   "Soft to press, quiet",
+   "switches",
+   "soft"
+  ]
+ },
+ {
+  "zh": [
+   "充电宝",
+   "充电器",
+   "给手机充电用的",
+   "自带电池，出门揣着",
+   "要插在墙上插座里",
+   "电池",
+   "插座"
+  ],
+  "en": [
+   "Power bank",
+   "Charger",
+   "Used to charge phones",
+   "Has its own battery, carry it out",
+   "Must plug into a wall socket",
+   "battery",
+   "socket"
+  ]
+ },
+ {
+  "zh": [
+   "打印机",
+   "复印机",
+   "办公室里出纸的机器",
+   "连电脑，把文档印出来",
+   "放上原件，照着出一份",
+   "连电脑",
+   "原件"
+  ],
+  "en": [
+   "Printer",
+   "Photocopier",
+   "Office machine that outputs paper",
+   "Connects to PC to print documents",
+   "Copies an original you put on it",
+   "PC",
+   "original"
+  ]
+ },
+ {
+  "zh": [
+   "摄像头",
+   "麦克风",
+   "视频聊天要用的电脑配件",
+   "能拍到你的脸",
+   "能录下你的声音",
+   "脸",
+   "声音"
+  ],
+  "en": [
+   "Webcam",
+   "Microphone",
+   "PC accessory for video chats",
+   "Captures your face",
+   "Records your voice",
+   "face",
+   "voice"
+  ]
+ },
+ {
+  "zh": [
+   "MP3",
+   "收音机",
+   "能听声音的小设备",
+   "存歌曲，从电脑拷歌",
+   "调频道听电台",
+   "拷歌",
+   "电台"
+  ],
+  "en": [
+   "MP3 player",
+   "Radio",
+   "Small device for listening",
+   "Stores songs copied from a PC",
+   "Tune in to stations",
+   "songs",
+   "stations"
+  ]
+ },
+ {
+  "zh": [
+   "光盘",
+   "软盘",
+   "老式存储，插进电脑读",
+   "圆圆亮亮，会反光",
+   "方方的，容量很小",
+   "反光",
+   "方"
+  ],
+  "en": [
+   "CD",
+   "Floppy disk",
+   "Old storage read by a PC",
+   "Round and shiny, reflects light",
+   "Square, tiny capacity",
+   "shiny",
+   "square"
+  ]
+ },
+ {
+  "zh": [
+   "淘宝",
+   "京东",
+   "网上购物平台",
+   "阿里巴巴的，店家特别多",
+   "自营送货快，吉祥物是狗",
+   "阿里",
+   "狗"
+  ],
+  "en": [
+   "Taobao",
+   "JD.com",
+   "Online shopping platform",
+   "Alibaba's, has tons of shops",
+   "Fast own delivery, dog mascot",
+   "Alibaba",
+   "dog"
+  ]
+ },
+ {
+  "zh": [
+   "百度",
+   "谷歌",
+   "搜索引擎，输入关键词查",
+   "国内常用，标志是熊掌",
+   "国外常用，彩色字母标志",
+   "熊掌",
+   "彩色字母"
+  ],
+  "en": [
+   "Baidu",
+   "Google",
+   "Search engine, type keywords",
+   "Common in China, paw-print logo",
+   "Common abroad, colorful letter logo",
+   "paw",
+   "colorful"
+  ]
+ },
+ {
+  "zh": [
+   "知乎",
+   "贴吧",
+   "网上提问讨论的社区",
+   "问答为主，常说“谢邀”",
+   "按兴趣分吧，有吧主",
+   "谢邀",
+   "吧主"
+  ],
+  "en": [
+   "Zhihu",
+   "Tieba",
+   "Online community for discussion",
+   "Q&A based, 'thanks for the invite'",
+   "Split by interests, with moderators",
+   "Q&A",
+   "moderators"
+  ]
+ },
+ {
+  "zh": [
+   "优酷",
+   "爱奇艺",
+   "看视频的网站",
+   "和土豆网合并了",
+   "百度旗下，绿色标志",
+   "土豆",
+   "绿色"
+  ],
+  "en": [
+   "Youku",
+   "iQiyi",
+   "Video streaming site",
+   "Merged with Tudou",
+   "Owned by Baidu, green logo",
+   "Tudou",
+   "green"
+  ]
+ },
+ {
+  "zh": [
+   "快手",
+   "美拍",
+   "拍短视频的手机应用",
+   "老铁多，记录日常生活",
+   "美颜特效多，女生爱用",
+   "老铁",
+   "美颜"
+  ],
+  "en": [
+   "Kuaishou",
+   "Meipai",
+   "Short-video app",
+   "Lots of 'bros', everyday life",
+   "Beauty filters, popular with girls",
+   "bros",
+   "beauty"
+  ]
+ },
+ {
+  "zh": [
+   "网易云音乐",
+   "QQ音乐",
+   "手机上听歌的应用",
+   "红色图标，评论区出名",
+   "绿色图标，腾讯旗下",
+   "评论",
+   "腾讯"
+  ],
+  "en": [
+   "NetEase Music",
+   "QQ Music",
+   "Music app on your phone",
+   "Red icon, famous comments",
+   "Green icon, owned by Tencent",
+   "comments",
+   "Tencent"
+  ]
+ },
+ {
+  "zh": [
+   "滴滴",
+   "出租车",
+   "打车出行，司机送你",
+   "用手机叫车，橙色图标",
+   "路边招手拦，车顶有灯",
+   "叫车",
+   "招手"
+  ],
+  "en": [
+   "Didi",
+   "Taxi",
+   "Ride with a driver",
+   "Hail by phone app, orange icon",
+   "Wave on the street, roof light",
+   "app",
+   "wave"
+  ]
+ },
+ {
+  "zh": [
+   "美团外卖",
+   "饿了么",
+   "手机点外卖的应用",
+   "黄色主题，袋鼠吉祥物",
+   "蓝色主题，骑手穿蓝衣",
+   "袋鼠",
+   "蓝色"
+  ],
+  "en": [
+   "Meituan Waimai",
+   "Ele.me",
+   "Food delivery app",
+   "Yellow theme, kangaroo mascot",
+   "Blue theme, riders in blue",
+   "kangaroo",
+   "blue"
+  ]
+ },
+ {
+  "zh": [
+   "美图秀秀",
+   "PS",
+   "修图用的软件",
+   "手机上一键美颜",
+   "专业电脑软件，图层多",
+   "一键",
+   "图层"
+  ],
+  "en": [
+   "Meitu",
+   "Photoshop",
+   "Photo editing software",
+   "One-tap beauty on phones",
+   "Pro PC software with layers",
+   "one tap",
+   "layers"
+  ]
+ },
+ {
+  "zh": [
+   "迅雷",
+   "网盘",
+   "用来下载文件的",
+   "蓝色小鸟，下载速度快",
+   "文件存在云上，能分享",
+   "小鸟",
+   "云"
+  ],
+  "en": [
+   "Xunlei",
+   "Cloud drive",
+   "Used to download files",
+   "Blue bird icon, fast downloads",
+   "Files stored in the cloud, shareable",
+   "bird",
+   "cloud"
+  ]
+ },
+ {
+  "zh": [
+   "表情包",
+   "颜文字",
+   "聊天时表达情绪用的",
+   "是图片，比如熊猫头",
+   "用符号拼成，比如 ^_^",
+   "图片",
+   "符号"
+  ],
+  "en": [
+   "Meme sticker",
+   "Kaomoji",
+   "Used to show feelings in chat",
+   "An image, like the panda head",
+   "Made of symbols, like ^_^",
+   "image",
+   "symbols"
+  ]
+ },
+ {
+  "zh": [
+   "弹幕",
+   "评论",
+   "看视频时发表看法",
+   "从屏幕上飘过去",
+   "在视频下面一条一条",
+   "飘",
+   "下面"
+  ],
+  "en": [
+   "Danmaku",
+   "Comments",
+   "Opinions while watching videos",
+   "Float across the screen",
+   "Listed below the video",
+   "float",
+   "below"
+  ]
+ },
+ {
+  "zh": [
+   "直播",
+   "录播",
+   "网上看的视频节目",
+   "实时的，能和主播互动",
+   "提前录好，可以快进",
+   "实时",
+   "快进"
+  ],
+  "en": [
+   "Live stream",
+   "Recorded video",
+   "Video shows watched online",
+   "Real time, chat with the host",
+   "Pre-recorded, can fast-forward",
+   "real time",
+   "fast-forward"
+  ]
+ },
+ {
+  "zh": [
+   "植物大战僵尸",
+   "愤怒的小鸟",
+   "很火的休闲小游戏",
+   "种向日葵，守住草坪",
+   "用弹弓发射，砸绿猪",
+   "向日葵",
+   "弹弓"
+  ],
+  "en": [
+   "Plants vs. Zombies",
+   "Angry Birds",
+   "Popular casual game",
+   "Plant sunflowers, defend the lawn",
+   "Launch with a slingshot at green pigs",
+   "sunflowers",
+   "slingshot"
+  ]
+ },
+ {
+  "zh": [
+   "开心消消乐",
+   "俄罗斯方块",
+   "消除类游戏，停不下来",
+   "三个相同动物连一排",
+   "落下的块凑满一行",
+   "动物",
+   "一行"
+  ],
+  "en": [
+   "Happy Elimination",
+   "Tetris",
+   "Clearing game, hard to stop",
+   "Line up three same animals",
+   "Fill a row with falling blocks",
+   "animals",
+   "row"
+  ]
+ },
+ {
+  "zh": [
+   "我的世界",
+   "乐高",
+   "用方块搭建东西",
+   "电脑游戏，夜里有僵尸",
+   "塑料积木，拿在手里拼",
+   "僵尸",
+   "积木"
+  ],
+  "en": [
+   "Minecraft",
+   "LEGO",
+   "Build things with blocks",
+   "PC game, zombies at night",
+   "Plastic bricks you snap by hand",
+   "zombies",
+   "bricks"
+  ]
+ },
+ {
+  "zh": [
+   "穿越火线",
+   "CS",
+   "第一人称射击游戏",
+   "腾讯代理，网吧常见",
+   "反恐精英，老牌外国游戏",
+   "腾讯",
+   "反恐"
+  ],
+  "en": [
+   "CrossFire",
+   "Counter-Strike",
+   "First-person shooter",
+   "Run by Tencent, common in net cafés",
+   "Classic foreign game, counter-terror",
+   "Tencent",
+   "counter-terror"
+  ]
+ },
+ {
+  "zh": [
+   "斗地主",
+   "麻将",
+   "几个人一起玩的牌",
+   "三个人，一副扑克",
+   "四个人，摸牌碰杠",
+   "扑克",
+   "碰杠"
+  ],
+  "en": [
+   "Dou Dizhu",
+   "Mahjong",
+   "Game played with several players",
+   "Three players, a deck of cards",
+   "Four players, draw tiles and pong",
+   "cards",
+   "pong"
+  ]
+ },
+ {
+  "zh": [
+   "象棋",
+   "围棋",
+   "两个人对下的棋",
+   "楚河汉界，车马炮",
+   "黑白两色子，围地盘",
+   "楚河汉界",
+   "黑白"
+  ],
+  "en": [
+   "Chinese chess",
+   "Go",
+   "Board game for two",
+   "River in the middle, chariots and cannons",
+   "Black and white stones, claim territory",
+   "river",
+   "black white"
+  ]
+ },
+ {
+  "zh": [
+   "阴阳师",
+   "皇室战争",
+   "2016 年火的手机游戏",
+   "和风画面，抽式神",
+   "卡牌对战，推掉对方塔",
+   "式神",
+   "卡牌"
+  ],
+  "en": [
+   "Onmyoji",
+   "Clash Royale",
+   "Hit mobile game of 2016",
+   "Japanese style, summon shikigami",
+   "Card battles, destroy towers",
+   "shikigami",
+   "cards"
+  ]
+ },
+ {
+  "zh": [
+   "魔兽世界",
+   "梦幻西游",
+   "很多人玩的网络游戏",
+   "联盟与部落，暴雪出品",
+   "取经题材，网易出品",
+   "部落",
+   "取经"
+  ],
+  "en": [
+   "World of Warcraft",
+   "Fantasy Westward Journey",
+   "Online game played by many",
+   "Alliance and Horde, by Blizzard",
+   "Pilgrimage theme, by NetEase",
+   "Horde",
+   "pilgrimage"
+  ]
+ },
+ {
+  "zh": [
+   "图书馆",
+   "书店",
+   "有很多书的地方",
+   "借书要按时还，要安静",
+   "付钱买书，可以带走",
+   "借",
+   "买"
+  ],
+  "en": [
+   "Library",
+   "Bookstore",
+   "A place full of books",
+   "Borrow and return on time, keep quiet",
+   "Pay for books and take them home",
+   "borrow",
+   "buy"
+  ]
+ },
+ {
+  "zh": [
+   "电影院",
+   "KTV",
+   "暗暗的房间，音响很响",
+   "大银幕，买票看片",
+   "包厢里拿话筒唱歌",
+   "大银幕",
+   "唱歌"
+  ],
+  "en": [
+   "Cinema",
+   "KTV",
+   "Dark room with loud speakers",
+   "Big screen, buy a ticket",
+   "Private room, sing with a mic",
+   "big screen",
+   "singing"
+  ]
+ },
+ {
+  "zh": [
+   "超市",
+   "便利店",
+   "卖日用品和零食的店",
+   "很大，要推购物车",
+   "很小，24 小时营业",
+   "购物车",
+   "24 小时"
+  ],
+  "en": [
+   "Supermarket",
+   "Convenience store",
+   "Shop for daily goods and snacks",
+   "Big, push a shopping cart",
+   "Small, open 24 hours",
+   "cart",
+   "24 hours"
+  ]
+ },
+ {
+  "zh": [
+   "医院",
+   "诊所",
+   "生病了去看医生的地方",
+   "很大，挂号要排长队",
+   "小小的，社区楼下就有",
+   "挂号",
+   "社区"
+  ],
+  "en": [
+   "Hospital",
+   "Clinic",
+   "Where you see a doctor when sick",
+   "Huge, long queue to register",
+   "Small, right in your neighborhood",
+   "register",
+   "neighborhood"
+  ]
+ },
+ {
+  "zh": [
+   "公园",
+   "游乐园",
+   "周末带孩子玩的地方",
+   "有树有湖，大多免费",
+   "有过山车，要买门票",
+   "免费",
+   "过山车"
+  ],
+  "en": [
+   "Park",
+   "Amusement park",
+   "Where kids play on weekends",
+   "Trees and lakes, mostly free",
+   "Roller coasters, need a ticket",
+   "free",
+   "roller coaster"
+  ]
+ },
+ {
+  "zh": [
+   "地铁",
+   "公交车",
+   "城市里刷卡坐的交通",
+   "在地下跑，不堵车",
+   "在马路上开，有站牌",
+   "地下",
+   "站牌"
+  ],
+  "en": [
+   "Subway",
+   "Bus",
+   "City transit, tap a card",
+   "Runs underground, no traffic",
+   "Drives on roads, has stop signs",
+   "underground",
+   "stop signs"
+  ]
+ },
+ {
+  "zh": [
+   "动物园",
+   "水族馆",
+   "去看各种动物的地方",
+   "有老虎大象和猴子",
+   "鱼和海豚，有透明隧道",
+   "老虎",
+   "海豚"
+  ],
+  "en": [
+   "Zoo",
+   "Aquarium",
+   "A place to see animals",
+   "Tigers, elephants and monkeys",
+   "Fish and dolphins, glass tunnel",
+   "tigers",
+   "dolphins"
+  ]
+ },
+ {
+  "zh": [
+   "铅笔",
+   "圆珠笔",
+   "写字用的笔",
+   "写错能用橡皮擦掉",
+   "按一下伸出笔头，难擦",
+   "橡皮",
+   "按"
+  ],
+  "en": [
+   "Pencil",
+   "Ballpoint pen",
+   "Used for writing",
+   "Mistakes can be erased",
+   "Click to extend the tip, hard to erase",
+   "eraser",
+   "click"
+  ]
+ },
+ {
+  "zh": [
+   "班长",
+   "学习委员",
+   "班里选出的班干部",
+   "管全班纪律，喊起立",
+   "收作业，带头学习",
+   "起立",
+   "收作业"
+  ],
+  "en": [
+   "Class monitor",
+   "Study rep",
+   "Elected class leader",
+   "Keeps order, calls 'stand up'",
+   "Collects homework, leads in study",
+   "stand up",
+   "homework"
+  ]
+ },
+ {
+  "zh": [
+   "寒假",
+   "暑假",
+   "学校的长假，有作业",
+   "冬天放，赶上过年",
+   "夏天放，时间更长",
+   "过年",
+   "夏天"
+  ],
+  "en": [
+   "Winter break",
+   "Summer break",
+   "Long school holiday with homework",
+   "In winter, includes New Year",
+   "In summer, lasts longer",
+   "New Year",
+   "summer"
+  ]
+ },
+ {
+  "zh": [
+   "黑板",
+   "白板",
+   "老师写字讲课用的板",
+   "用粉笔写，有粉灰",
+   "用马克笔写，好擦",
+   "粉笔",
+   "马克笔"
+  ],
+  "en": [
+   "Blackboard",
+   "Whiteboard",
+   "Board teachers write on",
+   "Chalk, leaves dust",
+   "Marker pens, easy to wipe",
+   "chalk",
+   "marker"
+  ]
+ },
+ {
+  "zh": [
+   "猫",
+   "狗",
+   "家里常养的有毛宠物",
+   "喵喵叫，爱抓沙发",
+   "汪汪叫，每天要遛",
+   "喵",
+   "遛"
+  ],
+  "en": [
+   "Cat",
+   "Dog",
+   "Furry pet kept at home",
+   "Meows, scratches the sofa",
+   "Barks, needs daily walks",
+   "meow",
+   "walks"
+  ]
+ },
+ {
+  "zh": [
+   "熊猫",
+   "考拉",
+   "圆滚滚、吃植物的萌动物",
+   "黑白相间，吃竹子",
+   "灰色，吃桉树叶",
+   "竹子",
+   "桉树"
+  ],
+  "en": [
+   "Panda",
+   "Koala",
+   "Chubby, cute plant-eater",
+   "Black and white, eats bamboo",
+   "Gray, eats eucalyptus",
+   "bamboo",
+   "eucalyptus"
+  ]
+ },
+ {
+  "zh": [
+   "兔子",
+   "仓鼠",
+   "毛茸茸的小宠物，爱啃",
+   "长耳朵，爱吃胡萝卜",
+   "腮帮能藏食物，爱跑轮",
+   "长耳朵",
+   "跑轮"
+  ],
+  "en": [
+   "Rabbit",
+   "Hamster",
+   "Fluffy little pet that nibbles",
+   "Long ears, loves carrots",
+   "Stores food in cheeks, runs on a wheel",
+   "long ears",
+   "wheel"
+  ]
+ },
+ {
+  "zh": [
+   "蝴蝶",
+   "蜻蜓",
+   "有翅膀会飞的昆虫",
+   "翅膀花花绿绿，爱采花",
+   "身体细长，会点水",
+   "采花",
+   "点水"
+  ],
+  "en": [
+   "Butterfly",
+   "Dragonfly",
+   "Flying insect with wings",
+   "Colorful wings, visits flowers",
+   "Slim body, skims water",
+   "flowers",
+   "skims water"
+  ]
+ },
+ {
+  "zh": [
+   "医生",
+   "护士",
+   "在医院穿白大褂工作",
+   "看病开药方",
+   "打针换药，照顾病人",
+   "开药",
+   "打针"
+  ],
+  "en": [
+   "Doctor",
+   "Nurse",
+   "Works in a hospital in white",
+   "Diagnoses and prescribes",
+   "Gives shots, cares for patients",
+   "prescribe",
+   "shots"
+  ]
+ },
+ {
+  "zh": [
+   "快递员",
+   "外卖员",
+   "骑电动车送东西上门",
+   "送包裹，要签收",
+   "送饭菜，要准时热乎",
+   "包裹",
+   "饭菜"
+  ],
+  "en": [
+   "Courier",
+   "Delivery rider",
+   "Rides an e-bike to your door",
+   "Brings parcels, need a signature",
+   "Brings hot meals on time",
+   "parcels",
+   "meals"
+  ]
+ },
+ {
+  "zh": [
+   "程序员",
+   "网管",
+   "天天和电脑打交道的工作",
+   "写代码，常加班",
+   "在网吧开机收费",
+   "代码",
+   "收费"
+  ],
+  "en": [
+   "Programmer",
+   "Net café admin",
+   "Works with computers all day",
+   "Writes code, often overtime",
+   "Opens machines and charges at net cafés",
+   "code",
+   "charges"
+  ]
+ },
+ {
+  "zh": [
+   "篮球",
+   "足球",
+   "两队抢一个球，进球得分",
+   "用手拍，投进筐里",
+   "用脚踢，有守门员",
+   "筐",
+   "守门员"
+  ],
+  "en": [
+   "Basketball",
+   "Soccer",
+   "Two teams score with one ball",
+   "Dribble by hand, shoot into a hoop",
+   "Kick with feet, has a goalie",
+   "hoop",
+   "goalie"
+  ]
+ },
+ {
+  "zh": [
+   "羽毛球",
+   "乒乓球",
+   "拿拍子隔着网打的球",
+   "林丹的项目，打高远球",
+   "在球桌上打，马龙夺冠",
+   "林丹",
+   "球桌"
+  ],
+  "en": [
+   "Badminton",
+   "Table tennis",
+   "Hit with a racket over a net",
+   "Lin Dan's sport, high clears",
+   "Played on a table, Ma Long won",
+   "Lin Dan",
+   "table"
+  ]
+ },
+ {
+  "zh": [
+   "滑板",
+   "轮滑",
+   "脚下有轮子的运动",
+   "站在一块木板上",
+   "鞋底装着轮子",
+   "木板",
+   "鞋"
+  ],
+  "en": [
+   "Skateboard",
+   "Roller skates",
+   "Sport with wheels under your feet",
+   "Stand on a wooden board",
+   "Wheels attached to shoes",
+   "board",
+   "shoes"
+  ]
+ },
+ {
+  "zh": [
+   "春节",
+   "元宵节",
+   "正月里的传统节日",
+   "正月初一，拜年发红包",
+   "正月十五，猜灯谜",
+   "拜年",
+   "灯谜"
+  ],
+  "en": [
+   "Spring Festival",
+   "Lantern Festival",
+   "Traditional holiday in the first lunar month",
+   "Day 1, New Year visits and red packets",
+   "Day 15, lantern riddles",
+   "visits",
+   "riddles"
+  ]
+ },
+ {
+  "zh": [
+   "情人节",
+   "七夕",
+   "情侣过的节日，要送花",
+   "2 月 14 日，西方传来",
+   "农历七月初七，牛郎织女",
+   "西方",
+   "牛郎织女"
+  ],
+  "en": [
+   "Valentine's Day",
+   "Qixi",
+   "Couples' holiday, give flowers",
+   "February 14, from the West",
+   "7th day of 7th lunar month, Cowherd",
+   "West",
+   "Cowherd"
+  ]
+ },
+ {
+  "zh": [
+   "圣诞节",
+   "万圣节",
+   "从西方传来的节日",
+   "12 月 25 日，白胡子老人送礼",
+   "10 月 31 日，点南瓜灯",
+   "送礼",
+   "南瓜灯"
+  ],
+  "en": [
+   "Christmas",
+   "Halloween",
+   "Holiday from the West",
+   "Dec 25, old bearded man brings gifts",
+   "Oct 31, jack-o'-lanterns",
+   "gifts",
+   "pumpkin"
+  ]
+ },
+ {
+  "zh": [
+   "双十一",
+   "618",
+   "网购打折的狂欢日",
+   "11 月 11 日，也叫光棍节",
+   "6 月 18 日，京东店庆",
+   "光棍节",
+   "店庆"
+  ],
+  "en": [
+   "Singles' Day",
+   "618 Sale",
+   "Big online shopping sale day",
+   "Nov 11, also called Bachelors' Day",
+   "June 18, JD's anniversary",
+   "Nov 11",
+   "anniversary"
+  ]
+ },
+ {
+  "zh": [
+   "洗发水",
+   "沐浴露",
+   "洗澡时挤一点出来用",
+   "抹在头上洗头发",
+   "抹在身上洗澡",
+   "头发",
+   "身上"
+  ],
+  "en": [
+   "Shampoo",
+   "Body wash",
+   "Squeeze some out in the shower",
+   "Used on your hair",
+   "Used on your body",
+   "hair",
+   "body"
+  ]
+ },
+ {
+  "zh": [
+   "雨伞",
+   "雨衣",
+   "下雨天出门用的",
+   "撑在头顶，有伞骨",
+   "穿在身上，骑车方便",
+   "撑",
+   "穿"
+  ],
+  "en": [
+   "Umbrella",
+   "Raincoat",
+   "Used outside on rainy days",
+   "Held over your head, has ribs",
+   "Worn on the body, good for cycling",
+   "held",
+   "worn"
+  ]
+ },
+ {
+  "zh": [
+   "口罩",
+   "围巾",
+   "冬天出门戴，能保暖",
+   "遮住口鼻，雾霾天戴",
+   "绕在脖子上",
+   "雾霾",
+   "脖子"
+  ],
+  "en": [
+   "Face mask",
+   "Scarf",
+   "Worn out in winter for warmth",
+   "Covers nose and mouth, for smog",
+   "Wrapped around your neck",
+   "smog",
+   "neck"
+  ]
+ },
+ {
+  "zh": [
+   "沙发",
+   "床",
+   "家里可以躺的家具",
+   "在客厅，坐着看电视",
+   "在卧室，晚上睡觉",
+   "客厅",
+   "卧室"
+  ],
+  "en": [
+   "Sofa",
+   "Bed",
+   "Furniture you can lie on",
+   "In the living room, sit and watch TV",
+   "Where you sleep at night",
+   "living room",
+   "sleep"
+  ]
+ }
+]

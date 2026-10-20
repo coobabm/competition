@@ -1,0 +1,1522 @@
+[
+ {
+  "wrong": "I am very agree with you.",
+  "meaningZh": "我非常同意你。",
+  "correct": "I totally agree with you.",
+  "wrong1": "I am very agree you.",
+  "wrong2": "I very am agree with you.",
+  "wrong3": "I agree you very.",
+  "spans": [
+   "I",
+   "am very",
+   "agree",
+   "with you."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Saying you fully share someone's opinion.",
+  "reasonZh": "agree 本身是动词，前面不能加 am very。",
+  "reasonEn": "Agree is a verb, so it cannot follow am very."
+ },
+ {
+  "wrong": "Welcome to come to Beijing!",
+  "meaningZh": "欢迎来北京！",
+  "correct": "Welcome to Beijing!",
+  "wrong1": "Welcome come to Beijing!",
+  "wrong2": "Welcome you to come Beijing!",
+  "wrong3": "Welcoming to Beijing!",
+  "spans": [
+   "Welcome",
+   "to come",
+   "to Beijing!"
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A banner greeting visitors to the city.",
+  "reasonZh": "Welcome to 后面直接接地点，不用再加 come。",
+  "reasonEn": "Welcome to is followed directly by the place."
+ },
+ {
+  "wrong": "I lost my road.",
+  "meaningZh": "我迷路了。",
+  "correct": "I'm lost.",
+  "wrong1": "I lost my roads.",
+  "wrong2": "I am lost road.",
+  "wrong3": "My road is lost.",
+  "spans": [
+   "I",
+   "lost",
+   "my road."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Asking a stranger for directions in a new city.",
+  "reasonZh": "迷路不是把路弄丢了，说 I'm lost 或 I lost my way。",
+  "reasonEn": "You lose your way, not your road."
+ },
+ {
+  "wrong": "Execution in progress",
+  "meaningZh": "正在施工。（工地标牌）",
+  "correct": "Under construction",
+  "wrong1": "Executing in progress",
+  "wrong2": "Construction is executing",
+  "wrong3": "Under execution",
+  "spans": [
+   "Execution",
+   "in progress"
+  ],
+  "errorSpans": [
+   0
+  ],
+  "contextEn": "A sign at a building site.",
+  "reasonZh": "execution 有处决的意思，施工中应说 under construction。",
+  "reasonEn": "Execution can mean putting someone to death; use under construction."
+ },
+ {
+  "wrong": "Safe exit",
+  "meaningZh": "安全出口。（标牌）",
+  "correct": "Emergency exit",
+  "wrong1": "Safety out",
+  "wrong2": "Safe outlet",
+  "wrong3": "Exit safely",
+  "spans": [
+   "Safe",
+   "exit"
+  ],
+  "errorSpans": [
+   0
+  ],
+  "contextEn": "A green sign above a door used in a fire.",
+  "reasonZh": "安全出口指紧急出口，英文是 emergency exit。",
+  "reasonEn": "The fire-escape door is called an emergency exit."
+ },
+ {
+  "wrong": "Please be careful your feet.",
+  "meaningZh": "请小心脚下。",
+  "correct": "Please watch your step.",
+  "wrong1": "Please careful your feet.",
+  "wrong2": "Please be careful feet.",
+  "wrong3": "Please take care your foot.",
+  "spans": [
+   "Please be",
+   "careful",
+   "your feet."
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "A sign near uneven stairs.",
+  "reasonZh": "小心脚下地道的说法是 watch your step。",
+  "reasonEn": "The natural phrase is watch your step."
+ },
+ {
+  "wrong": "No noisy.",
+  "meaningZh": "请勿喧哗。（图书馆标牌）",
+  "correct": "Please keep quiet.",
+  "wrong1": "Please keeps quiet.",
+  "wrong2": "Please keeping quiet.",
+  "wrong3": "No to be noisy.",
+  "spans": [
+   "No",
+   "noisy."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A sign in a library reading room.",
+  "reasonZh": "noisy 是形容词，不能跟 No 组成禁止句。",
+  "reasonEn": "Noisy is an adjective; the sign should ask for quiet."
+ },
+ {
+  "wrong": "Beware of missing foot.",
+  "meaningZh": "小心踏空。（地铁站台）",
+  "correct": "Mind the gap.",
+  "wrong1": "Beware of missing feet.",
+  "wrong2": "Careful of losing foot.",
+  "wrong3": "Mind the missing foot.",
+  "spans": [
+   "Beware of",
+   "missing foot."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A metro sign about the space between train and platform.",
+  "reasonZh": "踏空不是丢了脚，地铁标牌说 Mind the gap。",
+  "reasonEn": "Nobody loses a foot; metro signs say Mind the gap."
+ },
+ {
+  "wrong": "Beware of safety!",
+  "meaningZh": "注意安全！",
+  "correct": "Stay safe!",
+  "wrong1": "Beware of the safe!",
+  "wrong2": "Notice safety!",
+  "wrong3": "Be aware safety!",
+  "spans": [
+   "Beware of",
+   "safety!"
+  ],
+  "errorSpans": [
+   0
+  ],
+  "contextEn": "A reminder to be careful.",
+  "reasonZh": "beware of 是提防某物，提防安全意思反了。",
+  "reasonEn": "Beware of means avoid, so it says the opposite."
+ },
+ {
+  "wrong": "Husband and wife's lung slice",
+  "meaningZh": "夫妻肺片。（川菜菜单）",
+  "correct": "Sliced beef and offal in chili sauce",
+  "wrong1": "Couple's lung slices",
+  "wrong2": "Husband and wife lung",
+  "wrong3": "Married lung slice",
+  "spans": [
+   "Husband and",
+   "wife's lung",
+   "slice"
+  ],
+  "errorSpans": [
+   0,
+   1,
+   2
+  ],
+  "contextEn": "A Sichuan dish on a restaurant menu.",
+  "reasonZh": "菜名逐字翻译吓人，应说明食材和做法。",
+  "reasonEn": "A literal dish name is scary; describe the ingredients."
+ },
+ {
+  "wrong": "Red burned lion head",
+  "meaningZh": "红烧狮子头。（菜单）",
+  "correct": "Braised pork meatballs",
+  "wrong1": "Red burned lion's head",
+  "wrong2": "Burned red lion head",
+  "wrong3": "Red cooked lion head",
+  "spans": [
+   "Red burned",
+   "lion head"
+  ],
+  "errorSpans": [
+   0,
+   1
+  ],
+  "contextEn": "A dish on a restaurant menu.",
+  "reasonZh": "红烧是 braised，狮子头其实是大肉丸。",
+  "reasonEn": "Hong shao means braised, and the lion head is a big meatball."
+ },
+ {
+  "wrong": "Horse horse tiger tiger.",
+  "meaningZh": "马马虎虎。",
+  "correct": "So-so.",
+  "wrong1": "Horse and tiger.",
+  "wrong2": "Horses and tigers.",
+  "wrong3": "Horse tiger, horse tiger.",
+  "spans": [
+   "Horse horse",
+   "tiger tiger."
+  ],
+  "errorSpans": [
+   0,
+   1
+  ],
+  "contextEn": "Answering how your exam went.",
+  "reasonZh": "马马虎虎是一般般，跟马和老虎无关。",
+  "reasonEn": "It means so-so; there are no horses or tigers."
+ },
+ {
+  "wrong": "I'll give you face.",
+  "meaningZh": "我给你个面子。",
+  "correct": "I'll do it for your sake.",
+  "wrong1": "I'll give you a face.",
+  "wrong2": "I give your face.",
+  "wrong3": "I'll face you.",
+  "spans": [
+   "I'll give",
+   "you",
+   "face."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Agreeing to something out of respect for a friend.",
+  "reasonZh": "给面子是看在你的份上，face 不能直接给。",
+  "reasonEn": "It means for your sake; face is not something you hand over."
+ },
+ {
+  "wrong": "Please shutting down the computer.",
+  "meaningZh": "把电脑关了。",
+  "correct": "Shut down the computer.",
+  "wrong1": "Please shuts down the computer.",
+  "wrong2": "Please shut down the computers is.",
+  "wrong3": "Please to shutting down the computer.",
+  "spans": [
+   "Please",
+   "shutting down",
+   "the computer."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A parent asking a child to shut down the computer for the night.",
+  "reasonZh": "祈使句中 Please 后用动词原形 shut，不能用 shutting。",
+  "reasonEn": "After please, an imperative uses the base form shut, not shutting."
+ },
+ {
+  "wrong": "Remember to taking your medicine.",
+  "meaningZh": "记得吃药。",
+  "correct": "Remember to take your medicine.",
+  "wrong1": "Remember to takes your medicine.",
+  "wrong2": "Remember to took your medicine.",
+  "wrong3": "Remember to taken your medicine.",
+  "spans": [
+   "Remember to",
+   "taking",
+   "your medicine."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Reminding a sick friend.",
+  "reasonZh": "remember to 后接动词原形 take，不接 taking。",
+  "reasonEn": "Remember to is followed by the base form take, not taking."
+ },
+ {
+  "wrong": "I want to learn more knowledge.",
+  "meaningZh": "我想学更多知识。",
+  "correct": "I want to gain more knowledge.",
+  "wrong1": "I want to learn more knowledges.",
+  "wrong2": "I want learning more knowledge.",
+  "wrong3": "I want to study more knowledges.",
+  "spans": [
+   "I want to",
+   "learn more",
+   "knowledge."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Talking about why you read so much.",
+  "reasonZh": "knowledge 通常搭配 gain 或 acquire。",
+  "reasonEn": "Knowledge is usually gained, not learned."
+ },
+ {
+  "wrong": "My son plays computer all day.",
+  "meaningZh": "我儿子整天玩电脑。",
+  "correct": "My son is on the computer all day.",
+  "wrong1": "My son plays the computer all day.",
+  "wrong2": "My son plays computers all day.",
+  "wrong3": "My son computer plays all day.",
+  "spans": [
+   "My son",
+   "plays computer",
+   "all day."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A parent complaining about screen time.",
+  "reasonZh": "玩电脑不能直接说 play computer。",
+  "reasonEn": "English does not say play computer."
+ },
+ {
+  "wrong": "I like to look book.",
+  "meaningZh": "我喜欢看书。",
+  "correct": "I like reading books.",
+  "wrong1": "I like to see book.",
+  "wrong2": "I like look books.",
+  "wrong3": "I like to watch book.",
+  "spans": [
+   "I like",
+   "to look",
+   "book."
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "Talking about hobbies.",
+  "reasonZh": "看书是 read，不是 look book。",
+  "reasonEn": "Books are read, not looked."
+ },
+ {
+  "wrong": "Can I make a photo with you?",
+  "meaningZh": "我能和你合个影吗？",
+  "correct": "Can I take a photo with you?",
+  "wrong1": "Can I make photo with you?",
+  "wrong2": "Can I do a photo with you?",
+  "wrong3": "Can I photo with you?",
+  "spans": [
+   "Can I",
+   "make a photo",
+   "with you?"
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Asking a stranger for a picture together.",
+  "reasonZh": "拍照用 take a photo。",
+  "reasonEn": "Photos are taken, not made."
+ },
+ {
+  "wrong": "I am boring today.",
+  "meaningZh": "我今天好无聊。",
+  "correct": "I'm bored today.",
+  "wrong1": "I am bore today.",
+  "wrong2": "I am boringly today.",
+  "wrong3": "I feel boring today.",
+  "spans": [
+   "I am",
+   "boring",
+   "today."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Complaining that you have nothing to do.",
+  "reasonZh": "boring 是让人无聊，自己无聊用 bored。",
+  "reasonEn": "Boring describes the cause; you feel bored."
+ },
+ {
+  "wrong": "I am so exciting about the trip.",
+  "meaningZh": "我对这次旅行好兴奋。",
+  "correct": "I'm so excited about the trip.",
+  "wrong1": "I am so excite about the trip.",
+  "wrong2": "I so exciting about the trip.",
+  "wrong3": "I am exciting so about the trip.",
+  "spans": [
+   "I am so",
+   "exciting",
+   "about the trip."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Talking about an upcoming holiday.",
+  "reasonZh": "人感到兴奋用 excited。",
+  "reasonEn": "People feel excited; things are exciting."
+ },
+ {
+  "wrong": "Although it rained, but we went out.",
+  "meaningZh": "虽然下雨了，但是我们还是出门了。",
+  "correct": "Although it rained, we went out.",
+  "wrong1": "Although rained, but we went out.",
+  "wrong2": "Although it rained, but went out.",
+  "wrong3": "It rained although, we went out.",
+  "spans": [
+   "Although it",
+   "rained, but",
+   "we went out."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Describing a rainy-day outing.",
+  "reasonZh": "although 和 but 不能同时用。",
+  "reasonEn": "Although and but are not used together."
+ },
+ {
+  "wrong": "Because I was sick, so I stayed home.",
+  "meaningZh": "因为我病了，所以我待在家里。",
+  "correct": "Because I was sick, I stayed home.",
+  "wrong1": "Because sick, so I stayed home.",
+  "wrong2": "Because I was sick, so stayed home.",
+  "wrong3": "I was sick because I stayed home.",
+  "spans": [
+   "Because I",
+   "was sick, so",
+   "I stayed home."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Explaining why you missed school.",
+  "reasonZh": "because 和 so 不能同时用。",
+  "reasonEn": "Because and so are not used together."
+ },
+ {
+  "wrong": "This word how to say?",
+  "meaningZh": "这个词怎么说？",
+  "correct": "How do you say this word?",
+  "wrong1": "This word how say?",
+  "wrong2": "How to say this word?",
+  "wrong3": "This word, how say it?",
+  "spans": [
+   "This word",
+   "how to say?"
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Asking a teacher for help with pronunciation.",
+  "reasonZh": "英语问句要把疑问词放前面，加 do you。",
+  "reasonEn": "English questions start with how do you."
+ },
+ {
+  "wrong": "Let's discuss about it later.",
+  "meaningZh": "我们晚点再讨论这个。",
+  "correct": "Let's discuss it later.",
+  "wrong1": "Let's discussing about it later.",
+  "wrong2": "Let's discuss to it later.",
+  "wrong3": "Let's discuss over about it later.",
+  "spans": [
+   "Let's",
+   "discuss about",
+   "it later."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Ending a meeting that ran long.",
+  "reasonZh": "discuss 是及物动词，不加 about。",
+  "reasonEn": "Discuss takes an object directly, without about."
+ },
+ {
+  "wrong": "She married with a doctor.",
+  "meaningZh": "她嫁给了一位医生。",
+  "correct": "She married a doctor.",
+  "wrong1": "She married to a doctor.",
+  "wrong2": "She was marry with a doctor.",
+  "wrong3": "She marry a doctor.",
+  "spans": [
+   "She",
+   "married with",
+   "a doctor."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Sharing family news.",
+  "reasonZh": "marry 直接接人，不加 with。",
+  "reasonEn": "Marry takes the person directly."
+ },
+ {
+  "wrong": "I'll return back tomorrow.",
+  "meaningZh": "我明天回来。",
+  "correct": "I'll come back tomorrow.",
+  "wrong1": "I'll return back again tomorrow.",
+  "wrong2": "I'll back return tomorrow.",
+  "wrong3": "I'll returning tomorrow.",
+  "spans": [
+   "I'll",
+   "return back",
+   "tomorrow."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Telling a shop you'll be back.",
+  "reasonZh": "return 已含 back 的意思，重复了。",
+  "reasonEn": "Return already means come back."
+ },
+ {
+  "wrong": "We reached to Beijing at noon.",
+  "meaningZh": "我们中午到了北京。",
+  "correct": "We reached Beijing at noon.",
+  "wrong1": "We reached at Beijing at noon.",
+  "wrong2": "We arrived Beijing at noon.",
+  "wrong3": "We reach to Beijing at noon.",
+  "spans": [
+   "We",
+   "reached to",
+   "Beijing at noon."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Reporting the end of a train trip.",
+  "reasonZh": "reach 直接接地点，不加 to。",
+  "reasonEn": "Reach takes the place directly."
+ },
+ {
+  "wrong": "I need some informations.",
+  "meaningZh": "我需要一些信息。",
+  "correct": "I need some information.",
+  "wrong1": "I need an information.",
+  "wrong2": "I need some informationes.",
+  "wrong3": "I need many informations.",
+  "spans": [
+   "I need",
+   "some",
+   "informations."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Asking a help desk for details.",
+  "reasonZh": "information 不可数，不加 s。",
+  "reasonEn": "Information is uncountable."
+ },
+ {
+  "wrong": "I have many homeworks today.",
+  "meaningZh": "我今天作业好多。",
+  "correct": "I have a lot of homework today.",
+  "wrong1": "I have many homework today.",
+  "wrong2": "I have much homeworks today.",
+  "wrong3": "I have lots homeworks today.",
+  "spans": [
+   "I have",
+   "many",
+   "homeworks today."
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "Complaining after school.",
+  "reasonZh": "homework 不可数，不能说 many homeworks。",
+  "reasonEn": "Homework is uncountable."
+ },
+ {
+  "wrong": "Can you give me some advices?",
+  "meaningZh": "你能给我一些建议吗？",
+  "correct": "Can you give me some advice?",
+  "wrong1": "Can you give me an advice?",
+  "wrong2": "Can you give me some advise?",
+  "wrong3": "Can you advice me some?",
+  "spans": [
+   "Can you",
+   "give me",
+   "some advices?"
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Asking a friend for help choosing a phone.",
+  "reasonZh": "advice 不可数，不加 s。",
+  "reasonEn": "Advice is uncountable."
+ },
+ {
+  "wrong": "We bought new furnitures.",
+  "meaningZh": "我们买了新家具。",
+  "correct": "We bought new furniture.",
+  "wrong1": "We bought a new furniture.",
+  "wrong2": "We bought new furnitures set.",
+  "wrong3": "We buyed new furniture.",
+  "spans": [
+   "We bought",
+   "new",
+   "furnitures."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Talking about moving house.",
+  "reasonZh": "furniture 不可数，不加 s。",
+  "reasonEn": "Furniture is uncountable."
+ },
+ {
+  "wrong": "There are many peoples here.",
+  "meaningZh": "这里人好多。",
+  "correct": "There are so many people here.",
+  "wrong1": "There are many peoples in here.",
+  "wrong2": "There is many people here.",
+  "wrong3": "There are many person here.",
+  "spans": [
+   "There are",
+   "many",
+   "peoples here."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Describing a crowded mall.",
+  "reasonZh": "people 本身就是复数，不加 s。",
+  "reasonEn": "People is already plural."
+ },
+ {
+  "wrong": "Yesterday I go to the cinema.",
+  "meaningZh": "我昨天去看电影了。",
+  "correct": "Yesterday I went to the cinema.",
+  "wrong1": "Yesterday I goes to the cinema.",
+  "wrong2": "Yesterday I going to the cinema.",
+  "wrong3": "Yesterday I have go to the cinema.",
+  "spans": [
+   "Yesterday",
+   "I go",
+   "to the cinema."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Telling a classmate about your evening.",
+  "reasonZh": "昨天发生的事要用过去式 went。",
+  "reasonEn": "Past events need the past tense went."
+ },
+ {
+  "wrong": "He don't like milk.",
+  "meaningZh": "他不喜欢牛奶。",
+  "correct": "He doesn't like milk.",
+  "wrong1": "He not like milk.",
+  "wrong2": "He don't likes milk.",
+  "wrong3": "He doesn't likes milk.",
+  "spans": [
+   "He",
+   "don't like",
+   "milk."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Talking about a friend's breakfast.",
+  "reasonZh": "第三人称单数用 doesn't。",
+  "reasonEn": "Third person singular takes doesn't."
+ },
+ {
+  "wrong": "I am study English now.",
+  "meaningZh": "我现在在学英语。",
+  "correct": "I am studying English now.",
+  "wrong1": "I am studied English now.",
+  "wrong2": "I studying English now.",
+  "wrong3": "I am study at English now.",
+  "spans": [
+   "I am",
+   "study",
+   "English now."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Answering what you are doing.",
+  "reasonZh": "现在进行时要用 am studying。",
+  "reasonEn": "The present continuous needs studying."
+ },
+ {
+  "wrong": "I saw it in the internet.",
+  "meaningZh": "我在网上看到的。",
+  "correct": "I saw it on the internet.",
+  "wrong1": "I saw it at the internet.",
+  "wrong2": "I saw it inside the internet.",
+  "wrong3": "I saw it in internet.",
+  "spans": [
+   "I saw it",
+   "in",
+   "the internet."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Explaining where you heard some news.",
+  "reasonZh": "在网上用 on the internet。",
+  "reasonEn": "English says on the internet."
+ },
+ {
+  "wrong": "I like to listen music.",
+  "meaningZh": "我喜欢听音乐。",
+  "correct": "I like to listen to music.",
+  "wrong1": "I like to listen the music.",
+  "wrong2": "I like listen music.",
+  "wrong3": "I like to hear to music.",
+  "spans": [
+   "I like to",
+   "listen",
+   "music."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Talking about hobbies.",
+  "reasonZh": "listen 后面要加 to。",
+  "reasonEn": "Listen needs to before its object."
+ },
+ {
+  "wrong": "Please explain me this word.",
+  "meaningZh": "请给我解释一下这个词。",
+  "correct": "Please explain this word to me.",
+  "wrong1": "Please explain me about this word.",
+  "wrong2": "Please explain to me this words.",
+  "wrong3": "Please explaining me this word.",
+  "spans": [
+   "Please",
+   "explain me",
+   "this word."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Asking a teacher about vocabulary.",
+  "reasonZh": "explain 不能直接接人，要 explain sth to sb。",
+  "reasonEn": "Explain something to someone, not explain someone."
+ },
+ {
+  "wrong": "Can you borrow me your pen?",
+  "meaningZh": "你能借我一支笔吗？",
+  "correct": "Can you lend me your pen?",
+  "wrong1": "Can you borrow your pen to me?",
+  "wrong2": "Can you borrow me pen?",
+  "wrong3": "Can you lent me your pen?",
+  "spans": [
+   "Can you",
+   "borrow me",
+   "your pen?"
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Asking a classmate during a test.",
+  "reasonZh": "借给别人用 lend，向别人借用 borrow。",
+  "reasonEn": "Lend means give; borrow means take."
+ },
+ {
+  "wrong": "The price is very expensive.",
+  "meaningZh": "价格很贵。",
+  "correct": "The price is very high.",
+  "wrong1": "The price is very expensively.",
+  "wrong2": "The price is very much.",
+  "wrong3": "The price is expensive very.",
+  "spans": [
+   "The price",
+   "is very",
+   "expensive."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Complaining about a new phone.",
+  "reasonZh": "价格本身只能高或低，物品才贵。",
+  "reasonEn": "Prices are high; things are expensive."
+ },
+ {
+  "wrong": "I want to wash a bath.",
+  "meaningZh": "我想洗个澡。",
+  "correct": "I want to take a bath.",
+  "wrong1": "I want to wash bath.",
+  "wrong2": "I want washing a bath.",
+  "wrong3": "I want to do a bath.",
+  "spans": [
+   "I want to",
+   "wash",
+   "a bath."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Saying what you'll do after a long day.",
+  "reasonZh": "洗澡说 take a bath。",
+  "reasonEn": "Baths are taken, not washed."
+ },
+ {
+  "wrong": "I'll hit you a phone tonight.",
+  "meaningZh": "我今晚给你打电话。",
+  "correct": "I'll call you tonight.",
+  "wrong1": "I'll hit your phone tonight.",
+  "wrong2": "I'll play you a phone tonight.",
+  "wrong3": "I'll phone at you tonight.",
+  "spans": [
+   "I'll",
+   "hit you",
+   "a phone",
+   "tonight."
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "Making plans with a friend.",
+  "reasonZh": "打电话不是 hit a phone，直接说 call。",
+  "reasonEn": "Just say call; hit a phone is literal."
+ },
+ {
+  "wrong": "We sit the bus to school.",
+  "meaningZh": "我们坐公交去学校。",
+  "correct": "We take the bus to school.",
+  "wrong1": "We sit on bus to school.",
+  "wrong2": "We sit the buses to school.",
+  "wrong3": "We seat the bus to school.",
+  "spans": [
+   "We",
+   "sit the bus",
+   "to school."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Describing how you get to school.",
+  "reasonZh": "坐车用 take，不用 sit。",
+  "reasonEn": "You take a bus; sit is literal."
+ },
+ {
+  "wrong": "My stomach is pain.",
+  "meaningZh": "我肚子疼。",
+  "correct": "My stomach hurts.",
+  "wrong1": "My stomach is painful hurt.",
+  "wrong2": "My stomach pains me is.",
+  "wrong3": "My stomach is pained.",
+  "spans": [
+   "My stomach",
+   "is",
+   "pain."
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "Telling the school nurse what's wrong.",
+  "reasonZh": "pain 是名词，不能放在 is 后面当形容词。",
+  "reasonEn": "Pain is a noun; say hurts."
+ },
+ {
+  "wrong": "You can you up!",
+  "meaningZh": "你行你上啊！（网络流行语）",
+  "correct": "If you can do better, do it!",
+  "wrong1": "You can, you go up!",
+  "wrong2": "You up if you can!",
+  "wrong3": "Can you, up you!",
+  "spans": [
+   "You can",
+   "you up!"
+  ],
+  "errorSpans": [
+   0,
+   1
+  ],
+  "contextEn": "Snapping back at a critic of your gaming.",
+  "reasonZh": "逐字翻译网络用语外国人看不懂。",
+  "reasonEn": "The literal internet slang makes no sense in English."
+ },
+ {
+  "wrong": "We two who and who.",
+  "meaningZh": "咱俩谁跟谁啊。",
+  "correct": "We're like family.",
+  "wrong1": "We are two who.",
+  "wrong2": "Who and who are we two.",
+  "wrong3": "We two are who.",
+  "spans": [
+   "We two",
+   "who and who."
+  ],
+  "errorSpans": [
+   0,
+   1
+  ],
+  "contextEn": "Brushing off a friend's thanks.",
+  "reasonZh": "这句是说关系铁，逐字翻毫无意义。",
+  "reasonEn": "It means we are very close; the literal version is meaningless."
+ },
+ {
+  "wrong": "Free open",
+  "meaningZh": "免费开放。（景区标牌）",
+  "correct": "Free admission",
+  "wrong1": "Free opening",
+  "wrong2": "Open free",
+  "wrong3": "Freely open",
+  "spans": [
+   "Free",
+   "open"
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A sign at a park gate.",
+  "reasonZh": "免费入场标牌用 free admission。",
+  "reasonEn": "Signs say free admission."
+ },
+ {
+  "wrong": "Forbid to smoke here.",
+  "meaningZh": "此处禁止吸烟。",
+  "correct": "No smoking here.",
+  "wrong1": "Forbid smoking here.",
+  "wrong2": "Forbidden smoke here.",
+  "wrong3": "Forbid to smoking here.",
+  "spans": [
+   "Forbid",
+   "to smoke",
+   "here."
+  ],
+  "errorSpans": [
+   0
+  ],
+  "contextEn": "A sign in a hallway.",
+  "reasonZh": "标牌禁止吸烟直接写 No smoking。",
+  "reasonEn": "Signs simply say No smoking."
+ },
+ {
+  "wrong": "Please keep the door close.",
+  "meaningZh": "请随手关门。",
+  "correct": "Please keep the door closed.",
+  "wrong1": "Please keep the door close up.",
+  "wrong2": "Please keep the door closing.",
+  "wrong3": "Please keep door close.",
+  "spans": [
+   "Please keep",
+   "the door",
+   "close."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "A sign on an office door.",
+  "reasonZh": "keep 后接状态要用过去分词 closed。",
+  "reasonEn": "Keep needs the state closed."
+ },
+ {
+  "wrong": "Visitors stop",
+  "meaningZh": "游客止步。（标牌）",
+  "correct": "Staff only",
+  "wrong1": "Visitors stopping",
+  "wrong2": "Stop visitors",
+  "wrong3": "Tourists halt",
+  "spans": [
+   "Visitors",
+   "stop"
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A sign on a backstage door.",
+  "reasonZh": "游客止步是说只限工作人员。",
+  "reasonEn": "It means only staff may enter."
+ },
+ {
+  "wrong": "If you are stolen, call the police.",
+  "meaningZh": "如果被盗，请报警。",
+  "correct": "If something is stolen, call the police.",
+  "wrong1": "If you stolen, call the police.",
+  "wrong2": "If stolen you, call police.",
+  "wrong3": "If you are stealing, call the police.",
+  "spans": [
+   "If you",
+   "are stolen,",
+   "call the police."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A notice in a parking lot.",
+  "reasonZh": "are stolen 意思是你本人被偷走了。",
+  "reasonEn": "Are stolen means you yourself were taken."
+ },
+ {
+  "wrong": "My heart is seven up eight down.",
+  "meaningZh": "我心里七上八下的。",
+  "correct": "I'm really nervous.",
+  "wrong1": "My heart is seven up and eight down.",
+  "wrong2": "My heart seven up eight down.",
+  "wrong3": "My heart is up and down eight.",
+  "spans": [
+   "My heart is",
+   "seven up",
+   "eight down."
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "Waiting for exam results.",
+  "reasonZh": "七上八下是紧张不安。",
+  "reasonEn": "It means feeling anxious."
+ },
+ {
+  "wrong": "Laugh die me!",
+  "meaningZh": "笑死我了！",
+  "correct": "That's hilarious!",
+  "wrong1": "Laughing me to die!",
+  "wrong2": "Laugh me die!",
+  "wrong3": "Me laugh die!",
+  "spans": [
+   "Laugh die",
+   "me!"
+  ],
+  "errorSpans": [
+   0,
+   1
+  ],
+  "contextEn": "Reacting to a funny video.",
+  "reasonZh": "这是夸张说好笑，逐字翻成死很吓人。",
+  "reasonEn": "It just means very funny; die is literal and alarming."
+ },
+ {
+  "wrong": "I want one cup coffee.",
+  "meaningZh": "我要一杯咖啡。",
+  "correct": "I'd like a cup of coffee.",
+  "wrong1": "I want one cup coffees.",
+  "wrong2": "I want a cup coffee.",
+  "wrong3": "I want one coffee cup of.",
+  "spans": [
+   "I want",
+   "one cup",
+   "coffee."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Ordering at a cafe.",
+  "reasonZh": "一杯咖啡要说 a cup of coffee。",
+  "reasonEn": "It needs a cup of coffee."
+ },
+ {
+  "wrong": "Let's go to the shopping.",
+  "meaningZh": "我们去购物吧。",
+  "correct": "Let's go shopping.",
+  "wrong1": "Let's go to shopping.",
+  "wrong2": "Let's go for the shopping.",
+  "wrong3": "Let's go to shop the.",
+  "spans": [
+   "Let's go",
+   "to the",
+   "shopping."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Inviting a friend out on Saturday.",
+  "reasonZh": "go shopping 中间不加 to the。",
+  "reasonEn": "Go shopping takes no to the."
+ },
+ {
+  "wrong": "My phone has no electricity.",
+  "meaningZh": "我手机没电了。",
+  "correct": "My phone's battery is dead.",
+  "wrong1": "My phone has no electric.",
+  "wrong2": "My phone no have electricity.",
+  "wrong3": "My phone is no electricity.",
+  "spans": [
+   "My phone",
+   "has no",
+   "electricity."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Explaining why you didn't reply.",
+  "reasonZh": "手机没电说 battery is dead。",
+  "reasonEn": "Say the battery is dead."
+ },
+ {
+  "wrong": "My computer has poison.",
+  "meaningZh": "我的电脑中毒了。",
+  "correct": "My computer has a virus.",
+  "wrong1": "My computer is poisoned.",
+  "wrong2": "My computer has poisons.",
+  "wrong3": "My computer ate poison.",
+  "spans": [
+   "My computer",
+   "has",
+   "poison."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Asking a friend for tech help.",
+  "reasonZh": "电脑中毒是 virus，不是 poison。",
+  "reasonEn": "Computers get viruses, not poison."
+ },
+ {
+  "wrong": "Send me a red bag on WeChat!",
+  "meaningZh": "在微信上给我发个红包！",
+  "correct": "Send me a red packet on WeChat!",
+  "wrong1": "Send me red bag on WeChat!",
+  "wrong2": "Send me a red bags on WeChat!",
+  "wrong3": "Send me the red pocket WeChat!",
+  "spans": [
+   "Send me",
+   "a red bag",
+   "on WeChat!"
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Begging friends in a group chat at New Year.",
+  "reasonZh": "红包通常译作 red packet 或 red envelope。",
+  "reasonEn": "It is a red packet or red envelope."
+ },
+ {
+  "wrong": "I'm brushing Weibo.",
+  "meaningZh": "我在刷微博。",
+  "correct": "I'm scrolling through Weibo.",
+  "wrong1": "I'm brush Weibo.",
+  "wrong2": "I'm brushing on Weibo.",
+  "wrong3": "I'm brushing the Weibo.",
+  "spans": [
+   "I'm",
+   "brushing",
+   "Weibo."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Answering what you're doing on your phone.",
+  "reasonZh": "刷微博是不停地往下翻，不是刷子刷。",
+  "reasonEn": "It means scrolling, not brushing."
+ },
+ {
+  "wrong": "Let's open black tonight.",
+  "meaningZh": "今晚一起开黑吧。",
+  "correct": "Let's team up and play tonight.",
+  "wrong1": "Let's open the black tonight.",
+  "wrong2": "Let's opening black tonight.",
+  "wrong3": "Let's black open tonight.",
+  "spans": [
+   "Let's",
+   "open black",
+   "tonight."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Inviting friends to a game night.",
+  "reasonZh": "开黑是组队打游戏，open black 毫无意义。",
+  "reasonEn": "It means teaming up in a game."
+ },
+ {
+  "wrong": "Add me friend on QQ.",
+  "meaningZh": "加我QQ好友。",
+  "correct": "Add me as a friend on QQ.",
+  "wrong1": "Add me friends on QQ.",
+  "wrong2": "Add friend me on QQ.",
+  "wrong3": "Add me to friend on QQ.",
+  "spans": [
+   "Add me",
+   "friend",
+   "on QQ."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Swapping contacts after class.",
+  "reasonZh": "加好友要说 add me as a friend。",
+  "reasonEn": "It needs add me as a friend."
+ },
+ {
+  "wrong": "Watch out the car!",
+  "meaningZh": "小心车！",
+  "correct": "Watch out for cars!",
+  "wrong1": "Watch out the cars!",
+  "wrong2": "Watch the car out!",
+  "wrong3": "Watching out car!",
+  "spans": [
+   "Watch out",
+   "the car!"
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Warning a friend crossing the street.",
+  "reasonZh": "watch out 后面要加 for 才能接要提防的东西。",
+  "reasonEn": "Watch out needs for before the danger."
+ },
+ {
+  "wrong": "He is a children.",
+  "meaningZh": "他是个孩子。",
+  "correct": "He is a child.",
+  "wrong1": "He is a childrens.",
+  "wrong2": "He is an children.",
+  "wrong3": "He is one children.",
+  "spans": [
+   "He is",
+   "a",
+   "children."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Defending a kid who broke something.",
+  "reasonZh": "children 是复数，单数用 child。",
+  "reasonEn": "Children is plural; use child."
+ },
+ {
+  "wrong": "Do you have eaten?",
+  "meaningZh": "你吃了吗？",
+  "correct": "Have you eaten?",
+  "wrong1": "Do you eaten?",
+  "wrong2": "Did you have eaten?",
+  "wrong3": "Do you have ate?",
+  "spans": [
+   "Do you",
+   "have eaten?"
+  ],
+  "errorSpans": [
+   0
+  ],
+  "contextEn": "A friendly greeting at lunchtime.",
+  "reasonZh": "现在完成时问句用 Have you。",
+  "reasonEn": "The perfect question begins with have."
+ },
+ {
+  "wrong": "Where are you go?",
+  "meaningZh": "你去哪儿？",
+  "correct": "Where are you going?",
+  "wrong1": "Where are you goes?",
+  "wrong2": "Where you are going?",
+  "wrong3": "Where are you went?",
+  "spans": [
+   "Where",
+   "are you",
+   "go?"
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Asking a neighbor in the hallway.",
+  "reasonZh": "进行时要用 going。",
+  "reasonEn": "The continuous form needs going."
+ },
+ {
+  "wrong": "I will go to home.",
+  "meaningZh": "我要回家了。",
+  "correct": "I will go home.",
+  "wrong1": "I will go to the home.",
+  "wrong2": "I will going home.",
+  "wrong3": "I will go at home.",
+  "spans": [
+   "I will",
+   "go to",
+   "home."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Leaving after school.",
+  "reasonZh": "home 当副词，不加 to。",
+  "reasonEn": "Home is an adverb here; no to."
+ },
+ {
+  "wrong": "Please close your phone in the cinema.",
+  "meaningZh": "在电影院请关闭手机。",
+  "correct": "Please turn off your phone in the cinema.",
+  "wrong1": "Please shut your phone in the cinema.",
+  "wrong2": "Please closing your phone in the cinema.",
+  "wrong3": "Please close up your phone in cinema.",
+  "spans": [
+   "Please close",
+   "your phone",
+   "in the cinema."
+  ],
+  "errorSpans": [
+   0
+  ],
+  "contextEn": "A notice before a movie starts.",
+  "reasonZh": "关手机用 turn off，不用 close。",
+  "reasonEn": "Phones are turned off, not closed."
+ },
+ {
+  "wrong": "This is my first time come to here.",
+  "meaningZh": "这是我第一次来这里。",
+  "correct": "This is my first time here.",
+  "wrong1": "This is my first time come here.",
+  "wrong2": "This is my first time to here.",
+  "wrong3": "This is first time I come to here.",
+  "spans": [
+   "This is",
+   "my first time",
+   "come to here."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Visiting a new city.",
+  "reasonZh": "first time 后面不接 come to here。",
+  "reasonEn": "Just say my first time here."
+ },
+ {
+  "wrong": "My heart flower angry open.",
+  "meaningZh": "我心花怒放。",
+  "correct": "I'm overjoyed.",
+  "wrong1": "My heart flowers open angrily.",
+  "wrong2": "My heart is angry flower.",
+  "wrong3": "My heart opens flower angry.",
+  "spans": [
+   "My heart",
+   "flower",
+   "angry open."
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "Getting a surprise gift.",
+  "reasonZh": "心花怒放是非常高兴，跟生气无关。",
+  "reasonEn": "It means overjoyed, not angry."
+ },
+ {
+  "wrong": "My phone has no money.",
+  "meaningZh": "我手机欠费了。",
+  "correct": "My phone is out of credit.",
+  "wrong1": "My phone has not money.",
+  "wrong2": "My phone no money has.",
+  "wrong3": "My phone has no moneys.",
+  "spans": [
+   "My phone",
+   "has no",
+   "money."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "Explaining why your calls don't work.",
+  "reasonZh": "话费用完说 out of credit。",
+  "reasonEn": "Prepaid phones run out of credit."
+ },
+ {
+  "wrong": "My express has arrived.",
+  "meaningZh": "我的快递到了。",
+  "correct": "My package has arrived.",
+  "wrong1": "My express is arrived.",
+  "wrong2": "My expresses has arrived.",
+  "wrong3": "My express package arrive.",
+  "spans": [
+   "My",
+   "express",
+   "has arrived."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Getting a pickup text from the courier.",
+  "reasonZh": "快递包裹是 package 或 parcel。",
+  "reasonEn": "The item is a package, not an express."
+ },
+ {
+  "wrong": "Cheap no good goods.",
+  "meaningZh": "便宜没好货。",
+  "correct": "You get what you pay for.",
+  "wrong1": "Cheap is no good goods.",
+  "wrong2": "Cheap goods no good.",
+  "wrong3": "Cheap are no goods good.",
+  "spans": [
+   "Cheap",
+   "no good",
+   "goods."
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "Warning a friend about a suspicious deal.",
+  "reasonZh": "这是俗语，英语有对应说法。",
+  "reasonEn": "English has its own matching proverb."
+ },
+ {
+  "wrong": "Sorry, this price can't cheap.",
+  "meaningZh": "不好意思，这个价格不能再便宜了。",
+  "correct": "Sorry, I can't lower the price.",
+  "wrong1": "Sorry, this price can't cheaper.",
+  "wrong2": "Sorry, this price can't be cheap.",
+  "wrong3": "Sorry, price can't cheap more.",
+  "spans": [
+   "Sorry,",
+   "this price",
+   "can't cheap."
+  ],
+  "errorSpans": [
+   2
+  ],
+  "contextEn": "A shopkeeper refusing to bargain.",
+  "reasonZh": "cheap 是形容词，不能当动词用。",
+  "reasonEn": "Cheap is an adjective, not a verb."
+ },
+ {
+  "wrong": "He lives opposite door.",
+  "meaningZh": "他住在对门。",
+  "correct": "He lives across the hall.",
+  "wrong1": "He lives opposite doors.",
+  "wrong2": "He lives at opposite door.",
+  "wrong3": "He lives the opposite door.",
+  "spans": [
+   "He lives",
+   "opposite door."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Describing your neighbor.",
+  "reasonZh": "对门地道说法是 across the hall。",
+  "reasonEn": "The natural phrase is across the hall."
+ },
+ {
+  "wrong": "I am 15 years.",
+  "meaningZh": "我15岁。",
+  "correct": "I am 15 years old.",
+  "wrong1": "I am 15 years age.",
+  "wrong2": "I have 15 years.",
+  "wrong3": "I am 15 year.",
+  "spans": [
+   "I am",
+   "15 years."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Introducing yourself in class.",
+  "reasonZh": "说年龄要加 old 或直接说 I am 15。",
+  "reasonEn": "Age needs years old or just the number."
+ },
+ {
+  "wrong": "Don't throws rubbish here.",
+  "meaningZh": "不要乱扔垃圾。",
+  "correct": "Don't throw rubbish here.",
+  "wrong1": "Don't throwing rubbish here.",
+  "wrong2": "Don't threw rubbish here.",
+  "wrong3": "Don't to throw rubbish here.",
+  "spans": [
+   "Don't",
+   "throws",
+   "rubbish here."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "A sign in a park.",
+  "reasonZh": "Don't 后用动词原形 throw，不能加 s。",
+  "reasonEn": "Don't takes the base form throw, not throws."
+ },
+ {
+  "wrong": "Export this way",
+  "meaningZh": "出口在这边。（商场标牌）",
+  "correct": "Exit this way",
+  "wrong1": "Exports this way",
+  "wrong2": "Export the way",
+  "wrong3": "This way export",
+  "spans": [
+   "Export",
+   "this way"
+  ],
+  "errorSpans": [
+   0
+  ],
+  "contextEn": "A sign in a shopping mall.",
+  "reasonZh": "出口是 exit，export 是出口贸易。",
+  "reasonEn": "Export means trade; the door is an exit."
+ },
+ {
+  "wrong": "Too expensive, cheaper a little?",
+  "meaningZh": "太贵了，便宜点？",
+  "correct": "Can you make it a bit cheaper?",
+  "wrong1": "Too expensive, cheap a little?",
+  "wrong2": "Too expensive, little cheaper?",
+  "wrong3": "Too expensive, cheaper some?",
+  "spans": [
+   "Too expensive,",
+   "cheaper",
+   "a little?"
+  ],
+  "errorSpans": [
+   1,
+   2
+  ],
+  "contextEn": "Bargaining at a market stall.",
+  "reasonZh": "砍价要用完整问句。",
+  "reasonEn": "Bargaining needs a full question."
+ },
+ {
+  "wrong": "Mr. Wang are my teacher.",
+  "meaningZh": "王先生是我的老师。",
+  "correct": "Mr. Wang is my teacher.",
+  "wrong1": "Mr. Wang am my teacher.",
+  "wrong2": "Mr. Wang be my teacher.",
+  "wrong3": "Mr. Wang being my teacher.",
+  "spans": [
+   "Mr. Wang",
+   "are",
+   "my teacher."
+  ],
+  "errorSpans": [
+   1
+  ],
+  "contextEn": "Introducing Mr. Wang as your teacher.",
+  "reasonZh": "Mr. Wang 是第三人称单数，be 动词要用 is。",
+  "reasonEn": "Mr. Wang is a singular third-person subject, so use is."
+ }
+]

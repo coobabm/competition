@@ -1,0 +1,1242 @@
+[
+ {
+  "zh": [
+   "快递",
+   "以经",
+   "签收了"
+  ],
+  "en": [
+   "The parcel",
+   "has alredy",
+   "been signed for"
+  ],
+  "bad": 1,
+  "fix": "已经",
+  "fixEn": "has already",
+  "since": 0
+ },
+ {
+  "zh": [
+   "宿舍",
+   "晚上十一点",
+   "准时",
+   "熄灯"
+  ],
+  "en": [
+   "The dorm",
+   "turns off the lights",
+   "at eleven",
+   "sharp"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这道题",
+   "我想了",
+   "半天",
+   "也没有头续"
+  ],
+  "en": [
+   "I thought",
+   "about this problem",
+   "for ages, still",
+   "no cleu"
+  ],
+  "bad": 3,
+  "fix": "也没有头绪",
+  "fixEn": "no clue",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他的",
+   "QQ签名",
+   "总是",
+   "莫名奇妙"
+  ],
+  "en": [
+   "His",
+   "QQ signature",
+   "is always",
+   "wierd"
+  ],
+  "bad": 3,
+  "fix": "莫名其妙",
+  "fixEn": "weird",
+  "since": 0
+ },
+ {
+  "zh": [
+   "淘宝",
+   "卖家",
+   "发货",
+   "很迅速"
+  ],
+  "en": [
+   "The Taobao",
+   "seller",
+   "ships",
+   "very quickly"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "我们",
+   "一股作气",
+   "爬到了",
+   "山顶"
+  ],
+  "en": [
+   "We",
+   "in one breth",
+   "climbed to",
+   "the top"
+  ],
+  "bad": 1,
+  "fix": "一鼓作气",
+  "fixEn": "in one breath",
+  "since": 0
+ },
+ {
+  "zh": [
+   "网吧里",
+   "烟味",
+   "太重了"
+  ],
+  "en": [
+   "The smoke",
+   "in the net café",
+   "is too strong"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "迫不急待",
+   "打开了",
+   "新游戏"
+  ],
+  "en": [
+   "He",
+   "eagerly opend",
+   "the new",
+   "game"
+  ],
+  "bad": 1,
+  "fix": "迫不及待",
+  "fixEn": "eagerly opened",
+  "since": 0
+ },
+ {
+  "zh": [
+   "考试前",
+   "一定要",
+   "复习",
+   "笔计"
+  ],
+  "en": [
+   "Before the exam,",
+   "be sure to",
+   "review",
+   "your notess"
+  ],
+  "bad": 3,
+  "fix": "笔记",
+  "fixEn": "your notes",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这个",
+   "游戏的",
+   "画面",
+   "很精至"
+  ],
+  "en": [
+   "This",
+   "game's",
+   "graphics",
+   "are exquisit"
+  ],
+  "bad": 3,
+  "fix": "很精致",
+  "fixEn": "are exquisite",
+  "since": 0
+ },
+ {
+  "zh": [
+   "地铁里",
+   "人太多，",
+   "挤得",
+   "喘不过气"
+  ],
+  "en": [
+   "The subway",
+   "is so crowded",
+   "I can",
+   "barely breathe"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "电脑风扇",
+   "的燥音",
+   "越来越大"
+  ],
+  "en": [
+   "The PC fan's",
+   "noize",
+   "keeps getting louder"
+  ],
+  "bad": 1,
+  "fix": "的噪音",
+  "fixEn": "noise",
+  "since": 0
+ },
+ {
+  "zh": [
+   "高考",
+   "倒记时",
+   "只剩",
+   "一百天"
+  ],
+  "en": [
+   "The gaokao",
+   "countdowm",
+   "has only",
+   "100 days left"
+  ],
+  "bad": 1,
+  "fix": "倒计时",
+  "fixEn": "countdown",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这台",
+   "笔记本",
+   "性价比",
+   "很高"
+  ],
+  "en": [
+   "This",
+   "laptop",
+   "is great",
+   "value for money"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "做事",
+   "总是",
+   "粗心大义"
+  ],
+  "en": [
+   "He",
+   "always",
+   "does things",
+   "carelesly"
+  ],
+  "bad": 3,
+  "fix": "粗心大意",
+  "fixEn": "carelessly",
+  "since": 0
+ },
+ {
+  "zh": [
+   "请把",
+   "文件",
+   "发到",
+   "我的邮相"
+  ],
+  "en": [
+   "Please send",
+   "the file",
+   "to",
+   "my emial"
+  ],
+  "bad": 3,
+  "fix": "我的邮箱",
+  "fixEn": "my email",
+  "since": 0
+ },
+ {
+  "zh": [
+   "微信",
+   "朋友圈",
+   "被",
+   "刷平了"
+  ],
+  "en": [
+   "My WeChat",
+   "Moments",
+   "got",
+   "floded"
+  ],
+  "bad": 3,
+  "fix": "刷屏了",
+  "fixEn": "flooded",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他俩",
+   "是",
+   "青梅竹马的",
+   "好朋友"
+  ],
+  "en": [
+   "The two of them",
+   "are",
+   "childhood",
+   "friends"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "室友",
+   "打游戏",
+   "通霄",
+   "到天亮"
+  ],
+  "en": [
+   "My roommate",
+   "gamed",
+   "all nihgt",
+   "till dawn"
+  ],
+  "bad": 2,
+  "fix": "通宵",
+  "fixEn": "all night",
+  "since": 0
+ },
+ {
+  "zh": [
+   "游戏",
+   "更新了",
+   "新的",
+   "补钉"
+  ],
+  "en": [
+   "The game",
+   "has updated",
+   "with a new",
+   "pach"
+  ],
+  "bad": 3,
+  "fix": "补丁",
+  "fixEn": "patch",
+  "since": 0
+ },
+ {
+  "zh": [
+   "我",
+   "按装了",
+   "新的",
+   "输入法"
+  ],
+  "en": [
+   "I",
+   "instaled",
+   "a new",
+   "input method"
+  ],
+  "bad": 1,
+  "fix": "安装了",
+  "fixEn": "installed",
+  "since": 0
+ },
+ {
+  "zh": [
+   "电脑",
+   "重装系统后",
+   "速度",
+   "变快了"
+  ],
+  "en": [
+   "After",
+   "reinstalling Windows,",
+   "the PC",
+   "runs faster"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "我",
+   "明天",
+   "要去",
+   "面式"
+  ],
+  "en": [
+   "Tomorrow",
+   "I",
+   "have a",
+   "job intervew"
+  ],
+  "bad": 3,
+  "fix": "面试",
+  "fixEn": "job interview",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这款手机",
+   "配制",
+   "很高"
+  ],
+  "en": [
+   "This phone's",
+   "specifcations",
+   "are high-end"
+  ],
+  "bad": 1,
+  "fix": "配置",
+  "fixEn": "specifications",
+  "since": 0
+ },
+ {
+  "zh": [
+   "周末",
+   "一起去",
+   "网吧",
+   "开黑吧"
+  ],
+  "en": [
+   "This weekend,",
+   "let's go",
+   "to the net café",
+   "and team up"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "老师",
+   "表扬了",
+   "他的",
+   "进不"
+  ],
+  "en": [
+   "The teacher",
+   "praised",
+   "his",
+   "progres"
+  ],
+  "bad": 3,
+  "fix": "进步",
+  "fixEn": "progress",
+  "since": 0
+ },
+ {
+  "zh": [
+   "记得",
+   "给手机",
+   "冲电"
+  ],
+  "en": [
+   "Remember,",
+   "your phone",
+   "needs charjing"
+  ],
+  "bad": 2,
+  "fix": "充电",
+  "fixEn": "needs charging",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "对电脑",
+   "一窃不通"
+  ],
+  "en": [
+   "When it comes to PCs,",
+   "he",
+   "knows nothng"
+  ],
+  "bad": 2,
+  "fix": "一窍不通",
+  "fixEn": "knows nothing",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这首歌",
+   "旋率",
+   "很好听"
+  ],
+  "en": [
+   "This song's",
+   "meolody",
+   "is lovely"
+  ],
+  "bad": 1,
+  "fix": "旋律",
+  "fixEn": "melody",
+  "since": 0
+ },
+ {
+  "zh": [
+   "打印机",
+   "又",
+   "卡纸了"
+  ],
+  "en": [
+   "The printer",
+   "has jammed",
+   "again"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "班长",
+   "通知",
+   "明天",
+   "交做业"
+  ],
+  "en": [
+   "The class monitor",
+   "says",
+   "tomorrow",
+   "homwork is due"
+  ],
+  "bad": 3,
+  "fix": "交作业",
+  "fixEn": "homework is due",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这台",
+   "显视器",
+   "是",
+   "24寸的"
+  ],
+  "en": [
+   "This",
+   "moniter",
+   "is",
+   "24 inches"
+  ],
+  "bad": 1,
+  "fix": "显示器",
+  "fixEn": "monitor",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "学习总是",
+   "按步就班"
+  ],
+  "en": [
+   "He",
+   "always studies",
+   "stp by step"
+  ],
+  "bad": 2,
+  "fix": "按部就班",
+  "fixEn": "step by step",
+  "since": 0
+ },
+ {
+  "zh": [
+   "王者荣耀",
+   "又输了",
+   "真遗撼"
+  ],
+  "en": [
+   "Honor of Kings,",
+   "lost again,",
+   "what a pitty"
+  ],
+  "bad": 2,
+  "fix": "真遗憾",
+  "fixEn": "what a pity",
+  "since": 0
+ },
+ {
+  "zh": [
+   "阴阳师",
+   "抽卡",
+   "全靠",
+   "运气"
+  ],
+  "en": [
+   "Onmyoji",
+   "card draws",
+   "depend on",
+   "luck"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 20160902
+ },
+ {
+  "zh": [
+   "神舟十一号",
+   "顺利",
+   "发射"
+  ],
+  "en": [
+   "Shenzhou-11",
+   "launched",
+   "smoothly"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 20161017
+ },
+ {
+  "zh": [
+   "航天员",
+   "在太空",
+   "驻流",
+   "三十天"
+  ],
+  "en": [
+   "The astronauts",
+   "in space",
+   "will stya",
+   "thirty days"
+  ],
+  "bad": 2,
+  "fix": "驻留",
+  "fixEn": "will stay",
+  "since": 20161017
+ },
+ {
+  "zh": [
+   "里约奥运",
+   "开幕式",
+   "很精睬"
+  ],
+  "en": [
+   "The Rio Olympics'",
+   "opening ceremony",
+   "was spectaculer"
+  ],
+  "bad": 2,
+  "fix": "很精彩",
+  "fixEn": "was spectacular",
+  "since": 20160806
+ },
+ {
+  "zh": [
+   "欧洲杯",
+   "决赛",
+   "葡萄牙",
+   "夺冠了"
+  ],
+  "en": [
+   "In the Euro",
+   "final,",
+   "Portugal",
+   "won the title"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 20160711
+ },
+ {
+  "zh": [
+   "人机大战",
+   "第四局",
+   "李世石",
+   "扳回一城"
+  ],
+  "en": [
+   "In game four",
+   "of man vs machine,",
+   "Lee Sedol",
+   "won one back"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 20160313
+ },
+ {
+  "zh": [
+   "杭州",
+   "西湖",
+   "的灯光秀",
+   "美仑美奂"
+  ],
+  "en": [
+   "Hangzhou's",
+   "West Lake",
+   "light show",
+   "was stuning"
+  ],
+  "bad": 3,
+  "fix": "美轮美奂",
+  "fixEn": "was stunning",
+  "since": 20160904
+ },
+ {
+  "zh": [
+   "双十一",
+   "零点",
+   "大家都在",
+   "剁手"
+  ],
+  "en": [
+   "At midnight",
+   "on Double 11,",
+   "everyone",
+   "shops like mad"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 20161111
+ },
+ {
+  "zh": [
+   "这个暑假",
+   "过得",
+   "很冲实"
+  ],
+  "en": [
+   "This summer",
+   "holiday was",
+   "very fullfilling"
+  ],
+  "bad": 2,
+  "fix": "很充实",
+  "fixEn": "very fulfilling",
+  "since": 0
+ },
+ {
+  "zh": [
+   "我的",
+   "手机",
+   "没信号了，",
+   "真烦燥"
+  ],
+  "en": [
+   "My",
+   "phone",
+   "has no signal,",
+   "so iritating"
+  ],
+  "bad": 3,
+  "fix": "真烦躁",
+  "fixEn": "so irritating",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "编程",
+   "水平",
+   "很利害"
+  ],
+  "en": [
+   "His",
+   "coding",
+   "skills",
+   "are amazng"
+  ],
+  "bad": 3,
+  "fix": "很厉害",
+  "fixEn": "are amazing",
+  "since": 0
+ },
+ {
+  "zh": [
+   "账号",
+   "被盗了，",
+   "赶快",
+   "修改密吗"
+  ],
+  "en": [
+   "The account",
+   "was hacked,",
+   "quickly",
+   "chnage the password"
+  ],
+  "bad": 3,
+  "fix": "修改密码",
+  "fixEn": "change the password",
+  "since": 0
+ },
+ {
+  "zh": [
+   "宿舍",
+   "的空调",
+   "又坏了，",
+   "热死了"
+  ],
+  "en": [
+   "The dorm's",
+   "air conditioner",
+   "broke again,",
+   "so hot"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "上课",
+   "总是",
+   "无精打踩"
+  ],
+  "en": [
+   "In class",
+   "he",
+   "always",
+   "looks listles"
+  ],
+  "bad": 3,
+  "fix": "无精打采",
+  "fixEn": "looks listless",
+  "since": 0
+ },
+ {
+  "zh": [
+   "同学聚会",
+   "大家",
+   "谈笑风声"
+  ],
+  "en": [
+   "At the reunion",
+   "everyone",
+   "chated and laughed"
+  ],
+  "bad": 2,
+  "fix": "谈笑风生",
+  "fixEn": "chatted and laughed",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这段代码",
+   "有个",
+   "小毛病",
+   "需要调式"
+  ],
+  "en": [
+   "This code",
+   "has a",
+   "small bug,",
+   "needs debuging"
+  ],
+  "bad": 3,
+  "fix": "需要调试",
+  "fixEn": "needs debugging",
+  "since": 0
+ },
+ {
+  "zh": [
+   "请",
+   "不要",
+   "在图书馆",
+   "大声暄哗"
+  ],
+  "en": [
+   "In the library,",
+   "please",
+   "do not",
+   "make noize"
+  ],
+  "bad": 3,
+  "fix": "大声喧哗",
+  "fixEn": "make noise",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "在贴吧",
+   "发了",
+   "一篇贴子"
+  ],
+  "en": [
+   "On Tieba",
+   "he",
+   "posted",
+   "a theard"
+  ],
+  "bad": 3,
+  "fix": "一篇帖子",
+  "fixEn": "a thread",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "对待工作",
+   "一丝不苟"
+  ],
+  "en": [
+   "He",
+   "treats his work",
+   "meticulously"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "我们",
+   "今晚",
+   "布署",
+   "新版本"
+  ],
+  "en": [
+   "Tonight",
+   "we",
+   "deplyo",
+   "the new version"
+  ],
+  "bad": 2,
+  "fix": "部署",
+  "fixEn": "deploy",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这场雨",
+   "来得",
+   "太突然，",
+   "没带伞"
+  ],
+  "en": [
+   "This rain",
+   "came",
+   "so suddenly,",
+   "no umbrella"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "考试时",
+   "很紧张，",
+   "手心冒汉"
+  ],
+  "en": [
+   "During the exam,",
+   "he",
+   "was nervous,",
+   "palms sweatting"
+  ],
+  "bad": 3,
+  "fix": "手心冒汗",
+  "fixEn": "palms sweating",
+  "since": 0
+ },
+ {
+  "zh": [
+   "QQ",
+   "群里",
+   "有人",
+   "发了个红包"
+  ],
+  "en": [
+   "In the",
+   "QQ group,",
+   "someone",
+   "sent a red packet"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "中秋节",
+   "吃月饼",
+   "是传通"
+  ],
+  "en": [
+   "At Mid-Autumn",
+   "eating mooncakes",
+   "is a tradtion"
+  ],
+  "bad": 2,
+  "fix": "是传统",
+  "fixEn": "is a tradition",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "一直",
+   "坚持",
+   "锻练身体"
+  ],
+  "en": [
+   "He",
+   "always",
+   "sticks to",
+   "exercize"
+  ],
+  "bad": 3,
+  "fix": "锻炼身体",
+  "fixEn": "exercise",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这个",
+   "视频",
+   "画质",
+   "很模湖"
+  ],
+  "en": [
+   "This",
+   "video",
+   "quality",
+   "is blurrry"
+  ],
+  "bad": 3,
+  "fix": "很模糊",
+  "fixEn": "is blurry",
+  "since": 0
+ },
+ {
+  "zh": [
+   "他",
+   "说话",
+   "总是",
+   "含糊其祠"
+  ],
+  "en": [
+   "He",
+   "always",
+   "speaks",
+   "vagly"
+  ],
+  "bad": 3,
+  "fix": "含糊其辞",
+  "fixEn": "vaguely",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这个软件",
+   "兼融性",
+   "不太好"
+  ],
+  "en": [
+   "This software's",
+   "compatability",
+   "isn't great"
+  ],
+  "bad": 1,
+  "fix": "兼容性",
+  "fixEn": "compatibility",
+  "since": 0
+ },
+ {
+  "zh": [
+   "老板",
+   "说",
+   "明天",
+   "加斑"
+  ],
+  "en": [
+   "The boss",
+   "says",
+   "tomorrow is",
+   "overtim"
+  ],
+  "bad": 3,
+  "fix": "加班",
+  "fixEn": "overtime",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这个",
+   "表格",
+   "需要",
+   "重新编缉"
+  ],
+  "en": [
+   "This",
+   "spreadsheet",
+   "needs",
+   "re-editting"
+  ],
+  "bad": 3,
+  "fix": "重新编辑",
+  "fixEn": "re-editing",
+  "since": 0
+ },
+ {
+  "zh": [
+   "我",
+   "想买",
+   "一个",
+   "机戒键盘"
+  ],
+  "en": [
+   "I",
+   "want to buy",
+   "a",
+   "mechanicl keyboard"
+  ],
+  "bad": 3,
+  "fix": "机械键盘",
+  "fixEn": "mechanical keyboard",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这个",
+   "游戏",
+   "需要",
+   "实名认正"
+  ],
+  "en": [
+   "This",
+   "game",
+   "requires",
+   "real-name verifcation"
+  ],
+  "bad": 3,
+  "fix": "实名认证",
+  "fixEn": "real-name verification",
+  "since": 0
+ },
+ {
+  "zh": [
+   "你的",
+   "建意",
+   "很有用"
+  ],
+  "en": [
+   "Your",
+   "sugestion",
+   "is useful"
+  ],
+  "bad": 1,
+  "fix": "建议",
+  "fixEn": "suggestion",
+  "since": 0
+ },
+ {
+  "zh": [
+   "这",
+   "部电影",
+   "的结局",
+   "出呼意料"
+  ],
+  "en": [
+   "This",
+   "film's",
+   "ending",
+   "was unexpectd"
+  ],
+  "bad": 3,
+  "fix": "出乎意料",
+  "fixEn": "was unexpected",
+  "since": 0
+ },
+ {
+  "zh": [
+   "iPhone7",
+   "的亮黑色",
+   "很抢手"
+  ],
+  "en": [
+   "The iPhone 7",
+   "in jet black",
+   "is in hot demand"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 20160908
+ },
+ {
+  "zh": [
+   "宿舍",
+   "断网了，",
+   "只能",
+   "用流量"
+  ],
+  "en": [
+   "The dorm",
+   "Wi-Fi is down,",
+   "so I'm",
+   "using mobile data"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ },
+ {
+  "zh": [
+   "暑假",
+   "我在",
+   "驾校",
+   "学开车"
+  ],
+  "en": [
+   "This summer",
+   "I'm learning",
+   "to drive",
+   "at driving school"
+  ],
+  "bad": -1,
+  "fix": "没错",
+  "fixEn": "No mistake",
+  "since": 0
+ }
+]

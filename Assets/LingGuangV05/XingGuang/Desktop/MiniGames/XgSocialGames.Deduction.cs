@@ -16,7 +16,22 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             new[]{"筷子","勺子","每顿饭用，用完要洗","一双两根，夹菜用","圆圆的，可以盛汤","夹","舀"},
             new[]{"手机","平板","触摸屏，需要充电","随身揣在口袋里打电话","屏幕大，出门不太方便带","口袋","大屏"},
             new[]{"微信","QQ","可以聊天发图片","朋友圈和红包，妈妈也用","企鹅头像，太阳和月亮等级","朋友圈","企鹅"},
-            new[]{"咖啡","奶茶","一杯拿在手里，常排队买","苦苦的，熬夜时提神","甜甜的，可选珍珠和糖度","苦","珍珠"}};
+            new[]{"咖啡","奶茶","一杯拿在手里，常排队买","苦苦的，熬夜时提神","甜甜的，可选珍珠和糖度","苦","珍珠"},
+            // 2026-10-21: 14 more pairs (20 in all).
+            new[]{"支付宝","微信支付","手机扫码就能付钱","蓝色图标，过年集五福","绿色图标，群里发红包","蓝色","绿色"},
+            new[]{"U盘","移动硬盘","插在电脑上存文件","小小一根，挂在钥匙扣上","有点沉，要接数据线","钥匙扣","数据线"},
+            new[]{"网吧","机房","一排排电脑坐满了人","按小时收费，可以包夜","学校上课用，老师盯着","包夜","上课"},
+            new[]{"斗鱼","B站","在上面看视频和弹幕","主播直播打游戏","小电视图标，番剧和鬼畜","直播","小电视"},
+            new[]{"耳机","音箱","用来听歌","戴在头上，别人听不见","放在桌上，全屋都听得见","戴","全屋"},
+            new[]{"泡面","火锅","热乎乎的，要加水或汤","一个人加班，三分钟搞定","一群人围着锅涮","三分钟","一群人"},
+            new[]{"高铁","飞机","出远门坐的","在地上跑，从站台上车","在天上飞，在登机口等","站台","天上"},
+            new[]{"台式机","笔记本","打游戏写作业都靠它","大机箱放在桌子底下","合上盖子能装进书包","机箱","书包"},
+            new[]{"共享单车","电动车","骑着出门的两个轮子","扫码开锁，骑完随手停","要充电，拧把手就走","扫码","充电"},
+            new[]{"微博","朋友圈","发照片和心情的地方","陌生人也能看，有热搜","只有好友看得到，能点赞","热搜","好友"},
+            new[]{"月饼","汤圆","过节才吃的甜点心","圆饼，中秋配月亮","圆球，元宵煮着吃","中秋","元宵"},
+            new[]{"王者荣耀","英雄联盟","五个人一队推塔","拿手机就能玩","要坐在电脑前打","手机","电脑"},
+            new[]{"短信","邮件","用来发文字消息","手机上发，一条七十个字","要写主题，可以带附件","七十字","附件"},
+            new[]{"西瓜","哈密瓜","夏天切开吃的瓜","绿皮红瓤黑籽","黄绿皮橙色瓤，新疆的甜","红瓤","新疆"}};
         // English counterpart of Pairs: same order and shape.
         static readonly string[][] PairsEn={
             new[]{"Dumpling","Wonton","Filling wrapped in dough, eaten boiled","Crescent-shaped, fished out and dipped in vinegar","Thin wrapper, often served in seaweed and dried-shrimp soup","crescent","soup"},
@@ -24,13 +39,28 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             new[]{"Chopsticks","Spoon","Used at every meal, washed afterwards","A pair of two sticks, for picking up food","Round, can hold soup","pick","scoop"},
             new[]{"Phone","Tablet","Touch screen, needs charging","Carried in a pocket for making calls","Big screen, a bit awkward to carry around","pocket","big screen"},
             new[]{"WeChat","QQ","You can chat and send pictures","Moments and red packets, even Mom uses it","Penguin avatar, sun and moon levels","Moments","penguin"},
-            new[]{"Coffee","Milk tea","A cup in your hand, often a queue to buy","Bitter, keeps you awake late at night","Sweet, with optional pearls and sugar level","bitter","pearls"}};
+            new[]{"Coffee","Milk tea","A cup in your hand, often a queue to buy","Bitter, keeps you awake late at night","Sweet, with optional pearls and sugar level","bitter","pearls"},
+            new[]{"Alipay","WeChat Pay","Pay by scanning with your phone","Blue icon, collect the Five Fortunes at New Year","Green icon, send red packets in group chats","blue","green"},
+            new[]{"USB stick","External drive","Plugs into a computer to store files","Tiny, hangs on a keyring","A bit heavy, needs a cable","keyring","cable"},
+            new[]{"Net café","Computer lab","Rows of computers full of people","Paid by the hour, all-nighters allowed","For class at school, the teacher watching","all-nighter","class"},
+            new[]{"Douyu","Bilibili","Watch videos with bullet comments","Streamers playing games live","Little TV icon, anime and remixes","live","little TV"},
+            new[]{"Headphones","Speakers","For listening to music","Worn on your head, nobody else hears","On the desk, the whole room hears","worn","whole room"},
+            new[]{"Instant noodles","Hotpot","Hot food with water or broth","Ready in three minutes when working late alone","A group cooking around one pot","three minutes","group"},
+            new[]{"High-speed rail","Plane","For long trips","Runs on the ground, board at a platform","Flies in the sky, wait at the gate","platform","sky"},
+            new[]{"Desktop PC","Laptop","For games and homework","Big tower under the desk","Closes up and fits in a backpack","tower","backpack"},
+            new[]{"Shared bike","E-bike","Two wheels you ride around town","Scan to unlock, leave it anywhere","Needs charging, twist the grip to go","scan","charge"},
+            new[]{"Weibo","WeChat Moments","Where you post photos and moods","Strangers can see it, there are trending topics","Only friends see it, and they can like it","trending","friends"},
+            new[]{"Mooncake","Tangyuan","Sweet festival food","Round cake, for the Mid-Autumn moon","Round balls, boiled for the Lantern Festival","Mid-Autumn","Lantern"},
+            new[]{"Honor of Kings","League of Legends","Five per team, push the towers","Played on a phone","Played sitting at a computer","phone","computer"},
+            new[]{"Text message","Email","For sending written messages","Sent from a phone, 70 characters each","Has a subject line, can carry attachments","70 characters","attachment"},
+            new[]{"Watermelon","Hami melon","A melon you slice in summer","Green rind, red flesh, black seeds","Yellow-green rind, orange flesh, sweet from Xinjiang","red flesh","Xinjiang"}};
         string[] Names => new[]{"你",C.Sim.AiDisplayName,"虚拟玩家 A","虚拟玩家 B"};
         string[] NamesEn => new[]{"You",C.Sim.AiDisplayName,"Virtual player A","Virtual player B"};
         string Nm(int i)=>XgUi.T(Names[i],NamesEn[i]);
         readonly bool[] alive=new bool[4];readonly int[] sides=new int[4],marks=new int[4],descSide=new int[4];readonly string[] desc=new string[4];
         readonly List<string> history=new List<string>();
         string[] pair,pairEn;int odd,round,phase,goodVotes;float delay;
+        static XgUndercoverGame(){Pairs=global::LingGuangV05.XingGuang.XgQuestionBank.Join(Pairs,global::LingGuangV05.XingGuang.XgQuestionBank.Pairs);PairsEn=global::LingGuangV05.XingGuang.XgQuestionBank.Join(PairsEn,global::LingGuangV05.XingGuang.XgQuestionBank.PairsEn);} // appends XgQuestionBank (2026-10-21)
         public XgUndercoverGame(XgMiniContext c):base(c){}
         public override void Build(){int pi=C.Random.Next(Pairs.Length);pair=Pairs[pi];pairEn=PairsEn[pi];odd=C.Random.Next(4);int majority=C.Random.Next(2);for(int i=0;i<4;i++){alive[i]=true;sides[i]=i==odd?1-majority:majority;}round=goodVotes=0;history.Clear();NextRound();}
         void NextRound(){round++;phase=0;for(int i=0;i<4;i++){marks[i]=-1;desc[i]=null;descSide[i]=-1;}Draw();}

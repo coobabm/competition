@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using LingGuangV05.XingGuang;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,7 +19,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if(pack.dataset=="headline"&&XgNewsCatalog.All.Count==0){var news=Resources.Load<TextAsset>("LingGuangV05/Browser/browser_news");if(news!=null)XgNewsCatalog.Load(news.text);}
             phrase=C.Sim.PickTeachingPhrase(pack.dataset,C.Random,out int seed);
             QuestionCard=XgSim.TeachingPhraseCard(pack.dataset,phrase,seed);prediction=C.Sim.PredictTeachingBinary(QuestionCard);
-            promptZh=phrase.text;promptEn=phrase.textEn;
+            promptZh=phrase.text;promptEn=string.IsNullOrEmpty(phrase.textEn)?phrase.text:phrase.textEn; // authored banks are Chinese-only
             string left=pack.dataset=="spam"?"垃圾短信":pack.dataset=="review"?"刷单评论":"标题党";
             string leftEn=pack.dataset=="spam"?"Spam":pack.dataset=="review"?"Fake review":"Clickbait";
             Header(pack.name,pack.nameEn,"左划："+left+"；右划：正常。","Swipe left for "+leftEn.ToLowerInvariant()+", right for genuine.");
@@ -219,9 +220,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
     }
     sealed class XgPackPoem : XgPackQuestion
     {
-        static readonly string[] Five={"床前明月光","疑是地上霜","举头望明月","低头思故乡","白日依山尽","黄河入海流","欲穷千里目","更上一层楼","春眠不觉晓","处处闻啼鸟"};
-        static readonly string[] Seven={"日照香炉生紫烟","遥看瀑布挂前川","飞流直下三千尺","疑是银河落九天","两岸猿声啼不住","轻舟已过万重山"};
+        // 2026-10-21: 20 lines per bank (锄禾/草/相思; 早发白帝城/黄鹤楼/九月九日/绝句 added).
+        static readonly string[] Five={"床前明月光","疑是地上霜","举头望明月","低头思故乡","白日依山尽","黄河入海流","欲穷千里目","更上一层楼","春眠不觉晓","处处闻啼鸟",
+            "锄禾日当午","汗滴禾下土","谁知盘中餐","粒粒皆辛苦","离离原上草","一岁一枯荣","野火烧不尽","春风吹又生","红豆生南国","春来发几枝"};
+        static readonly string[] Seven={"日照香炉生紫烟","遥看瀑布挂前川","飞流直下三千尺","疑是银河落九天","两岸猿声啼不住","轻舟已过万重山",
+            "朝辞白帝彩云间","千里江陵一日还","故人西辞黄鹤楼","烟花三月下扬州","孤帆远影碧空尽","唯见长江天际流","独在异乡为异客","每逢佳节倍思亲",
+            "遥知兄弟登高处","遍插茱萸少一人","两个黄鹂鸣翠柳","一行白鹭上青天","窗含西岭千秋雪","门泊东吴万里船"};
         int questionRound;XgPoemQuote quote;
+        static XgPackPoem(){Five=global::LingGuangV05.XingGuang.XgQuestionBank.Join(Five,global::LingGuangV05.XingGuang.XgQuestionBank.Five);Seven=global::LingGuangV05.XingGuang.XgQuestionBank.Join(Seven,global::LingGuangV05.XingGuang.XgQuestionBank.Seven);} // appends XgQuestionBank (2026-10-21)
         public XgPackPoem(XgMiniContext c):base(c){}
         protected override void DrawQuestion()
         {
@@ -267,17 +273,62 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
     }
     sealed class XgPackEnglish : XgPackQuestion
     {
-        static readonly string[][] Zh={new[]{"Good good study, day day up.","努力学习，天天向上。","Study hard and make progress every day.","Study good and day up.","Good days study up.","Day day good study."},new[]{"Please don't touch me.","请勿触摸。（博物馆展品标牌）","Please do not touch.","Please don't touch myself.","No to touch me.","Please do not touches."},new[]{"Carefully slide.","小心地滑。","Caution: slippery floor.","Careful slipping.","The floor is carefully.","Slip the floor carefully."},new[]{"I very like this game.","我很喜欢这个游戏。","I really like this game.","I am very like this game.","I very likes this game.","I like very this game."}};
-        static readonly string[][] Spans={new[]{"Good good","study,","day day","up."},new[]{"Please","don't","touch","me."},new[]{"Carefully","slide."},new[]{"I","very","like","this game."}};
-        static readonly int[][] ErrorSpans={new[]{0,2},new[]{3},new[]{1},new[]{1}};
-        static readonly string[] ContextEn={"A slogan about diligent study and daily progress.","A museum display sign warning visitors not to touch the exhibit.","A sign warning that the floor is slippery.","Express strong enjoyment of this game."};
-        static readonly string[] ReasonZh={"good good、day day 都是逐字硬译。","标牌提醒勿触摸展品，不是在说别碰我。","地滑是 slippery，不是让人 slide。","very 不能直接修饰 like。"};
-        static readonly string[] ReasonEn={"Good good and day day are both literal mistranslations.","The sign warns about touching the exhibit, not touching the speaker.","A slippery floor is a hazard, not an instruction to slide.","Very cannot directly modify like."};
+        static readonly string[][] Zh={new[]{"Good good study, day day up.","努力学习，天天向上。","Study hard and make progress every day.","Study good and day up.","Good days study up.","Day day good study."},new[]{"Please don't touch me.","请勿触摸。（博物馆展品标牌）","Please do not touch.","Please don't touch myself.","No to touch me.","Please do not touches."},new[]{"Carefully slide.","小心地滑。","Caution: slippery floor.","Careful slipping.","The floor is carefully.","Slip the floor carefully."},new[]{"I very like this game.","我很喜欢这个游戏。","I really like this game.","I am very like this game.","I very likes this game.","I like very this game."},
+            // 2026-10-21: 17 more, so the stage-five pack has 20+.
+            new[]{"You can does it!","你能做到！（给朋友鼓劲）","You can do it!","You cans do it!","You can doing it!","You can did it!"},
+            new[]{"Fall into the water carefully.","小心落水。（水边标牌）","Caution: deep water.","Carefully fall into water.","Be careful fall water.","Water falls carefully."},
+            new[]{"Civilized toilet, convenient for you.","文明如厕，方便你我。（洗手间标牌）","Please keep the restroom clean.","Civilize the toilet.","The toilet is civilized for you.","Convenient civilized toilet."},
+            new[]{"Open the light, please.","请开灯。","Please turn on the light.","Please open on the light.","Open light, please.","Please light the open."},
+            new[]{"People mountain people sea.","人山人海。","There are crowds everywhere.","People are mountain and sea.","Mountain of people sea.","Many mountain people."},
+            new[]{"Don't forget to brings your belongings.","别忘了带好随身物品。（车厢广播）","Don't forget to bring your belongings.","Don't forget to bringing your belongings.","Don't forget bring your belongings.","Don't forget to brought your belongings."},
+            new[]{"Please minds your head.","请小心碰头。（矮门标牌）","Please mind your head.","Please minding your head.","Please minded your head.","Please to mind your head."},
+            new[]{"Give you some color to see see.","给你点颜色看看。","I'll teach you a lesson.","I'll show you some colors.","Give you color see.","Some color you see see."},
+            new[]{"Let me see see.","让我看看。","Let me have a look.","Let me see look.","Me see see.","Let see me."},
+            new[]{"No zuo no die.","不作死就不会死。","Play with fire and you'll get burned.","No do no die.","Don't zuo die.","No die no zuo."},
+            new[]{"Please don't play the phone.","上课请不要玩手机。","Please don't use your phone.","Please don't play phone.","Don't play the phones please.","Please no play phone."},
+            new[]{"My computer is died.","我的电脑死机了。","My computer has frozen.","My computer is dead die.","My computer died is.","Computer my is died."},
+            new[]{"I have a good news.","我有一个好消息。","I have some good news.","I have good newses.","I has a good news.","A good news I have."},
+            new[]{"I am sweat a lot in this heat.","这么热，我正在大量出汗。","I am sweating a lot in this heat.","I is sweating a lot in this heat.","I am sweats a lot in this heat.","I am to sweating a lot in this heat."},
+            new[]{"WiFi is weak, can't up the net.","WiFi 信号太弱，上不了网。","The Wi-Fi is weak; I can't get online.","WiFi weak, up the net can't.","WiFi can't the net up.","Weak WiFi, net can't up."},
+            new[]{"Hi, I want a ticket go Shanghai.","你好，我要一张去上海的票。","Hi, I'd like a ticket to Shanghai.","Hi, a ticket go Shanghai want.","I want go Shanghai ticket.","Hi, ticket want go Shanghai."},
+            new[]{"Please don't walks on the grass.","请不要踩草坪。（草坪标牌）","Please don't walk on the grass.","Please don't walking on the grass.","Please don't walked on the grass.","Please doesn't walk on the grass."}};
+        static readonly string[][] Spans={new[]{"Good good","study,","day day","up."},new[]{"Please","don't","touch","me."},new[]{"Carefully","slide."},new[]{"I","very","like","this game."},
+            new[]{"You can","does","it!"},new[]{"Fall into","the water","carefully."},new[]{"Civilized","toilet,","convenient","for you."},new[]{"Open","the light,","please."},
+            new[]{"People","mountain","people","sea."},new[]{"Don't forget","to brings","your belongings."},new[]{"Please","minds","your head."},new[]{"Give you","some color","to see","see."},
+            new[]{"Let me","see","see."},new[]{"No","zuo","no","die."},new[]{"Please","don't","play","the phone."},new[]{"My computer","is","died."},
+            new[]{"I have","a","good news."},new[]{"I","am sweat","a lot","in this heat."},new[]{"WiFi is weak,","can't","up","the net."},new[]{"Hi,","I want","a ticket","go Shanghai."},
+            new[]{"Please","don't","walks","on the grass."}};
+        static readonly int[][] ErrorSpans={new[]{0,2},new[]{3},new[]{1},new[]{1},
+            new[]{1},new[]{0,2},new[]{0,2},new[]{0},
+            new[]{1,3},new[]{1},new[]{1},new[]{1,3},
+            new[]{2},new[]{1},new[]{2},new[]{1,2},
+            new[]{1},new[]{1},new[]{2,3},new[]{3},
+            new[]{2}};
+        static readonly string[] ContextEn={"A slogan about diligent study and daily progress.","A museum display sign warning visitors not to touch the exhibit.","A sign warning that the floor is slippery.","Express strong enjoyment of this game.",
+            "Encouraging a friend by saying that they can do it.","A sign warning people near deep water.","A restroom sign asking people to keep it clean.","Asking someone to switch on the light.",
+            "Describing a huge crowd.","A reminder on a bus or train not to forget to bring your belongings.","A polite warning at a low doorway asking people to mind their heads.","A movie-style threat to teach someone a lesson.",
+            "Asking to take a look at something.","Warning that reckless behaviour brings trouble.","A teacher asking students not to use phones in class.","Complaining that the computer stopped responding.",
+            "Announcing good news to friends.","Describing how much you are sweating right now in the heat.","Complaining that the internet isn't working.","Buying a train ticket at the station.",
+            "A lawn sign asking visitors not to walk on the grass."};
+        static readonly string[] ReasonZh={"good good、day day 都是逐字硬译。","标牌提醒勿触摸展品，不是在说别碰我。","地滑是 slippery，不是让人 slide。","very 不能直接修饰 like。",
+            "情态动词 can 后面要用动词原形 do，不能用 does。","标牌是提醒别落水，不是让人小心地掉下去。","文明如厕是请保持卫生，逐字翻成 civilized、convenient 意思全变了。","开灯用 turn on，不用 open。",
+            "人山人海是人很多，逐字译成 mountain、sea 外国人看不懂。","forget to do 表示别忘了去做某事；不定式 to 后应接原形 bring，不能接 brings。","祈使句要用动词原形 mind；please 后不能用第三人称单数 minds。","给你点颜色看看是要教训人，see see 是逐字重复。",
+            "看看不用重复 see，说 have a look。","zuo 是拼音，外国人看不懂，可以说 play with fire。","玩手机说 use your phone，play 后面通常接游戏或乐器。","死机是 frozen；is died 语法也不对。",
+            "news 不可数，不能加 a。","描述正在出汗时，进行时应为 am sweating；am 后不能直接接动词原形 sweat。","上网是 get online，up the net 是逐字硬译。","去上海的票是 a ticket to Shanghai，不用 go。",
+            "否定祈使句用 do not 加动词原形；应为 walk，不能用 walks。"};
+        static readonly string[] ReasonEn={"Good good and day day are both literal mistranslations.","The sign warns about touching the exhibit, not touching the speaker.","A slippery floor is a hazard, not an instruction to slide.","Very cannot directly modify like.",
+            "The modal verb can takes the base form do, not does.","The sign warns against falling in, not how to fall in.","Word-for-word civilized and convenient change the meaning entirely.","Lights are turned on, not opened.",
+            "It means a huge crowd; mountain and sea are word-for-word.","In this reminder, to introduces an infinitive and requires the base form bring, not brings.","An imperative uses the base form mind; please does not take the third-person form minds here.","It means teaching someone a lesson; see see is a literal repeat.",
+            "No need to repeat see; say have a look.","Zuo is pinyin; English speakers would say play with fire.","Phones are used; play usually takes a game or an instrument.","A stuck computer has frozen; is died is also ungrammatical.",
+            "News is uncountable, so no a.","For an action happening now, use the progressive am sweating; am cannot directly take the base verb sweat.","Going online is get online; up the net is word-for-word.","A ticket to Shanghai needs no go.",
+            "A negative imperative uses do not followed by the base verb walk, not walks."};
+        static readonly List<int> Recent=new List<int>();
         int questionIndex;bool choosingRewrite;
+        static XgPackEnglish(){Zh=global::LingGuangV05.XingGuang.XgQuestionBank.Join(Zh,global::LingGuangV05.XingGuang.XgQuestionBank.EnglishZh);Spans=global::LingGuangV05.XingGuang.XgQuestionBank.Join(Spans,global::LingGuangV05.XingGuang.XgQuestionBank.EnglishSpans);ErrorSpans=global::LingGuangV05.XingGuang.XgQuestionBank.Join(ErrorSpans,global::LingGuangV05.XingGuang.XgQuestionBank.EnglishErrorSpans);ContextEn=global::LingGuangV05.XingGuang.XgQuestionBank.Join(ContextEn,global::LingGuangV05.XingGuang.XgQuestionBank.EnglishContextEn);ReasonZh=global::LingGuangV05.XingGuang.XgQuestionBank.Join(ReasonZh,global::LingGuangV05.XingGuang.XgQuestionBank.EnglishReasonZh);ReasonEn=global::LingGuangV05.XingGuang.XgQuestionBank.Join(ReasonEn,global::LingGuangV05.XingGuang.XgQuestionBank.EnglishReasonEn);} // appends XgQuestionBank (2026-10-21)
         public XgPackEnglish(XgMiniContext c):base(c){}
         protected override void DrawQuestion()
         {
-            questionIndex=C.Random.Next(Zh.Length);choosingRewrite=false;var q=Zh[questionIndex];promptZh=q[1]+"\n"+q[0];promptEn=ContextEn[questionIndex]+"\n"+q[0];
+            questionIndex=PickFresh(new int[Zh.Length],Recent);choosingRewrite=false;var q=Zh[questionIndex];promptZh=q[1]+"\n"+q[0];promptEn=ContextEn[questionIndex]+"\n"+q[0];
             Header("中式英语改错","Fix the Chinglish","先点出错的字词，再选自然的改写。","First locate the error, then choose a natural rewrite.");
             T("Source",35,100,830,100,XgUi.T(promptZh,promptEn),27);
             for(int i=0;i<Spans[questionIndex].Length;i++){int span=i;B("ErrorSpan"+i,35+i*215,260,200,65,Spans[questionIndex][i],()=>PickError(span),23);}

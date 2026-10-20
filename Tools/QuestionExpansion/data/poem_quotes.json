@@ -1,0 +1,722 @@
+[
+ {
+  "line": "千山鸟飞绝，万径人踪灭。",
+  "lineEn": "No birds over a thousand hills; no footprints on ten thousand paths.",
+  "original": true,
+  "originalLine": "千山鸟飞绝，万径人踪灭。",
+  "originalLineEn": "No birds over a thousand hills; no footprints on ten thousand paths.",
+  "source": "柳宗元《江雪》",
+  "sourceEn": "Liu Zongyuan, River Snow"
+ },
+ {
+  "line": "千山鸟飞绝，宿舍没网络。",
+  "lineEn": "No birds over a thousand hills; no internet in the dorm.",
+  "original": false,
+  "originalLine": "千山鸟飞绝，万径人踪灭。",
+  "originalLineEn": "No birds over a thousand hills; no footprints on ten thousand paths.",
+  "source": "柳宗元《江雪》",
+  "sourceEn": "Liu Zongyuan, River Snow"
+ },
+ {
+  "line": "众鸟高飞尽，孤云独去闲。",
+  "lineEn": "The birds have flown off high; a lone cloud drifts idly away.",
+  "original": true,
+  "originalLine": "众鸟高飞尽，孤云独去闲。",
+  "originalLineEn": "The birds have flown off high; a lone cloud drifts idly away.",
+  "source": "李白《独坐敬亭山》",
+  "sourceEn": "Li Bai, Sitting Alone on Jingting Mountain"
+ },
+ {
+  "line": "众鸟高飞尽，手机没电了。",
+  "lineEn": "The birds have flown off high; my phone battery just died.",
+  "original": false,
+  "originalLine": "众鸟高飞尽，孤云独去闲。",
+  "originalLineEn": "The birds have flown off high; a lone cloud drifts idly away.",
+  "source": "李白《独坐敬亭山》",
+  "sourceEn": "Li Bai, Sitting Alone on Jingting Mountain"
+ },
+ {
+  "line": "空山不见人，但闻人语响。",
+  "lineEn": "No one seen on the empty hill; only voices echo.",
+  "original": true,
+  "originalLine": "空山不见人，但闻人语响。",
+  "originalLineEn": "No one seen on the empty hill; only voices echo.",
+  "source": "王维《鹿柴》",
+  "sourceEn": "Wang Wei, Deer Park"
+ },
+ {
+  "line": "空山不见人，但闻键盘响。",
+  "lineEn": "No one seen on the empty hill; only keyboards clacking.",
+  "original": false,
+  "originalLine": "空山不见人，但闻人语响。",
+  "originalLineEn": "No one seen on the empty hill; only voices echo.",
+  "source": "王维《鹿柴》",
+  "sourceEn": "Wang Wei, Deer Park"
+ },
+ {
+  "line": "夕阳无限好，只是近黄昏。",
+  "lineEn": "The setting sun is boundlessly fine; it's just that dusk is near.",
+  "original": true,
+  "originalLine": "夕阳无限好，只是近黄昏。",
+  "originalLineEn": "The setting sun is boundlessly fine; it's just that dusk is near.",
+  "source": "李商隐《登乐游原》",
+  "sourceEn": "Li Shangyin, On Leyou Plain"
+ },
+ {
+  "line": "夕阳无限好，只是要加班。",
+  "lineEn": "The setting sun is boundlessly fine; it's just that I have to work late.",
+  "original": false,
+  "originalLine": "夕阳无限好，只是近黄昏。",
+  "originalLineEn": "The setting sun is boundlessly fine; it's just that dusk is near.",
+  "source": "李商隐《登乐游原》",
+  "sourceEn": "Li Shangyin, On Leyou Plain"
+ },
+ {
+  "line": "松下问童子，言师采药去。",
+  "lineEn": "Under the pines I ask the boy; he says his master's gone gathering herbs.",
+  "original": true,
+  "originalLine": "松下问童子，言师采药去。",
+  "originalLineEn": "Under the pines I ask the boy; he says his master's gone gathering herbs.",
+  "source": "贾岛《寻隐者不遇》",
+  "sourceEn": "Jia Dao, Seeking the Hermit in Vain"
+ },
+ {
+  "line": "松下问童子，言师去网吧。",
+  "lineEn": "Under the pines I ask the boy; he says his master's gone to the internet cafe.",
+  "original": false,
+  "originalLine": "松下问童子，言师采药去。",
+  "originalLineEn": "Under the pines I ask the boy; he says his master's gone gathering herbs.",
+  "source": "贾岛《寻隐者不遇》",
+  "sourceEn": "Jia Dao, Seeking the Hermit in Vain"
+ },
+ {
+  "line": "柴门闻犬吠，风雪夜归人。",
+  "lineEn": "A dog barks at the brushwood gate; someone comes home through the snowy night.",
+  "original": true,
+  "originalLine": "柴门闻犬吠，风雪夜归人。",
+  "originalLineEn": "A dog barks at the brushwood gate; someone comes home through the snowy night.",
+  "source": "刘长卿《逢雪宿芙蓉山主人》",
+  "sourceEn": "Liu Changqing, Snowbound at Lotus Hill"
+ },
+ {
+  "line": "柴门闻犬吠，风雪外卖人。",
+  "lineEn": "A dog barks at the brushwood gate; the delivery guy arrives through the snow.",
+  "original": false,
+  "originalLine": "柴门闻犬吠，风雪夜归人。",
+  "originalLineEn": "A dog barks at the brushwood gate; someone comes home through the snowy night.",
+  "source": "刘长卿《逢雪宿芙蓉山主人》",
+  "sourceEn": "Liu Changqing, Snowbound at Lotus Hill"
+ },
+ {
+  "line": "危楼高百尺，手可摘星辰。",
+  "lineEn": "The tower soars a hundred feet; my hand could pluck the stars.",
+  "original": true,
+  "originalLine": "危楼高百尺，手可摘星辰。",
+  "originalLineEn": "The tower soars a hundred feet; my hand could pluck the stars.",
+  "source": "李白《夜宿山寺》",
+  "sourceEn": "Li Bai, A Night at a Mountain Temple"
+ },
+ {
+  "line": "危楼高百尺，电梯又坏了。",
+  "lineEn": "The tower soars a hundred feet; and the elevator's broken again.",
+  "original": false,
+  "originalLine": "危楼高百尺，手可摘星辰。",
+  "originalLineEn": "The tower soars a hundred feet; my hand could pluck the stars.",
+  "source": "李白《夜宿山寺》",
+  "sourceEn": "Li Bai, A Night at a Mountain Temple"
+ },
+ {
+  "line": "墙角数枝梅，凌寒独自开。",
+  "lineEn": "A few plum sprigs in the corner bloom alone against the cold.",
+  "original": true,
+  "originalLine": "墙角数枝梅，凌寒独自开。",
+  "originalLineEn": "A few plum sprigs in the corner bloom alone against the cold.",
+  "source": "王安石《梅花》",
+  "sourceEn": "Wang Anshi, Plum Blossoms"
+ },
+ {
+  "line": "墙角数枝梅，WiFi连不上。",
+  "lineEn": "A few plum sprigs in the corner; the Wi-Fi won't connect.",
+  "original": false,
+  "originalLine": "墙角数枝梅，凌寒独自开。",
+  "originalLineEn": "A few plum sprigs in the corner bloom alone against the cold.",
+  "source": "王安石《梅花》",
+  "sourceEn": "Wang Anshi, Plum Blossoms"
+ },
+ {
+  "line": "春种一粒粟，秋收万颗子。",
+  "lineEn": "Sow one grain of millet in spring; reap ten thousand in autumn.",
+  "original": true,
+  "originalLine": "春种一粒粟，秋收万颗子。",
+  "originalLineEn": "Sow one grain of millet in spring; reap ten thousand in autumn.",
+  "source": "李绅《悯农·其一》",
+  "sourceEn": "Li Shen, Pity the Farmers I"
+ },
+ {
+  "line": "春种一粒粟，秋收万个赞。",
+  "lineEn": "Sow one grain of millet in spring; reap ten thousand likes in autumn.",
+  "original": false,
+  "originalLine": "春种一粒粟，秋收万颗子。",
+  "originalLineEn": "Sow one grain of millet in spring; reap ten thousand in autumn.",
+  "source": "李绅《悯农·其一》",
+  "sourceEn": "Li Shen, Pity the Farmers I"
+ },
+ {
+  "line": "慈母手中线，游子身上衣。",
+  "lineEn": "The thread in a loving mother's hand becomes the coat on her wandering son.",
+  "original": true,
+  "originalLine": "慈母手中线，游子身上衣。",
+  "originalLineEn": "The thread in a loving mother's hand becomes the coat on her wandering son.",
+  "source": "孟郊《游子吟》",
+  "sourceEn": "Meng Jiao, Song of the Wanderer"
+ },
+ {
+  "line": "慈母手中线，游子在网吧。",
+  "lineEn": "The thread in a loving mother's hand; her son is at the internet cafe.",
+  "original": false,
+  "originalLine": "慈母手中线，游子身上衣。",
+  "originalLineEn": "The thread in a loving mother's hand becomes the coat on her wandering son.",
+  "source": "孟郊《游子吟》",
+  "sourceEn": "Meng Jiao, Song of the Wanderer"
+ },
+ {
+  "line": "好雨知时节，当春乃发生。",
+  "lineEn": "Good rain knows its season; it comes just when spring arrives.",
+  "original": true,
+  "originalLine": "好雨知时节，当春乃发生。",
+  "originalLineEn": "Good rain knows its season; it comes just when spring arrives.",
+  "source": "杜甫《春夜喜雨》",
+  "sourceEn": "Du Fu, Welcome Rain on a Spring Night"
+ },
+ {
+  "line": "好雨知时节，快递全淋湿。",
+  "lineEn": "Good rain knows its season; all my parcels got soaked.",
+  "original": false,
+  "originalLine": "好雨知时节，当春乃发生。",
+  "originalLineEn": "Good rain knows its season; it comes just when spring arrives.",
+  "source": "杜甫《春夜喜雨》",
+  "sourceEn": "Du Fu, Welcome Rain on a Spring Night"
+ },
+ {
+  "line": "海内存知己，天涯若比邻。",
+  "lineEn": "With a true friend within the seas, the world's end feels next door.",
+  "original": true,
+  "originalLine": "海内存知己，天涯若比邻。",
+  "originalLineEn": "With a true friend within the seas, the world's end feels next door.",
+  "source": "王勃《送杜少府之任蜀州》",
+  "sourceEn": "Wang Bo, Farewell to Prefect Du"
+ },
+ {
+  "line": "海内存知己，全在QQ里。",
+  "lineEn": "With true friends within the seas, all of them in my QQ list.",
+  "original": false,
+  "originalLine": "海内存知己，天涯若比邻。",
+  "originalLineEn": "With a true friend within the seas, the world's end feels next door.",
+  "source": "王勃《送杜少府之任蜀州》",
+  "sourceEn": "Wang Bo, Farewell to Prefect Du"
+ },
+ {
+  "line": "感时花溅泪，恨别鸟惊心。",
+  "lineEn": "Grieving the times, flowers draw tears; hating parting, birds startle the heart.",
+  "original": true,
+  "originalLine": "感时花溅泪，恨别鸟惊心。",
+  "originalLineEn": "Grieving the times, flowers draw tears; hating parting, birds startle the heart.",
+  "source": "杜甫《春望》",
+  "sourceEn": "Du Fu, Spring View"
+ },
+ {
+  "line": "感时花溅泪，考试不及格。",
+  "lineEn": "Grieving the times, flowers draw tears; I failed the exam.",
+  "original": false,
+  "originalLine": "感时花溅泪，恨别鸟惊心。",
+  "originalLineEn": "Grieving the times, flowers draw tears; hating parting, birds startle the heart.",
+  "source": "杜甫《春望》",
+  "sourceEn": "Du Fu, Spring View"
+ },
+ {
+  "line": "明月松间照，清泉石上流。",
+  "lineEn": "The bright moon shines through the pines; clear springs flow over stones.",
+  "original": true,
+  "originalLine": "明月松间照，清泉石上流。",
+  "originalLineEn": "The bright moon shines through the pines; clear springs flow over stones.",
+  "source": "王维《山居秋暝》",
+  "sourceEn": "Wang Wei, Autumn Evening in the Mountains"
+ },
+ {
+  "line": "明月松间照，作业写不完。",
+  "lineEn": "The bright moon shines through the pines; my homework never ends.",
+  "original": false,
+  "originalLine": "明月松间照，清泉石上流。",
+  "originalLineEn": "The bright moon shines through the pines; clear springs flow over stones.",
+  "source": "王维《山居秋暝》",
+  "sourceEn": "Wang Wei, Autumn Evening in the Mountains"
+ },
+ {
+  "line": "海日生残夜，江春入旧年。",
+  "lineEn": "The sea sun rises from the last of night; river spring enters the old year.",
+  "original": true,
+  "originalLine": "海日生残夜，江春入旧年。",
+  "originalLineEn": "The sea sun rises from the last of night; river spring enters the old year.",
+  "source": "王湾《次北固山下》",
+  "sourceEn": "Wang Wan, Mooring Below Beigu Mountain"
+ },
+ {
+  "line": "海日生残夜，熬夜打游戏。",
+  "lineEn": "The sea sun rises from the last of night; I stayed up gaming again.",
+  "original": false,
+  "originalLine": "海日生残夜，江春入旧年。",
+  "originalLineEn": "The sea sun rises from the last of night; river spring enters the old year.",
+  "source": "王湾《次北固山下》",
+  "sourceEn": "Wang Wan, Mooring Below Beigu Mountain"
+ },
+ {
+  "line": "会当凌绝顶，一览众山小。",
+  "lineEn": "I shall climb the highest peak and see all other mountains small.",
+  "original": true,
+  "originalLine": "会当凌绝顶，一览众山小。",
+  "originalLineEn": "I shall climb the highest peak and see all other mountains small.",
+  "source": "杜甫《望岳》",
+  "sourceEn": "Du Fu, Gazing at Mount Tai"
+ },
+ {
+  "line": "会当凌绝顶，信号满格了。",
+  "lineEn": "I shall climb the highest peak; finally full phone signal.",
+  "original": false,
+  "originalLine": "会当凌绝顶，一览众山小。",
+  "originalLineEn": "I shall climb the highest peak and see all other mountains small.",
+  "source": "杜甫《望岳》",
+  "sourceEn": "Du Fu, Gazing at Mount Tai"
+ },
+ {
+  "line": "人闲桂花落，夜静春山空。",
+  "lineEn": "At ease, I watch osmanthus fall; the night is still, the spring hill empty.",
+  "original": true,
+  "originalLine": "人闲桂花落，夜静春山空。",
+  "originalLineEn": "At ease, I watch osmanthus fall; the night is still, the spring hill empty.",
+  "source": "王维《鸟鸣涧》",
+  "sourceEn": "Wang Wei, Birdsong Brook"
+ },
+ {
+  "line": "人闲桂花落，夜静显卡响。",
+  "lineEn": "At ease, I watch osmanthus fall; the night is still, the graphics card roars.",
+  "original": false,
+  "originalLine": "人闲桂花落，夜静春山空。",
+  "originalLineEn": "At ease, I watch osmanthus fall; the night is still, the spring hill empty.",
+  "source": "王维《鸟鸣涧》",
+  "sourceEn": "Wang Wei, Birdsong Brook"
+ },
+ {
+  "line": "野旷天低树，江清月近人。",
+  "lineEn": "The wide plain sky sinks below the trees; the clear river brings the moon near.",
+  "original": true,
+  "originalLine": "野旷天低树，江清月近人。",
+  "originalLineEn": "The wide plain sky sinks below the trees; the clear river brings the moon near.",
+  "source": "孟浩然《宿建德江》",
+  "sourceEn": "Meng Haoran, Mooring on the Jiande River"
+ },
+ {
+  "line": "野旷天低树，江清WiFi弱。",
+  "lineEn": "The wide plain sky sinks below the trees; by the clear river, the Wi-Fi is weak.",
+  "original": false,
+  "originalLine": "野旷天低树，江清月近人。",
+  "originalLineEn": "The wide plain sky sinks below the trees; the clear river brings the moon near.",
+  "source": "孟浩然《宿建德江》",
+  "sourceEn": "Meng Haoran, Mooring on the Jiande River"
+ },
+ {
+  "line": "白发三千丈，缘愁似个长。",
+  "lineEn": "My white hair is three thousand zhang long, as long as my sorrow.",
+  "original": true,
+  "originalLine": "白发三千丈，缘愁似个长。",
+  "originalLineEn": "My white hair is three thousand zhang long, as long as my sorrow.",
+  "source": "李白《秋浦歌》",
+  "sourceEn": "Li Bai, Song of Qiupu"
+ },
+ {
+  "line": "白发三千丈，全因写代码。",
+  "lineEn": "My white hair is three thousand zhang long, all from writing code.",
+  "original": false,
+  "originalLine": "白发三千丈，缘愁似个长。",
+  "originalLineEn": "My white hair is three thousand zhang long, as long as my sorrow.",
+  "source": "李白《秋浦歌》",
+  "sourceEn": "Li Bai, Song of Qiupu"
+ },
+ {
+  "line": "林暗草惊风，将军夜引弓。",
+  "lineEn": "Dark woods, grass startled by wind; the general draws his bow at night.",
+  "original": true,
+  "originalLine": "林暗草惊风，将军夜引弓。",
+  "originalLineEn": "Dark woods, grass startled by wind; the general draws his bow at night.",
+  "source": "卢纶《塞下曲·其二》",
+  "sourceEn": "Lu Lun, Frontier Song II"
+ },
+ {
+  "line": "林暗草惊风，将军夜开黑。",
+  "lineEn": "Dark woods, grass startled by wind; the general games online with friends all night.",
+  "original": false,
+  "originalLine": "林暗草惊风，将军夜引弓。",
+  "originalLineEn": "Dark woods, grass startled by wind; the general draws his bow at night.",
+  "source": "卢纶《塞下曲·其二》",
+  "sourceEn": "Lu Lun, Frontier Song II"
+ },
+ {
+  "line": "独坐幽篁里，弹琴复长啸。",
+  "lineEn": "Sitting alone in the quiet bamboo, I play the qin and whistle long.",
+  "original": true,
+  "originalLine": "独坐幽篁里，弹琴复长啸。",
+  "originalLineEn": "Sitting alone in the quiet bamboo, I play the qin and whistle long.",
+  "source": "王维《竹里馆》",
+  "sourceEn": "Wang Wei, Bamboo Lodge"
+ },
+ {
+  "line": "独坐幽篁里，弹琴复上网。",
+  "lineEn": "Sitting alone in the quiet bamboo, I play the qin, then go online.",
+  "original": false,
+  "originalLine": "独坐幽篁里，弹琴复长啸。",
+  "originalLineEn": "Sitting alone in the quiet bamboo, I play the qin and whistle long.",
+  "source": "王维《竹里馆》",
+  "sourceEn": "Wang Wei, Bamboo Lodge"
+ },
+ {
+  "line": "停车坐爱枫林晚，霜叶红于二月花。",
+  "lineEn": "I stop my cart to love the maples at dusk; frosted leaves outshine spring flowers.",
+  "original": true,
+  "originalLine": "停车坐爱枫林晚，霜叶红于二月花。",
+  "originalLineEn": "I stop my cart to love the maples at dusk; frosted leaves outshine spring flowers.",
+  "source": "杜牧《山行》",
+  "sourceEn": "Du Mu, Mountain Walk"
+ },
+ {
+  "line": "停车坐爱枫林晚，随手拍照发微博。",
+  "lineEn": "I stop my cart to love the maples at dusk; snap a photo and post it on Weibo.",
+  "original": false,
+  "originalLine": "停车坐爱枫林晚，霜叶红于二月花。",
+  "originalLineEn": "I stop my cart to love the maples at dusk; frosted leaves outshine spring flowers.",
+  "source": "杜牧《山行》",
+  "sourceEn": "Du Mu, Mountain Walk"
+ },
+ {
+  "line": "秦时明月汉时关，万里长征人未还。",
+  "lineEn": "Qin-era moon, Han-era pass; men marched ten thousand li and never returned.",
+  "original": true,
+  "originalLine": "秦时明月汉时关，万里长征人未还。",
+  "originalLineEn": "Qin-era moon, Han-era pass; men marched ten thousand li and never returned.",
+  "source": "王昌龄《出塞》",
+  "sourceEn": "Wang Changling, Beyond the Frontier"
+ },
+ {
+  "line": "秦时明月汉时关，万里长征没WiFi。",
+  "lineEn": "Qin-era moon, Han-era pass; ten thousand li of marching and no Wi-Fi.",
+  "original": false,
+  "originalLine": "秦时明月汉时关，万里长征人未还。",
+  "originalLineEn": "Qin-era moon, Han-era pass; men marched ten thousand li and never returned.",
+  "source": "王昌龄《出塞》",
+  "sourceEn": "Wang Changling, Beyond the Frontier"
+ },
+ {
+  "line": "葡萄美酒夜光杯，欲饮琵琶马上催。",
+  "lineEn": "Fine grape wine in a glowing cup; as I drink, the pipa urges us to ride.",
+  "original": true,
+  "originalLine": "葡萄美酒夜光杯，欲饮琵琶马上催。",
+  "originalLineEn": "Fine grape wine in a glowing cup; as I drink, the pipa urges us to ride.",
+  "source": "王翰《凉州词》",
+  "sourceEn": "Wang Han, Song of Liangzhou"
+ },
+ {
+  "line": "葡萄美酒夜光杯，欲饮老板催加班。",
+  "lineEn": "Fine grape wine in a glowing cup; as I drink, the boss calls me in to work late.",
+  "original": false,
+  "originalLine": "葡萄美酒夜光杯，欲饮琵琶马上催。",
+  "originalLineEn": "Fine grape wine in a glowing cup; as I drink, the pipa urges us to ride.",
+  "source": "王翰《凉州词》",
+  "sourceEn": "Wang Han, Song of Liangzhou"
+ },
+ {
+  "line": "羌笛何须怨杨柳，春风不度玉门关。",
+  "lineEn": "Why should the Qiang flute lament the willows? Spring wind never crosses Yumen Pass.",
+  "original": true,
+  "originalLine": "羌笛何须怨杨柳，春风不度玉门关。",
+  "originalLineEn": "Why should the Qiang flute lament the willows? Spring wind never crosses Yumen Pass.",
+  "source": "王之涣《凉州词》",
+  "sourceEn": "Wang Zhihuan, Song of Liangzhou"
+ },
+ {
+  "line": "羌笛何须怨杨柳，WiFi不度玉门关。",
+  "lineEn": "Why should the Qiang flute lament the willows? Wi-Fi never crosses Yumen Pass.",
+  "original": false,
+  "originalLine": "羌笛何须怨杨柳，春风不度玉门关。",
+  "originalLineEn": "Why should the Qiang flute lament the willows? Spring wind never crosses Yumen Pass.",
+  "source": "王之涣《凉州词》",
+  "sourceEn": "Wang Zhihuan, Song of Liangzhou"
+ },
+ {
+  "line": "劝君更尽一杯酒，西出阳关无故人。",
+  "lineEn": "Have one more cup of wine, my friend; west of Yang Pass you'll have no old friends.",
+  "original": true,
+  "originalLine": "劝君更尽一杯酒，西出阳关无故人。",
+  "originalLineEn": "Have one more cup of wine, my friend; west of Yang Pass you'll have no old friends.",
+  "source": "王维《送元二使安西》",
+  "sourceEn": "Wang Wei, Seeing Off Yuan the Second"
+ },
+ {
+  "line": "劝君更尽一杯酒，西出阳关没信号。",
+  "lineEn": "Have one more cup of wine, my friend; west of Yang Pass there's no phone signal.",
+  "original": false,
+  "originalLine": "劝君更尽一杯酒，西出阳关无故人。",
+  "originalLineEn": "Have one more cup of wine, my friend; west of Yang Pass you'll have no old friends.",
+  "source": "王维《送元二使安西》",
+  "sourceEn": "Wang Wei, Seeing Off Yuan the Second"
+ },
+ {
+  "line": "洛阳亲友如相问，一片冰心在玉壶。",
+  "lineEn": "If friends in Luoyang ask of me: my heart is pure as ice in a jade pot.",
+  "original": true,
+  "originalLine": "洛阳亲友如相问，一片冰心在玉壶。",
+  "originalLineEn": "If friends in Luoyang ask of me: my heart is pure as ice in a jade pot.",
+  "source": "王昌龄《芙蓉楼送辛渐》",
+  "sourceEn": "Wang Changling, Farewell to Xin Jian"
+ },
+ {
+  "line": "洛阳亲友如相问，就说我在写作业。",
+  "lineEn": "If friends in Luoyang ask of me: just say I'm doing my homework.",
+  "original": false,
+  "originalLine": "洛阳亲友如相问，一片冰心在玉壶。",
+  "originalLineEn": "If friends in Luoyang ask of me: my heart is pure as ice in a jade pot.",
+  "source": "王昌龄《芙蓉楼送辛渐》",
+  "sourceEn": "Wang Changling, Farewell to Xin Jian"
+ },
+ {
+  "line": "桃花潭水深千尺，不及汪伦送我情。",
+  "lineEn": "Peach Blossom Pool is a thousand feet deep, yet not as deep as Wang Lun's farewell.",
+  "original": true,
+  "originalLine": "桃花潭水深千尺，不及汪伦送我情。",
+  "originalLineEn": "Peach Blossom Pool is a thousand feet deep, yet not as deep as Wang Lun's farewell.",
+  "source": "李白《赠汪伦》",
+  "sourceEn": "Li Bai, For Wang Lun"
+ },
+ {
+  "line": "桃花潭水深千尺，不及汪伦发红包。",
+  "lineEn": "Peach Blossom Pool is a thousand feet deep, yet not as deep as Wang Lun's red packet.",
+  "original": false,
+  "originalLine": "桃花潭水深千尺，不及汪伦送我情。",
+  "originalLineEn": "Peach Blossom Pool is a thousand feet deep, yet not as deep as Wang Lun's farewell.",
+  "source": "李白《赠汪伦》",
+  "sourceEn": "Li Bai, For Wang Lun"
+ },
+ {
+  "line": "两岸青山相对出，孤帆一片日边来。",
+  "lineEn": "Green hills face each other on both banks; a lone sail comes from the sun.",
+  "original": true,
+  "originalLine": "两岸青山相对出，孤帆一片日边来。",
+  "originalLineEn": "Green hills face each other on both banks; a lone sail comes from the sun.",
+  "source": "李白《望天门山》",
+  "sourceEn": "Li Bai, Gazing at Tianmen Mountain"
+ },
+ {
+  "line": "两岸青山相对出，外卖小哥日边来。",
+  "lineEn": "Green hills face each other on both banks; the delivery guy comes from the sun.",
+  "original": false,
+  "originalLine": "两岸青山相对出，孤帆一片日边来。",
+  "originalLineEn": "Green hills face each other on both banks; a lone sail comes from the sun.",
+  "source": "李白《望天门山》",
+  "sourceEn": "Li Bai, Gazing at Tianmen Mountain"
+ },
+ {
+  "line": "姑苏城外寒山寺，夜半钟声到客船。",
+  "lineEn": "Outside Gusu stands Hanshan Temple; its midnight bell reaches my boat.",
+  "original": true,
+  "originalLine": "姑苏城外寒山寺，夜半钟声到客船。",
+  "originalLineEn": "Outside Gusu stands Hanshan Temple; its midnight bell reaches my boat.",
+  "source": "张继《枫桥夜泊》",
+  "sourceEn": "Zhang Ji, Night Mooring at Maple Bridge"
+ },
+ {
+  "line": "姑苏城外寒山寺，夜半微信响不停。",
+  "lineEn": "Outside Gusu stands Hanshan Temple; at midnight WeChat won't stop pinging.",
+  "original": false,
+  "originalLine": "姑苏城外寒山寺，夜半钟声到客船。",
+  "originalLineEn": "Outside Gusu stands Hanshan Temple; its midnight bell reaches my boat.",
+  "source": "张继《枫桥夜泊》",
+  "sourceEn": "Zhang Ji, Night Mooring at Maple Bridge"
+ },
+ {
+  "line": "借问酒家何处有，牧童遥指杏花村。",
+  "lineEn": "I ask where a tavern can be found; the herd boy points to Apricot Village.",
+  "original": true,
+  "originalLine": "借问酒家何处有，牧童遥指杏花村。",
+  "originalLineEn": "I ask where a tavern can be found; the herd boy points to Apricot Village.",
+  "source": "杜牧《清明》",
+  "sourceEn": "Du Mu, Qingming"
+ },
+ {
+  "line": "借问酒家何处有，牧童低头看手机。",
+  "lineEn": "I ask where a tavern can be found; the herd boy is staring at his phone.",
+  "original": false,
+  "originalLine": "借问酒家何处有，牧童遥指杏花村。",
+  "originalLineEn": "I ask where a tavern can be found; the herd boy points to Apricot Village.",
+  "source": "杜牧《清明》",
+  "sourceEn": "Du Mu, Qingming"
+ },
+ {
+  "line": "不知细叶谁裁出，二月春风似剪刀。",
+  "lineEn": "Who cut these slender leaves? The February spring wind, sharp as scissors.",
+  "original": true,
+  "originalLine": "不知细叶谁裁出，二月春风似剪刀。",
+  "originalLineEn": "Who cut these slender leaves? The February spring wind, sharp as scissors.",
+  "source": "贺知章《咏柳》",
+  "sourceEn": "He Zhizhang, Ode to the Willow"
+ },
+ {
+  "line": "不知细叶谁裁出，网上下单包邮的。",
+  "lineEn": "Who cut these slender leaves? Ordered online, free shipping.",
+  "original": false,
+  "originalLine": "不知细叶谁裁出，二月春风似剪刀。",
+  "originalLineEn": "Who cut these slender leaves? The February spring wind, sharp as scissors.",
+  "source": "贺知章《咏柳》",
+  "sourceEn": "He Zhizhang, Ode to the Willow"
+ },
+ {
+  "line": "儿童相见不相识，笑问客从何处来。",
+  "lineEn": "The children meet me but don't know me; smiling, they ask where I'm from.",
+  "original": true,
+  "originalLine": "儿童相见不相识，笑问客从何处来。",
+  "originalLineEn": "The children meet me but don't know me; smiling, they ask where I'm from.",
+  "source": "贺知章《回乡偶书》",
+  "sourceEn": "He Zhizhang, Coming Home"
+ },
+ {
+  "line": "儿童相见不相识，笑问WiFi密码多少。",
+  "lineEn": "The children meet me but don't know me; smiling, they ask for the Wi-Fi password.",
+  "original": false,
+  "originalLine": "儿童相见不相识，笑问客从何处来。",
+  "originalLineEn": "The children meet me but don't know me; smiling, they ask where I'm from.",
+  "source": "贺知章《回乡偶书》",
+  "sourceEn": "He Zhizhang, Coming Home"
+ },
+ {
+  "line": "不识庐山真面目，只缘身在此山中。",
+  "lineEn": "I can't see Mount Lu's true face, only because I'm standing inside it.",
+  "original": true,
+  "originalLine": "不识庐山真面目，只缘身在此山中。",
+  "originalLineEn": "I can't see Mount Lu's true face, only because I'm standing inside it.",
+  "source": "苏轼《题西林壁》",
+  "sourceEn": "Su Shi, Written on the Wall at Xilin Temple"
+ },
+ {
+  "line": "不识庐山真面目，只缘照片开美颜。",
+  "lineEn": "I can't see Mount Lu's true face, only because the photo has a beauty filter.",
+  "original": false,
+  "originalLine": "不识庐山真面目，只缘身在此山中。",
+  "originalLineEn": "I can't see Mount Lu's true face, only because I'm standing inside it.",
+  "source": "苏轼《题西林壁》",
+  "sourceEn": "Su Shi, Written on the Wall at Xilin Temple"
+ },
+ {
+  "line": "欲把西湖比西子，淡妆浓抹总相宜。",
+  "lineEn": "Compare West Lake to the beauty Xi Shi: light or heavy makeup, always lovely.",
+  "original": true,
+  "originalLine": "欲把西湖比西子，淡妆浓抹总相宜。",
+  "originalLineEn": "Compare West Lake to the beauty Xi Shi: light or heavy makeup, always lovely.",
+  "source": "苏轼《饮湖上初晴后雨》",
+  "sourceEn": "Su Shi, Drinking on the Lake"
+ },
+ {
+  "line": "欲把西湖比西子，拍照内存不够用。",
+  "lineEn": "Compare West Lake to the beauty Xi Shi; my phone ran out of storage for photos.",
+  "original": false,
+  "originalLine": "欲把西湖比西子，淡妆浓抹总相宜。",
+  "originalLineEn": "Compare West Lake to the beauty Xi Shi: light or heavy makeup, always lovely.",
+  "source": "苏轼《饮湖上初晴后雨》",
+  "sourceEn": "Su Shi, Drinking on the Lake"
+ },
+ {
+  "line": "接天莲叶无穷碧，映日荷花别样红。",
+  "lineEn": "Lotus leaves stretch green to the sky; lotus flowers glow unusually red in the sun.",
+  "original": true,
+  "originalLine": "接天莲叶无穷碧，映日荷花别样红。",
+  "originalLineEn": "Lotus leaves stretch green to the sky; lotus flowers glow unusually red in the sun.",
+  "source": "杨万里《晓出净慈寺送林子方》",
+  "sourceEn": "Yang Wanli, Dawn at Jingci Temple"
+ },
+ {
+  "line": "接天莲叶无穷碧，映日红包别样红。",
+  "lineEn": "Lotus leaves stretch green to the sky; red packets glow unusually red in the sun.",
+  "original": false,
+  "originalLine": "接天莲叶无穷碧，映日荷花别样红。",
+  "originalLineEn": "Lotus leaves stretch green to the sky; lotus flowers glow unusually red in the sun.",
+  "source": "杨万里《晓出净慈寺送林子方》",
+  "sourceEn": "Yang Wanli, Dawn at Jingci Temple"
+ },
+ {
+  "line": "春色满园关不住，一枝红杏出墙来。",
+  "lineEn": "The garden can't hold in all its spring; a red apricot branch reaches over the wall.",
+  "original": true,
+  "originalLine": "春色满园关不住，一枝红杏出墙来。",
+  "originalLineEn": "The garden can't hold in all its spring; a red apricot branch reaches over the wall.",
+  "source": "叶绍翁《游园不值》",
+  "sourceEn": "Ye Shaoweng, Visiting a Garden in Vain"
+ },
+ {
+  "line": "春色满园关不住，一根网线出墙来。",
+  "lineEn": "The garden can't hold in all its spring; a network cable reaches over the wall.",
+  "original": false,
+  "originalLine": "春色满园关不住，一枝红杏出墙来。",
+  "originalLineEn": "The garden can't hold in all its spring; a red apricot branch reaches over the wall.",
+  "source": "叶绍翁《游园不值》",
+  "sourceEn": "Ye Shaoweng, Visiting a Garden in Vain"
+ },
+ {
+  "line": "君问归期未有期，巴山夜雨涨秋池。",
+  "lineEn": "You ask when I'll return; I can't say. Night rain in Bashan fills the autumn pools.",
+  "original": true,
+  "originalLine": "君问归期未有期，巴山夜雨涨秋池。",
+  "originalLineEn": "You ask when I'll return; I can't say. Night rain in Bashan fills the autumn pools.",
+  "source": "李商隐《夜雨寄北》",
+  "sourceEn": "Li Shangyin, Night Rain, Sent North"
+ },
+ {
+  "line": "君问归期未有期，项目还要加班改。",
+  "lineEn": "You ask when I'll return; I can't say. The project needs more overtime.",
+  "original": false,
+  "originalLine": "君问归期未有期，巴山夜雨涨秋池。",
+  "originalLineEn": "You ask when I'll return; I can't say. Night rain in Bashan fills the autumn pools.",
+  "source": "李商隐《夜雨寄北》",
+  "sourceEn": "Li Shangyin, Night Rain, Sent North"
+ },
+ {
+  "line": "春风又绿江南岸，明月何时照我还。",
+  "lineEn": "Spring wind greens the south bank again; when will the moon light my way home?",
+  "original": true,
+  "originalLine": "春风又绿江南岸，明月何时照我还。",
+  "originalLineEn": "Spring wind greens the south bank again; when will the moon light my way home?",
+  "source": "王安石《泊船瓜洲》",
+  "sourceEn": "Wang Anshi, Mooring at Guazhou"
+ },
+ {
+  "line": "春风又绿江南岸，快递何时到我家。",
+  "lineEn": "Spring wind greens the south bank again; when will my parcel reach my home?",
+  "original": false,
+  "originalLine": "春风又绿江南岸，明月何时照我还。",
+  "originalLineEn": "Spring wind greens the south bank again; when will the moon light my way home?",
+  "source": "王安石《泊船瓜洲》",
+  "sourceEn": "Wang Anshi, Mooring at Guazhou"
+ },
+ {
+  "line": "等闲识得东风面，万紫千红总是春。",
+  "lineEn": "Anyone can know the face of the east wind; a riot of colours is always spring.",
+  "original": true,
+  "originalLine": "等闲识得东风面，万紫千红总是春。",
+  "originalLineEn": "Anyone can know the face of the east wind; a riot of colours is always spring.",
+  "source": "朱熹《春日》",
+  "sourceEn": "Zhu Xi, Spring Day"
+ },
+ {
+  "line": "等闲识得东风面，万紫千红是表情。",
+  "lineEn": "Anyone can know the face of the east wind; a riot of colours, all emoji.",
+  "original": false,
+  "originalLine": "等闲识得东风面，万紫千红总是春。",
+  "originalLineEn": "Anyone can know the face of the east wind; a riot of colours is always spring.",
+  "source": "朱熹《春日》",
+  "sourceEn": "Zhu Xi, Spring Day"
+ }
+]

@@ -26,6 +26,15 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         public override void Build() { submitted = false; elapsed = 0; QuestionCard=null; chosenText=aiText=""; ClearPredictionFeedback(); keys=new Action[0]; DrawQuestion(); }
         protected abstract void DrawQuestion();
         protected void ClearPredictionFeedback(){predictionCaptured=false;predictionCorrect=null;predictedAnswer="";}
+        // Picks a question already possible on the in-game date (since: yyyymmdd, 0 = any day) and skips the last few shown.
+        protected int PickFresh(int[] since,List<int> recent)
+        {
+            var open=new List<int>();for(int i=0;i<since.Length;i++)if(since[i]==0||C.Sim.Today>=since[i])open.Add(i);
+            var fresh=open.FindAll(i=>!recent.Contains(i));if(fresh.Count==0)fresh=open;
+            int pick=fresh[C.Random.Next(fresh.Count)];
+            recent.Add(pick);while(recent.Count>Math.Max(1,open.Count/2))recent.RemoveAt(0);
+            return pick;
+        }
         // Capture the displayed answer before the player's action can train or settle it.
         protected void CapturePrediction(bool? correct)
         {
@@ -104,12 +113,26 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
 
     sealed class XgOddPack : XgPackQuestion
     {
-        static readonly string[][] Zh={new[]{"猫","狗","鱼","桌子"},new[]{"苹果","梨","香蕉","显卡"},new[]{"键盘","鼠标","显示器","西瓜"},new[]{"北京","上海","广州","月球"},new[]{"GTX 1070","GTX 1080","Titan X","RX 480"},new[]{"红色","蓝色","绿色","三角形"}};
-        static readonly string[][] En={new[]{"Cat","Dog","Fish","Table"},new[]{"Apple","Pear","Banana","Graphics card"},new[]{"Keyboard","Mouse","Monitor","Watermelon"},new[]{"Beijing","Shanghai","Guangzhou","Moon"},new[]{"GTX 1070","GTX 1080","Titan X","RX 480"},new[]{"Red","Blue","Green","Triangle"}};
+        // The last option is always the odd one. 2026-10-21: 20 more sets with 2016 things, each shown only from its date.
+        static readonly string[][] Zh={new[]{"猫","狗","鱼","桌子"},new[]{"苹果","梨","香蕉","显卡"},new[]{"键盘","鼠标","显示器","西瓜"},new[]{"北京","上海","广州","月球"},new[]{"GTX 1070","GTX 1080","Titan X","RX 480"},new[]{"红色","蓝色","绿色","三角形"},
+            new[]{"微信","QQ","陌陌","Windows 10"},new[]{"《太阳的后裔》","《欢乐颂》","《琅琊榜》","《王者荣耀》"},new[]{"孙杨","宁泽涛","傅园慧","林丹"},new[]{"GTX 1060","GTX 1070","GTX 1080","i7-6700K"},
+            new[]{"U盘","移动硬盘","SD 卡","路由器"},new[]{"Windows 7","Windows 10","OS X","Office 2016"},new[]{"《魔兽》","《美国队长3》","《疯狂动物城》","《三体》"},new[]{"里约","伦敦","雅典","索契"},
+            new[]{"支付宝","微信支付","Apple Pay","淘宝"},new[]{"李世石","柯洁","古力","AlphaGo"},new[]{"红包","饺子","春联","粽子"},new[]{"iPhone 6s","小米 5","华为 P9","Kindle"},
+            new[]{"斗鱼","熊猫TV","虎牙","知乎"},new[]{"Ctrl+C","Ctrl+V","Ctrl+X","Alt+F4"},new[]{"感知机","卷积网络","LSTM","Excel 表格"},new[]{"《Pokémon GO》","《守望先锋》","《皇室战争》","《权力的游戏》"},
+            new[]{"MP3","WAV","FLAC","JPG"},new[]{"蓝瘦香菇","洪荒之力","友谊的小船","红烧牛肉面"},new[]{"QQ空间","微博","人人网","QQ音乐"},new[]{"春节","中秋","端午","双十一"}};
+        static readonly string[][] En={new[]{"Cat","Dog","Fish","Table"},new[]{"Apple","Pear","Banana","Graphics card"},new[]{"Keyboard","Mouse","Monitor","Watermelon"},new[]{"Beijing","Shanghai","Guangzhou","Moon"},new[]{"GTX 1070","GTX 1080","Titan X","RX 480"},new[]{"Red","Blue","Green","Triangle"},
+            new[]{"WeChat","QQ","Momo","Windows 10"},new[]{"Descendants of the Sun","Ode to Joy","Nirvana in Fire","Honor of Kings"},new[]{"Sun Yang","Ning Zetao","Fu Yuanhui","Lin Dan"},new[]{"GTX 1060","GTX 1070","GTX 1080","i7-6700K"},
+            new[]{"USB stick","External drive","SD card","Router"},new[]{"Windows 7","Windows 10","OS X","Office 2016"},new[]{"Warcraft","Captain America: Civil War","Zootopia","The Three-Body Problem"},new[]{"Rio","London","Athens","Sochi"},
+            new[]{"Alipay","WeChat Pay","Apple Pay","Taobao"},new[]{"Lee Sedol","Ke Jie","Gu Li","AlphaGo"},new[]{"Red envelopes","Dumplings","Spring couplets","Zongzi"},new[]{"iPhone 6s","Mi 5","Huawei P9","Kindle"},
+            new[]{"Douyu","Panda TV","Huya","Zhihu"},new[]{"Ctrl+C","Ctrl+V","Ctrl+X","Alt+F4"},new[]{"Perceptron","Convolutional net","LSTM","Excel sheet"},new[]{"Pokémon GO","Overwatch","Clash Royale","Game of Thrones"},
+            new[]{"MP3","WAV","FLAC","JPG"},new[]{"Blue thin mushroom (slang)","Primal power (slang)","Friendship boat (slang)","Braised beef noodles"},new[]{"Qzone","Weibo","Renren","QQ Music"},new[]{"Spring Festival","Mid-Autumn","Dragon Boat","Singles' Day"}};
+        static readonly int[] Since={0,0,0,0,20160803,0, 0,20160418,0,20160803, 0,0,20160608,0, 20160218,20160309,0,20160415, 0,0,0,20160706, 0,20161010,0,0};
+        static readonly List<int> Recent=new List<int>();
+        static XgOddPack(){Zh=global::LingGuangV05.XingGuang.XgQuestionBank.Join(Zh,global::LingGuangV05.XingGuang.XgQuestionBank.OddZh);En=global::LingGuangV05.XingGuang.XgQuestionBank.Join(En,global::LingGuangV05.XingGuang.XgQuestionBank.OddEn);Since=global::LingGuangV05.XingGuang.XgQuestionBank.Join(Since,global::LingGuangV05.XingGuang.XgQuestionBank.OddSince);} // appends XgQuestionBank (2026-10-21)
         public XgOddPack(XgMiniContext c):base(c){}
         protected override void DrawQuestion()
         {
-            int i=C.Random.Next(Zh.Length); if(i==4 && C.Sim.Today<20160803)i=0;
+            int i=PickFresh(Since,Recent);
             promptZh=i==4?"哪个不是 NVIDIA 显卡？":"哪个不属于同一类？";promptEn=i==4?"Which is not an NVIDIA graphics card?":"Which belongs to a different category?";
             Header("找不同","Odd one out","点出四个选项里不属于同一类的那个。","Pick the option in a different category.");
             T("Question",35,110,830,85,XgUi.T(promptZh,promptEn),30);Choices(Zh[i],En[i],3);
@@ -194,6 +217,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
     {
         static readonly string[] Words={"一心一意","意气风发","发扬光大","大快人心","心想事成","成千上万","万事如意","意味深长","长生不老","老当益壮","壮志凌云","云淡风轻","轻而易举","举一反三","三心二意","意犹未尽","尽善尽美","美中不足","足智多谋","谋事在人","人山人海","海阔天空","空前绝后","后来居上","上下一心"};
         int index,nextIndex,questionRound;bool authenticity,proposalReal;string proposal;
+        static XgIdiomPack(){Words=global::LingGuangV05.XingGuang.XgQuestionBank.Join(Words,global::LingGuangV05.XingGuang.XgQuestionBank.Idioms);} // appends XgQuestionBank (2026-10-21)
         public XgIdiomPack(XgMiniContext c):base(c) {index=c.Random.Next(Words.Length-1);}
         protected override void DrawQuestion()
         {

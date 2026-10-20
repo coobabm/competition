@@ -1,0 +1,434 @@
+[
+ {
+  "text": "这解说太专业了，涨知识了！",
+  "textEn": "This commentary is so professional. I learned a lot!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "跳得真准，一帧都没浪费！",
+  "textEn": "Perfect jump timing, not a single frame wasted!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "前方高能！这波反杀太帅了！",
+  "textEn": "Hype incoming! That comeback kill was so cool!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "老司机就是稳，带飞全场。",
+  "textEn": "A true veteran, so steady. Carried the whole match.",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "233333，主播太有梗了！",
+  "textEn": "233333, the streamer is hilarious!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "这首配乐选得太对味了！",
+  "textEn": "That music choice fits perfectly!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "一血拿得漂亮，开局就稳了。",
+  "textEn": "Clean first blood. What a start!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "丝血逃生，我心跳都停了！",
+  "textEn": "Escaped with a sliver of health. My heart stopped!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "这个走位，教科书级别。",
+  "textEn": "That positioning is textbook.",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "字幕组辛苦了，翻译得真好。",
+  "textEn": "Thanks, subtitle team. Great translation.",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "主播心态真好，输了也不急。",
+  "textEn": "The streamer stays so calm, even after a loss.",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "画面太美了，截图当壁纸了。",
+  "textEn": "So beautiful, I saved a screenshot as my wallpaper.",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "一打五还能赢，封神了！",
+  "textEn": "Won a one-versus-five. Legendary!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "讲得通俗易懂，我妈都看懂了。",
+  "textEn": "So easy to follow, even my mom got it.",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "这个补刀节奏，学到了学到了。",
+  "textEn": "That last-hit rhythm. Lesson learned!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "每期准时更新，良心UP主！",
+  "textEn": "On time every episode. What a dedicated uploader!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "手速快得我都看不清，太强了！",
+  "textEn": "Hands so fast I can't even follow. So strong!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "绝地翻盘，今晚睡不着了！",
+  "textEn": "What a comeback! I won't sleep tonight!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "剧情神转折，我给满分！",
+  "textEn": "Brilliant plot twist. Full marks from me!",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "这把视野做得太到位了。",
+  "textEn": "The map vision this game was spot on.",
+  "tone": 0,
+  "since": 20160101
+ },
+ {
+  "text": "冰岛逆转英格兰，太燃了！",
+  "textEn": "Iceland came back to beat England. So thrilling!",
+  "tone": 0,
+  "since": 20160628
+ },
+ {
+  "text": "葡萄牙夺冠，C罗捧杯太感人了！",
+  "textEn": "Portugal are champions. Ronaldo lifting the cup was so moving!",
+  "tone": 0,
+  "since": 20160711
+ },
+ {
+  "text": "孙杨两百米自由泳夺冠，太强了！",
+  "textEn": "Sun Yang won the 200m freestyle. Incredible!",
+  "tone": 0,
+  "since": 20160809
+ },
+ {
+  "text": "阴阳师斗技这一手太秀了！",
+  "textEn": "That Onmyoji duel move was so slick!",
+  "tone": 0,
+  "since": 20160902
+ },
+ {
+  "text": "解说全程念错名字，做点功课吧。",
+  "textEn": "The caster got names wrong all game. Do some homework.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "又卡又糊，这直播没法看。",
+  "textEn": "Laggy and blurry. This stream is unwatchable.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "别拖时间了，赶紧开团啊！",
+  "textEn": "Stop stalling and start the fight already!",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "标题写得热闹，内容全是凑时长。",
+  "textEn": "Flashy title, but the content is just padding.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "这剪辑太乱了，看得头晕。",
+  "textEn": "The editing is so messy it makes me dizzy.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "声音太小了，开到最大也听不清。",
+  "textEn": "Too quiet. Even at max volume I can't hear it.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "一直在念礼物名单，比赛呢？",
+  "textEn": "Just reading out gifts all day. What about the game?",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "剧透的请自觉出去！",
+  "textEn": "Whoever is posting spoilers, please leave!",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "野区都空了，你在发什么呆？",
+  "textEn": "The jungle is empty. What are you zoning out for?",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "说好的日更呢？又鸽了！",
+  "textEn": "What happened to daily uploads? Bailed again!",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "这波决策太差了，纯属白给。",
+  "textEn": "Terrible call. You just gave it away.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "搬运都不标出处，不太好吧。",
+  "textEn": "Reposting without crediting the source isn't okay.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "节奏太拖了，快进都嫌慢。",
+  "textEn": "So slow that even fast-forward feels slow.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "解说别光聊天了，看看比赛啊。",
+  "textEn": "Casters, stop chatting and watch the match.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "镜头一直晃，看得想吐。",
+  "textEn": "The camera keeps shaking. It's making me sick.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "这翻译错得离谱，别误导人了。",
+  "textEn": "This translation is way off. Stop misleading people.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "光抢人头不救队友，太自私了。",
+  "textEn": "Stealing kills and never saving teammates. So selfish.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "连送八个人头，别玩了吧。",
+  "textEn": "Fed eight kills in a row. Maybe just stop playing.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "开局就挂机，太不负责了。",
+  "textEn": "Going AFK right at the start is so irresponsible.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "画面和声音对不上，重传一下吧。",
+  "textEn": "Picture and sound are out of sync. Please re-upload.",
+  "tone": 1,
+  "since": 20160101
+ },
+ {
+  "text": "这场欧洲杯解说太水了，换人吧。",
+  "textEn": "This Euro commentary is so weak. Get a new caster.",
+  "tone": 1,
+  "since": 20160611
+ },
+ {
+  "text": "别刷蓝瘦香菇了，字幕都挡住了！",
+  "textEn": "Stop spamming 'so sad, wanna cry'. It covers the subtitles!",
+  "tone": 1,
+  "since": 20161010
+ },
+ {
+  "text": "这阴阳师攻略全是广告，退钱！",
+  "textEn": "This Onmyoji guide is all ads. Refund me!",
+  "tone": 1,
+  "since": 20160902
+ },
+ {
+  "text": "剧透《你的名字。》结局的请走开！",
+  "textEn": "Whoever spoiled the ending of Your Name, go away!",
+  "tone": 1,
+  "since": 20161202
+ },
+ {
+  "text": "好厉害哦，开局三分钟就投降。",
+  "textEn": "So impressive: surrendering three minutes in.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "画质真高清，人脸全糊成马赛克了。",
+  "textEn": "True HD: every face is a blur of pixels.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "解说真专业，冠军队名都念错了。",
+  "textEn": "Such pro commentary: even got the champions' name wrong.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "好一个神预判，技能全放空了。",
+  "textEn": "Amazing prediction: every single skill missed.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "真是团队核心，全场就你没出手。",
+  "textEn": "A true team core: you never joined a single fight.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "这更新速度真快，一年一集。",
+  "textEn": "Such fast updates: one episode a year.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "主播真大方，抽奖奖品是一句谢谢。",
+  "textEn": "So generous: the giveaway prize is a 'thank you'.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "补刀真准啊，一个都没补到。",
+  "textEn": "Such precise last hits: not a single one landed.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "太贴心了，又插了九十秒广告。",
+  "textEn": "How thoughtful: another ninety-second ad break.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "走位真风骚，直接走进敌方塔下。",
+  "textEn": "Such stylish movement: straight under the enemy tower.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "好棒的剪辑，一句话重复了五遍。",
+  "textEn": "Lovely editing: one line repeated five times.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "不愧是大神，教学视频自己先输了。",
+  "textEn": "A true master: lost the game in his own tutorial.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "节目真良心，正片五分钟，广告十分钟。",
+  "textEn": "So generous: five minutes of show, ten of ads.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "网速好稳啊，一局重连了八次。",
+  "textEn": "Very stable connection: reconnected eight times in one game.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "好一个指挥，带全队一起团灭。",
+  "textEn": "Great shotcaller: led the whole team to a wipe.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "太有创意了，跟上期一模一样。",
+  "textEn": "So creative: exactly the same as last episode.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "翻译真信达雅，人名都翻成了菜名。",
+  "textEn": "Such elegant translation: names turned into dishes.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "运气真好，十连抽全是重复的。",
+  "textEn": "So lucky: ten pulls, all duplicates.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "比赛真精彩，双方挂机二十分钟。",
+  "textEn": "What a thrilling match: both teams idled for twenty minutes.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "好专业的测评，连机器都没开。",
+  "textEn": "A very professional review: never even switched it on.",
+  "tone": 2,
+  "since": 20160101
+ },
+ {
+  "text": "欧洲杯竞猜真准啊，猜啥输啥。",
+  "textEn": "Great Euro predictions: every single pick loses.",
+  "tone": 2,
+  "since": 20160611
+ },
+ {
+  "text": "葛优躺得真专业，一整局没动过。",
+  "textEn": "Expert sofa slouch: didn't move all game.",
+  "tone": 2,
+  "since": 20160725
+ },
+ {
+  "text": "这直播真给力，开幕式卡成幻灯片。",
+  "textEn": "Great stream: the opening ceremony turned into a slideshow.",
+  "tone": 2,
+  "since": 20160806
+ },
+ {
+  "text": "欧皇本皇啊，抽一百次没出SSR。",
+  "textEn": "A true lucky emperor: a hundred pulls, no SSR.",
+  "tone": 2,
+  "since": 20160902
+ }
+]

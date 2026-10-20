@@ -51,7 +51,8 @@ namespace LingGuangV05.XingGuang
         public static XgCard TeachingPhraseCard(string dataset,XgPhrase phrase,int seed)=>new XgCard{dataset=dataset,question=phrase.text,questionEn=phrase.textEn,truth=phrase.yes,seed=seed,level=phrase.level};
         public XgPhrase PickTeachingPhrase(string dataset,Random random,out int seed)
         {
-            XgPhrase Pick()=>dataset=="headline"?(XgTeachingHeadlines.Pick(Today,random)??XgMemes.Pick(dataset,random,3,Today,"",false)):XgMemes.Pick(dataset,random,3,Today,"",false);
+            // Headlines: half from this month's browser news, half from the authored bank, so every stage has 20+ distinct items.
+            XgPhrase Pick()=>dataset=="headline"&&random.Next(2)==0?(XgTeachingHeadlines.Pick(Today,random)??XgMemes.Pick(dataset,random,3,Today,"",false)):XgMemes.Pick(dataset,random,3,Today,"",false);
             var selected=Pick();seed=random.Next();
             if(!TeachingUncertainFirst||!BinaryToolDataset(dataset))return selected;
             double best=Math.Abs(PredictTeachingBinary(TeachingPhraseCard(dataset,selected,seed)).probabilityYes-.5);
