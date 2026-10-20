@@ -115,7 +115,7 @@ public static class KnowledgePageChecks
             { visible++; Check(report, XgKnowledge.Entries[i].Matches("COMPUTE"), "English search matches visible term " + i); }
             Check(report, visible > 0, "Case-insensitive English search works in hardware category");
             search.text = "算力";
-            Check(report, rows[XgKnowledge.Entries.Length - 19].rt.gameObject.activeSelf, "Chinese search includes Compute");
+            Check(report, rows[Array.FindIndex(XgKnowledge.Entries, e => e.Key == "算力")].rt.gameObject.activeSelf, "Chinese search includes Compute");
             search.text = "";
             tree.OpenKnowledge("算力"); yield return null; yield return null; Canvas.ForceUpdateCanvases();
             var detail = Field<RectTransform>(tree, "knowledgeDetail");
@@ -123,6 +123,22 @@ public static class KnowledgePageChecks
             Check(report, related.Length == 3, "Compute exposes its three related links");
             Click(report, related[0], "Related term");
             Check(report, Field<XgKnowledge.Entry>(tree, "knowledgeSelected").Key == "浮点运算", "Related link navigates to floating-point operations");
+            tree.OpenKnowledge("激活函数"); yield return null; yield return null; Canvas.ForceUpdateCanvases();
+            int activationIndex = Array.FindIndex(XgKnowledge.Entries, e => e.Key == "激活函数");
+            Check(report, rows[activationIndex].label.text.Contains("新"), "V4 term has a new badge");
+            Check(report, Field<XgKnowledge.Entry>(tree, "knowledgeSelected").Key == "激活函数", "V4 term opens from public entry point");
+            bool usageVisible = false;
+            foreach (var label in detail.GetComponentsInChildren<TMP_Text>())
+                if (label.text == XgKnowledge.Find("激活函数").ChineseUsage) usageVisible = true;
+            Check(report, usageVisible, "V4 gameplay context is visible separately from explanation");
+            related = detail.GetComponentsInChildren<Button>();
+            Check(report, related.Length == 4, "V4 activation exposes four related terms");
+            // Longer entries place the last related link below the viewport; reach it
+            // through the page's real scroll view before verifying pointer hit testing.
+            detail.GetComponentInParent<ScrollRect>().verticalNormalizedPosition = 0;
+            yield return null; Canvas.ForceUpdateCanvases();
+            Click(report, related[3], "V4 related Softmax term");
+            Check(report, Field<XgKnowledge.Entry>(tree, "knowledgeSelected").Key == "归一化指数", "V4 to V4 related link navigates correctly");
             for (int i = 0; i < 4; i++) tree.Refresh(); tree.Shown();
             yield return null; Canvas.ForceUpdateCanvases();
             Check(report, overlay.GetSiblingIndex() == overlay.parent.childCount - 1, "Refresh and Shown preserve overlay stacking");

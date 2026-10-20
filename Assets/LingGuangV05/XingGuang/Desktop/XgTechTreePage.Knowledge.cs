@@ -131,6 +131,12 @@ namespace LingGuangV05.Desktop.XingGuang
             PaintKnowledgeList(); SelectKnowledge(knowledgeSelected);
         }
 
+        string KnowledgeRowName(XgKnowledge.Entry entry)
+        {
+            string badge = entry.IsNew ? "  <size=70%><color=#" + ColorUtility.ToHtmlStringRGB(XgDark.Good) + ">" + T("新", "NEW") + "</color></size>" : "";
+            return entry.Name(En) + badge;
+        }
+
         void PaintKnowledgeList()
         {
             if (knowledgeCount == null) return;
@@ -140,7 +146,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 var entry = XgKnowledge.Entries[i];
                 bool show = (knowledgeCategory < 0 || entry.Category == knowledgeCategory) && entry.Matches(knowledgeSearch.text);
                 knowledgeRows[i].Show(show);
-                knowledgeRows[i].Set(entry.Name(En), true, entry == knowledgeSelected ? XgDark.AccentSoft : XgDark.Button);
+                knowledgeRows[i].Set(KnowledgeRowName(entry), true, entry == knowledgeSelected ? XgDark.AccentSoft : XgDark.Button);
                 if (show) visible++;
             }
             for (int i = 0; i < knowledgeCategories.Count; i++)
@@ -168,6 +174,12 @@ namespace LingGuangV05.Desktop.XingGuang
             KnowledgeText(entry.Name(En), 23, XgDark.Ink);
             KnowledgeText((En ? KnowledgeCategoriesEn : KnowledgeCategoriesZh)[entry.Category + 1], 14, XgDark.Good);
             KnowledgeText(entry.Body(En), 17, XgDark.Ink);
+            string usage = En ? entry.EnglishUsage : entry.ChineseUsage;
+            if (!string.IsNullOrEmpty(usage))
+            {
+                KnowledgeText(T("游戏中在哪里遇到", "Where it appears in the game"), 15, XgDark.Muted);
+                KnowledgeText(usage, 16, XgDark.Ink);
+            }
             KnowledgeText(T("延伸阅读", "Related terms"), 16, XgDark.Muted);
             foreach (string key in entry.Related)
             {
@@ -178,7 +190,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             KnowledgeText(T("以2016年前后技术为背景；游戏数值是简化规则，后续技术会注明年代。", "Set around 2016. Game values simplify reality; later technologies are marked with historical context."), 13, XgDark.Muted);
             knowledgeDetail.anchoredPosition = Vector2.zero;
-            for (int i = 0; i < knowledgeRows.Count; i++) knowledgeRows[i].Set(XgKnowledge.Entries[i].Name(En), true, XgKnowledge.Entries[i] == entry ? XgDark.AccentSoft : XgDark.Button);
+            for (int i = 0; i < knowledgeRows.Count; i++) knowledgeRows[i].Set(KnowledgeRowName(XgKnowledge.Entries[i]), true, XgKnowledge.Entries[i] == entry ? XgDark.AccentSoft : XgDark.Button);
         }
     }
 }

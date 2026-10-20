@@ -2,27 +2,29 @@ using System;
 
 namespace LingGuangV05.XingGuang
 {
-    // Design glossary: 91 entries, including 24 hardware entries. Pure presentation data; no save state.
+    // Design glossary: 131 entries, including 40 v4 additions and 24 hardware entries. Pure presentation data; no save state.
     public static class XgKnowledge
     {
         public sealed class Entry
         {
             public readonly string Key, English, ChineseBody, EnglishBody;
+            public readonly string ChineseUsage, EnglishUsage;
+            public readonly bool IsNew;
             public readonly int Category;
             public readonly string[] Related;
-            public Entry(string key, string english, int category, string zh, string en, string[] related)
-            { Key = key; English = english; Category = category; ChineseBody = zh; EnglishBody = en; Related = related; }
+            public Entry(string key, string english, int category, string zh, string en, string[] related, string usageZh = "", string usageEn = "", bool isNew = false)
+            { Key = key; English = english; Category = category; ChineseBody = zh; EnglishBody = en; Related = related; ChineseUsage = usageZh; EnglishUsage = usageEn; IsNew = isNew; }
             public string Name(bool english) => english ? English : Key;
             public string Body(bool english) => english ? EnglishBody : ChineseBody;
-            public bool Matches(string query) => string.IsNullOrWhiteSpace(query) || (Key + " " + English + " " + ChineseBody + " " + EnglishBody).IndexOf(query.Trim(), StringComparison.OrdinalIgnoreCase) >= 0;
+            public bool Matches(string query) => string.IsNullOrWhiteSpace(query) || (Key + " " + English + " " + ChineseBody + " " + EnglishBody + " " + ChineseUsage + " " + EnglishUsage).IndexOf(query.Trim(), StringComparison.OrdinalIgnoreCase) >= 0;
         }
         public static readonly Entry[] Entries = {
             new Entry("参数", "Parameters", 0, "模型里可以训练的数，包括权重和偏置。参数更多通常增加容量和显存需求，但不保证泛化更好。", "Trainable numbers, including weights and biases. More parameters increase capacity and memory use, but do not guarantee better generalisation.", new[] { "权重", "偏置" }),
             new Entry("权重", "Weights", 0, "模型里可调的数值，训练就是不断改这些数。", "Trainable coefficients that control how strongly signals contribute to a result.", new[] { "参数" }),
             new Entry("偏置", "Bias", 0, "给神经元加的一个常数，让判断门槛能整体平移。", "An added constant that shifts a neuron's decision threshold.", new[] { "参数" }),
-            new Entry("阶跃开关", "Step activation", 0, "最早的开关：过线输出 1，不过线输出 0；不能求导。", "Outputs zero or one across a threshold; its discontinuity prevents ordinary gradient training.", new[] { "参数" }),
-            new Entry("平滑开关", "Sigmoid activation", 0, "把硬跳变换成 S 形曲线，小误差也能传回去。", "A smooth S-shaped function that allows derivatives, but can saturate and weaken gradients.", new[] { "参数" }),
-            new Entry("整流激活", "ReLU", 0, "小于 0 的输出归零，大于 0 原样通过；深层网络因此训得动。", "Returns zero for negative inputs and the input otherwise. It often helps deep networks train.", new[] { "参数" }),
+            new Entry("阶跃开关", "Step activation", 0, "最早的开关：过线输出 1，不过线输出 0；不能求导。", "Outputs zero or one across a threshold; its discontinuity prevents ordinary gradient training.", new[] { "参数", "激活函数" }),
+            new Entry("平滑开关", "Sigmoid activation", 0, "把硬跳变换成 S 形曲线，小误差也能传回去。", "A smooth S-shaped function that allows derivatives, but can saturate and weaken gradients.", new[] { "参数", "激活函数" }),
+            new Entry("整流激活", "ReLU", 0, "小于 0 的输出归零，大于 0 原样通过；深层网络因此训得动。", "Returns zero for negative inputs and the input otherwise. It often helps deep networks train.", new[] { "参数", "激活函数" }),
             new Entry("感知机", "Perceptron", 0, "1958 年的一层线性分类器，用一条直线分开两类。", "A linear classifier introduced in 1958. It separates linearly separable classes.", new[] { "参数" }),
             new Entry("感知学习", "Perceptron learning", 0, "答错时调整权重；经典感知机算法的收敛保证要求训练数据线性可分。", "Corrects weights after a wrong answer; convergence requires linearly separable training data.", new[] { "参数" }),
             new Entry("多层感知机", "Multilayer perceptron", 0, "把多层感知机叠起来，能拟合非线性的关系。", "Layers of neurons and nonlinear activations can represent nonlinear relationships.", new[] { "感知机" }),
@@ -35,7 +37,7 @@ namespace LingGuangV05.XingGuang
             new Entry("学习率", "Learning rate", 0, "每次更新走多大一步。\n\n步子太大越过最优点来回震荡，步子太小半天走不到；所以要么自动搜，要么按计划变小。", "Controls the size of parameter updates. Too large can destabilise training; too small can slow it.", new[] { "学习率衰减", "学习率预热" }),
             new Entry("学习率衰减", "Learning-rate decay", 0, "训练后期把步长调小，收敛更稳。", "Reduces the step size later in training to help refine a solution.", new[] { "参数" }),
             new Entry("学习率预热", "Learning-rate warmup", 0, "开头用小步长，稳定后再放大，避免一上来就发散。", "Starts with smaller updates and gradually raises the rate to reduce early instability.", new[] { "参数" }),
-            new Entry("损失函数", "Loss function", 0, "衡量「答得有多错」的分数，训练就是把它压低。", "A numerical measure of prediction error that training tries to reduce.", new[] { "参数" }),
+            new Entry("损失函数", "Loss function", 0, "衡量「答得有多错」的分数，训练就是把它压低。", "A numerical measure of prediction error that training tries to reduce.", new[] { "参数", "交叉熵", "梯度下降" }),
             new Entry("反向传播", "Backpropagation", 0, "从损失出发，逐层往回算每个参数该负多少责任。", "Applies the chain rule backwards through a network to calculate gradients.", new[] { "参数" }),
             new Entry("自动求导", "Automatic differentiation", 0, "框架自动算梯度，不用手推公式。", "Computes derivatives from the operations performed by a program.", new[] { "参数" }),
             new Entry("小批量", "Mini-batch", 0, "每次拿一小批样本算梯度：比全量快，比单样本稳。", "A small set of examples used for one update; size affects memory, throughput and gradient noise.", new[] { "参数" }),
@@ -44,7 +46,7 @@ namespace LingGuangV05.XingGuang
             new Entry("自适应动量", "Adam", 0, "Adam 记录梯度的一阶、二阶矩，为各参数缩放更新步长。效果取决于任务与调参，不保证总比固定学习率快或稳。", "Tracks first and second gradient moments to scale each parameter's update. It is useful, but not always faster or better than other optimisers.", new[] { "参数", "梯度" }),
             new Entry("早停研究", "Early stopping", 0, "新题成绩不再提升就停，防止把练习题背下来。", "Stops when held-out performance stops improving, to reduce overfitting.", new[] { "参数" }),
             new Entry("单位初始化", "Identity initialisation", 0, "把循环网络的初始权重设成单位矩阵，让早期记忆不被冲掉。", "Initialises recurrent weights with an identity matrix in certain architectures to help preserve early signals.", new[] { "参数" }),
-            new Entry("过拟合", "Overfitting", 0, "练习题背下来了，新题不会。", "Fitting training examples closely while performing poorly on unseen examples.", new[] { "参数" }),
+            new Entry("过拟合", "Overfitting", 0, "练习题背下来了，新题不会。", "Fitting training examples closely while performing poorly on unseen examples.", new[] { "参数", "欠拟合", "正则化", "泛化" }),
             new Entry("随机失活", "Dropout", 0, "训练时随机关掉一部分神经元，逼模型别只靠某几个特征。", "Randomly removes activations during training to discourage reliance on individual features.", new[] { "参数" }),
             new Entry("归一化", "Normalisation", 0, "把每层的输出拉到相近的范围。\n\n数值范围稳定后，梯度不会忽大忽小，层数才能叠深。", "Rescales values using selected statistics; its exact behaviour depends on the method.", new[] { "批归一化", "层归一化" }),
             new Entry("批归一化", "Batch normalisation", 0, "按一批样本统计均值和方差再归一化，训练更快更稳。", "Uses batch statistics during training to normalise activations, often improving optimisation.", new[] { "参数" }),
@@ -108,6 +110,47 @@ namespace LingGuangV05.XingGuang
             new Entry("硬盘", "Storage drive", 3, "长期存数据集和检查点的地方；装不下就下载不了新数据包。", "Persistent storage for datasets and checkpoints. Capacity and read speed can both constrain a training workflow.", new[] { "内存" }),
             new Entry("CUDA", "CUDA", 3, "英伟达的显卡编程平台，深度学习框架靠它把运算交给显卡。", "NVIDIA's GPU computing platform, used by compatible deep-learning software to run supported computations on NVIDIA GPUs.", new[] { "显卡加速" }),
             new Entry("专用芯片", "Special-purpose chip", 3, "为特定任务设计的芯片，在适合的任务上可能更高效。谷歌2016年公开的第一代TPU主要用于内部推理，并非当时公开出售的通用训练卡。", "Hardware designed for a narrower workload can improve efficiency for that workload. Google disclosed its first TPU in 2016 for internal inference, not general public training-card sales.", new[] { "算力" }),
+            // v4 popular terms (2016 setting; later developments explicitly qualified).
+            new Entry("激活函数", "Activation function", 0, "神经元算完后经过的一道开关，决定怎样输出。\n\n非线性激活给计算加入弯折，让多层网络能学到复杂关系。", "A function that determines a neuron's output.\n\nNonlinear activations add bends to the computation, letting layered networks learn complex relationships.", new[] { "阶跃开关", "平滑开关", "整流激活", "归一化指数" }, "科技：阶跃开关、平滑开关、整流激活", "Tech: Step activation, Sigmoid activation, ReLU", true),
+            new Entry("神经元", "Neuron", 0, "网络中的计算单元，通常把输入乘权重、加偏置，再经过激活函数。", "A network unit that combines weighted inputs and a bias, then applies an activation function.", new[] { "权重", "偏置", "激活函数" }, "科技：感知机", "Tech: Perceptron", true),
+            new Entry("神经网络", "Neural network", 0, "把许多计算单元连接起来，通过调整参数从数据中学习规律的模型。", "A model of connected computational units that learns patterns by adjusting parameters.", new[] { "神经元", "网络层数", "结构" }, "科技：多层感知机、卷积、循环网络", "Tech: Multilayer perceptron, convolution and recurrent networks", true),
+            new Entry("归一化指数", "Softmax", 0, "Softmax把一组分数转成总和为1的预测概率。\n\n分类时常选概率最大的类别；预测概率还需要检验是否可靠。", "Softmax turns scores into predicted probabilities that sum to one.\n\nClassification often chooses the highest-probability class; those probabilities still need calibration checks.", new[] { "交叉熵", "激活函数" }, "科技：多层感知机", "Tech: Multilayer perceptron", true),
+            new Entry("交叉熵", "Cross-entropy", 0, "衡量预测与正确答案差距的损失；给正确类别的概率越低，损失越大。", "A loss measuring prediction error: less probability for the correct class produces a larger loss.", new[] { "损失函数", "归一化指数" }, "科技：自动求导；训练中的误差反馈", "Tech: Auto-diff; error feedback in Train", true),
+            new Entry("梯度下降", "Gradient descent", 0, "沿梯度反方向调整参数，尝试让损失一步步变小。\n\n像摸索下山：梯度告诉你方向，学习率决定迈多大一步。", "Adjusts parameters against the gradient to try to reduce loss.\n\nLike feeling your way downhill: the gradient gives a direction and the learning rate sets the step size.", new[] { "梯度", "学习率", "随机梯度下降" }, "科技：学习率搜索、动量下降", "Tech: Learning-rate search, Momentum", true),
+            new Entry("随机梯度下降", "Stochastic gradient descent", 0, "SGD每次用随机抽取的样本或小批量估计梯度，较省计算，也带些噪声。", "SGD estimates gradients from random examples or mini-batches, making each update cheaper but noisier.", new[] { "小批量", "动量下降", "梯度下降" }, "科技：动量下降", "Tech: Momentum", true),
+            new Entry("梯度爆炸", "Exploding gradients", 0, "反向传播中的梯度变得过大，可能让参数更新幅度过大、训练失去稳定性。", "Gradients become so large during backpropagation that an update can destabilise training.", new[] { "梯度消失", "梯度裁剪" }, "科技：梯度裁剪", "Tech: Gradient clipping", true),
+            new Entry("训练轮次", "Training epoch", 0, "Epoch是完整遍历一次训练集；本作「训练一轮」按钮只处理一批数据。", "An epoch is one full pass through the training set; the game's Train one round button processes one batch.", new[] { "小批量", "训练曲线" }, "训练：训练一轮（游戏中是一批）", "Train: Train one round (one batch in the game)", true),
+            new Entry("超参数", "Hyperparameters", 0, "由人或搜索程序选择的训练设置，如学习率、网络层数和批大小。\n\n参数是模型学的，超参数是替它选的；调整设置能改善训练。", "Training settings chosen by people or search procedures, such as learning rate, depth and batch size.\n\nThe model learns parameters; hyperparameters configure how it learns.", new[] { "参数", "学习率" }, "科技：学习率搜索、网络深度、网络宽度", "Tech: Learning-rate search, Network depth, Network width", true),
+            new Entry("欠拟合", "Underfitting", 0, "模型还没学到足够的规律，连训练题也答不好，可能是容量小或训练不够。", "The model has learned too little to answer training examples well, often from limited capacity or insufficient training.", new[] { "过拟合" }, "科技：网络宽度、网络深度", "Tech: Network width, Network depth", true),
+            new Entry("正则化", "Regularisation", 0, "给训练加入约束或技巧，减少死记硬背，让模型更好地应对新题。", "Constraints or training techniques that reduce overfitting and help the model handle unseen examples.", new[] { "过拟合", "权重衰减", "随机失活" }, "科技：随机失活、数据增强", "Tech: Dropout, Data augmentation", true),
+            new Entry("权重衰减", "Weight decay", 0, "训练时把权重朝零缩小一点，用来约束过大的权重、减少过拟合。", "Shrinks weights toward zero during training to discourage large weights and reduce overfitting.", new[] { "正则化", "权重" }, "科普延伸阅读", "Further reading", true),
+            new Entry("泛化", "Generalisation", 0, "把学到的规律用于没见过的新题，并且仍然答得好的能力。\n\n练习题全对还不够，要用能代表实际用途的新题来检验。", "The ability to apply learned patterns successfully to unseen examples.\n\nPerfect training answers are not enough; new test examples should represent the intended use.", new[] { "过拟合", "测试集" }, "科技：留出新题；训练中的新题成绩", "Tech: Held-out data; unseen-example scores in Train", true),
+            new Entry("初始化", "Initialisation", 0, "训练开始前给参数设定初值，帮助信号和梯度顺利通过网络。", "Sets initial parameter values to help signals and gradients flow through the network.", new[] { "单位初始化", "梯度消失" }, "科技：单位初始化", "Tech: Identity initialisation", true),
+            new Entry("推理", "Inference", 0, "用练好的模型对新输入作预测，通常不改变模型参数。", "Uses a trained model to predict outputs for new inputs, normally without changing its parameters.", new[] { "反向传播", "显存" }, "摆渡众包：自动答题", "Bodu crowd work: Auto-answer", true),
+            new Entry("预训练", "Pretraining", 0, "先在一批数据或任务上训练模型，为之后的使用或调整打基础。", "Trains a model on an initial dataset or task as a starting point for later use or adaptation.", new[] { "微调", "预训练参数", "迁移学习" }, "终章：开始预训练", "Finale: Start pre-training", true),
+            new Entry("微调", "Fine-tuning", 0, "从已经训练好的模型继续学习，使它适应新的任务或数据。", "Continues training an existing model to adapt it to a new task or dataset.", new[] { "预训练", "迁移学习" }, "科技：迁移学习", "Tech: Transfer learning", true),
+            new Entry("全连接层", "Fully connected layer", 1, "每个输入单元都连接到每个输出单元，参数量随两端大小一起增长。", "Connects every input unit to every output unit; parameter count grows with both input and output size.", new[] { "参数", "神经元" }, "科技：多层感知机", "Tech: Multilayer perceptron", true),
+            new Entry("池化", "Pooling", 1, "把一小块区域汇总成最大值或平均值，缩小特征图并容忍一些小位移。", "Summarises a region with a maximum or average, reducing feature-map size and tolerating some small shifts.", new[] { "卷积" }, "科技：手写卷积、深层卷积", "Tech: Handwriting convolution, Deep convolution", true),
+            new Entry("编码解码", "Encoder-decoder", 1, "编码器把输入读成表示，解码器据此生成输出，常用于翻译。", "An encoder reads input into a representation; a decoder uses it to generate output, as in translation.", new[] { "循环网络", "回看注意力" }, "科技：回看注意力", "Tech: Look-back attention", true),
+            new Entry("自注意力", "Self-attention", 1, "让同一序列中的位置按相关程度交换信息；因果生成时只看已有词元。\n\n训练常能并行处理位置。纯注意力Transformer发表于2017年，本作2016年的「自研新脑」属于推演突破。", "Lets positions in one sequence exchange information; causal generation attends only to available tokens.\n\nTraining can often process positions in parallel. The attention-only Transformer appeared in 2017; the game's 2016 New brain research is a speculative breakthrough.", new[] { "注意力", "多路注意", "位置标记" }, "科技：自研新脑（游戏推演）", "Tech: New brain research (speculative game progression)", true),
+            new Entry("语言模型", "Language model", 1, "学习文字序列规律的模型，常根据前文预测下一个词元。", "A model of text sequences, often predicting the next token from previous context.", new[] { "词元", "温度", "预训练" }, "科技：自研新脑；终章：开始预训练", "Tech: New brain research; Finale: Start pre-training", true),
+            new Entry("词元", "Token", 1, "Token是模型处理文字的单位，可以是字、词、子词或字节。", "A token is a unit of text processing, such as a character, word, subword or byte.", new[] { "子词切分", "词向量" }, "科技：子词切分", "Tech: Subword units", true),
+            new Entry("温度", "Temperature", 1, "生成采样时调节概率分布：低温度更偏向高分候选，高温度选择更多样。", "A sampling setting: lower temperature favours high-scoring candidates; higher temperature spreads choices more widely.", new[] { "束搜索", "语言模型" }, "科普延伸阅读", "Further reading", true),
+            new Entry("生成对抗网络", "Generative adversarial network", 1, "GAN于2014年提出：生成器造样本，判别器辨真假，通过对抗训练学习。", "Introduced in 2014, a GAN trains a sample-generating model against one that distinguishes generated from real data.", new[] { "自编码器" }, "科普延伸阅读", "Further reading", true),
+            new Entry("自编码器", "Autoencoder", 1, "把输入编码后再重建，通过压缩或其他约束学到有用的表示。", "Encodes and reconstructs inputs, learning useful representations through compression or other constraints.", new[] { "特征" }, "科普延伸阅读", "Further reading", true),
+            new Entry("强化学习", "Reinforcement learning", 1, "通过行动和奖励学习策略，尝试让长期获得的回报更多。\n\n2016年AlphaGo战胜李世石，结合了人类棋谱、自我对弈强化学习、价值网络和树搜索。", "Learns action policies from rewards to improve long-term return.\n\nThe AlphaGo that beat Lee Sedol in 2016 combined human games, self-play reinforcement learning, value networks and tree search.", new[] { "自我对弈" }, "任务：让它自己下棋；科技：自己跟自己下", "Task: Let it practise; Tech: Self-play", true),
+            new Entry("自我对弈", "Self-play", 1, "让智能体与自己或其他版本对局，用对局过程与结果来学习或评估。", "An agent plays itself or other versions, using game trajectories and outcomes for learning or evaluation.", new[] { "强化学习" }, "任务：让它自己下棋；科技：自己跟自己下", "Task: Let it practise; Tech: Self-play", true),
+            new Entry("数据集", "Dataset", 2, "按用途整理的一批样本，可以带标签，也可以不带，用于训练或评估。", "A collection of labelled or unlabelled examples organised for training or evaluation.", new[] { "样本", "标注", "训练集" }, "数据包；训练时使用的数据", "Data packs; data used in Train", true),
+            new Entry("样本", "Example", 2, "一条数据记录，例如一幅图或一句话；监督学习时通常还配有标签。", "One data example, such as an image or sentence, usually paired with a label in supervised learning.", new[] { "标注", "数据集" }, "答题标注", "Manual labelling", true),
+            new Entry("标注", "Labelling", 2, "给样本补上任务需要的标签，例如类别或答案；本作手动答题就是标注。", "Adds task labels, such as categories or answers, to examples; manual answering in the game is labelling.", new[] { "样本", "标签噪声" }, "答题标注、摆渡众包", "Manual labelling and Bodu crowd work", true),
+            new Entry("标签噪声", "Label noise", 2, "数据标签中的错误或不一致，会给模型学习带来干扰。", "Errors or inconsistencies in data labels that interfere with learning.", new[] { "数据清洗", "标注" }, "科技：答案抽检、数据清洗", "Tech: Answer audit, Data cleaning", true),
+            new Entry("训练集", "Training set", 2, "直接拿来训练、调整模型参数的那部分数据。\n\n常把数据分成三份：训练集用来学，验证集挑设置，测试集作最终评估；要避免样本泄漏。", "The portion of data used directly to train model parameters.\n\nA common split uses training data to learn, validation data to choose settings and test data for final evaluation, keeping information from leaking between them.", new[] { "验证集", "测试集" }, "训练：训练一轮", "Train: Train one round", true),
+            new Entry("验证集", "Validation set", 2, "训练过程中用来挑设置、决定早停的数据，通常不直接用于梯度更新。", "Data used to choose settings or early stopping, normally without direct gradient updates.", new[] { "训练集", "测试集", "早停研究" }, "科技：早停研究、学习率搜索", "Tech: Early-stop study, Learning-rate search", true),
+            new Entry("测试集", "Test set", 2, "评估已经确定的模型所用的数据，应避免反复依据它的分数调参。", "Data for evaluating a model after choices are made, without repeatedly tuning to its scores.", new[] { "泛化", "留出新题" }, "科技：留出新题；训练中的新题评估", "Tech: Held-out data; evaluation on unseen examples in Train", true),
+            new Entry("精确率", "Precision", 2, "模型判为正类的样本里，实际也是正类的比例。", "The fraction of predicted positives that are actually positive.", new[] { "召回率", "准确率" }, "科技：答案抽检", "Tech: Answer audit", true),
+            new Entry("召回率", "Recall", 2, "所有实际正类中，被模型成功找出的比例。\n\n查垃圾邮件时，精确率低容易误拦正常信，召回率低容易漏掉垃圾信；调阈值常要权衡。", "The fraction of actual positives successfully found.\n\nFor spam detection, low precision flags more legitimate mail and low recall misses spam; choosing a threshold often involves a trade-off.", new[] { "精确率", "准确率" }, "科技：答案抽检", "Tech: Answer audit", true),
+            new Entry("混淆矩阵", "Confusion matrix", 2, "列出真实类别分别被预测成什么的一张表，帮助看清模型错在哪里。", "A table comparing actual and predicted classes, showing which mistakes a model makes.", new[] { "准确率", "精确率" }, "科普延伸阅读", "Further reading", true),
+            new Entry("基准测试", "Benchmark", 2, "使用共同数据、指标与评估规则比较模型表现的一套测试。", "A test using shared data, metrics and evaluation rules to compare models.", new[] { "测试集" }, "训练：参加能力考", "Train: Sit the exam", true),
         };
         public static Entry Find(string key) => Array.Find(Entries, e => e.Key == key);
     }
