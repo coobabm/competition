@@ -86,6 +86,8 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim(state) { GoldChance = 0 };
             foreach (var id in new[] { "rnn", "s.w1", "s.w2", "s.w3", "s.d3", "longtext.pack" }) sim.S.unlocked.Add(id);
             sim.S.owned.Add("longtext");
+            sim.S.installedDataBatches.Add(new XgLabelCount { dataset = "longtext", count = XgSim.PackBatches("longtext") });
+            Assert.That(sim.InstalledBatches("longtext"), Is.GreaterThan(0), "fixture has installed training data");
             sim.S.labels.Add(new XgLabelCount { dataset = "longtext", count = 50000 });
             sim.SelectedTrack = XgTrack.Sequence;
             Assert.That(sim.SetDataset(XgTrack.Sequence, "longtext"), Is.True);

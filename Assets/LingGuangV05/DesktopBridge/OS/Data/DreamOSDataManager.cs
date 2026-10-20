@@ -9,9 +9,10 @@ namespace LingGuangV05.Desktop.OS
     /// <summary>
     /// The desktop's save system: one small JSON file per <see cref="DataCategory"/> holding flat key/value pairs
     /// (settings, app state, favorites, downloads, ...). Files live in "DreamOS_UserData/&lt;profileID&gt;/&lt;Category&gt;.json"
-    /// next to the project (editor) or the built game, and are created on first use. Replaces DreamOS's
+    /// under the project (editor) or player save root, and are created on first use. Verification redirects this
+    /// directory to its isolated desktop profile. Replaces DreamOS's
     /// DreamOSDataManager (2026-10-19): same GUID, file names, JSON layout, category order and public API, so existing
-    /// player saves load unchanged.
+    /// save contents remain compatible. Player paths follow DesktopProfilePaths rather than the old EXE-name formula.
     ///
     /// <c>dataPath</c> is the profile folder; QA code and tests set it by reflection (a full path ending in a
     /// separator) to redirect the saves, so its name, type and "empty means not initialized yet" meaning must stay.
@@ -28,16 +29,28 @@ namespace LingGuangV05.Desktop.OS
 
         static void InitializeProfile()
         {
+            string verification = LingGuangV05.Runtime.Persistence.VerificationSavePaths.DesktopProfileDirectory;
+            if (verification != null) { dataPath = verification + Path.DirectorySeparatorChar; return; }
 #if UNITY_EDITOR
             string appPath = Application.dataPath;
             appPath = appPath.Replace(GetProjectName() + "/Assets", "");
             dataPath = appPath + GetProjectName() + "/" + subPath + "/" + profileID + "/";
 #else
-            string appPath = Application.dataPath;
-            appPath = appPath.Replace(Application.productName + "_Data", "");
-            dataPath = appPath + subPath + "/" + profileID + "/";
+            // Player desktop state follows the save root even when the executable has a different name.
+            dataPath = LingGuangV05.Runtime.Persistence.DesktopProfilePaths.Resolve(null, PlayerDataRoot(), profileID);
 #endif
         }
+
+#if !UNITY_EDITOR
+        static string PlayerDataRoot()
+        {
+#if RECORDING_PREVIEW
+            return Path.GetFullPath(Path.Combine(Application.dataPath, "..", "UserData"));
+#else
+            return Application.persistentDataPath;
+#endif
+        }
+#endif
 
         static string GetProjectName()
         {
@@ -142,10 +155,10 @@ namespace LingGuangV05.Desktop.OS
             File.WriteAllText(filePath, JsonConvert.SerializeObject(data));
         }
 
-        // Uses dataPath as it stands, without initializing it, exactly as before.
+        // Initialize the profile and category before clearing it, including the first call in a session.
         public static void DeleteDataCategory(DataCategory cat)
         {
-            File.WriteAllText(dataPath + cat.ToString() + jsonExtension, "{}");
+            File.WriteAllText(GetTempDataPath(cat), "{}");
         }
     }
 }

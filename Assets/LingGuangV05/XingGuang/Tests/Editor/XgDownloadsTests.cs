@@ -25,11 +25,20 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim { GoldChance = 0 };
             sim.S.stage = sim.S.stageVision = sim.S.stageSequence = 5;
             sim.S.fundedAbility = 5;
-            foreach (var id in new[] { "mlp", "rnn", "lenet", "resnet" }) sim.S.unlocked.Add(id);
+            foreach (var id in new[] { "mlp", "rnn", "lenet", "resnet", "train.curve", XgSim.DataEntryNode }) sim.S.unlocked.Add(id);
             return sim;
         }
 
-        static double Seconds(double mb, double mbps) => mb / mbps * XgSim.DownloadTimeScale;
+        static double Seconds(double mb, double mbps) => XgSim.PacedDownloadSeconds(mb, mbps, false, false);
+
+        static void InstallReady(XgSim sim, string dataset)
+        {
+            var file = sim.S.dataFiles.Find(x => x.dataset == dataset && !x.installed);
+            Assert.IsNotNull(file, dataset + " must have a downloaded file");
+            Assert.IsTrue(sim.DataFileReady(file.fileId));
+            Assert.IsTrue(sim.InstallDataFile(file.fileId));
+            Assert.IsFalse(sim.InstallDataFile(file.fileId), "repeat drops are no-ops");
+        }
 
         [Test]
         public void TheQueueDownloadsOneItemAtATimeAtTheLineSpeed()
@@ -38,7 +47,7 @@ namespace LingGuangV05.XingGuang.Tests
             var imagenet = XgCatalog.Dataset("imagenet"); var news = XgCatalog.Dataset("news");
             Assert.IsTrue(sim.BuyNode("imagenet.pack", host));
             Assert.IsTrue(sim.BuyNode("news.pack", host));
-            double first = Seconds(XgSim.BatchMB(imagenet), XgSim.BroadbandMBps[0]), second = Seconds(XgSim.BatchMB(news), XgSim.BroadbandMBps[0]);
+            double first = Seconds(imagenet.sizeMB, XgSim.BroadbandMBps[0]), second = Seconds(news.sizeMB, XgSim.BroadbandMBps[0]);
             Assert.That(first, Is.InRange(20, 45), "15 GB of ImageNet on the starting 20M line takes about half a minute");
             Assert.AreEqual(first, sim.DownloadLeft("imagenet"), 1e-6);
             Assert.AreEqual(first + second, sim.DownloadLeft("news"), 1e-6, "news waits behind ImageNet");
@@ -51,21 +60,33 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(0, sim.PackSamples("imagenet"), "samples arrive at the end of the item");
             Assert.AreEqual(0, sim.DownloadQueue()[1].doneMB, "the second item has not started");
             sim.Tick(6, host);
-            Assert.AreEqual(XgSim.BatchSamples(imagenet), sim.PackSamples("imagenet"), 1e-6);
-            Assert.AreEqual(1, sim.BatchesArrived("imagenet"));
+            Assert.AreEqual(0, sim.PackSamples("imagenet"), "ready files do not count as training data");
+            Assert.AreEqual(XgSim.PackBatches(imagenet), sim.BatchesArrived("imagenet"));
+            Assert.IsFalse(sim.Owns("imagenet"));
+            InstallReady(sim, "imagenet");
+            Assert.AreEqual(imagenet.samples, sim.PackSamples("imagenet"), 1e-6);
             Assert.IsTrue(sim.Owns("imagenet"));
             sim.Tick(second, host);
-            Assert.AreEqual(XgSim.BatchSamples(news), sim.PackSamples("news"), 1e-6);
+            Assert.AreEqual(0, sim.PackSamples("news"));
+            InstallReady(sim, "news");
+            Assert.AreEqual(news.samples, sim.PackSamples("news"), 1e-6);
             Assert.AreEqual(0, sim.DownloadQueue().Count);
         }
 
         [Test]
-        public void SmallTextPacksArriveAtOnce()
+        public void SmallTextPacksDownloadVisiblyAndNeedInstallation()
         {
             var sim = new XgSim(); var host = new Host();
+            sim.S.unlocked.Add(XgSim.DataEntryNode);
             Assert.IsTrue(sim.BuyNode("spam.pack", host));
+            Assert.IsTrue(sim.Downloading("spam"));
+            Assert.That(sim.DownloadLeft("spam"), Is.InRange(2, 30));
+            Assert.AreEqual(0, sim.PackSamples("spam"));
+            sim.Tick(sim.DownloadLeft("spam") + 1, host);
             Assert.IsFalse(sim.Downloading("spam"));
-            Assert.AreEqual(XgSim.BatchSamples(XgCatalog.Dataset("spam")), sim.PackSamples("spam"), 1e-6);
+            Assert.AreEqual(0, sim.PackSamples("spam"));
+            InstallReady(sim, "spam");
+            Assert.AreEqual(XgCatalog.Dataset("spam").samples, sim.PackSamples("spam"), 1e-6);
         }
 
         [Test]
@@ -183,43 +204,63 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void BatchesGetDearerAndEachDownloadsItsShare()
+        public void ANewPackBuysTheWholeFileAndInstallsItsSamplesOnce()
         {
             var sim = Lab(); var host = new Host();
             var d = XgCatalog.Dataset("poems");
-            int all = XgSim.PackBatches(d);
-            Assert.That(all, Is.InRange(5, 10));
-            Assert.IsNotNull(sim.BatchBlocker("poems", out _), "the pack node is the download right");
+            double before = host.money, price = sim.NodeCost(XgCatalog.Node("poems.pack"));
             Assert.IsTrue(sim.BuyNode("poems.pack", host));
-            Assert.AreEqual(1, sim.BatchesBought("poems"));
-            double baseline = sim.BatchPrice("poems", 1) / XgSim.BatchPriceGrowth;
-            for (int k = 1; k < all; k++)
-            {
-                double price = sim.NextBatchPrice("poems"), before = host.money;
-                Assert.AreEqual(baseline * System.Math.Pow(XgSim.BatchPriceGrowth, k), price, 1.0, "batch " + (k + 1) + " (prices are rounded up to whole yuan)");
-                Assert.IsTrue(sim.BuyBatch("poems", host));
-                Assert.AreEqual(before - price, host.money, 1e-9);
-                sim.Tick(sim.DownloadLeft("poems") + .1, host);
-                Assert.AreEqual(XgSim.BatchSamples(d) * (k + 1), sim.PackSamples("poems"), 1e-6);
-            }
-            Assert.AreEqual(d.samples, sim.PackSamples("poems"), 1e-6, "every batch adds up to the whole pack");
-            Assert.IsNotNull(sim.BatchBlocker("poems", out _));
-            Assert.IsFalse(sim.BuyBatch("poems", host), "no batch past the last");
+            Assert.AreEqual(before - price, host.money, 1e-9);
+            Assert.AreEqual(XgSim.PackBatches(d), sim.BatchesBought("poems"));
+            Assert.AreEqual(d.samples, sim.DownloadQueue()[0].samples);
+            Assert.AreEqual(d.sizeMB, sim.DownloadQueue()[0].sizeMB);
+            Assert.AreEqual(0, sim.PackSamples("poems"));
+            Assert.IsFalse(sim.BuyBatch("poems", host));
+            sim.Tick(sim.DownloadLeft("poems") + 1, host);
+            Assert.AreEqual(0, sim.PackSamples("poems"));
+            InstallReady(sim, "poems");
+            Assert.AreEqual(d.samples, sim.PackSamples("poems"), 1e-6);
             Assert.IsTrue(double.IsPositiveInfinity(sim.NextBatchPrice("poems")));
         }
 
         [Test]
-        public void TheNoteOffersAnOwnedPackOnlyAsItsNextBatch()
+        public void TheNoteOffersAnOlderPartialPackAsItsNextBatch()
         {
-            var sim = Lab(); var host = new Host();
-            foreach (var n in XgCatalog.Nodes)
-                if (n.kind == XgNodeKind.Dataset && sim.Status(n, host) == XgSim.NodeStatus.Buyable) sim.BuyNode(n.id, host);
-            sim.Tick(600, host);
-            var buy = XgGuide.DataPlan(sim, sim.NextAbility, 1e9);
-            Assert.IsNotNull(buy);
-            Assert.IsNotNull(buy.batch, "every pack is owned: only batches are left");
+            var state = new XgState { stage = 5, stageVision = 5, stageSequence = 5,
+                progressionVersion = XgSim.ProgressionSchemaWalls, downloadsVersion = XgSim.DownloadsSchema };
+            foreach (var node in XgCatalog.Nodes) state.unlocked.Add(node.id);
+            foreach (var ds in XgCatalog.Datasets)
+            {
+                state.owned.Add(ds.id);
+                int batches = ds.id == "imagenet" ? 1 : XgSim.PackBatches(ds);
+                state.batchesBought.Add(new XgLabelCount { dataset = ds.id, count = batches });
+                state.batchesArrived.Add(new XgLabelCount { dataset = ds.id, count = batches });
+            }
+            var sim = new XgSim(state);
+            var buy = XgGuide.DataPlan(sim, 6, 1e9);
+            Assert.IsNotNull(buy, "an older partially downloaded pack retains its next-batch option");
+            Assert.AreEqual("imagenet", buy.batch);
             Assert.AreEqual(sim.NextBatchPrice(buy.batch), buy.cost, 1e-9);
             Assert.AreEqual(XgCatalog.Dataset(buy.batch).dataWeight * XgSim.BatchSamples(XgCatalog.Dataset(buy.batch)), buy.gain, 1e-6);
+        }
+
+        [Test]
+        public void TheDataPlanCountsTheWholeNewPackThatThePurchaseQueues()
+        {
+            var state = new XgState { stage = 5, stageVision = 5, stageSequence = 5,
+                progressionVersion = XgSim.ProgressionSchemaWalls, downloadsVersion = XgSim.DownloadsSchema };
+            foreach (var node in XgCatalog.Nodes) if (node.id != "imagenet.pack") state.unlocked.Add(node.id);
+            foreach (var ds in XgCatalog.Datasets) if (ds.id != "imagenet") state.owned.Add(ds.id);
+            var sim = new XgSim(state);
+            var buy = XgGuide.DataPlan(sim, 6, 1e9);
+            Assert.IsNotNull(buy);
+            Assert.AreEqual("imagenet.pack", buy.target.id);
+            Assert.IsNull(buy.batch);
+            var dataset = XgCatalog.Dataset("imagenet");
+            Assert.AreEqual(dataset.samples * dataset.dataWeight, buy.gain, 1e-6);
+            Assert.IsTrue(sim.BuyNode(buy.target.id, new Host()));
+            Assert.AreEqual(sim.DownloadQueue()[0].samples * dataset.dataWeight, buy.gain, 1e-6,
+                "the planner counts the full file the purchase queues, before the existing noise adjustment");
         }
 
         [Test]
@@ -282,13 +323,18 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = Lab(); var host = new Host();
             sim.S.stage = 4;
             // Something to train on (a whole pack from before the queue), then ImageNet's right and enough batches for the bar.
-            sim.S.owned.Add("poems"); sim.S.unlocked.Add("poems.pack");
+            Assert.IsTrue(sim.BuyNode("poems.pack", host));
+            sim.Tick(sim.DownloadLeft("poems") + 1, host);
+            InstallReady(sim, "poems");
             sim.S.epochs = 1; sim.S.assessments = 1; sim.S.treeIntroDelivered = true; // past the first-round steps, the 科技 page open
+            sim.S.stage = 5;
+            Assert.IsTrue(sim.BuyNode("news.pack", host));
+            Assert.IsTrue(sim.BuyNode("spam.pack", host));
+            sim.S.stage = 4;
             Assert.IsTrue(sim.BuyNode("imagenet.pack", host));
             Assume.That(sim.NextAbility, Is.EqualTo(5));
             double need = sim.SamplesThreshold(5) - sim.TrainedSamples - sim.QueuedDataSamples(out _);
-            for (int i = 0; need > 0 && i < 9; i++) { Assert.IsTrue(sim.BuyBatch("imagenet", host)); need = sim.SamplesThreshold(5) - sim.TrainedSamples - sim.QueuedDataSamples(out _); }
-            Assume.That(need, Is.LessThanOrEqualTo(0));
+            Assert.That(need, Is.LessThanOrEqualTo(0), "the two full files cover the data gap");
             var steps = XgGuide.Current(sim, host.money);
             var wait = steps.Find(x => x.id == "ability.download");
             Assert.IsNotNull(wait, string.Join(" | ", steps));

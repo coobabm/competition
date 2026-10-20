@@ -113,17 +113,17 @@ namespace LingGuangV05.XingGuang
                 // 下班以后: hidden cards for the life outside the lab (the casino, 晴雯, 三体, the desktop). The album
                 // shows only a rumour until one is found; the desktop apps call EarnSecret, the lab's own chat earns here.
                 Life(1, "life.gf.busy", "忙", "抱歉，我真的在忙", "Sorry, I really was busy", "上一章没回晴雯，这一章终于道了歉。", "Left Qingwen unanswered for a chapter, then apologized.", "有些消息不能一直放着。", "Some messages should not wait forever.", "刚看到。对不起。", "Just saw this. Sorry."),
-                Life(0, "life.casino.first", "赌", "小赌怡情", "A little flutter", "在 888.vip 下了第一注。", "Placed a first bet on 888.vip.", "听说有个网站，一夜就能把显卡钱赚回来。", "Rumour has it a website pays back a graphics card overnight.",
+                Life(0, "life.casino.first", "堵", "小堵怡情", "A little flutter", "在 888.vip 下了第一注。", "Placed a first bet on 888.vip.", "听说有个网站，一夜就能把显卡钱赚回来。", "Rumour has it a website pays back a graphics card overnight.",
                     "庄家从来不急。", "The house is never in a hurry."),
                 Life(1, "life.casino.blackjack", "A", "黑杰克", "Blackjack", "二十一点开局就拿到黑杰克。", "Dealt a natural blackjack.", "有人在二十一点的桌上等一张 A。", "Someone at the blackjack table is waiting for an ace.",
                     "一张 A，一张 K。概率 4.8%，这次是你。", "An ace and a king: 4.8%, and this time it was you."),
-                Life(2, "life.casino.jackpot", "7", "三个七", "Triple seven", "老虎机转出三个一样的。", "Hit three of a kind on the slots.", "老虎机据说真的会吐钱。", "They say the slot machine really does pay out.",
+                Life(2, "life.casino.jackpot", "7", "三个七", "Triple seven", "老唬机转出三个一样的。", "Hit three of a kind on the slots.", "老唬机据说真的会吐钱。", "They say the slot machine really does pay out.",
                     "最高二十倍。别告诉晴雯。", "Up to twenty times the stake. Don't tell Qingwen."),
-                Life(1, "life.casino.broke", "光", "一把梭", "All in", "在赌场输到连最小的筹码都押不起。", "Lost until not even the smallest chip was affordable.", "据说有人在 888.vip 输掉了买显卡的钱。", "Word is someone lost the GPU money on 888.vip.",
+                Life(1, "life.casino.broke", "光", "一把梭", "All in", "在堵场输到连最小的筹码都押不起。", "Lost until not even the smallest chip was affordable.", "据说有人在 888.vip 输掉了买显卡的钱。", "Word is someone lost the GPU money on 888.vip.",
                     "显卡没买成，模型还在等。", "No new graphics card. The model is still waiting."),
-                Life(2, "life.casino.loss", "庄", "久赌必输", "The house always wins", "在赌场累计净输 ¥" + CasinoLossCard + "。", "Lost ¥" + CasinoLossCard + " net at the casino.", "赌场的账本上，有一页写着你的名字。", "There is a page with your name in the casino's ledger.",
+                Life(2, "life.casino.loss", "庄", "久堵必输", "The house always wins", "在堵场累计净输 ¥" + CasinoLossCard + "。", "Lost ¥" + CasinoLossCard + " net at the casino.", "堵场的账本上，有一页写着你的名字。", "There is a page with your name in the casino's ledger.",
                     "每一种玩法的期望都是负的：模型一算就知道，你偏要试。", "Every game has a negative expectation: the model could have told you, you had to try."),
-                Life(4, "life.casino.streak", "赢", "赌神", "God of Gamblers", "在赌场连赢 " + CasinoStreakCard + " 把。", "Won " + CasinoStreakCard + " casino rounds in a row.", "传说有人在 888.vip 一直赢。转一下这张卡。", "Legend has it someone never lost at 888.vip. Turn this card.",
+                Life(4, "life.casino.streak", "赢", "堵神", "God of Gamblers", "在堵场连赢 " + CasinoStreakCard + " 把。", "Won " + CasinoStreakCard + " casino rounds in a row.", "传说有人在 888.vip 一直赢。转一下这张卡。", "Legend has it someone never lost at 888.vip. Turn this card.",
                     "转过来看看：赢的背面，写的是输。", "Turn it over: on the back of winning is losing.", "输"),
 
                 Life(0, "life.gf.chat", "晴", "下班回消息", "Texting back", "在 YY 上给晴雯发了第一句话。", "Sent Qingwen a first message on YY.", "工作再忙，也有人在等你回消息。", "However busy work is, someone is waiting for your reply.",
@@ -188,8 +188,11 @@ namespace LingGuangV05.XingGuang
             };
             // 书架: one card per book read to the end (XgSim.Books.cs).
             foreach (var b in XgBooks.All)
-                list.Add(Card(CardData, b.ability >= 5 ? 2 : b.ability >= 4 ? 1 : 0, "book." + b.id, b.name.Substring(0, 1), "读完《" + b.name + "》", "Read " + b.nameEn,
-                    "把《" + b.name + "》一篇一篇读完了：参数 +" + ParamsText(b.paramsK) + "。", "Read " + b.nameEn + " to the end, chapter by chapter: parameters +" + ParamsText(b.paramsK) + ".", b.note, b.noteEn));
+                list.Add(Card(CardData, b.ability >= 5 ? 2 : b.ability >= 4 ? 1 : 0, "book." + b.id, b.name.Substring(0, 1),
+                    XgBooks.LibraryEntry(b.id).IsGuide ? "读完《" + b.name + "》导读" : "读完《" + b.name + "》选段",
+                    "Read " + (XgBooks.LibraryEntry(b.id).IsGuide ? "the guide to " : "selected excerpts from ") + b.nameEn,
+                    XgBooks.LibraryEntry(b.id).IsGuide ? "读完原创导读，并非原著全文。" : "把《" + b.name + "》选段读完了：参数 +" + ParamsText(b.paramsK) + "。",
+                    XgBooks.LibraryEntry(b.id).IsGuide ? "Completed the original guide, not the complete book." : "Read selected excerpts from " + b.nameEn + ": parameters +" + ParamsText(b.paramsK) + ".", b.note, b.noteEn));
             // 现象图鉴: one common card per phenomenon of the board.
             foreach (var p in XgPhenomena.All)
                 list.Add(Card(CardPhenomenon, 0, "ph." + p.id, p.name.Substring(0, 1), p.name, p.nameEn, "第一次观察到「" + p.name + "」。", "Saw " + p.nameEn + " for the first time.", p.why, p.whyEn));

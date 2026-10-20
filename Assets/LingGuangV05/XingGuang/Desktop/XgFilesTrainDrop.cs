@@ -49,7 +49,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 ?T(sim,"已安装 ","Installed ")+LastInstalled+T(sim," 个数据包。"," data packs.")
                 :T(sim,"没有安装新的数据包。","No new data packs installed.");
             if(skipped>0)result+="\n"+T(sim,"未安装 ","Not installed: ")+skipped+" · "
-                +(interruption??T(sim,"已安装或文件已不可用，请刷新资料夹。","Already installed or no longer available; refresh Files."));
+                +(interruption??T(sim,"已安装或文件已不可用，请刷新资料文件夹。","Already installed or no longer available; refresh Training files."));
             Notify?.Invoke(result);
             RefreshView?.Invoke();
         }

@@ -103,9 +103,9 @@ namespace LingGuangV05.Core
         }
 
         /// <summary>
-        /// Calendar bills: broadband once when a new month begins, the October rent rise notice, a booked train ticket.
-        /// Rent and the summer air conditioner are charged per day of play instead (<see cref="SettleDayWithRent"/>), so a
-        /// calendar jump never bills weeks at once. Runs at the start of every tick; the calendar itself is moved by the lab.
+        /// Calendar bills: a monthly YY rent invoice, broadband, the October rent rise notice and a booked train ticket.
+        /// Rent is only debited by an explicit transfer; summer air conditioning still follows play time.
+        /// Runs at the start of every tick; the calendar itself is moved by the lab.
         /// </summary>
         public void SettleCalendar()
         {
@@ -118,6 +118,7 @@ namespace LingGuangV05.Core
                 // Nothing owed for the holiday; rent starts from the day it ends.
                 if (S.rentDay > 0) S.rentDay = today;
                 S.broadbandMonth = month;
+                if (S.rentSystemStarted) S.rentBilledMonth = month;
                 return;
             }
             // The economy starts today: this month's broadband is due now.
@@ -127,6 +128,7 @@ namespace LingGuangV05.Core
 
             }
             StartManualRent();
+            SettleMonthlyRent();
             if (S.broadbandMonth != month)
             {
                 // One bill per month begun (a jump over a month still pays it once), none twice.
@@ -138,7 +140,7 @@ namespace LingGuangV05.Core
             {
                 if (S.rentDay < GameCalendar.DayIndex(RentRiseDate) && today >= GameCalendar.DayIndex(RentRiseDate))
                 {
-                    LastMessage = T("跟你说一声，十月起房租涨到一天 " + Yuan(Config.rentPerDayFromOctober) + "，这片都涨了。你这孩子靠谱，别的租客我可没这么客气地说。", "Heads up: from October the rent is " + Yuan(Config.rentPerDayFromOctober) + " a day. Everyone round here has gone up. You're a reliable kid; I don't tell the other tenants this politely.");
+                    LastMessage = T("跟你说一声，十月起房租涨到每月 " + Yuan(MonthlyRentFor(RentRiseDate)) + "，这片都涨了。账单还是每月发在 YY 里。", "Heads up: from October the rent is " + Yuan(MonthlyRentFor(RentRiseDate)) + " a month. Everyone round here has gone up. I'll still send a monthly bill in YY.");
                     Raise("rent.raised");
                 }
                 S.rentDay = today;

@@ -1,7 +1,8 @@
 # OSArt — desktop art and data (our own)
 
-Everything here replaced the art that came with the DreamOS UI kit (2026-10-19). Files keep their original GUIDs, so
-scenes and prefabs did not need re-authoring.
+The desktop art replacement was integrated on 2026-10-19. Files keep their original GUIDs, so
+scenes and prefabs did not need re-authoring. Retained font atlases and structural layout data
+are distinct from the newly drawn art; their original notices still apply.
 
 | Folder | Source |
 |---|---|
@@ -11,5 +12,5 @@ scenes and prefabs did not need re-authoring.
 | Animations | regenerated with our own curves: `Tools/OSArt/Animation` |
 | Shaders, Materials | hand-written blur shaders; materials from `Tools/OSArt/ShadersData` |
 | Localization | our own wording: `Tools/OSArt/ShadersData/genloc.py` |
-| Fonts | Open Sans (Google, SIL Open Font License 1.1) and TextMeshPro font assets generated from it |
+| Fonts | Retained Open Sans bytes (Google, Apache License 2.0 according to the bundled font's name table) and their TextMeshPro font assets |
 | Prefabs, Resources | layout and library data built from our own scripts (`DesktopBridge/OS`, `DesktopBridge/Apps`) and the art above |

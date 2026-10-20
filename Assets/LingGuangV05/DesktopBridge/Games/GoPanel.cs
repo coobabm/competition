@@ -27,9 +27,7 @@ namespace LingGuangV05.Desktop.Games
 
         public override string Id => "go";
         public override string Title => Lang.T("围棋");
-        public override string Blurb => AiPlays
-            ? T("9 路小棋盘。现在执白的是" + AiName + "：它从「围棋局面」里学会了数气，越练越稳。", "A small 9 × 9 board. White is now " + AiName + ": it learned to count liberties from the Go positions it labelled, and steadies as it trains.")
-            : Lang.T("9 路小棋盘，和电脑的围棋程序下。今年 3 月 AlphaGo 4:1 赢了李世石，可这个程序还只会数气。");
+        public override string Blurb => T("9路小棋盘，数气、提子，连续停两手结束。可选电脑或自己的AI，棋力取决于桌游逻辑等级。","A 9×9 board: liberties, captures and two passes to finish. Choose the computer or your AI; strength follows its board-logic level.");
 
         /// <summary>The white player: the built-in program until stage 4, then the lab's AI.</summary>
         string Opponent => AiPlays ? AiName : Lang.T("电脑");
@@ -70,13 +68,14 @@ namespace LingGuangV05.Desktop.Games
             var side = PrologueDesk.Rect("Side", area, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-370, 30), new Vector2(-30, -30));
             status = Text(PrologueDesk.Rect("Status", side, new Vector2(0, .34f), Vector2.one, Vector2.zero, Vector2.zero), "", 20, new Color32(30, 50, 40, 255));
             Button(side, "Pass", new Vector2(0, .24f), new Vector2(1, .32f), new Color32(120, 130, 125, 255), Pass, out pass);
-            Button(side, "Again", new Vector2(0, .12f), new Vector2(1, .22f), Accent, () => { game = new GoGame(); aiAt = -1; log.Clear(); ClearComment(); Draw(); }, out again);
+            Button(side, "Again", new Vector2(0, .12f), new Vector2(1, .22f), Accent, RestartRound, out again);
             Draw();
         }
 
+        public override void RestartRound(){AbandonRoundRecord();game=new GoGame();aiAt=-1;counted=false;log.Clear();ClearComment();Draw();}
         public override void Refresh() => Draw();
 
-        bool HumanTurn => !game.Ended && aiAt < 0 && game.ToMove == GoGame.Black;
+        bool HumanTurn => CanInteract && !game.Ended && aiAt < 0 && game.ToMove == GoGame.Black;
 
         // Go coordinates skip the letter I.
         static string Point(int x, int y) => "ABCDEFGHJ"[x] + (y + 1).ToString();
@@ -102,7 +101,7 @@ namespace LingGuangV05.Desktop.Games
 
         void Update()
         {
-            if (aiAt < 0 || Time.unscaledTime < aiAt) return;
+            if (!CanInteract || aiAt < 0 || Time.unscaledTime < aiAt) return;
             aiAt = -1;
             if (!game.Ended)
             {
@@ -168,7 +167,7 @@ namespace LingGuangV05.Desktop.Games
             }
             else if (aiAt >= 0) state = Opponent + Lang.T("在想……");
             else state = game.LastX < 0 && game.Moves > 0 ? Opponent + Lang.T("停了一手。你也停一手，就结束数子。") : Lang.T("你执黑，先手。");
-            string opponent = Lang.T("对手：") + (AiPlays ? AiName + Lang.T(" · 下对 ") + Mathf.RoundToInt((float)Skill * 100) + "%" : Lang.T("电脑的围棋程序"));
+            string opponent = Lang.T("对手：") + (AiPlays ? AiName + T(" · 逻辑等级 "," · Logic level ") + Lab.BoardLogicLevel : Lang.T("电脑的围棋程序"));
             status.text = "<b><size=26>" + Title + "</size></b>\n" + opponent + "\n\n" + state + "\n\n" + Lang.T("提子 ") + game.Captures(GoGame.Black) + Lang.T(" · 被提 ") + game.Captures(GoGame.White) +
                 "\n" + Lang.T("胜 ") + wins + Lang.T(" · 负 ") + losses + LabLines() + "\n\n<size=15><color=#4A6656>" +
                 Lang.T("把对方棋子的「气」（相邻空点）全部堵上就能提走。双方都停一手时结束，按地盘和棋子数子。") + "</color></size>";

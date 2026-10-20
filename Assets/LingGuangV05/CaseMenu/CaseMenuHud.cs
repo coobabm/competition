@@ -14,6 +14,14 @@ namespace LingGuangV05.CaseMenu
         private static readonly Color Surface = new Color(.082f, .079f, .073f, 1f);
         private static readonly Color Control = new Color(.14f, .134f, .12f, 1f);
 
+        // Opening title artwork (v9 clean lockup: 我的电脑 / [monitor icon 活]了). Reference pixels at 1920x1080.
+        // Two lines at 500 px wide keep the same footprint the retired v5 art had, so the room framing and the
+        // 8 px gap to the subheading keep working; the cleaner art simply has less transparent padding.
+        private const float TitleLogoLeft = 65f;   // the art carries ~4.8 px transparent padding at this size, ink starts at x~70
+        private const float TitleLogoTop = -98f;
+        private const float TitleLogoWidth = 500f;
+        private const float TitleLogoSubheadingGap = 8f;
+
         private TMP_FontAsset font;
         private RectTransform canvasRoot;
         private CanvasGroup chromeGroup;
@@ -27,16 +35,26 @@ namespace LingGuangV05.CaseMenu
         private UnityEngine.UI.Slider volumeSlider;
         private UnityEngine.UI.Toggle reduceMotionToggle;
         private UnityEngine.UI.Toggle fullscreenToggle;
+        private UnityEngine.UI.Toggle qualityToggle, frameRateToggle;
+        private TextMeshProUGUI settingsStatus;
+        private readonly System.Collections.Generic.List<Action> settingsTranslations = new System.Collections.Generic.List<Action>();
         private Action<float> volumeChanged;
         private Action<bool> reduceMotionChanged;
         private Action<bool> fullscreenChanged;
         private Action closeRequested;
         private Action uiClick;
+        private Func<int?> lifeEventMode;
+        private Action<int> lifeEventModeChanged;
+        private UnityEngine.UI.Button lifeEventsButton;
+        private TextMeshProUGUI lifeEventsTitle, lifeEventsDetail;
         private int displayedVolume = -1;
         private int displayedProgress = -1;
         private string loadingMessage;
 
         public bool IsSettingsOpen => settingsGroup != null && settingsGroup.gameObject.activeSelf;
+        static CaseMenuHud settingsOwner;
+        // Both the title controller and direct-Main fallback display this same HUD.
+        public static bool AnySettingsOpen => settingsOwner != null && settingsOwner.gameObject.activeInHierarchy && settingsOwner.IsSettingsOpen;
 
         public bool HasSelectedControl
         {
@@ -57,7 +75,10 @@ namespace LingGuangV05.CaseMenu
             uiClick = onUIClick;
             if (canvasRoot != null) return;
 
-            this.font = font != null ? font : TMP_Settings.defaultFontAsset;
+            // Title and .exe share MiSans (UiSans) so the first screen already looks like the game's own UI;
+            // the scene's Desktop CJK font stays the fallback when the UiV4 assets are unavailable.
+            var uiSans = LingGuangV05.Desktop.XingGuang.XgUiV4Fonts.Sans;
+            this.font = uiSans != null ? uiSans : font != null ? font : TMP_Settings.defaultFontAsset;
             canvasRoot = Rect("CaseMenuOverlay", transform);
             var canvas = canvasRoot.gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -133,15 +154,59 @@ namespace LingGuangV05.CaseMenu
             SetChromeAlpha(1f);
         }
 
+        public void ConfigureLifeEvents(Func<int?> readMode, Action<int> writeMode)
+        {
+            lifeEventMode = readMode; lifeEventModeChanged = writeMode;
+            RefreshLifeEventsSetting();
+        }
+        public void RefreshLifeEventsSetting()
+        {
+            if (lifeEventsButton == null) return;
+            int? mode = lifeEventMode?.Invoke();
+            lifeEventsButton.interactable = mode.HasValue && mode.Value >= 0 && mode.Value <= 2 && lifeEventModeChanged != null;
+            string value = !mode.HasValue ? "" : mode.Value == 1 ? T("每 15 分钟", "Every 15 min")
+                : mode.Value == 2 ? T("关闭", "Off") : T("每 8 分钟", "Every 8 min");
+            lifeEventsTitle.text = T("突发事件", "Life events") + (value.Length > 0 ? " · " + value : "");
+            lifeEventsDetail.text = mode.HasValue ? T("当前存档 · 点击切换", "Current save · click to change")
+                : T("进入游戏后设置", "Enter the game to configure");
+        }
+        private UnityEngine.UI.Button BuildLifeEventsSetting(RectTransform parent)
+        {
+            var background = Panel("LifeEvents", parent, Control, true);
+            Place(background.rectTransform, new Vector2(0, 1), new Vector2(42, -479), new Vector2(536, 56));
+            lifeEventsButton = background.gameObject.AddComponent<UnityEngine.UI.Button>();
+            Style(lifeEventsButton, background);
+            lifeEventsTitle = Label("Label", background.transform, "", 17, Ink);
+            Place(lifeEventsTitle.rectTransform, new Vector2(0, 1), new Vector2(14, -5), new Vector2(508, 27));
+            lifeEventsDetail = Label("Description", background.transform, "", 12, Muted);
+            Place(lifeEventsDetail.rectTransform, new Vector2(0, 0), new Vector2(14, 5), new Vector2(508, 22));
+            lifeEventsButton.onClick.AddListener(() =>
+            {
+                int? mode = lifeEventMode?.Invoke();
+                if (!mode.HasValue || mode.Value < 0 || mode.Value > 2 || lifeEventModeChanged == null) return;
+                lifeEventModeChanged((mode.Value + 1) % 3);
+                RefreshLifeEventsSetting(); uiClick?.Invoke();
+            });
+            RefreshLifeEventsSetting(); return lifeEventsButton;
+        }
+
         public void ShowSettings(float volume, bool reduceMotion, bool fullscreen)
         {
             if (settingsGroup == null) return;
+            foreach (var refresh in settingsTranslations) refresh();
+            ClosePlayerHelp(false);
+            RefreshPlayerHelpEntry();
             volumeSlider.SetValueWithoutNotify(Unit(volume));
             reduceMotionToggle.SetIsOnWithoutNotify(reduceMotion);
             fullscreenToggle.SetIsOnWithoutNotify(fullscreen);
+            qualityToggle.SetIsOnWithoutNotify(!LingGuangV05.Desktop.GamePerformance.Low);
+            frameRateToggle.SetIsOnWithoutNotify(LingGuangV05.Desktop.GamePerformance.Frames == 60);
+            settingsStatus.text = T("设置即时保存，不会重置游戏进度", "Settings save immediately. Game progress is preserved.");
             SetVolumeLabel(volumeSlider.value);
+            RefreshLifeEventsSetting();
             SetTitleActionsVisible(false);
             settingsGroup.gameObject.SetActive(true);
+            settingsOwner = this;
             settingsGroup.alpha = 1f;
             settingsGroup.interactable = true;
             settingsGroup.blocksRaycasts = true;
@@ -152,9 +217,16 @@ namespace LingGuangV05.CaseMenu
             }
         }
 
+        public void ShowSettingsError(string message)
+        {
+            if (settingsStatus != null) settingsStatus.text = message;
+        }
+
         public void HideSettings()
         {
+            if (settingsOwner == this) settingsOwner = null;
             if (settingsGroup == null) return;
+            ClosePlayerHelp(false);
             if (IsSettingsOpen && EventSystem.current != null)
                 EventSystem.current.SetSelectedGameObject(null);
             settingsGroup.interactable = false;
@@ -174,15 +246,35 @@ namespace LingGuangV05.CaseMenu
             var eyebrow = Label("Eyebrow", chrome, "MY COMPUTER IS ALIVE / 2016", 14, Muted);
             Place(eyebrow.rectTransform, new Vector2(0, 1), new Vector2(70, -66), new Vector2(520, 26));
             eyebrow.characterSpacing = 5f;
-            var title = Label("Title", chrome, LingGuangV05.Core.AppNames.GameZh, 66, Ink);
-            Place(title.rectTransform, new Vector2(0, 1), new Vector2(64, -98), new Vector2(610, 124));
-            // A fixed title is never cut to "…": auto-sizing keeps it inside its box (CaseMenuHudTests).
-            title.overflowMode = TextOverflowModes.Overflow;
-            title.enableAutoSizing = true; title.fontSizeMin = 42; title.fontSizeMax = 66;
-            title.characterSpacing = 2f;
+            // v9 clean lockup: 我的电脑[monitor icon carrying 活]了. The icon replaces the 活 character, so the
+            // artwork replaces both the old text title and the separate signal decoration.
+            var logoTexture = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV9");
+            float subheadingTop;
+            if (logoTexture != null)
+            {
+                var logoRoot = Rect("TitleLogoV9", chrome);
+                float logoHeight = TitleLogoWidth * logoTexture.height / logoTexture.width;
+                Place(logoRoot, new Vector2(0, 1), new Vector2(TitleLogoLeft, TitleLogoTop),
+                    new Vector2(TitleLogoWidth, logoHeight));
+                var logo = logoRoot.gameObject.AddComponent<UnityEngine.UI.RawImage>();
+                logo.texture = logoTexture;
+                logo.color = Color.white;
+                logo.raycastTarget = false;
+                subheadingTop = TitleLogoTop - logoHeight - TitleLogoSubheadingGap;
+            }
+            else
+            {
+                var title = Label("Title", chrome, LingGuangV05.Core.AppNames.Game(LingGuangV05.Runtime.GameText.IsEnglish), 66, Ink);
+                Place(title.rectTransform, new Vector2(0, 1), new Vector2(64, -98), new Vector2(610, 124));
+                title.overflowMode = TextOverflowModes.Overflow;
+                title.enableAutoSizing = true; title.fontSizeMin = 42; title.fontSizeMax = 66;
+                title.characterSpacing = 3f;
+                var titleFace = LingGuangV05.Desktop.XingGuang.XgUiV4Fonts.SansSemibold;
+                if (titleFace != null) title.font = titleFace;
+                subheadingTop = -234f;
+            }
             var subheading = Label("Subheading", chrome, "从一次开机开始。", 21, Muted);
-            Place(subheading.rectTransform, new Vector2(0, 1), new Vector2(70, -234), new Vector2(640, 36));
-
+            Place(subheading.rectTransform, new Vector2(0, 1), new Vector2(70, subheadingTop), new Vector2(640, 36));
             var accent = Panel("HintAccent", chrome, Amber);
             Place(accent.rectTransform, Vector2.zero, new Vector2(70, 76), new Vector2(28, 2));
             hintLabel = Label("ContextHint", chrome, "点击机箱上的电源键，进入游戏", 21, Ink);
@@ -190,6 +282,14 @@ namespace LingGuangV05.CaseMenu
             var keyboard = Label("KeyboardHint", chrome, "TAB 切换 · ENTER 确认", 15, Muted);
             Place(keyboard.rectTransform, new Vector2(1, 0), new Vector2(-70, 63), new Vector2(520, 30));
             keyboard.alignment = TextAlignmentOptions.MidlineRight;
+            // Keep the muted notice readable over the bright papers in the room scene.
+            var disclosureBacking = Panel("AiContentNoticeBacking", chrome, new Color(0, 0, 0, .62f));
+            Place(disclosureBacking.rectTransform, Vector2.zero, new Vector2(62, 18), new Vector2(1136, 34));
+            var disclosure = Label("AiContentNoticeBody", chrome,
+                LingGuangV05.Runtime.AiContentNotice.Description(LingGuangV05.Runtime.GameText.IsEnglish), 14, Muted);
+            Place(disclosure.rectTransform, Vector2.zero, new Vector2(70, 22), new Vector2(1120, 26));
+            disclosure.enableAutoSizing = false;
+            disclosure.textWrappingMode = TextWrappingModes.NoWrap;
         }
 
         private void BuildLoading()
@@ -216,52 +316,57 @@ namespace LingGuangV05.CaseMenu
             Stretch(backdrop.rectTransform);
             settingsGroup = backdrop.gameObject.AddComponent<CanvasGroup>();
             var card = Panel("SettingsCard", backdrop.transform, Surface, true);
-            Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(620, 600));
+            Place(card.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(620, 668));
             var accent = Panel("CardAccent", card.transform, Amber);
             Place(accent.rectTransform, new Vector2(0, 1), new Vector2(42, -29), new Vector2(28, 2));
 
             var eyebrow = Label("SettingsEyebrow", card.transform, "SYSTEM CONFIGURATION", 11, Muted);
             Place(eyebrow.rectTransform, new Vector2(0, 1), new Vector2(84, -19), new Vector2(494, 23));
             eyebrow.characterSpacing = 2.7f;
-            var title = Label("SettingsTitle", card.transform, "设置", 32, Ink);
+            var title = SettingsLabel("SettingsTitle", card.transform, "设置", "Settings", 32, Ink);
             Place(title.rectTransform, new Vector2(0, 1), new Vector2(42, -55), new Vector2(536, 52));
             title.overflowMode = TextOverflowModes.Overflow;
             var separator = Panel("HeaderRule", card.transform, new Color(1, 1, 1, .13f));
             Place(separator.rectTransform, new Vector2(0, 1), new Vector2(42, -113), new Vector2(536, 1));
 
             BuildVolume(card.rectTransform);
-            reduceMotionToggle = BuildToggle(card.rectTransform, "ReduceMotion", "减少动态效果", "简化镜头转场与按钮光效", 207);
+            reduceMotionToggle = BuildToggle(card.rectTransform, "ReduceMotion", "减少动态效果", "Reduce motion", "简化镜头转场与按钮光效", "Simplify camera transitions and button lighting", 207);
             reduceMotionToggle.onValueChanged.AddListener(value => { reduceMotionChanged?.Invoke(value); uiClick?.Invoke(); });
-            fullscreenToggle = BuildToggle(card.rectTransform, "Fullscreen", "全屏显示", "切换窗口与全屏显示", 275);
+            fullscreenToggle = BuildToggle(card.rectTransform, "Fullscreen", "全屏显示", "Fullscreen", "切换窗口与全屏显示", "Switch between windowed and fullscreen display", 275);
             fullscreenToggle.onValueChanged.AddListener(value => { fullscreenChanged?.Invoke(value); uiClick?.Invoke(); });
-            var quality = BuildToggle(card.rectTransform, "HighQuality", LingGuangV05.Runtime.GameText.T("画面：高 / 低", "Graphics: High / Low"), LingGuangV05.Runtime.GameText.T("开启为高画质；关闭降低阴影与细节", "On: high quality. Off: fewer shadows and details."), 343);
+            var quality = qualityToggle = BuildToggle(card.rectTransform, "HighQuality", "画面：高 / 低", "Graphics: High / Low", "开启为高画质；关闭降低阴影与细节", "On: high quality. Off: fewer shadows and details.", 343);
             quality.SetIsOnWithoutNotify(!LingGuangV05.Desktop.GamePerformance.Low);
             quality.onValueChanged.AddListener(value => LingGuangV05.Desktop.GamePerformance.SetLow(!value));
-            var fps = BuildToggle(card.rectTransform, "FrameRate", LingGuangV05.Runtime.GameText.T("帧率：60 / 30", "Frame rate: 60 / 30"), LingGuangV05.Runtime.GameText.T("开启为 60 帧；关闭为 30 帧", "On: 60 FPS. Off: 30 FPS."), 411);
+            var fps = frameRateToggle = BuildToggle(card.rectTransform, "FrameRate", "帧率：60 / 30", "Frame rate: 60 / 30", "开启为 60 帧；关闭为 30 帧", "On: 60 FPS. Off: 30 FPS.", 411);
             fps.SetIsOnWithoutNotify(LingGuangV05.Desktop.GamePerformance.Frames == 60);
             fps.onValueChanged.AddListener(LingGuangV05.Desktop.GamePerformance.SetSixty);
 
+            var lifeEvents = BuildLifeEventsSetting(card.rectTransform);
+            var playerHelp = BuildPlayerHelpEntry(card.rectTransform);
             var returnImage = Panel("Return", card.transform, Control, true);
-            Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -489), new Vector2(142, 44));
+            Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -557), new Vector2(142, 44));
             var returnButton = returnImage.gameObject.AddComponent<UnityEngine.UI.Button>();
             Style(returnButton, returnImage);
             returnButton.onClick.AddListener(() => { uiClick?.Invoke(); closeRequested?.Invoke(); });
-            var returnLabel = Label("Label", returnImage.transform, "返回", 18, Ink);
+            var returnLabel = SettingsLabel("Label", returnImage.transform, "返回", "Back", 18, Ink);
             Stretch(returnLabel.rectTransform);
             returnLabel.alignment = TextAlignmentOptions.Midline;
-            var escape = Label("EscapeHint", card.transform, "ESC 关闭", 14, Muted);
-            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -494), new Vector2(320, 34));
+            var escape = SettingsLabel("EscapeHint", card.transform, "ESC 关闭", "ESC Close", 14, Muted);
+            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -562), new Vector2(180, 34));
             escape.alignment = TextAlignmentOptions.MidlineRight;
-            var saved = Label("SaveHint", card.transform, "设置即时保存，不会重置游戏进度", 14, Muted);
+            var saved = settingsStatus = Label("SaveHint", card.transform, T("设置即时保存，不会重置游戏进度", "Settings save immediately. Game progress is preserved."), 14, Muted);
             Place(saved.rectTransform, Vector2.zero, new Vector2(42, 22), new Vector2(536, 24));
+            saved.enableAutoSizing = true; saved.fontSizeMin = 11; saved.fontSizeMax = 14;
 
             // Explicit vertical navigation keeps the modal's keyboard focus contained.
             Link(volumeSlider, returnButton, reduceMotionToggle);
             Link(reduceMotionToggle, volumeSlider, fullscreenToggle);
             Link(fullscreenToggle, reduceMotionToggle, quality);
             Link(quality, fullscreenToggle, fps);
-            Link(fps, quality, returnButton);
-            Link(returnButton, fps, volumeSlider);
+            Link(fps, quality, lifeEvents);
+            Link(lifeEvents, fps, playerHelp);
+            Link(playerHelp, lifeEvents, returnButton);
+            Link(returnButton, playerHelp, volumeSlider);
             HideSettings();
         }
 
@@ -269,7 +374,7 @@ namespace LingGuangV05.CaseMenu
         {
             var root = Rect("MasterVolume", parent);
             Place(root, new Vector2(0, 1), new Vector2(42, -132), new Vector2(536, 64));
-            var label = Label("Label", root, "主音量", 18, Ink);
+            var label = SettingsLabel("Label", root, "主音量", "Master volume", 18, Ink);
             Place(label.rectTransform, new Vector2(0, 1), Vector2.zero, new Vector2(340, 28));
             volumeLabel = Label("Value", root, "100%", 16, Muted);
             Place(volumeLabel.rectTransform, Vector2.one, Vector2.zero, new Vector2(150, 28));
@@ -306,15 +411,22 @@ namespace LingGuangV05.CaseMenu
             volumeSlider.onValueChanged.AddListener(value => { SetVolumeLabel(value); volumeChanged?.Invoke(value); });
         }
 
-        private UnityEngine.UI.Toggle BuildToggle(RectTransform parent, string name, string title, string subtitle, float top)
+        private TextMeshProUGUI SettingsLabel(string name, Transform parent, string zh, string en, float size, Color color)
+        {
+            var label = Label(name, parent, T(zh, en), size, color);
+            settingsTranslations.Add(() => label.text = T(zh, en));
+            return label;
+        }
+
+        private UnityEngine.UI.Toggle BuildToggle(RectTransform parent, string name, string title, string titleEn, string subtitle, string subtitleEn, float top)
         {
             var background = Panel(name, parent, Control, true);
             Place(background.rectTransform, new Vector2(0, 1), new Vector2(42, -top), new Vector2(536, 56));
             var toggle = background.gameObject.AddComponent<UnityEngine.UI.Toggle>();
             Style(toggle, background);
-            var titleLabel = Label("Label", background.transform, title, 17, Ink);
+            var titleLabel = SettingsLabel("Label", background.transform, title, titleEn, 17, Ink);
             Place(titleLabel.rectTransform, new Vector2(0, 1), new Vector2(14, -5), new Vector2(450, 27));
-            var detail = Label("Description", background.transform, subtitle, 12, Muted);
+            var detail = SettingsLabel("Description", background.transform, subtitle, subtitleEn, 12, Muted);
             Place(detail.rectTransform, new Vector2(0, 0), new Vector2(14, 5), new Vector2(450, 22));
             var box = Panel("Checkbox", background.transform, new Color(.46f, .43f, .36f, 1f));
             Place(box.rectTransform, new Vector2(1, .5f), new Vector2(-16, 0), new Vector2(22, 22));
@@ -417,6 +529,64 @@ namespace LingGuangV05.CaseMenu
         private static float Unit(float value)
         {
             return float.IsNaN(value) || float.IsInfinity(value) ? 0f : Mathf.Clamp01(value);
+        }
+    }
+}
+
+
+namespace LingGuangV05.CaseMenu
+{
+    // One static mesh. Shapes are original geometry, not text glyphs or external assets.
+    [RequireComponent(typeof(CanvasRenderer))]
+    public sealed class CaseMenuTitleSignalGraphic : UnityEngine.UI.MaskableGraphic
+    {
+        protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper vh)
+        {
+            vh.Clear();
+            Vector2 origin = rectTransform.rect.min;
+            Color faint = color; faint.a *= .35f;
+            Color live = color; live.a *= .78f;
+            // Open power ring; the top gap and stem remain legible when scaled down.
+            var center = origin + new Vector2(6, 6);
+            const int segments = 24;
+            for (int i = 0; i < segments; i++)
+            {
+                float a = (135 + 270f * i / segments) * Mathf.Deg2Rad;
+                float b = (135 + 270f * (i + 1) / segments) * Mathf.Deg2Rad;
+                Stroke(vh, center + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * 4.5f,
+                    center + new Vector2(Mathf.Cos(b), Mathf.Sin(b)) * 4.5f, live, 1.5f);
+            }
+            Stroke(vh, center, center + new Vector2(0, 5), live, 1.5f);
+            Stroke(vh, origin + new Vector2(20, 6), origin + new Vector2(126, 6), faint, 1.5f);
+            Stroke(vh, origin + new Vector2(126, 6), origin + new Vector2(132, 10), live, 1.5f);
+            Stroke(vh, origin + new Vector2(132, 10), origin + new Vector2(153, 10), live, 1.5f);
+            Stroke(vh, origin + new Vector2(153, 10), origin + new Vector2(159, 6), live, 1.5f);
+            Stroke(vh, origin + new Vector2(159, 6), origin + new Vector2(326, 6), faint, 1.5f);
+            Stroke(vh, origin + new Vector2(56, 6), origin + new Vector2(64, 2), faint, 1.25f);
+            Dot(vh, origin + new Vector2(64, 2), live, 1.5f);
+            Dot(vh, origin + new Vector2(102, 6), live, 1.5f);
+            // A steady terminal caret, deliberately not blinking.
+            Stroke(vh, origin + new Vector2(342, 2), origin + new Vector2(342, 10), live, 2.5f);
+        }
+
+        static void Stroke(UnityEngine.UI.VertexHelper vh, Vector2 a, Vector2 b, Color ink, float width)
+        {
+            Vector2 direction = (b - a).normalized;
+            Vector2 normal = new Vector2(-direction.y, direction.x) * (width * .5f);
+            int start = vh.currentVertCount;
+            vh.AddVert(a - normal, ink, Vector2.zero); vh.AddVert(a + normal, ink, Vector2.zero);
+            vh.AddVert(b + normal, ink, Vector2.zero); vh.AddVert(b - normal, ink, Vector2.zero);
+            vh.AddTriangle(start, start + 1, start + 2); vh.AddTriangle(start, start + 2, start + 3);
+        }
+
+        static void Dot(UnityEngine.UI.VertexHelper vh, Vector2 center, Color ink, float radius)
+        {
+            int start = vh.currentVertCount;
+            vh.AddVert(center + Vector2.up * radius, ink, Vector2.zero);
+            vh.AddVert(center + Vector2.right * radius, ink, Vector2.zero);
+            vh.AddVert(center + Vector2.down * radius, ink, Vector2.zero);
+            vh.AddVert(center + Vector2.left * radius, ink, Vector2.zero);
+            vh.AddTriangle(start, start + 1, start + 2); vh.AddTriangle(start, start + 2, start + 3);
         }
     }
 }

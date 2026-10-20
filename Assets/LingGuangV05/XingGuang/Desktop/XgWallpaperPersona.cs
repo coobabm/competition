@@ -16,6 +16,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgState observed;
         Vector3 target = Vector3.one * .5f;
         float nextRead, nextDraw;
+        bool lastReduced, meshReady;
         public Vector3 Axes { get; private set; } = Vector3.one * .5f;
         public float Phase { get; private set; }
         public int MeshBuilds { get; private set; }
@@ -51,16 +52,19 @@ namespace LingGuangV05.Desktop.XingGuang
                 for (int i = 0; i < 3; i++) target[i] = float.IsNaN(target[i]) ? .5f : Mathf.Clamp01(target[i]);
                 if (observed != controller.Sim.S) { observed = controller.Sim.S; Axes = target; }
             }
-            if(GamePerformance.Low && Axes!=target)presentation?.DataChanged();
+            bool reduced = XgBrainWallpaper.MotionReduced(controller);
+            bool changed = Axes != target || reduced != lastReduced || !meshReady;
+            if(reduced && changed)presentation?.DataChanged();
             if (presentation != null ? !presentation.DrawDue(ref nextDraw) : now < nextDraw) return;
             if (presentation == null) nextDraw = now + 1f / 15;
-            Axes = GamePerformance.Low?target:Vector3.Lerp(Axes, target, 1 - Mathf.Exp(-1f/15 * 3));
-            float reveal = wallpaper.Reveal.Visible ? Mathf.SmoothStep(0, 1, (wallpaper.Reveal.Age - XgWallpaperReveal.CompleteSeconds) / 1.2f) : 0;
+            Axes = reduced?target:Vector3.Lerp(Axes, target, 1 - Mathf.Exp(-1f/15 * 3));
+            float reveal = wallpaper.Reveal.Visible ? reduced ? 1 : Mathf.SmoothStep(0, 1, (wallpaper.Reveal.Age - XgWallpaperReveal.CompleteSeconds) / 1.2f) : 0;
             canvasRenderer.SetAlpha(reveal * (presentation != null ? presentation.LightLevel : 1));
             // Integrate phase so toggling Quiet never jumps to another point in the wave.
-            if (!GamePerformance.Low && (controller.View?.Juice == null || !controller.View.Juice.Reduced))
+            if (!reduced)
                 Phase += 1f/15 * (presentation != null ? presentation.MotionLevel : 1);
-            SetVerticesDirty();
+            if (!reduced || changed) SetVerticesDirty();
+            lastReduced = reduced; meshReady = true;
         }
 
         public Vector2 OutlinePoint(float angle, float phase)

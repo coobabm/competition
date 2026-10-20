@@ -5,7 +5,16 @@ using LingGuangV05.Core.Story;
 
 namespace LingGuangV05.XingGuang
 {
-    [Serializable] public sealed class XgAskedEntry { public string bankId, question, playerAnswer, aiAnswer; public double at; }
+    [Serializable] public sealed class XgAskedEntry
+    {
+        public string bankId, question, playerAnswer, aiAnswer;
+        public double at; // Legacy elapsed clock; retained but never displayed as a calendar date.
+        public long id, originalId, teachingNoteId;
+        public int gameDate;
+        public double gameSecondsOfDay = -1;
+        public string sourceKind = "", eventKey = "", questionEn = "", correction = "";
+        public string answerSource = ""; // Absent in old saves: retain unknown provenance.
+    }
     [Serializable] public sealed class XgPersonaQuestion { public string q, qEn; public int stage; }
     [Serializable] public sealed class XgPersonaPack { public string id, name, nameEn, desc, descEn; public int stage; public double price; public List<XgPersonaQuestion> questions = new List<XgPersonaQuestion>(); }
     [Serializable] public sealed class XgPersonaTag { public string id, name, nameEn, axis, flag; public int delta; }
@@ -66,19 +75,18 @@ namespace LingGuangV05.XingGuang
         }
         public void RepairYyLearning()
         {
-            if(S.askedLog==null)S.askedLog=new List<XgAskedEntry>();
+            RepairLearningRecords();
             if(S.personaPacks==null)S.personaPacks=new List<string>();
             if(S.yyReplies==null)S.yyReplies=new List<XgYyReply>();
             if(S.talkSamples==null)S.talkSamples=new List<XgTalkSample>();
             if(S.chatUnlocked==null)S.chatUnlocked=new List<XgUnlockedChat>();
-            foreach(var node in S.unlocked) if(node!=null&&node.StartsWith("persona.",StringComparison.Ordinal)&&!S.personaPacks.Contains(node.Substring(8)))S.personaPacks.Add(node.Substring(8));
+            foreach(var node in S.unlocked) if(node!=null&&node!=PersonaArchiveNode&&node.StartsWith("persona.",StringComparison.Ordinal)&&!S.personaPacks.Contains(node.Substring(8)))S.personaPacks.Add(node.Substring(8));
             if(!S.personaPacks.Contains("daily"))S.personaPacks.Add("daily");
         }
         public void RecordAsked(string bankId,string question,string playerAnswer,string aiAnswer="",double at=-1)
         {
             if(string.IsNullOrWhiteSpace(question))return;RepairYyLearning();bankId=bankId??"general";
-            S.askedLog.Add(new XgAskedEntry{bankId=bankId,question=question,playerAnswer=playerAnswer??"",aiAnswer=aiAnswer??"",at=at<0?S.lifeClock:at});
-            int count=0;for(int i=S.askedLog.Count-1;i>=0;i--)if(S.askedLog[i].bankId==bankId&&++count>200)S.askedLog.RemoveAt(i);
+            AppendLearning(new XgAskedEntry{bankId=bankId,answerSource=bankId.StartsWith("train.",StringComparison.Ordinal)?"dataset_label":"",sourceKind=bankId.StartsWith("train.",StringComparison.Ordinal)?"train":"question",question=question,playerAnswer=playerAnswer??"",aiAnswer=aiAnswer??"",at=at<0?S.lifeClock:at});
         }
         public static double PersonaPrice(string id) { var p=personaCatalog.Find(x=>x.id==id);return p==null?double.PositiveInfinity:p.price; }
         public bool OwnsPersonaPack(string id){RepairYyLearning();return S.personaPacks.Contains(id);}
@@ -113,6 +121,8 @@ namespace LingGuangV05.XingGuang
         {
             if(!deliveredSuccessfully||string.IsNullOrWhiteSpace(answer)||string.IsNullOrWhiteSpace(rawQuestion))return 0;
             RepairYyLearning();var reply=new XgYyReply{id=++S.yyReplySerial,question=rawQuestion,answer=answer};S.yyReplies.Add(reply);
+            // Keep the short interaction cache bounded; the durable learning record is separate.
+            RecordDeliveredLearningReply(reply.id,rawQuestion,answer);
             while(S.yyReplies.Count>50)S.yyReplies.RemoveAt(0);
             foreach(var u in chatUnlockCatalog)
                 if(S.stage>=u.stage&&!S.chatUnlocked.Exists(x=>x.node==u.node)&&(string.Equals(rawQuestion,u.phrase,StringComparison.Ordinal)||string.Equals(rawQuestion,u.phraseEn,StringComparison.Ordinal)))
@@ -134,7 +144,8 @@ namespace LingGuangV05.XingGuang
             feedback="";RepairYyLearning();var r=S.yyReplies.Find(x=>x.id==replyId);var tag=personaTags.Find(x=>x.id==tagId);
             if(r==null||tag==null)return false;if(r.tags==null)r.tags=new List<string>();if(r.tags.Count>=2||r.tags.Contains(tagId))return false;r.tags.Add(tagId);
             int axis=tag.axis=="温度"?0:tag.axis=="玩心"?1:tag.axis=="主见"?2:-1;
-            if(axis>=0){double target=Math.Max(0,Math.Min(100,TargetAxis(axis)+tag.delta));if(axis==0)Profile.warmth=target;else if(axis==1)Profile.play=target;else Profile.opinion=target;ToneCard(tag.delta>=0?High[axis]:Low[axis],true,Math.Abs(tag.delta)/10.0);feedback=T(AxisNames[axis],AxisNamesEn[axis])+" "+(tag.delta>0?"+":"")+tag.delta;}
+            // Tags teach the actual tone board; they never rewrite the player's opening wish.
+            if(axis>=0){ToneCard(tag.delta>=0?High[axis]:Low[axis],true,Math.Abs(tag.delta)/10.0,"tag");feedback=T(AxisNames[axis],AxisNamesEn[axis])+" "+(tag.delta>0?"+":"")+tag.delta;}
             else feedback=T("记下这次答歪了","Noted: off the mark");
             if(tag.flag=="honest")S.honestTags++;if(tag.flag=="flatter")S.flatterTags++;
             S.talkSamples.Add(new XgTalkSample{tag=tagId,text=r.answer});int count=0;for(int i=S.talkSamples.Count-1;i>=0;i--)if(S.talkSamples[i].tag==tagId&&++count>5)S.talkSamples.RemoveAt(i);
@@ -145,6 +156,8 @@ namespace LingGuangV05.XingGuang
             RepairYyLearning();var b=new StringBuilder();
             foreach(var p in personaCatalog)if(p.id!="daily"&&S.personaPacks.Contains(p.id))b.AppendLine(T(p.desc,p.descEn));
             foreach(var s in S.talkSamples){var tag=personaTags.Find(x=>x.id==s.tag);if(tag!=null)b.AppendLine(T("你曾说：「"+s.text+"」；主人给这句贴的标签是「"+tag.name+"」。","You once said: \""+s.text+"\"; the player tagged it \""+tag.nameEn+"\"."));}
+            // 888.vip (XgSim.Gambling.cs): it saw the player gamble; it talks people out of it. Empty until then.
+            string gambling=GamblingPromptLine();if(gambling.Length>0)b.AppendLine(gambling);
             return b.ToString();
         }
     }

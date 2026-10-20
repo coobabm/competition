@@ -191,6 +191,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (step.app != XgGuide.Lab) return;
             Open(step.tab == "train" && (step.arg == "vision" || step.arg == "sequence") ? step.arg : step.tab);
             XgGuideHighlight.Show(this, step.tab, step.target);
+            if (step.id == "data.install" && Sim.DataFileReady(step.arg))
+                UnityEngine.Object.FindAnyObjectByType<XgFilesWindow>(UnityEngine.FindObjectsInactive.Include)?.ShowTrainingData(Sim);
         }
 
         string GoTip()
@@ -389,7 +391,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "data": return T("数据：每个数据集有多少样本、干不干净。买数据包，或者去摆渡众包做题。", "Data: how many samples each dataset has and how clean they are. Buy packs, or label on Bodu Crowd.");
                 case "backpack": return T("背包：拿到的稀有道具都在这里，最多装备 4 件，只有装备的才生效，随时可换。也有已买的结构和技巧，和稀有道具图鉴。", "Backpack: every rare item you found. Equip up to four; only equipped ones work, and you can swap any time. Also the structures and techniques you bought, and the collection book.");
                 case "items": return T("道具：结构和技巧，按年代排。结构能降低某项能力的门槛。\n加宽、加深、自动化和研究在「科技」里。", "Items: structures and techniques by year. A structure lowers an ability's line.\nWidth, depth, automation and research are under Tech.");
-                case "tree": return T("成长：六项能力、参数和样本门槛，以及结构、技巧和数据包。点击节点购买；消耗品在右侧货架。", "Growth: six abilities, their parameter and sample thresholds, structures, techniques and data packs. Click a node to buy; consumables are on the right shelf.");
+                case "tree": return T("成长：六项能力及其门槛、结构、技巧和数据包。点击或停留在图标上看说明，点击价格购买。", "Growth: six abilities and their thresholds, structures, techniques and data packs. Click or hover over an icon to read; click the price to buy.");
                 case "repo": return Lang.T("模型仓库：每次刷新纪录都存一个检查点。");
                 case "wiring": return T("接线：电力 → 显卡 → 模型 → 任务。\n点输出口再点输入口接线，点线拔线。模型要放得进显卡的显存，显卡要有电；订单、代标、训练和预训练都在这里排。\n有了「看图说词」，就能按秒租阿杰网吧的两台 960。", "Wiring: power → cards → models → jobs.\nClick an output port, then an input port, to wire; click a wire to unplug. A model must fit in its card's VRAM and a card needs power; orders, auto-labelling, training and pre-training all run through here.\nWith 'Picture to word' you can rent Ajie's two café 960s by the second.");
                 case "abilities": return T("能力：六项能力、它们的参数和样本门槛，以及能降低门槛的道具。", "Abilities: the six abilities, their parameter and sample lines, and the items that lower them.");

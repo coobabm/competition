@@ -17,6 +17,12 @@ namespace LingGuangV05.XingGuang
         public int shutdownCards, shutdownLean;
         /// <summary>Stage-one logic/arithmetic cards that could have carried the shutdown question, and the count at which one was last forced onto a card (0 = never).</summary>
         public int shutdownEligible, shutdownForcedAt;
+        /// <summary>The single stage-one shutdown card dispatched to a saved desk (0 = not dispatched). Background card generation never sets this.</summary>
+        public long shutdownCardId;
+        public int shutdownCardDueAt;
+        /// <summary>Active, unobstructed play time for the current stage's narrative shutdown question.</summary>
+        public int shutdownNarrativeStage;
+        public double shutdownNarrativeElapsed;
         public bool seedPlanted;
         /// <summary>Per-save data seed: every save meets different cards of the same kinds (0 for older saves).</summary>
         public int dataSalt;
@@ -46,9 +52,9 @@ namespace LingGuangV05.XingGuang
         public const int ProgressionSchemaWalls = 2;
         /// <summary>Working something out without the secret pays this many times the secret's price.</summary>
         public const double SelfInsightBonus = 1.5;
-        public const int ShutdownCardsInStageOne = 5;
-        /// <summary>The first shutdown question is not left to luck: it lands on the third eligible card of stage one, and again every third one until it has been answered.</summary>
-        public const int ShutdownCardDueAfter = 3, ShutdownCardRetryEvery = 3;
+        public const int ShutdownCardsInStageOne = 1;
+        /// <summary>The single shutdown question lands on a saved random eligible card, from 3 through 12.</summary>
+        public const int ShutdownCardDueAfter = 3;
         public const string SeedKey = "关机";
         /// <summary>Exam-use card indices that stay reserved (older saves' exam cards are never handed out as new questions).</summary>
         public const int ReservedExamCards = 2400;
@@ -69,6 +75,7 @@ namespace LingGuangV05.XingGuang
             var unlockBefore = CaptureStageUnlocks();
             if (!S.emerged.Contains(from)) Emerge(from);
             S.stage = from + 1; S.stageEpochs = 0; S.stageSeconds = 0; S.monthProgress = 0;
+            RepairShutdownCardDispatch();
             S.stageStartParamsK = TrainedParamsK; S.stageStartSamples = TrainedSamples; S.stageClock = 0;
             GrantAbilitiesUpTo(S.stage);
             S.stageVision = S.stageSequence = S.stage;
@@ -234,16 +241,34 @@ namespace LingGuangV05.XingGuang
         /// <summary>The "？" cell: which way it leans now (true = 是).</summary>
         public bool SeedSaysYes { get { var c = Board.Find("logic", SeedKey); return c != null && c.w > 0; } }
 
+        void RepairShutdownCardDispatch()
+        {
+            // Older saves may hold one pending copy on each desk. Keep the selected desk's
+            // unanswered copy, or the first one; completed answers and their evidence stay intact.
+            XgCard pending = S.cards.Find(c => c.kind == "shutdown" && c.dataset == S.desk)
+                ?? S.cards.Find(c => c.kind == "shutdown");
+            if (S.stage != 1 || S.shutdownCards >= ShutdownCardsInStageOne) pending = null;
+            else if (S.shutdownCardId != 0) pending = S.cards.Find(c => c.kind == "shutdown" && c.id == S.shutdownCardId);
+            if (pending != null) S.shutdownCardId = pending.id;
+            S.cards.RemoveAll(c => c.kind == "shutdown" && !ReferenceEquals(c, pending));
+            // Older background generation could also plant these in automatic buffers.
+            // They are not completed answers and cannot use the player's special seed-answer path.
+            S.prefetch.RemoveAll(c => c.kind == "shutdown");
+            S.queue.RemoveAll(c => c.kind == "shutdown");
+        }
+
         void MaybeShutdownCard(XgCard card)
         {
             // Bounties already own their answer and reward semantics; do not replace them with a shutdown choice.
-            if (card.dataset != "logic" && card.dataset != "arith" || card.law || card.bounty || S.stage != 1 || S.shutdownCards >= ShutdownCardsInStageOne) return;
-            // The first one is certain: if none has been answered by the third eligible card, this one carries it (and again every third card if it is skipped).
+            if (card.dataset != "logic" && card.dataset != "arith" || card.law || card.bounty || S.stage != 1
+                || S.shutdownCards >= ShutdownCardsInStageOne || S.shutdownCardId != 0) return;
+            // Called only when saving a real current card, never for previews or automatic buffers.
+            if (S.shutdownCardDueAt < ShutdownCardDueAfter || S.shutdownCardDueAt > 12)
+                S.shutdownCardDueAt = ShutdownCardDueAfter + (int)(Roll() * 10);
             S.shutdownEligible++;
-            bool due = S.shutdownCards == 0 && S.shutdownEligible >= ShutdownCardDueAfter
-                && (S.shutdownForcedAt == 0 || S.shutdownEligible - S.shutdownForcedAt >= ShutdownCardRetryEvery);
-            if (due) S.shutdownForcedAt = S.shutdownEligible;
-            else if (Roll() > .08) return;
+            if (S.shutdownEligible < S.shutdownCardDueAt) return;
+            S.shutdownForcedAt = S.shutdownEligible;
+            S.shutdownCardId = card.id;
             card.kind = "shutdown"; card.truth = true; card.gold = false; card.trick = false; card.timeLimit = 0;
             card.category = "系统提示"; card.categoryEn = "System";
             card.question = "电脑正在更新，此时应该关机吗？"; card.questionEn = "The computer is updating. Should it be shut down now?";

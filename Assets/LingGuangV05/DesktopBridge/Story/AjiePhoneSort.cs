@@ -40,7 +40,7 @@ namespace LingGuangV05.Desktop.Story
 
         static string T(string zh, string en) => GameText.T(zh, en);
 
-        static XgSim Sim { get { var lab = FindAnyObjectByType<XingGuangController>(); return lab != null ? lab.Sim : null; } }
+        static XgSim Sim { get { var lab = XingGuangController.Instance; return lab != null ? lab.Sim : null; } }
 
         bool Busy()
         {

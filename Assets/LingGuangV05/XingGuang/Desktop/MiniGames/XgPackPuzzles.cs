@@ -16,34 +16,63 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         protected float elapsed;
         Action[] keys = new Action[0];
         protected string chosenText = "", aiText = "";
+        string predictedAnswer="",lastAiName="";
+        bool predictionCaptured,lastAiVisible;
+        bool? predictionCorrect,lastAiCorrect;
+        TMP_Text lastAnswerLabel,lastAiLabel;
+        protected Color UnsureInk => C.Ui.dark ? XgDark.Muted : new Color32(93,101,115,255);
+        protected Color PredictionInk => predictionCaptured && predictedAnswer==aiText && !predictionCorrect.HasValue ? UnsureInk : purple;
         protected XgPackQuestion(XgMiniContext c) : base(c) { }
-        public override void Build() { submitted = false; elapsed = 0; QuestionCard=null; chosenText=aiText=""; keys=new Action[0]; DrawQuestion(); }
+        public override void Build() { submitted = false; elapsed = 0; QuestionCard=null; chosenText=aiText=""; ClearPredictionFeedback(); keys=new Action[0]; DrawQuestion(); }
         protected abstract void DrawQuestion();
+        protected void ClearPredictionFeedback(){predictionCaptured=false;predictionCorrect=null;predictedAnswer="";}
+        // Capture the displayed answer before the player's action can train or settle it.
+        protected void CapturePrediction(bool? correct)
+        {
+            predictedAnswer=aiText;predictionCaptured=!string.IsNullOrEmpty(aiText);
+            bool unsure=aiText=="……不知道"||aiText=="…not sure"||aiText=="不知道"||aiText=="Not sure"||aiText=="无法判断"||aiText=="Cannot determine";
+            predictionCorrect=unsure?null:correct;
+        }
         protected void Header(string zh, string en, string instructionZh, string instructionEn)
         {
             Clear(XgUi.T(zh,en),XgUi.T(instructionZh,instructionEn));
-            if (last.Length > 0) T("LastAnswer",20,437,860,35,last,16);
+            lastAnswerLabel=T("LastAnswer",20,437,860,18,last,15);
+            lastAiLabel=T("LastAiAnswer",20,455,860,19,"",14);
+            PaintLastFeedback();
+        }
+        void PaintLastFeedback()
+        {
+            if(lastAnswerLabel!=null)lastAnswerLabel.text=last;
+            if(lastAiLabel==null)return;
+            lastAiLabel.text=!lastAiVisible?"":XgUi.T("上题 ","Previous: ")+lastAiName+XgUi.T("：",": ")
+                +(lastAiCorrect.HasValue?(lastAiCorrect.Value?XgUi.T("✓ 答对","✓ correct"):XgUi.T("× 答错","× incorrect")):XgUi.T("… 不知道","… not sure"));
+            lastAiLabel.color=!lastAiCorrect.HasValue?UnsureInk:lastAiCorrect.Value?green:red;
+            lastAiLabel.richText=false;lastAiLabel.raycastTarget=false;
         }
         protected void Submit(bool correct,string whyZh,string whyEn)
         {
             if (submitted || !C.IsActive) return;
             submitted = true; nextFrame = Time.frameCount;
+            lastAiVisible=predictionCaptured;
+            lastAiCorrect=predictionCorrect;lastAiName=C.Sim.AiDisplayName;
             var pack = XgTeachingPacks.Find(C.Id);
             C.Sim.RecordTeachingQuestion(promptZh,promptEn,correct,true,whyZh,whyEn,pack == null ? "sense" : pack.dataset,QuestionCard,chosenText,aiText);
             C.ReportTimed(correct,elapsed);
             last = XgUi.T(correct ? "✓ " : "× ",correct ? "✓ " : "× ") + XgUi.T(whyZh,whyEn);
+            PaintLastFeedback(); // Static retained feedback; next-question timing is unchanged.
         }
         protected void GuessBinary(bool truth,string yesZh,string yesEn,string noZh,string noEn)
         {
             if(!C.Sim.TeachingAiReady)return;
             bool guess=C.Random.NextDouble()<C.Skill?truth:!truth;
             aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):guess?XgUi.T(yesZh,yesEn):XgUi.T(noZh,noEn);
+            CapturePrediction(C.Skill<.55?(bool?)null:guess==truth);
         }
         protected void ShowAi(float x=25,float y=70,float width=850)
         {
             if(!C.Sim.TeachingAiReady)return;
             string answer=string.IsNullOrEmpty(aiText)?XgUi.T("……不知道","…not sure"):aiText;
-            T("PackAiAnswer",x,y,width,26,C.Sim.AiDisplayName+"："+answer+(C.Sim.Has("sigmoid")?" · "+Math.Round(C.Skill*100)+"%":""),17,purple);
+            T("PackAiAnswer",x,y,width,26,C.Sim.AiDisplayName+"："+answer+(C.Sim.Has("sigmoid")?" · "+Math.Round(C.Skill*100)+"%":""),17,string.IsNullOrEmpty(aiText)?UnsureInk:PredictionInk);
         }
         protected void Choices(string[] zh,string[] en,int answer,float top = 270,string whyZh=null,string whyEn=null,float left=25,float buttonWidth=420,float columnStep=435)
         {
@@ -59,7 +88,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             {
                 int guessed=Guess(answer,zh.Length);
                 aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):XgUi.T(zh[guessed],en[guessed]);
-                T("AiAnswer",left,top-40,buttonWidth+columnStep,35,C.Sim.AiDisplayName+"："+(C.Skill<.55?XgUi.T("……不知道","…not sure"):XgUi.T(zh[guessed],en[guessed])),20,purple);
+                CapturePrediction(C.Skill<.55?(bool?)null:guessed==answer);
+                T("AiAnswer",left,top-40,buttonWidth+columnStep,35,C.Sim.AiDisplayName+"："+aiText,20,PredictionInk);
             }
         }
         protected virtual void ChoiceSelected(int choice,int expected) { }
@@ -133,7 +163,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             for(int i=0;i<6;i++){int k=C.Random.Next(81);if(board[k]==0 && k!=(y+gap*dy)*9+x+gap*dx)board[k]=2;}
             if(C.Sim.TeachingAiReady){int guess=(y+gap*dy)*9+x+gap*dx;
                 if(C.Random.NextDouble()>C.Skill){var empty=new List<int>();for(int k=0;k<81;k++)if(board[k]==0)empty.Add(k);guess=empty[C.Random.Next(empty.Count)];}
-                aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):((char)('A'+guess%9)).ToString()+(guess/9+1);}
+                aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):((char)('A'+guess%9)).ToString()+(guess/9+1);
+                CapturePrediction(C.Skill<.55?(bool?)null:WinningPoint(guess));}
             QuestionCard=new XgCard{dataset="go",teachingImageKind="gomoku",teachingImageKeys=(int[])board.Clone()};
             promptZh="黑棋下一步在哪里连成五子？";promptEn="Where can Black make five in a row?";
             Header("五子棋 · 一步连五","Gomoku · five in a row","点击一个空位。任意合法连五都算对。","Tap an empty intersection. Any move making five counts.");
@@ -143,6 +174,13 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 b.image.color=new Color32(222,185,122,255);b.label.color=board[k]==2?Color.white:Color.black;
             }
             T("Question",410,150,430,140,XgUi.T(promptZh,promptEn),30);ShowAi(410,300,430);
+        }
+        bool WinningPoint(int k)
+        {
+            if(k<0||k>=board.Length||board[k]!=0)return false;
+            int x=k%9,y=k/9;int[] dx={1,0,1,1},dy={0,1,1,-1};
+            for(int d=0;d<4;d++){int count=1;foreach(int sign in new[]{-1,1})for(int n=1;n<9;n++){int xx=x+dx[d]*n*sign,yy=y+dy[d]*n*sign;if(xx<0||xx>=9||yy<0||yy>=9||board[yy*9+xx]!=1)break;count++;}if(count>=5)return true;}
+            return false;
         }
         void Move(int k)
         {

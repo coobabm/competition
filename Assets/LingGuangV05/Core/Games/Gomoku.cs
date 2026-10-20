@@ -27,6 +27,10 @@ namespace LingGuangV05.Core.Games
             return true;
         }
 
+        public Gomoku Copy()
+        {
+            var copy=new Gomoku();Array.Copy(cells,copy.cells,cells.Length);copy.Moves=Moves;copy.Winner=Winner;copy.LastX=LastX;copy.LastY=LastY;return copy;
+        }
         public bool Full => Moves >= Size * Size;
 
         static readonly int[,] Dirs = { { 1, 0 }, { 0, 1 }, { 1, 1 }, { 1, -1 } };

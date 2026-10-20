@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using LingGuangV05.Desktop.OS;
+using LingGuangV05.CaseMenu;
+using LingGuangV05.Runtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,6 +20,7 @@ namespace HongmengOS.Aero2010
             public string searchKeywords;
             public GameObject row;
             public WindowManager window;
+            public bool gameSettings;
         }
         public GameObject menu;
         public RectTransform panel;
@@ -34,6 +37,45 @@ namespace HongmengOS.Aero2010
         private readonly List<WindowManager> desktopRestore = new List<WindowManager>(16);
         private bool showingDesktop;
 
+        private void Start()
+        {
+            EnsureSettingsEntry();
+            if (FindAnyObjectByType<CaseMenuController>() == null) GameSettings.ApplySaved();
+        }
+
+        private void EnsureSettingsEntry()
+        {
+            if (programs == null || programScroll == null || programScroll.content == null) return;
+            int index = Array.FindIndex(programs, entry => entry.gameSettings);
+            if (index < 0)
+            {
+                var template = Array.Find(programs, entry => controlPanelWindow != null && entry.window == controlPanelWindow && entry.row != null).row;
+                bool hasSettingsIcon = template != null;
+                if (template == null) template = Array.Find(programs, entry => entry.row != null && entry.row.GetComponent<UnityEngine.UI.Button>() != null).row;
+                if (template == null) return;
+                var row = Instantiate(template, programScroll.content);
+                row.name = "Game Settings";
+                // This row has its own action; never retain the copied app's serialized launch listeners.
+                row.GetComponent<UnityEngine.UI.Button>().onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                var icon = row.transform.Find("Icon");
+                if (icon != null && !hasSettingsIcon) icon.gameObject.SetActive(false);
+                var entries = new List<ProgramEntry>(programs);
+                entries.Insert(0, new ProgramEntry { title = "Settings", searchKeywords = "设置 游戏 音量 全屏 帮助 settings volume fullscreen help", row = row, gameSettings = true });
+                programs = entries.ToArray(); index = 0;
+            }
+            var settings = programs[index];
+            if (settings.row == null) return;
+            settings.row.transform.SetAsFirstSibling();
+            var button = settings.row.GetComponent<UnityEngine.UI.Button>();
+            if (button == null) return;
+            button.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+            button.onClick.AddListener(OpenSettings);
+            foreach (var binding in settings.row.GetComponentsInChildren<LingGuangV05.Desktop.DesktopLocalizedText>(true))
+                binding.enabled = false;
+            foreach (var label in settings.row.GetComponentsInChildren<TMP_Text>(true)) label.text = GameText.T("设置", "Settings");
+            button.interactable = true;
+        }
+
         private void Update()
         {
             if (menu != null && menu.activeSelf && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Close();
@@ -44,6 +86,7 @@ namespace HongmengOS.Aero2010
             if (menu == null) return;
             if (menu.activeSelf) { Close(); return; }
             menu.SetActive(true);
+            EnsureSettingsEntry();
             menu.transform.SetAsLastSibling();
             if (panel != null && menu.transform is RectTransform bounds)
             {
@@ -81,7 +124,7 @@ namespace HongmengOS.Aero2010
                     var entry = programs[i];
                     bool show = query.Length == 0 || (!string.IsNullOrEmpty(entry.title) && entry.title.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
                         || (!string.IsNullOrEmpty(entry.searchKeywords) && entry.searchKeywords.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0);
-                    show &= entry.window != null;
+                    show &= entry.gameSettings || entry.window != null && LingGuangV05.Desktop.Story.StudyDesktopGates.AllowsWindow(entry.window);
                     if (entry.row != null && entry.row.activeSelf != show) entry.row.SetActive(show);
                     if (show) matches++;
                 }
@@ -99,8 +142,9 @@ namespace HongmengOS.Aero2010
         {
             if (programs == null) return;
             for (int i = 0; i < programs.Length; i++)
-                if (programs[i].row != null && programs[i].row.activeSelf && programs[i].window != null)
+                if (programs[i].row != null && programs[i].row.activeSelf && (programs[i].gameSettings || programs[i].window != null))
                 {
+                    if (programs[i].gameSettings) { OpenSettings(); return; }
                     programs[i].window.OpenWindow();
                     Close();
                     return;
@@ -108,6 +152,18 @@ namespace HongmengOS.Aero2010
         }
 
         public void OpenComputer() { Open(computerWindow); }
+        public void OpenSettings()
+        {
+            Close();
+            var title = FindAnyObjectByType<CaseMenuController>();
+            if (title != null)
+            {
+                title.OpenDesktopSettings();
+                return;
+            }
+            var overlay = GetComponent<DesktopSettingsOverlay>() ?? gameObject.AddComponent<DesktopSettingsOverlay>();
+            overlay.Open(search != null && search.textComponent != null ? search.textComponent.font : null);
+        }
         public void OpenControlPanel() { Open(controlPanelWindow); }
         public void OpenUser() { Open(userWindow != null ? userWindow : controlPanelWindow); }
         private void Open(WindowManager window) { if (window != null) window.OpenWindow(); Close(); }

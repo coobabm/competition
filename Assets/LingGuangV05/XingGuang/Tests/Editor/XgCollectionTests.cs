@@ -82,9 +82,19 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.BuyNode("imagenet.pack", host), "ImageNet's first batch is 15 GB");
             Assert.IsTrue(sim.Downloading("imagenet")); Assert.IsFalse(sim.Owns("imagenet"));
             sim.Tick(sim.DownloadLeft("imagenet") + 1, host);
+            Assert.IsFalse(sim.Owns("imagenet"), "download completion only creates a file");
+            var ready = sim.S.dataFiles.Find(x => x.dataset == "imagenet");
+            Assert.IsNotNull(ready);
+            Assert.IsTrue(sim.DataFileReady(ready.fileId));
+            sim.S.unlocked.Add(XgSim.DataEntryNode);
+            Assert.IsTrue(sim.InstallDataFile(ready.fileId));
             Assert.IsTrue(sim.Owns("imagenet"));
             Assert.IsTrue(sim.BuyNode("review.pack", host));
-            Assert.IsFalse(sim.Downloading("review"), "small packs arrive at once");
+            Assert.IsTrue(sim.Downloading("review"), "small packs have a visible download too");
+            sim.Tick(sim.DownloadLeft("review") + 1, host);
+            Assert.IsFalse(sim.Owns("review"));
+            Assert.IsTrue(sim.InstallDataFile(sim.S.dataFiles.Find(x => x.dataset == "review").fileId));
+            Assert.IsTrue(sim.Owns("review"));
         }
 
         [Test]
@@ -99,6 +109,12 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(System.Math.Max(XgSim.AccelerateMin, System.Math.Ceiling(sim.DownloadLeft("imagenet") * XgSim.AcceleratePerSecond)), cost, 1, "¥ for the seconds it saves");
             Assert.IsTrue(sim.Accelerate("imagenet", host));
             Assert.AreEqual(before - cost, host.money, 1e-9);
+            Assert.IsFalse(sim.Owns("imagenet"), "download completion only creates a file");
+            var ready = sim.S.dataFiles.Find(x => x.dataset == "imagenet");
+            Assert.IsNotNull(ready);
+            Assert.IsTrue(sim.DataFileReady(ready.fileId));
+            sim.S.unlocked.Add(XgSim.DataEntryNode);
+            Assert.IsTrue(sim.InstallDataFile(ready.fileId));
             Assert.IsTrue(sim.Owns("imagenet"));
             Assert.IsFalse(sim.Accelerate("imagenet", host), "nothing left to speed up");
         }

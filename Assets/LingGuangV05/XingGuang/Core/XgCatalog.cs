@@ -324,7 +324,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Skill-tree geometry: one column per stage, cards in rows of <see cref="NodesPerRow"/>, lanes stacked top to bottom.</summary>
         public const float StageWidth = 720, NodeWidth = 136, NodeHeight = 64, BreakthroughSize = 120, SlotWidth = 150, RowHeight = 84;
         public const int NodesPerRow = 4;
-        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "persona", "atlas" };
+        static readonly string[] LaneOrder = { "trunk", "vision", "sequence", "research", "persona", "boardlogic", "daily", "atlas" };
         /// <summary>Lane bands in drawing order (the tree page paints their stripes).</summary>
         public static IReadOnlyList<string> Lanes => LaneOrder;
         /// <summary>Height of a lane's band (after layout).</summary>
@@ -469,6 +469,9 @@ namespace LingGuangV05.XingGuang
             AddTeachingPackNodes(list);
             AddPersonaPackNodes(list);
             XgTrainingCatalog.AddNodes(list);
+            XgDailyLife.AddNodes(list);
+            XgBoardRecords.AddNodes(list);
+            XgBoardLogic.AddNodes(list);
             LayoutStages(list);
             return list.ToArray();
         }
@@ -564,7 +567,9 @@ namespace LingGuangV05.XingGuang
         public static readonly string[] ComboTierNamesEn = { "Nice", "Warming up", "On fire", "Flash of insight" };
 
         public static XgNode Node(string id) { foreach (var n in Nodes) if (n.id == id) return n; return null; }
-        public static XgDesk Desk(string id) { foreach (var d in Desks) if (d.id == id) return d; return ExtraTeachingDesk(id); }
+        // Only the platform catalog authorizes crowd submissions. Supplemental teaching desks do not.
+        public static XgDesk CrowdDesk(string id) { foreach (var d in Desks) if (d.id == id) return d; return null; }
+        public static XgDesk Desk(string id) => CrowdDesk(id) ?? ExtraTeachingDesk(id);
 
         public static readonly XgContract[] Contracts =
         {
@@ -579,7 +584,7 @@ namespace LingGuangV05.XingGuang
             new XgContract { id = "homework", client = "家教网站", clientEn = "Tutoring site", job = "作业是非题自动批改", jobEn = "Homework auto-marking", dataset = "logic", threshold = .75, income = 1.5, signBonus = 300 },
             new XgContract { id = "civilexam", client = "考公培训班", clientEn = "Civil-service prep school", job = "判断推理陪练", jobEn = "Reasoning drills", dataset = "logic", threshold = .88, income = 7, signBonus = 1500 },
             new XgContract { id = "danmaku", client = "某弹幕网站", clientEn = "A danmaku video site", job = "弹幕情绪审核", jobEn = "Comment moderation", dataset = "danmu", threshold = .85, income = .75, signBonus = 150 },
-            new XgContract { id = "antifraud", client = "市反诈中心", clientEn = "City anti-fraud centre", job = "诈骗短信拦截", jobEn = "Scam SMS filtering", dataset = "spam", threshold = .92, income = 1, signBonus = 250 },
+            new XgContract { id = "antifraud", client = "市反诈中心", clientEn = "City anti-fraud centre", job = "诈片短信拦截", jobEn = "Scam SMS filtering", dataset = "spam", threshold = .92, income = 1, signBonus = 250 },
             new XgContract { id = "clickbait", client = "某浏览器资讯频道", clientEn = "A browser news feed", job = "标题党降权", jobEn = "Clickbait demotion", dataset = "headline", threshold = .85, income = 2, signBonus = 400 },
             new XgContract { id = "fakereview", client = "电商平台风控部", clientEn = "Marketplace risk team", job = "刷单评论识别", jobEn = "Fake-review detection", dataset = "review", threshold = .85, income = 3.5, signBonus = 800 },
             new XgContract { id = "ime", client = "某输入法", clientEn = "A pinyin IME", job = "联想词推荐", jobEn = "Next-word suggestions", dataset = "news", threshold = .45, income = 2, signBonus = 450 },
@@ -740,7 +745,7 @@ namespace LingGuangV05.XingGuang
             }
             for (int t = 0; t < PoemLines.Length; t++)
             {
-                string other = PoemLines[(p + t) % PoemLines.Length];
+                string other = PoemLines[((p % PoemLines.Length) + t) % PoemLines.Length];
                 int idx = pos < other.Length ? pos : other.Length - 1;
                 if (other[idx] != right) return other.Substring(idx, 1);
             }
@@ -775,11 +780,17 @@ namespace LingGuangV05.XingGuang
                 foreach (var need in n.needs) if (Node(need) == null) throw new InvalidOperationException("node needs " + n.id);
                 if (n.kind == XgNodeKind.Arch && Arch(n.target) == null) throw new InvalidOperationException("node arch " + n.id);
                 if (n.kind == XgNodeKind.Dataset && Dataset(n.target) == null) throw new InvalidOperationException("node data " + n.id);
-                if (n.kind == XgNodeKind.Research && ResearchItem(n.target) == null) throw new InvalidOperationException("node research " + n.id);
                 // A parent chain must end at a root: no cycles.
                 var seen = new HashSet<string>(); for (var p = n; p != null; p = p.parent == null ? null : Node(p.parent)) if (!seen.Add(p.id)) throw new InvalidOperationException("node cycle " + n.id);
             }
-            foreach (var r in Research) if (Node(r.id) == null) throw new InvalidOperationException("research without node " + r.id);
+            // Research also represents feature unlocks, teaching/persona packs and optional daily abilities.
+            // Only catalogued model effects require a ResearchItem; validate their complete node mapping.
+            foreach (var r in Research)
+            {
+                var node = Node(r.id);
+                if (node == null) throw new InvalidOperationException("research without node " + r.id);
+                if (node.kind != XgNodeKind.Research || node.target != r.id) throw new InvalidOperationException("node research " + r.id);
+            }
             foreach (var a in Archs) if (Node(a.id) == null) throw new InvalidOperationException("arch without node " + a.id);
             foreach (var d in Desks) { var data = Dataset(d.id); if (data == null || !data.handLabel) throw new InvalidOperationException("desk dataset " + d.id); }
         }

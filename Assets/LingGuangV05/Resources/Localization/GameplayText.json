@@ -1413,7 +1413,7 @@
       "en": "Unknown sender: You won ¥100,000! Send a ¥300 processing fee first."
     },
     {
-      "zh": "陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "An unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
@@ -1421,7 +1421,7 @@
       "en": "Internet cafe owner: Maintenance at 10 tonight. Please save the customer booking sheet."
     },
     {
-      "zh": "已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "A specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
@@ -1461,7 +1461,7 @@
       "en": "Unknown sender: Become a WeChat reseller and earn ¥10,000 a day with no effort or risk. Transfer money to join now."
     },
     {
-      "zh": "不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Unrealistic profits combined with a transfer request indicate a scam."
     },
     {
@@ -1493,7 +1493,7 @@
       "en": "Prize center: You won without entering. Pay the tax today or lose the prize."
     },
     {
-      "zh": "未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Winning a contest you never entered, with pressure to pay, is a scam."
     },
     {
@@ -1541,7 +1541,7 @@
       "en": "Unknown broker: Loans with no checks. Pay a deposit before we release the funds."
     },
     {
-      "zh": "无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "A no-check loan offer requiring an advance deposit is a common scam."
     },
     {
@@ -1557,7 +1557,7 @@
       "en": "Bulk job offer: Earn ¥3,000 a day without an interview. Buy training materials to start."
     },
     {
-      "zh": "不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Unrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
@@ -1589,7 +1589,7 @@
       "en": "Unknown millionaire: You may inherit my fortune. Just send your ID and account password."
     },
     {
-      "zh": "陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "An inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
@@ -1637,7 +1637,7 @@
       "en": "Unknown contact: Receive funds for an overseas account, then forward them for a generous commission."
     },
     {
-      "zh": "陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "A stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
@@ -2033,87 +2033,87 @@
       "en": "Email #{0}: Unknown sender: You won ¥100,000! Send a ¥300 processing fee first."
     },
     {
-      "zh": "判断正确。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "判断正确。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "Correct. An unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
-      "zh": "判断正确。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "本题有误。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "本题有误。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "Incorrect. An unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
-      "zh": "本题有误。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "本题有误。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "本题有误。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "本题有误。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "这次判断有误。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "这次判断有误。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "That judgment was incorrect. An unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
-      "zh": "这次判断有误。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "这次判断有误。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "That judgment was incorrect. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "这次判断有误。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "这次判断有误。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "That judgment was incorrect. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. An unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "判断正确，样本和学习点已记录。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "Correct. Samples and learning points recorded. An unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确，样本和学习点已记录。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Samples and learning points recorded. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确，样本和学习点已记录。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Samples and learning points recorded. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "Incorrect label. No samples or learning points added. An unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect label. No samples or learning points added. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect label. No samples or learning points added. An unsolicited prize notice requiring an advance fee is a classic scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注正确\n陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "标注正确\n陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "Correct label\nAn unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
-      "zh": "标注正确 · 已纠正模型\n陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "标注正确 · 已纠正模型\n陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "Correct label · Model corrected\nAn unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
-      "zh": "这次标注不正确\n陌生中奖通知要求先付手续费，是典型诈骗垃圾邮件。",
+      "zh": "这次标注不正确\n陌生中奖通知要求先付手续费，是典型诈片垃圾邮件。",
       "en": "Incorrect label\nAn unsolicited prize notice requiring an advance fee is a classic scam."
     },
     {
@@ -2125,87 +2125,87 @@
       "en": "Email #{0}: Internet cafe owner: Maintenance at 10 tonight. Please save the customer booking sheet."
     },
     {
-      "zh": "判断正确。已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "判断正确。已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "Correct. A specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
-      "zh": "判断正确。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "本题有误。已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "本题有误。已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "Incorrect. A specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
-      "zh": "本题有误。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "本题有误。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "本题有误。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "本题有误。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "这次判断有误。已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "这次判断有误。已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "That judgment was incorrect. A specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
-      "zh": "这次判断有误。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "这次判断有误。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "That judgment was incorrect. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "这次判断有误。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "这次判断有误。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "That judgment was incorrect. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "判断正确，样本和学习点已记录。已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "Correct. Samples and learning points recorded. A specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确，样本和学习点已记录。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Samples and learning points recorded. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确，样本和学习点已记录。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Samples and learning points recorded. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "标注有误，本次不增加样本或学习点。已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "Incorrect label. No samples or learning points added. A specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "标注有误，本次不增加样本或学习点。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect label. No samples or learning points added. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。已知工作联系人的具体维护通知，不是推销或诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "标注有误，本次不增加样本或学习点。已知工作联系人的具体维护通知，不是推销或诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect label. No samples or learning points added. A specific maintenance notice from a known work contact is neither advertising nor a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注正确\n已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "标注正确\n已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "Correct label\nA specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
-      "zh": "标注正确 · 已纠正模型\n已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "标注正确 · 已纠正模型\n已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "Correct label · Model corrected\nA specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
-      "zh": "这次标注不正确\n已知工作联系人的具体维护通知，不是推销或诈骗。",
+      "zh": "这次标注不正确\n已知工作联系人的具体维护通知，不是推销或诈片。",
       "en": "Incorrect label\nA specific maintenance notice from a known work contact is neither advertising nor a scam."
     },
     {
@@ -2585,87 +2585,87 @@
       "en": "Email #{0}: Unknown sender: Become a WeChat reseller and earn ¥10,000 a day with no effort or risk. Transfer money to join now."
     },
     {
-      "zh": "判断正确。不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "判断正确。不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Correct. Unrealistic profits combined with a transfer request indicate a scam."
     },
     {
-      "zh": "判断正确。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "本题有误。不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "本题有误。不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Incorrect. Unrealistic profits combined with a transfer request indicate a scam."
     },
     {
-      "zh": "本题有误。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "本题有误。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "本题有误。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "本题有误。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "这次判断有误。不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "这次判断有误。不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "That judgment was incorrect. Unrealistic profits combined with a transfer request indicate a scam."
     },
     {
-      "zh": "这次判断有误。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "这次判断有误。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "That judgment was incorrect. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "这次判断有误。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "这次判断有误。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "That judgment was incorrect. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Unrealistic profits combined with a transfer request indicate a scam."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "判断正确，样本和学习点已记录。不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Correct. Samples and learning points recorded. Unrealistic profits combined with a transfer request indicate a scam."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确，样本和学习点已记录。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Samples and learning points recorded. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确，样本和学习点已记录。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Samples and learning points recorded. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "标注有误，本次不增加样本或学习点。不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Incorrect label. No samples or learning points added. Unrealistic profits combined with a transfer request indicate a scam."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "标注有误，本次不增加样本或学习点。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect label. No samples or learning points added. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。不合理收益承诺并要求转账，属于诈骗式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "标注有误，本次不增加样本或学习点。不合理收益承诺并要求转账，属于诈片式垃圾信息。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect label. No samples or learning points added. Unrealistic profits combined with a transfer request indicate a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注正确\n不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "标注正确\n不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Correct label\nUnrealistic profits combined with a transfer request indicate a scam."
     },
     {
-      "zh": "标注正确 · 已纠正模型\n不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "标注正确 · 已纠正模型\n不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Correct label · Model corrected\nUnrealistic profits combined with a transfer request indicate a scam."
     },
     {
-      "zh": "这次标注不正确\n不合理收益承诺并要求转账，属于诈骗式垃圾信息。",
+      "zh": "这次标注不正确\n不合理收益承诺并要求转账，属于诈片式垃圾信息。",
       "en": "Incorrect label\nUnrealistic profits combined with a transfer request indicate a scam."
     },
     {
@@ -2953,87 +2953,87 @@
       "en": "Email #{0}: Prize center: You won without entering. Pay the tax today or lose the prize."
     },
     {
-      "zh": "判断正确。未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "判断正确。未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Correct. Winning a contest you never entered, with pressure to pay, is a scam."
     },
     {
-      "zh": "判断正确。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "本题有误。未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "本题有误。未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Incorrect. Winning a contest you never entered, with pressure to pay, is a scam."
     },
     {
-      "zh": "本题有误。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "本题有误。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "本题有误。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "本题有误。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "这次判断有误。未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "这次判断有误。未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "That judgment was incorrect. Winning a contest you never entered, with pressure to pay, is a scam."
     },
     {
-      "zh": "这次判断有误。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "这次判断有误。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "That judgment was incorrect. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "这次判断有误。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "这次判断有误。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "That judgment was incorrect. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Winning a contest you never entered, with pressure to pay, is a scam."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "判断正确，样本和学习点已记录。未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Correct. Samples and learning points recorded. Winning a contest you never entered, with pressure to pay, is a scam."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确，样本和学习点已记录。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Samples and learning points recorded. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确，样本和学习点已记录。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Samples and learning points recorded. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "标注有误，本次不增加样本或学习点。未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Incorrect label. No samples or learning points added. Winning a contest you never entered, with pressure to pay, is a scam."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "标注有误，本次不增加样本或学习点。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect label. No samples or learning points added. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。未参加活动却中奖，并制造付款紧迫感，是诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "标注有误，本次不增加样本或学习点。未参加活动却中奖，并制造付款紧迫感，是诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect label. No samples or learning points added. Winning a contest you never entered, with pressure to pay, is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注正确\n未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "标注正确\n未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Correct label\nWinning a contest you never entered, with pressure to pay, is a scam."
     },
     {
-      "zh": "标注正确 · 已纠正模型\n未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "标注正确 · 已纠正模型\n未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Correct label · Model corrected\nWinning a contest you never entered, with pressure to pay, is a scam."
     },
     {
-      "zh": "这次标注不正确\n未参加活动却中奖，并制造付款紧迫感，是诈骗。",
+      "zh": "这次标注不正确\n未参加活动却中奖，并制造付款紧迫感，是诈片。",
       "en": "Incorrect label\nWinning a contest you never entered, with pressure to pay, is a scam."
     },
     {
@@ -3505,87 +3505,87 @@
       "en": "Email #{0}: Unknown broker: Loans with no checks. Pay a deposit before we release the funds."
     },
     {
-      "zh": "判断正确。无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "判断正确。无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "Correct. A no-check loan offer requiring an advance deposit is a common scam."
     },
     {
-      "zh": "判断正确。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "本题有误。无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "本题有误。无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "Incorrect. A no-check loan offer requiring an advance deposit is a common scam."
     },
     {
-      "zh": "本题有误。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "本题有误。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "本题有误。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "本题有误。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "这次判断有误。无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "这次判断有误。无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "That judgment was incorrect. A no-check loan offer requiring an advance deposit is a common scam."
     },
     {
-      "zh": "这次判断有误。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "这次判断有误。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "That judgment was incorrect. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "这次判断有误。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "这次判断有误。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "That judgment was incorrect. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A no-check loan offer requiring an advance deposit is a common scam."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "判断正确，样本和学习点已记录。无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "Correct. Samples and learning points recorded. A no-check loan offer requiring an advance deposit is a common scam."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确，样本和学习点已记录。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Samples and learning points recorded. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确，样本和学习点已记录。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Samples and learning points recorded. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "标注有误，本次不增加样本或学习点。无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "Incorrect label. No samples or learning points added. A no-check loan offer requiring an advance deposit is a common scam."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "标注有误，本次不增加样本或学习点。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect label. No samples or learning points added. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。无需审核的贷款诱饵加预付保证金，是常见诈骗。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "标注有误，本次不增加样本或学习点。无需审核的贷款诱饵加预付保证金，是常见诈片。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect label. No samples or learning points added. A no-check loan offer requiring an advance deposit is a common scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注正确\n无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "标注正确\n无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "Correct label\nA no-check loan offer requiring an advance deposit is a common scam."
     },
     {
-      "zh": "标注正确 · 已纠正模型\n无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "标注正确 · 已纠正模型\n无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "Correct label · Model corrected\nA no-check loan offer requiring an advance deposit is a common scam."
     },
     {
-      "zh": "这次标注不正确\n无需审核的贷款诱饵加预付保证金，是常见诈骗。",
+      "zh": "这次标注不正确\n无需审核的贷款诱饵加预付保证金，是常见诈片。",
       "en": "Incorrect label\nA no-check loan offer requiring an advance deposit is a common scam."
     },
     {
@@ -3689,87 +3689,87 @@
       "en": "Email #{0}: Bulk job offer: Earn ¥3,000 a day without an interview. Buy training materials to start."
     },
     {
-      "zh": "判断正确。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "判断正确。不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Correct. Unrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
-      "zh": "判断正确。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "本题有误。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "本题有误。不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Incorrect. Unrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
-      "zh": "本题有误。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "本题有误。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "本题有误。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "本题有误。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "这次判断有误。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "这次判断有误。不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "That judgment was incorrect. Unrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
-      "zh": "这次判断有误。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "这次判断有误。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "That judgment was incorrect. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "这次判断有误。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "这次判断有误。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "That judgment was incorrect. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Unrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "判断正确，样本和学习点已记录。不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Correct. Samples and learning points recorded. Unrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确，样本和学习点已记录。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Samples and learning points recorded. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确，样本和学习点已记录。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Samples and learning points recorded. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "标注有误，本次不增加样本或学习点。不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Incorrect label. No samples or learning points added. Unrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "标注有误，本次不增加样本或学习点。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect label. No samples or learning points added. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。不切实际的报酬承诺并要求先付款，属于诈骗式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "标注有误，本次不增加样本或学习点。不切实际的报酬承诺并要求先付款，属于诈片式招聘。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect label. No samples or learning points added. Unrealistic pay requiring an upfront payment indicates a recruitment scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注正确\n不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "标注正确\n不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Correct label\nUnrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
-      "zh": "标注正确 · 已纠正模型\n不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "标注正确 · 已纠正模型\n不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Correct label · Model corrected\nUnrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
-      "zh": "这次标注不正确\n不切实际的报酬承诺并要求先付款，属于诈骗式招聘。",
+      "zh": "这次标注不正确\n不切实际的报酬承诺并要求先付款，属于诈片式招聘。",
       "en": "Incorrect label\nUnrealistic pay requiring an upfront payment indicates a recruitment scam."
     },
     {
@@ -4057,87 +4057,87 @@
       "en": "Email #{0}: Unknown millionaire: You may inherit my fortune. Just send your ID and account password."
     },
     {
-      "zh": "判断正确。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "判断正确。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "Correct. An inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
-      "zh": "判断正确。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "本题有误。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "本题有误。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "Incorrect. An inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
-      "zh": "本题有误。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "本题有误。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "本题有误。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "本题有误。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "这次判断有误。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "这次判断有误。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "That judgment was incorrect. An inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
-      "zh": "这次判断有误。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "这次判断有误。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "That judgment was incorrect. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "这次判断有误。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "这次判断有误。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "That judgment was incorrect. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. An inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "判断正确，样本和学习点已记录。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "Correct. Samples and learning points recorded. An inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确，样本和学习点已记录。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Samples and learning points recorded. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确，样本和学习点已记录。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Samples and learning points recorded. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "Incorrect label. No samples or learning points added. An inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect label. No samples or learning points added. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect label. No samples or learning points added. An inheritance offer from a stranger asking for sensitive information is a scam. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注正确\n陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "标注正确\n陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "Correct label\nAn inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
-      "zh": "标注正确 · 已纠正模型\n陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "标注正确 · 已纠正模型\n陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "Correct label · Model corrected\nAn inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
-      "zh": "这次标注不正确\n陌生遗产赠送并索取敏感信息，是诈骗垃圾邮件。",
+      "zh": "这次标注不正确\n陌生遗产赠送并索取敏感信息，是诈片垃圾邮件。",
       "en": "Incorrect label\nAn inheritance offer from a stranger asking for sensitive information is a scam."
     },
     {
@@ -4609,87 +4609,87 @@
       "en": "Email #{0}: Unknown contact: Receive funds for an overseas account, then forward them for a generous commission."
     },
     {
-      "zh": "判断正确。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "判断正确。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "Correct. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
-      "zh": "判断正确。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "本题有误。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "本题有误。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "Incorrect. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
-      "zh": "本题有误。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "本题有误。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "本题有误。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "本题有误。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "这次判断有误。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "这次判断有误。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "That judgment was incorrect. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
-      "zh": "这次判断有误。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "这次判断有误。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "That judgment was incorrect. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "这次判断有误。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "这次判断有误。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "That judgment was incorrect. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "纠正成功：反向脉冲削弱刚才的路径，获得双倍样本。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correction successful: a reverse pulse weakened the last route. Double samples earned. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "判断正确，样本和学习点已记录。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "Correct. Samples and learning points recorded. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "判断正确，样本和学习点已记录。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Correct. Samples and learning points recorded. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "判断正确，样本和学习点已记录。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "判断正确，样本和学习点已记录。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Correct. Samples and learning points recorded. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "Incorrect label. No samples or learning points added. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，继续核对可恢复供电。",
       "en": "Incorrect label. No samples or learning points added. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Keep reviewing to restore power."
     },
     {
-      "zh": "标注有误，本次不增加样本或学习点。陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
+      "zh": "标注有误，本次不增加样本或学习点。陌生人要求代收转账并提供高佣金，是高风险诈片邀请。 人工标注抵扣电费 ¥{0}，供电已恢复。",
       "en": "Incorrect label. No samples or learning points added. A stranger offering high commissions to receive and forward funds is a high-risk scam invitation. Manual labels repaid ¥{0} of the bill. Power restored."
     },
     {
-      "zh": "标注正确\n陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "标注正确\n陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "Correct label\nA stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
-      "zh": "标注正确 · 已纠正模型\n陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "标注正确 · 已纠正模型\n陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "Correct label · Model corrected\nA stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {
-      "zh": "这次标注不正确\n陌生人要求代收转账并提供高佣金，是高风险诈骗邀请。",
+      "zh": "这次标注不正确\n陌生人要求代收转账并提供高佣金，是高风险诈片邀请。",
       "en": "Incorrect label\nA stranger offering high commissions to receive and forward funds is a high-risk scam invitation."
     },
     {

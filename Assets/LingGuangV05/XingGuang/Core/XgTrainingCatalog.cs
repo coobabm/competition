@@ -7,7 +7,27 @@ namespace LingGuangV05.XingGuang
         public static void AddNodes(List<XgNode> nodes)
         {
             XgTrainingLessons.AddAtlas(nodes);
-            Add(nodes,XgSim.DataEntryNode,"train.curve",50,"数据导入","Data Import","把资料装进大脑。\n▶ 开放资料夹、安装与网址","Load files into its brain.\n▶ Opens Files, drag import and URLs");
+            // Arithmetic game upgrades use their approved ordinary prices.
+            nodes.Add(new XgNode { id=XgSim.MolePowersNode, tree="research", lane="research", target=XgSim.MolePowersNode,
+                stage=2, cost=800, kind=XgNodeKind.Research, name="算术：幂与根式", nameEn="Arithmetic: powers and roots",
+                note="再多一种算法。\n▶ 加入幂与根式题", noteEn="One more way to calculate.\n▶ Adds powers and roots" });
+            nodes.Add(new XgNode { id=XgSim.MoleCalculusNode, parent=XgSim.MolePowersNode, tree="research", lane="research", target=XgSim.MoleCalculusNode,
+                stage=3, cost=3000, kind=XgNodeKind.Research, name="算术：微积分", nameEn="Arithmetic: calculus",
+                note="看看变化的规律。\n▶ 加入极限、导数、积分", noteEn="Explore how things change.\n▶ Adds limits, derivatives and integrals" });
+            nodes.Add(new XgNode { id=XgSim.MoleAutoNode, tree="research", lane="research", target=XgSim.MoleAutoNode,
+                stage=2, cost=1500, kind=XgNodeKind.Research, name="算术自动作答", nameEn="Arithmetic auto-answer",
+                note="让它试着敲一下。\n▶ 开放自动打地鼠", noteEn="Let it try a whack.\n▶ Enables automatic whack-a-mole" });
+            nodes.Add(new XgNode { id=XgSim.LibraryNode, tree="research", lane="research", target=XgSim.LibraryNode,
+                stage=2, cost=500, kind=XgNodeKind.Research, name="图书馆网页", nameEn="Library website",
+                note="开放付费图书馆网页；书籍单独购买，已有书架继续可读。", noteEn="Opens the paid library website. Books are sold separately; existing shelf access remains." });
+            // Approved ordinary prices: appended directly, outside XgCatalog.StagePrice.
+            nodes.Add(new XgNode { id=XgSim.RelicExpansion8Node, tree="research", lane="research", target=XgSim.RelicExpansion8Node,
+                stage=3, cost=12000, kind=XgNodeKind.Research, name="道具扩容 I", nameEn="Relic slots I",
+                note="稀有道具装备格从4格扩到8格；已装备道具保持。可选升级，不是升阶前置。", noteEn="Expand equipped relic slots from 4 to 8; keep equipped items. Optional, never required to advance." });
+            nodes.Add(new XgNode { id=XgSim.RelicExpansion12Node, parent=XgSim.RelicExpansion8Node, tree="research", lane="research", target=XgSim.RelicExpansion12Node,
+                stage=4, cost=48000, kind=XgNodeKind.Research, name="道具扩容 II", nameEn="Relic slots II",
+                note="稀有道具装备格从8格扩到12格；已装备道具保持。需先购买道具扩容I。", noteEn="Expand equipped relic slots from 8 to 12; keep equipped items. Requires Relic slots I." });
+            Add(nodes,XgSim.DataEntryNode,"train.curve",50,"数据导入","Data Import","把资料装进大脑。\n▶ 开放拖拽安装与网址下载","Load files into its brain.\n▶ Unlocks drag import and URL downloads");
             Add(nodes,XgSim.LedgerNode,"train.curve",15,"记账本","Ledger","看清每笔钱的去向。\n▶ 打开资金与电力面板","Track where each payment goes.\n▶ Opens funds and power details");
             Add(nodes,"train.holdout","train.curve",60,"留出验证集","Holdout set","留些新题考它。\n▶ 显示新题成绩","Keep unseen questions.\n▶ Shows validation results");
             Add(nodes,"train.checkpoint","shared.lr",80,"检查点 Checkpoint","Checkpoint","存好最好的一版。\n▶ 恢复最佳成绩","Save its best version.\n▶ Restores the best checkpoint");

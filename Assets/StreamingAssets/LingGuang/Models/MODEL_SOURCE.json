@@ -1,0 +1,13 @@
+{
+  "model": "Qwen3.5-2B (灵光 LoRA r2)",
+  "filename": "Qwen3.5-2B-Q5_K_S-emb5.gguf",
+  "quantization": "Q5_K_S, token embedding Q5_K, imatrix",
+  "bytes": 1306533984,
+  "sha256": "4b154ece943d21ebdf8179935a335cd35897babd212cb144a86a8605bf1782b1",
+  "baseModel": "https://huggingface.co/Qwen/Qwen3.5-2B",
+  "quantizationSource": "https://huggingface.co/bartowski/Qwen_Qwen3.5-2B-GGUF (bf16 GGUF and imatrix)",
+  "license": "Apache-2.0",
+  "transformation": "A LoRA (rank 16, all 24 layers) trained by the team on the game's own dialogue (晴雯, 老周, 灵光 and the other contacts, Chinese) is merged into the weights; the MTP (nextn) block is stripped (Tools/LocalLLM/strip_qwen_mtp.py); quantized with llama-quantize --imatrix --token-embedding-type q5_K ... Q5_K_S (Tools/LocalLLM/quantize_qwen35_2b.sh). Pipeline: Exports/model-work/lora.",
+  "usage": "Local text generation only; no vision projector is bundled. Game slot context remains 4096.",
+  "replaces": "Qwen3-1.7B-Q4_K_M.gguf (2026.10.20.x) and Qwen3.5-4B-Q4_K_M.gguf (through 2026.10.19.5); historical packages remain unchanged."
+}

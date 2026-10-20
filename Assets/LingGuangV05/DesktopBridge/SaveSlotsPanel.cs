@@ -21,6 +21,8 @@ namespace LingGuangV05.Desktop
         readonly XgBtn[] loads = new XgBtn[6], chapters = new XgBtn[6];
         Action pending;
         XgBtn confirm;
+        XgBtn settingsSave, settingsFunds;
+        bool settingsEnglish;
         bool installed, tickBefore;
         float retry;
         public static bool IsOpen { get; private set; }
@@ -35,22 +37,39 @@ namespace LingGuangV05.Desktop
         void Update()
         {
             if (IsOpen && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Close();
-            if (installed || Time.unscaledTime < retry) return;
+            if (installed)
+            {
+                if (settingsEnglish != GameText.IsEnglish) RefreshSettingsLabels();
+                return;
+            }
+            if (Time.unscaledTime < retry) return;
             retry = Time.unscaledTime + 1;
             var window = Array.Find(FindObjectsByType<WindowManager>(FindObjectsInactive.Include, FindObjectsSortMode.None), w => w.name == "Settings");
-            if (window?.windowContainer == null) return;
-            // 2026-10-19 (owner): no buttons in the Settings title bar any more. The ledger stays on the training page
-            // (查看资金账本); saves & chapters moved into Settings → About, its only entry.
-            var panels = window.GetComponentInChildren<WindowPanelManager>(true);
-            var about = panels != null ? panels.panels.Find(p => p.panelName == "About")?.panelObject : null;
-            if (about == null) return;
+            if (window?.windowContent == null) return;
             ui = new XgUi(PrologueDesk.CjkFont(), window);
-            var button = ui.Button((RectTransform)about.transform, T("存档与章节", "Saves & chapters"), Open, 15);
-            button.rt.name = "SaveSlotsSettingsButton";
-            // Bottom right, above the About page's footer note
-            button.rt.anchorMin = button.rt.anchorMax = new Vector2(1, 0);
-            button.rt.offsetMin = new Vector2(-204, 62); button.rt.offsetMax = new Vector2(-24, 100);
-            button.rt.SetAsLastSibling(); installed = true;
+            // Compact actions belong to the client area, below the native caption and its controls.
+            var actions = Rect("GameActions", window.windowContent, Vector2.one, Vector2.one,
+                new Vector2(-276, -40), new Vector2(-12, -12));
+            settingsFunds = ui.Button(actions, "", () =>
+            {
+                var funds = runtime.GetComponent<FundsPanel>() ?? runtime.gameObject.AddComponent<FundsPanel>();
+                funds.Open();
+            }, 12);
+            settingsFunds.rt.name = "FundsSettingsButton";
+            settingsFunds.rt.anchorMin = Vector2.zero; settingsFunds.rt.anchorMax = new Vector2(0, 1);
+            settingsFunds.rt.offsetMin = Vector2.zero; settingsFunds.rt.offsetMax = new Vector2(116, 0);
+            settingsSave = ui.Button(actions, "", Open, 12);
+            settingsSave.rt.name = "SaveSlotsSettingsButton";
+            settingsSave.rt.anchorMin = new Vector2(1, 0); settingsSave.rt.anchorMax = Vector2.one;
+            settingsSave.rt.offsetMin = new Vector2(-140, 0); settingsSave.rt.offsetMax = Vector2.zero;
+            actions.SetAsLastSibling(); installed = true;
+            RefreshSettingsLabels();
+        }
+        void RefreshSettingsLabels()
+        {
+            settingsEnglish = GameText.IsEnglish;
+            settingsFunds.Set(T("资金账本", "Funds ledger"), true);
+            settingsSave.Set(T("存档与章节", "Saves & chapters"), true);
         }
         void Build()
         {

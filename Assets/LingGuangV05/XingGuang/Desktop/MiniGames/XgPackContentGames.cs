@@ -19,8 +19,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             phrase=C.Sim.PickTeachingPhrase(pack.dataset,C.Random,out int seed);
             QuestionCard=XgSim.TeachingPhraseCard(pack.dataset,phrase,seed);prediction=C.Sim.PredictTeachingBinary(QuestionCard);
             promptZh=phrase.text;promptEn=phrase.textEn;
-            string left=pack.dataset=="spam"?"诈骗短信":pack.dataset=="review"?"刷单评论":"标题党";
-            string leftEn=pack.dataset=="spam"?"Scam":pack.dataset=="review"?"Fake review":"Clickbait";
+            string left=pack.dataset=="spam"?"垃圾短信":pack.dataset=="review"?"刷单评论":"标题党";
+            string leftEn=pack.dataset=="spam"?"Spam":pack.dataset=="review"?"Fake review":"Clickbait";
             Header(pack.name,pack.nameEn,"左划："+left+"；右划：正常。","Swipe left for "+leftEn.ToLowerInvariant()+", right for genuine.");
             falling=pack.dataset=="spam";dragging=false;fallOffset=0;
             card=C.Box("SwipeCard",150,falling?90:110,600,falling?145:190,Color.white).rectTransform;
@@ -48,7 +48,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             prediction=C.Sim.PredictTeachingBinary(QuestionCard);if(prediction==null)return;
             string answer=prediction.guessed&&Math.Abs(C.Sim.TeachingThreshold(QuestionCard.dataset)-.5)<.001?XgUi.T("……不知道","…not sure"):prediction.yes?"←":"→";
             aiText=answer;
-            if(predictionText!=null)predictionText.text=C.Sim.AiDisplayName+XgUi.T("：",": ")+answer+(C.Sim.Has("sigmoid")?" · "+Math.Round(prediction.confidence*100)+"%":"");
+            CapturePrediction(prediction.yes==phrase.yes);
+            if(predictionText!=null){predictionText.text=C.Sim.AiDisplayName+XgUi.T("：",": ")+answer+(C.Sim.Has("sigmoid")?" · "+Math.Round(prediction.confidence*100)+"%":"");predictionText.color=PredictionInk;}
         }
         void BuildThreshold()
         {
@@ -66,9 +67,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         {
             if(submitted)return;var p=XgTeachingPacks.Find(C.Id);
             C.Sim.RememberTeachingBinary(QuestionCard,yes,prediction,phrase.why,phrase.whyEn);
-            chosenText=yes?(p.dataset=="spam"?XgUi.T("诈骗短信","Scam"):p.dataset=="review"?XgUi.T("刷单评论","Fake review"):XgUi.T("标题党","Clickbait")):XgUi.T("正常","Genuine");
+            chosenText=yes?(p.dataset=="spam"?XgUi.T("垃圾短信","Spam"):p.dataset=="review"?XgUi.T("刷单评论","Fake review"):XgUi.T("标题党","Clickbait")):XgUi.T("正常","Genuine");
             string why=phrase.why,whyEn=phrase.whyEn;
-            if(falling){smsRounds++;if(!yes&&phrase.yes){why="模拟收件箱：诈骗短信被放行了。"+why;whyEn="Practice inbox: the scam text was let through. "+whyEn;}}
+            if(falling){smsRounds++;if(!yes&&phrase.yes){why="模拟收件箱：垃圾短信被放行了。"+why;whyEn="Practice inbox: the spam text was let through. "+whyEn;}}
             Submit(yes==phrase.yes,why,whyEn);
         }
     }
@@ -108,7 +109,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 if(C.Sim.TeachingAiReady)B("ShiftProbe",700,95,160,38,XgUi.T("挪一格试试","Try a shift"),()=>{
                     if(submitted||QuestionCard.teachingImageKind=="handwriting28shift")return;
                     var result=C.Sim.ObserveTeachingDigitShift(target,seed);picture.texture=XgTeachingPictures.HandwritingVariant28(target,seed,0);QuestionCard.teachingImageKind="handwriting28shift";
-                    var label=ActiveChild("AiAnswer")?.GetComponent<TMP_Text>();if(label!=null)label.text=C.Sim.AiDisplayName+XgUi.T("：原来 ",": before ")+GuessText(result.before)+XgUi.T(" → 挪后 "," → shifted ")+GuessText(result.after);aiText=GuessText(result.after);
+                    aiText=GuessText(result.after);CapturePrediction(result.after.valid?(bool?)(result.after.digit==target):null);
+                    var label=ActiveChild("AiAnswer")?.GetComponent<TMP_Text>();if(label!=null){label.text=C.Sim.AiDisplayName+XgUi.T("：原来 ",": before ")+GuessText(result.before)+XgUi.T(" → 挪后 "," → shifted ")+aiText;label.color=PredictionInk;}
                 },16);
                 if(C.Sim.Has("augment"))B("Augment",525,95,160,38,XgUi.T("变","Vary"),()=>OpenAugmentation(seed),19);
             }
@@ -129,12 +131,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         {
             if(!C.Sim.TeachingAiReady)return;var ink=XgVisualRaster.Handwriting28(target,(QuestionCard.seed&int.MaxValue)%16);
             var guess=C.Sim.ReadHandwriting(XgTeachingAugmentation.RecognitionRaster(ink));aiText=GuessText(guess);
-            var label=ActiveChild("AiAnswer")?.GetComponent<TMP_Text>();if(label!=null)label.text=C.Sim.AiDisplayName+XgUi.T("：",": ")+aiText;
+            CapturePrediction(guess.valid?(bool?)(guess.digit==target):null);
+            var label=ActiveChild("AiAnswer")?.GetComponent<TMP_Text>();if(label!=null){label.text=C.Sim.AiDisplayName+XgUi.T("：",": ")+aiText;label.color=PredictionInk;}
         }
         void OpenAugmentation(int seed)
         {
             if(submitted||augmentation!=null)return;augmentation=C.Sim.BeginTeachingAugmentation(target,seed);if(augmentation==null)return;
             augmentationKeep=new[]{true,true,true,true};
+            ClearPredictionFeedback(); // This subtask displays no AI prediction; do not grade the old digit guess.
             Header("变一变，标签还对吗？","Vary it: does the label still fit?","点图下按钮，剔掉已经不像原数字的图，再提交。","Discard images that no longer match the original digit, then submit.");
             string[] zh={"挪一格","转半圈","左右翻","调亮度"},en={"Shift one pixel","Turn 180°","Mirror","Brightness"};
             T("OriginalLabel",25,82,850,30,XgUi.T("原标签：","Original label: ")+target,22);
@@ -163,7 +167,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             for(int i=0;i<XgVisualRaster.Alphabet.Length;i++){char c=XgVisualRaster.Alphabet[i];B("Type"+c,170+(i%8)*70,250+(i/8)*36,64,32,c.ToString(),()=>AddCaptcha(c),19);}
             B("Backspace",170,402,190,32,XgUi.T("退一格","Backspace"),BackCaptcha,17);
             B("SubmitCode",540,402,190,32,XgUi.T("提交","Submit"),SubmitCaptcha,17);
-            if(C.Sim.TeachingAiReady){aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):C.Random.NextDouble()<C.Skill?captchaCode:XgVisualRaster.Code((seed+37)%128);ShowAi(200,215,500);}
+            if(C.Sim.TeachingAiReady){aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):C.Random.NextDouble()<C.Skill?captchaCode:XgVisualRaster.Code((seed+37)%128);CapturePrediction(C.Skill<.55?(bool?)null:aiText==captchaCode);ShowAi(200,215,500);}
         }
         void AddCaptcha(char c){if(submitted||captchaInput.Length>=4)return;captchaInput+=c;RefreshCaptchaEntry();}
         void BackCaptcha(){if(submitted||captchaInput.Length==0)return;captchaInput=captchaInput.Substring(0,captchaInput.Length-1);RefreshCaptchaEntry();}
@@ -185,10 +189,10 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 var b=B("Cell"+i,x,y,99,99,"",()=>{selected[k]=!selected[k];PaintSelected(k);});
                 var image=C.Rect("Photo"+i,x+4,y+4,91,91).gameObject.AddComponent<RawImage>();image.texture=XgTeachingPictures.LibraryPhoto(photoIndices[i]);image.raycastTarget=false;
             }
-            if(C.Sim.TeachingAiReady){aiText="";
+            if(C.Sim.TeachingAiReady){aiText="";bool guessedGridCorrect=true;
                 if(C.Skill<.55)aiText=XgUi.T("……不知道","…not sure");
-                else for(int i=0;i<9;i++){bool pick=items[i]==target;if(C.Random.NextDouble()>C.Skill)pick=!pick;if(pick)aiText+=(i+1)+" ";}
-                if(aiText.Length==0)aiText=XgUi.T("都不选","None");ShowAi(430,225,430);}
+                else for(int i=0;i<9;i++){bool pick=items[i]==target;if(C.Random.NextDouble()>C.Skill)pick=!pick;if(pick!=(items[i]==target))guessedGridCorrect=false;if(pick)aiText+=(i+1)+" ";}
+                if(aiText.Length==0)aiText=XgUi.T("都不选","None");CapturePrediction(C.Skill<.55?(bool?)null:guessedGridCorrect);ShowAi(430,225,430);}
             B("Submit",450,290,340,70,XgUi.T("提交","Submit"),()=>{
                 bool ok=true;chosenText="";for(int i=0;i<9;i++){if(selected[i]!=(items[i]==target))ok=false;if(selected[i])chosenText+=(i+1)+" ";}
                 Submit(ok,"目标是"+XgTeachingPictures.LibraryWords[target]+"，只选这些照片。","Select only the photographs of "+XgTeachingPictures.LibraryWordsEn[target]+".");},28);
@@ -277,7 +281,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             Header("中式英语改错","Fix the Chinglish","先点出错的字词，再选自然的改写。","First locate the error, then choose a natural rewrite.");
             T("Source",35,100,830,100,XgUi.T(promptZh,promptEn),27);
             for(int i=0;i<Spans[questionIndex].Length;i++){int span=i;B("ErrorSpan"+i,35+i*215,260,200,65,Spans[questionIndex][i],()=>PickError(span),23);}
-            if(C.Sim.TeachingAiReady){aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):Spans[questionIndex][ErrorSpans[questionIndex][0]];ShowAi(35,210,830);}
+            if(C.Sim.TeachingAiReady){aiText=C.Skill<.55?XgUi.T("……不知道","…not sure"):Spans[questionIndex][ErrorSpans[questionIndex][0]];CapturePrediction(C.Skill<.55?(bool?)null:true);ShowAi(35,210,830);}
         }
         void PickError(int span)
         {

@@ -1,0 +1,46 @@
+--- a/Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs
++++ b/Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs
+@@ -19,7 +19,7 @@
+ using TMPro;
+ 
+ // -executeMethod TeachingFullRoundChecks.Run, without -quit.
+-// This is a fully unlocked QA fixture, NOT evidence that a new player can buy every pack.
++// This is an explicitly unlocked/installed QA fixture, NOT evidence of player purchase, download or installation.
+ [InitializeOnLoad]
+ public static partial class TeachingFullRoundChecks
+ {
+@@ -42,7 +42,7 @@
+     [Serializable] sealed class Entry { public string id,language,gameType,clicked="",note="";public bool built,visible;public int texts,images,buttons,answersBefore,answersAfter; }
+     [Serializable] sealed class Report
+     {
+-        public string scope="Main PlayMode, isolated save, explicit stage-six/all-research QA fixture; all 19 packs in Chinese and English through existing Unity Button callbacks and explicit action-game ticks, not LCD or physical pointer coverage. Correct/wrong settlement and JsonUtility record reload; pre-submit displayed AI prediction, retained two-line footer after natural next-frame rebuild, unknown gray and rendered text/mask bounds. Hidden truth selects deterministic QA answers and independently checks supported prediction types. Other prediction verdicts are snapshot-propagation checks, not model accuracy claims. Actual current window size, not a forced small-window matrix.";
++        public string scope="Main PlayMode, isolated save, explicit stage-six/all-research/all-paid-teaching-nodes-installed QA fixture (installation receipts are fixture state, not acquisition coverage); all 19 packs in Chinese and English through existing Unity Button callbacks and explicit action-game ticks, not LCD or physical pointer coverage. Correct/wrong settlement and JsonUtility record reload; pre-submit displayed AI prediction, retained two-line footer after natural next-frame rebuild, unknown gray and rendered text/mask bounds. Hidden truth selects deterministic QA answers and independently checks supported prediction types. Other prediction verdicts are snapshot-propagation checks, not model accuracy claims. Actual current window size, not a forced small-window matrix.";
+         public string status="running",failure="",unityVersion;
+         public List<Entry> packs=new List<Entry>();public List<string> runtimeErrors=new List<string>();
+         public List<string> editorInfrastructureErrors=new List<string>();
+@@ -113,10 +113,24 @@
+                 runtime.useDiskSave=false;
+                 var lab=new XgSim();lab.S.stage=6;lab.S.firstSpecialty="vision";lab.S.handCorrect=200;lab.S.epochs=20;
+                 foreach(var node in XgCatalog.Nodes)if(!lab.S.unlocked.Contains(node.id))lab.S.unlocked.Add(node.id);
+-                foreach(var pack in XgTeachingPacks.All){if(!lab.S.unlocked.Contains(pack.NodeId))lab.S.unlocked.Add(pack.NodeId);if(!lab.S.owned.Contains(pack.dataset))lab.S.owned.Add(pack.dataset);if(!lab.S.desksOpen.Contains(pack.dataset))lab.S.desksOpen.Add(pack.dataset);}
++                foreach(var pack in XgTeachingPacks.All)
++                {
++                    if(!lab.S.unlocked.Contains(pack.NodeId))lab.S.unlocked.Add(pack.NodeId);
++                    if(!lab.S.owned.Contains(pack.dataset))lab.S.owned.Add(pack.dataset);
++                    if(!lab.S.desksOpen.Contains(pack.dataset))lab.S.desksOpen.Add(pack.dataset);
++                    // Explicit all-packs fixture: ownership and installation are separate prerequisites.
++                    // Seed the same receipt read by the production gate; do not bypass SelectTeachingPack.
++                    if(pack.buy&&!lab.S.installedTeachingNodes.Contains(pack.NodeId))lab.S.installedTeachingNodes.Add(pack.NodeId);
++                }
+                 var house=new ChapterOneSim();house.S.prologue=2;house.S.appInstallState=2;house.S.money=1000000;house.S.labState=JsonUtility.ToJson(lab.S);
+                 GameCalendar.Advance(house.S,GameCalendar.DayFor(6,lab.MonthProgress));house.S.rentDay=GameCalendar.CurrentDay(house.S);house.S.broadbandMonth=201612;
+                 runtime.SetSimulationForTests(house);typeof(XingGuangController).GetMethod("BindSave",Flags).Invoke(ctl,new object[]{house});
++                foreach(var pack in XgTeachingPacks.All)
++                {
++                    Require(!pack.buy||ctl.Sim.TeachingNodeInstalled(pack.NodeId),"Installed teaching fixture receipt lost after bind: "+pack.id);
++                    Require(ctl.Sim.TeachingPackAvailable(pack.id),"Installed all-packs fixture blocked after bind: "+pack.id+": "+ctl.Sim.TeachingPackBlocker(pack));
++                }
++                report.checks.Add("Explicit QA installation receipts survived save binding; all "+Packs.Length+" teaching packs pass the unchanged production availability gate. Purchase/download/install UI is not exercised by this fixture.");
+                 // This fixture exercises desktop games, not the title/login sequence. Complete the
+                 // isolated DreamOS profile's boot explicitly; an empty profile otherwise waits at login.
+                 var boot=UnityEngine.Object.FindAnyObjectByType<Michsky.DreamOS.BootManager>(FindObjectsInactive.Include);

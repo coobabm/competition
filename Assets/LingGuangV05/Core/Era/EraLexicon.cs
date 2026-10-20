@@ -14,14 +14,15 @@ namespace LingGuangV05.Core.Era
         /// <summary>Shown to the model and in docs.</summary>
         public static readonly string[] Banned =
         {
-            "皮皮虾我们走", "扎心了老铁", "请开始你的表演", "惊不惊喜", "意不意外", "尬聊", "油腻中年", "打 call", "freestyle",
+            "皮皮虾我们走", "扎心了老铁", "请开始你的表演", "惊不惊喜", "意不意外", "尬聊", "油腻中年", "打 call", "你有 freestyle 吗",
             "戏精", "佛系", "吃鸡", "确认过眼神", "skr", "C 位", "官宣", "真香", "锦鲤附体", "我酸了", "安排上",
         };
 
         static readonly Regex[] Patterns =
         {
             P("皮皮虾\\s*[，,]?\\s*我们走"), P("扎心了\\s*[，,]?\\s*老铁"), P("请开始你的表演"), P("惊不惊喜"), P("意不意外"), P("尬聊"),
-            P("油腻(的)?(中年|大叔|男)"), P("打\\s*call"), P("free\\s*style"), P("戏精"), P("佛系"), P("吃鸡(?![腿肉蛋翅爪汤块])"),
+            // Freestyle is an older swimming/music term; only the later Chinese catchphrase is a future meme.
+            P("油腻(的)?(中年|大叔|男)"), P("打\\s*call"), P("(?:你\\s*)?有\\s*free\\s*style\\s*[吗么嘛]"), P("戏精"), P("佛系"), P("吃鸡(?![腿肉蛋翅爪汤块])"),
             P("确认过眼神"), P("(?<![a-z])skr(?![a-z])"), P("(?<![a-z])c\\s*位"), P("官宣"), P("(?<![饭菜肉汤花茶面])真香"),
             P("锦鲤(附体|本鲤)|转发锦鲤|成为锦鲤"), P("我酸了"), P("安排上|给(你|我|他|她|您)安排(上|了)(?!一)"),
         };

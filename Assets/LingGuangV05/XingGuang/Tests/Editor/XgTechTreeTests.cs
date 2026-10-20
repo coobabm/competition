@@ -36,7 +36,14 @@ namespace LingGuangV05.XingGuang.Tests
             foreach (var e in XgTechTree.Entries)
             {
                 if (!e.IsChain) continue;
-                Assert.IsTrue(XgTechTree.Ladder(e.First.kind), e.id);
+                if (e.id == "board.logic1")
+                {
+                    Assert.AreEqual(XgNodeKind.Research, e.First.kind, "Board logic keeps its research behavior");
+                    Assert.AreEqual(4, e.members.Count, "The designed logic node has exactly four levels");
+                    for (int i = 0; i < 4; i++)
+                        Assert.AreEqual("board.logic" + (i + 1), e.members[i].id, "Logic level order");
+                }
+                else Assert.IsTrue(XgTechTree.Ladder(e.First.kind), e.id);
                 for (int i = 1; i < e.members.Count; i++)
                 {
                     Assert.AreEqual(e.members[i - 1].id, e.members[i].parent, "each step needs the one before: " + e.members[i].id);
@@ -50,6 +57,11 @@ namespace LingGuangV05.XingGuang.Tests
                 if (XgTechTree.Ladder(n.kind) && parent != null && parent.kind == n.kind)
                     Assert.AreSame(XgTechTree.EntryOf(parent.id), XgTechTree.EntryOf(n.id), n.id);
             }
+            var logic = XgTechTree.EntryOf("board.logic1");
+            Assert.IsNotNull(logic); Assert.IsTrue(logic.IsChain, "Board logic must remain one four-level square");
+            for (int i = 1; i <= 4; i++)
+                Assert.AreSame(logic, XgTechTree.EntryOf("board.logic" + i));
+            Assert.AreNotSame(logic, XgTechTree.EntryOf("nextmove"), "The optional question desk is a separate purchase");
             var depth = XgTechTree.EntryOf("v.d4");
             Assert.IsNotNull(depth); Assert.IsTrue(depth.IsChain);
             Assert.IsNull(XgCatalog.Node("auto2"), "the automation lane is gone");

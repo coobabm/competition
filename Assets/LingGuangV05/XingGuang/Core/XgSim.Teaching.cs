@@ -144,7 +144,7 @@ namespace LingGuangV05.XingGuang
             else if (dataset == "mnist") source = new XgCard { dataset = "mnist", seed = 9137, truth = true, digit = 0, asked = 0, level = 1 };
             else if (dataset == "poems") source = new XgCard { dataset = "poems", seed = 9137, truth = true, line = "疑是地上霜", shown = 4, askedChar = "霜", level = 1 };
             var card = source == null ? XgBoardData.Make(dataset, 9137, 1, 20160524) : XgBoardData.FromCard(source);
-            card.text = dataset == "spam" ? "这条短信是诈骗吗：恭喜您中奖，请点击领取" : dataset == "mnist" ? "这张手写数字是 0 吗？" : dataset == "poems" ? "床前明月光，疑是地上__，填「霜」吗？" : !string.IsNullOrEmpty(card.text) ? card.text : !string.IsNullOrEmpty(card.source?.question) ? card.source.question : "判断「" + XgCatalog.Dataset(dataset).name + "」中的固定样本";
+            card.text = dataset == "spam" ? "这条短信是诈片吗：恭喜您中奖，请点击领取" : dataset == "mnist" ? "这张手写数字是 0 吗？" : dataset == "poems" ? "床前明月光，疑是地上__，填「霜」吗？" : !string.IsNullOrEmpty(card.text) ? card.text : !string.IsNullOrEmpty(card.source?.question) ? card.source.question : "判断「" + XgCatalog.Dataset(dataset).name + "」中的固定样本";
             return card;
         }
 

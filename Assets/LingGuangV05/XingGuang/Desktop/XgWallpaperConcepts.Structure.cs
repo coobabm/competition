@@ -44,7 +44,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public Vector2 AttentionTarget(int index)
         {
             if (index < 0 || index >= attentionWords.Count || AttentionIndex < 0) return default;
-            return RegionCenter(1) + new Vector2(-.033f, Mathf.Lerp(.038f, -.038f, (index + .5f) / attentionWords.Count));
+            return RegionCenter(1) + RegionOffset(1, new Vector2(-.033f, Mathf.Lerp(.038f, -.038f, (index + .5f) / attentionWords.Count)));
         }
 
         void UpdateAttentionLabels()
@@ -75,12 +75,12 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             int selected = AttentionIndex; if (selected < 0) return;
             var from = area.min + Vector2.Scale(area.size, RegionCenter(1));
-            var to = area.min + Vector2.Scale(area.size, AttentionTarget(selected) + new Vector2(.008f, 0));
+            var to = area.min + Vector2.Scale(area.size, AttentionTarget(selected) + RegionOffset(1, new Vector2(.008f, 0)));
             var ink = XgCortexGraphic.N.Gold; ink.a = .65f;
             XgSoftDraw.Seg(vh, from, to, 1.4f * scale, 4 * scale, ink);
             XgDraw.Ring(vh, from, 3 * scale, scale, ink, 12);
         }
-        bool StructureReduced => GamePerformance.Low || controller?.View?.Juice != null && controller.View.Juice.Reduced;
+        bool StructureReduced => XgBrainWallpaper.MotionReduced(controller);
         bool StructureMoving => System.Array.IndexOf(movingRegions, true) >= 0 && Time.unscaledTime - structureStarted <= StructureSeconds;
 
         void ClearStructure()
@@ -128,15 +128,17 @@ namespace LingGuangV05.Desktop.XingGuang
 
         Vector2 RotateNebula(int region, Vector2 offset)
         {
+            var radius = RegionContentRadius(region);
+            offset = new Vector2(offset.x / radius.x, offset.y / radius.y);
             float angle = StructureReduced ? 0 : (Time.unscaledTime - structureClocks[region]) * .075f;
             float c = Mathf.Cos(angle), s = Mathf.Sin(angle);
-            return new Vector2(offset.x * c - offset.y * s, offset.x * s + offset.y * c);
+            return Vector2.Scale(radius, new Vector2(offset.x * c - offset.y * s, offset.x * s + offset.y * c));
         }
 
         public Vector2 NebulaSocket(int region, int index)
         {
             if (region < 0 || region >= 4 || structureIds[region] != "transformer" || index < 0 || index >= 10 || !isActiveAndEnabled) return default;
-            return RegionCenter(region) + RotateNebula(region, LayoutPosition("transformer", index, 10) * .06f);
+            return RegionCenter(region) + RotateNebula(region, Vector2.Scale(LayoutPosition("transformer", index, 10), RegionContentRadius(region)));
         }
 
         void DrawNebula(VertexHelper vh, Rect area, float scale, int region)
@@ -164,7 +166,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (region != 1 || !IsRecurrent(structureIds[region]) || !isActiveAndEnabled) return default;
             float phase = StructureReduced ? .2f : Mathf.Repeat((Time.unscaledTime - structureClocks[region]) / 4, 1);
             float angle = Mathf.PI * .5f - phase * Mathf.PI * 2;
-            Vector2 at = RegionCenter(region) + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * .06f;
+            Vector2 at = RegionCenter(region) + Vector2.Scale(new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)), RegionContentRadius(region));
             return new Vector3(at.x, at.y, Mathf.Exp(-(MemoryGates(structureIds[region]) > 0 ? .15f : 3) * phase));
         }
 
@@ -184,7 +186,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 float behind = phase - i * .014f; if (behind < 0) break;
                 float angle = Mathf.PI * .5f - behind * Mathf.PI * 2;
-                var uv = RegionCenter(region) + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * .06f;
+                var uv = RegionCenter(region) + Vector2.Scale(new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)), RegionContentRadius(region));
                 ink.a = signal.z * .4f * (1 - i / 7f);
                 XgSoftDraw.Halo(vh, area.min + Vector2.Scale(area.size, uv), 3 * scale, ink, 8);
             }
@@ -211,13 +213,13 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 float phase = (gate + 1f) / (gates + 1), angle = Mathf.PI * .5f - phase * Mathf.PI * 2;
                 Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                Vector2 uv = RegionCenter(region) + direction * .06f;
+                Vector2 uv = RegionCenter(region) + Vector2.Scale(direction, RegionContentRadius(region));
                 Vector2 point = area.min + Vector2.Scale(area.size, uv);
                 var gold = XgCortexGraphic.N.Gold; gold.a = .6f;
                 XgSoftDraw.Seg(vh, point + new Vector2(-4, -7) * scale, point + new Vector2(-4, 7) * scale, 1.4f * scale, scale, gold);
                 XgSoftDraw.Seg(vh, point + new Vector2(4, -7) * scale, point + new Vector2(4, 7) * scale, 1.4f * scale, scale, gold);
                 float retained = GateRetention(region, gate); if (retained <= 0) continue;
-                Vector2 inside = area.min + Vector2.Scale(area.size, RegionCenter(region) + direction * .045f);
+                Vector2 inside = area.min + Vector2.Scale(area.size, RegionCenter(region) + Vector2.Scale(direction, RegionContentRadius(region)) * .75f);
                 gold.a = retained;
                 XgSoftDraw.Halo(vh, inside, 7 * scale, gold, 12);
                 var line = gold; line.a *= .3f;
@@ -235,8 +237,8 @@ namespace LingGuangV05.Desktop.XingGuang
             int from = Mathf.FloorToInt(step), to = Mathf.Min(from + 1, points - 1);
             Vector2 a = ScanGridPoint(from, last), b = ScanGridPoint(to, last);
             Vector2 cell = Vector2.Lerp(a, b, Mathf.SmoothStep(0, 1, step - from));
-            Vector2 min = RegionCenter(region) - Vector2.one * .06f + cell * (.12f / divisions);
-            return new Rect(min, Vector2.one * (.12f * span / divisions));
+            Vector2 min = RegionCenter(region) - RegionContentRadius(region) + Vector2.Scale(cell, RegionContentRadius(region)) * (2f / divisions);
+            return new Rect(min, RegionContentRadius(region) * (2f * span / divisions));
         }
 
         static Vector2 ScanGridPoint(int step, int last)
@@ -248,7 +250,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void DrawConvolution(VertexHelper vh, Rect area, float scale, int region)
         {
             var center = area.min + Vector2.Scale(area.size, RegionCenter(region));
-            var radius = Vector2.Scale(area.size, Vector2.one * .06f);
+            var radius = Vector2.Scale(area.size, RegionContentRadius(region));
             var ink = XgCortexGraphic.N.Wire; ink.a = .17f;
             int divisions = GridDivisions(region);
             for (int i = 0; i <= divisions; i++)
@@ -274,8 +276,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (region != 0 || structureIds[region] != "resnet" || !isActiveAndEnabled || route < 0 || route > 1) return default;
             float t = Mathf.Clamp01(progress);
-            return RegionCenter(region) + new Vector2(Mathf.Lerp(-.06f, .06f, t),
-                (route == 0 ? 1 : -1) * .052f * Mathf.Sin(t * Mathf.PI));
+            return RegionCenter(region) + RegionOffset(region, new Vector2(Mathf.Lerp(-.06f, .06f, t),
+                (route == 0 ? 1 : -1) * .052f * Mathf.Sin(t * Mathf.PI)));
         }
 
         void DrawResidualPaths(VertexHelper vh, Rect area, float scale, int region)
@@ -312,9 +314,9 @@ namespace LingGuangV05.Desktop.XingGuang
             var ink = XgCortexGraphic.N.Teal; ink.a = .32f;
             for (int side = -1; side <= 1; side += 2)
             {
-                var uv = origin + new Vector2(side * Mathf.Lerp(.012f, .033f, split), 0);
+                var uv = origin + RegionOffset(region, new Vector2(side * Mathf.Lerp(.012f, .033f, split), 0));
                 EllipseLine(vh, area.min + Vector2.Scale(area.size, uv),
-                    Vector2.Scale(area.size, new Vector2(.0252f, .048f)), scale, ink);
+                    Vector2.Scale(area.size, RegionOffset(region, new Vector2(.0252f, .048f))), scale, ink);
             }
             // A narrow structural channel joins encoder and decoder; it is not a learned link.
             var gold = XgCortexGraphic.N.Gold; gold.a = .5f;
@@ -324,7 +326,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 for (int i = 0; i <= 24; i++)
                 {
                     float x = -1 + i / 12f;
-                    var uv = origin + new Vector2(x * .033f, side * Mathf.Lerp(neck, .032f, x * x));
+                    var uv = origin + RegionOffset(region, new Vector2(x * .033f, side * Mathf.Lerp(neck, .032f, x * x)));
                     var point = area.min + Vector2.Scale(area.size, uv);
                     if (i > 0) XgSoftDraw.Seg(vh, previous, point, scale, 1.4f * scale, gold);
                     previous = point;
@@ -348,7 +350,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var ink = XgCortexGraphic.N.Wire;
             ink.a = .18f * (StructureMoving ? Mathf.SmoothStep(0, 1, (Time.unscaledTime - structureStarted) / StructureSeconds) : 1);
             var center = area.min + Vector2.Scale(area.size, RegionCenter(region));
-            var radius = Vector2.Scale(area.size, new Vector2(.06f, .06f));
+            var radius = Vector2.Scale(area.size, RegionContentRadius(region));
             var guide = ink; guide.a *= .35f;
             for (int layer = 0; layer < 3; layer++)
                 XgDraw.Seg(vh, center + new Vector2((layer - 1) * radius.x, -radius.y),
@@ -371,7 +373,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             float phase = mlp && movingRegions[region] ? Mathf.SmoothStep(0, 1, (Time.unscaledTime - structureStarted) / StructureSeconds) : 1;
             var center = area.min + Vector2.Scale(area.size, RegionCenter(region));
-            var radius = Vector2.Scale(area.size, new Vector2(.06f, .06f));
+            var radius = Vector2.Scale(area.size, RegionContentRadius(region));
             var ink = XgCortexGraphic.N.Wire; ink.a = .2f;
             // Hollow sockets describe available structure, not learned concepts. Filled learned
             // points and the Core link index remain exclusively backed by the actual board.

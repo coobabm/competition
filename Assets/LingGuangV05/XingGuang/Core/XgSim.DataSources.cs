@@ -135,7 +135,7 @@ namespace LingGuangV05.XingGuang
         static readonly object[][] JunkPacks =
         {
             new object[] { "spam", .3, 201606, "垃圾短信样本包（某手机卫士用户举报汇总）", "Spam SMS dump (phone-guard user reports)",
-                "用户举报的短信，顺手把催缴话费的也当成了诈骗。", "Messages users reported; phone-bill reminders got reported as scams too." },
+                "用户举报的短信，顺手把催缴话费的也当成了诈片。", "Messages users reported; phone-bill reminders got reported as scams too." },
             new object[] { "mnist", .3, 201607, "手写数字扫描件 12 万张（补习班作业本）", "120k scanned digits (cram-school workbooks)",
                 "补习班的作业本拍照切图，答案是按老师批改抄的，红笔叉也算数。", "Workbook photos cut into digits; labels copied from the teacher's marking, red crosses included." },
             new object[] { "danmu", .35, 201607, "弹幕全量爬取包，按点赞数打的标", "Full danmaku crawl, labelled by likes",
@@ -491,9 +491,18 @@ namespace LingGuangV05.XingGuang
             o.downloadLeft = queued != null ? DownloadLeft(key) : 0;
             o.downloading = o.owned && queued != null;
             o.downloadProgress = queued != null ? (queued.sizeMB > 0 ? Clamp01(queued.doneMB / queued.sizeMB) : 1) : o.owned ? 1 : 0;
-            if (StoryComesOverHomeLine(def.id)) o.downloadSec = DownloadSecondsAt(def.sizeMB, LineMBps);
+            // Estimate a new purchase using the same simulated duration as Enqueue/ItemRate.
+            // Public purchases now queue the full teaching pack; home-line story packs queue every batch.
+            // Keep catalog timing untouched: paceVersion 0 campus saves still use it for their actual rate.
             if (def.source == XgDataSource.Public || def.source == XgDataSource.Junk)
-                o.downloadSec = DownloadSecondsAt(def.source == XgDataSource.Public ? BatchMB(XgCatalog.Dataset(def.datasetId)) : def.sizeMB, LineMBps * (def.source == XgDataSource.Junk ? JunkLineShare : 1));
+                o.downloadSec = PacedDownloadSeconds(def.sizeMB, LineMBps, def.source == XgDataSource.Junk, false);
+            else if (def.source == XgDataSource.Story)
+            {
+                var data = XgCatalog.Dataset(def.datasetId);
+                o.downloadSec = StoryComesOverHomeLine(def.id)
+                    ? PackBatches(data) * PacedDownloadSeconds(BatchMB(data), LineMBps, false, false)
+                    : PacedDownloadSeconds(def.sizeMB, LineMBps, false, true);
+            }
             if (def.source == XgDataSource.Public || def.source == XgDataSource.Story)
             {
                 o.batchesBought = BatchesBought(def.datasetId); o.batchesArrived = BatchesArrived(def.datasetId);
@@ -599,7 +608,8 @@ namespace LingGuangV05.XingGuang
                 else
                 {
                     Enqueue(new XgDownload { key = def.datasetId, dataset = def.datasetId, offer = def.id, batches = all, sizeMB = def.sizeMB, samples = def.samples, campus = true, ownDrive = true }, false);
-                    Say(T("贴吧回帖 · 周而复始：《" + def.name + "》我下好了，拷在硬盘里给你寄过来，约 " + ClockText(def.downloadSec) + " 到。", "Forum reply · 周而复始: " + def.nameEn + " is already downloaded; he is mailing it on a drive, about " + ClockText(def.downloadSec) + "."));
+                    double deliverySeconds = Offer(def.id).downloadSec;
+                    Say(T("贴吧回帖 · 周而复始：《" + def.name + "》我下好了，拷在硬盘里给你寄过来，约 " + ClockText(deliverySeconds) + " 到。", "Forum reply · 周而复始: " + def.nameEn + " is already downloaded; he is mailing it on a drive, about " + ClockText(deliverySeconds) + "."));
                 }
                 CheckDesks();
             }

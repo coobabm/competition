@@ -17,6 +17,48 @@ public static class WorldYyGiftRoutingChecks
     static void Set(object target, string field, object value) => target.GetType().GetField(field, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).SetValue(target, value);
     [MenuItem("LingGuang/Checks/World all interactions and photos")]
     public static void Run() { RunInteractions(); RunPhotos(); }
+    public static void RunMonthlyRent()
+    {
+        var go = new GameObject("MonthlyRentDeliveryChecks"); go.SetActive(false);
+        try
+        {
+            var sim = new ChapterOneSim(); sim.S.prologue = 2; sim.S.appInstallState = 2;
+            GameCalendar.Advance(sim.S, GameCalendar.DayIndex(new DateTime(2016, 9, 1))); sim.SettleCalendar();
+            Require(sim.S.rentInvoiceOutbox.Count == 1, "first-frame bill is durable before YY exists");
+            sim = new ChapterOneSim(JsonUtility.FromJson<GameState>(JsonUtility.ToJson(sim.S)));
+            var runtime = go.AddComponent<ChapterOneRuntime>(); runtime.SetSimulationForTests(sim);
+            var hub = go.AddComponent<YYChatHub>(); Set(hub, "runtime", runtime);
+            var state = new YYState(); state.conversations.Add(new YYConversation { id = "landlord" });
+            typeof(YYChatHub).GetProperty("S").SetValue(hub, state);
+            hub.FlushPendingRentInvoices();
+            Require(sim.S.rentInvoiceOutbox.Count == 1 && state.conversations[0].messages.Count == 0, "cannot deliver into an unbound or previous save");
+            Set(hub, "linked", sim); hub.FlushPendingRentInvoices();
+            var conv = state.conversations[0];
+            Require(conv.messages.Count == 2 && conv.unread == 1 && sim.S.rentInvoiceOutbox.Count == 0, "late YY initialization delivers text and card once");
+            Require(conv.messages[1].rentInvoiceMonth == 201609 && conv.messages[1].transferAmount == 2100, "card identifies the actual billing month");
+            hub.FlushPendingRentInvoices(); Require(conv.messages.Count == 2, "repeat Update does not duplicate");
+            var replay = new RentInvoice { month = 201609, amount = 2100, total = 2100 };
+            sim.S.rentInvoiceOutbox.Add(replay); hub.FlushPendingRentInvoices();
+            Require(conv.messages.Count == 2 && conv.unread == 1 && sim.S.rentInvoiceOutbox.Count == 0, "persisted receipt deduplicates a recovered outbox");
+            GameCalendar.Advance(sim.S, GameCalendar.DayIndex(new DateTime(2016, 12, 1))); sim.SettleCalendar();
+            Require(sim.S.rentInvoiceOutbox.Count == 3, "October through December queued separately");
+            hub.FlushPendingRentInvoices();
+            Require(conv.messages.Count == 8 && conv.unread == 4, "each month delivers exactly one bill pair");
+            Require(conv.messages[3].rentInvoiceMonth == 201610 && conv.messages[5].rentInvoiceMonth == 201611 && conv.messages[7].rentInvoiceMonth == 201612, "months delivered in order");
+            Require(hub.CurrentRentRequest(conv.messages[7]) && !hub.CurrentRentRequest(conv.messages[1]), "only latest outstanding-total card is actionable");
+            sim.S.money = 20000; Require(hub.TransferRent(100, out _), "partial transfer accepts current invoice");
+            Require(sim.Debt == 9350 && hub.CurrentRentRequest(conv.messages[7]), "partial payment leaves the latest bill active");
+            Require(hub.TransferRent(sim.Debt, out _), "remaining balance settles");
+            Require(!hub.CurrentRentRequest(conv.messages[7]), "settled bill cannot be paid twice");
+            var next = new ChapterOneSim(); runtime.SetSimulationForTests(next);
+            next.S.prologue = 2; next.S.appInstallState = 2;
+            GameCalendar.Advance(next.S, GameCalendar.DayIndex(new DateTime(2016, 6, 1))); next.SettleCalendar();
+            int oldCount = conv.messages.Count; hub.FlushPendingRentInvoices();
+            Require(conv.messages.Count == oldCount && next.S.rentInvoiceOutbox.Count == 1, "cross-save pending bill waits for matching chat state");
+            Debug.Log("MonthlyRentDeliveryChecks PASS: durable first-frame invoice, JSON reload, matching owner, receipt deduplication, calendar catch-up, unread, partial/full payment, cross-save guard.");
+        }
+        finally { UnityEngine.Object.DestroyImmediate(go); }
+    }
     [MenuItem("LingGuang/Checks/World interactions")]
     public static void RunInteractions()
     {
@@ -109,7 +151,7 @@ public static class WorldYyGiftRoutingChecks
 
     static void CheckGroupPresetsAndPhotos(ChapterOneRuntime runtime, YYChatHub hub)
     {
-        var choices=(string[])Call(hub,"GroupPresetChoices"); Require(choices.Length==3,"exactly three current preset bubbles");
+        // Content checks first, on the full date-eligible pool of this fresh save (nothing sent yet).
         var presets=(IList)Call(hub,"AvailableGroupPresets");
         foreach(var preset in presets)
         {
@@ -120,6 +162,61 @@ public static class WorldYyGiftRoutingChecks
             foreach(var text in replies)foreach(var banned in new[]{"摆渡众包","房租","训练包"})Require(!text.Contains(banned),"group private-topic exclusion");
             foreach(var banned in new[]{"摆渡众包","房租","训练包"})Require(!zh.Contains(banned),"preset private-topic exclusion");
         }
+        CheckGroupPresetLifecycle(runtime, hub, presets);
+    }
+    static string PresetId(object preset) => (string)preset.GetType().GetField("id").GetValue(preset);
+    static string PresetIdForText(IList presets, string shown)
+    {
+        foreach(var preset in presets)
+        {
+            var type=preset.GetType();
+            if((string)type.GetField("text").GetValue(preset)==shown||(string)type.GetField("textEn").GetValue(preset)==shown) return PresetId(preset);
+        }
+        return null;
+    }
+    // Lifecycle semantics: at most three bubbles, frozen for the game day, never a sent id, no same-day refill.
+    static void CheckGroupPresetLifecycle(ChapterOneRuntime runtime, YYChatHub hub, IList presets)
+    {
+        var life=hub.S.groupPresets; Require(life!=null,"YYState carries a group preset lifecycle");
+        Require(presets.Count>=3,"real resource offers at least three eligible presets on this date");
+        int today=GameCalendar.CurrentDay(runtime.Sim.S);
+        var choices=(string[])Call(hub,"GroupPresetChoices");
+        Require(choices.Length<=3,"never more than three preset bubbles");
+        Require(choices.Length==Math.Min(3,presets.Count),"fresh day with nothing sent shows a full set of bubbles");
+        var ids=new string[choices.Length];
+        for(int i=0;i<choices.Length;i++)
+        {
+            ids[i]=PresetIdForText(presets,choices[i]); Require(ids[i]!=null,"every bubble is a real eligible preset");
+            Require(!life.sentIds.Contains(ids[i]),"no bubble repeats a sent preset");
+            for(int j=0;j<i;j++)Require(ids[j]!=ids[i],"bubbles are distinct");
+        }
+        // The getter is a pure read: calling it again changes neither the answer nor the save.
+        bool hadSelection=life.hasDailySelection; int selectionDay=life.selectionDay, dailyCount=life.dailyIds.Count;
+        var again=(string[])Call(hub,"GroupPresetChoices");
+        Require(again.Length==choices.Length&&Array.TrueForAll(again,x=>Array.IndexOf(choices,x)>=0),"getter is stable within the day");
+        Require(life.hasDailySelection==hadSelection&&life.selectionDay==selectionDay&&life.dailyIds.Count==dailyCount,"getter does not mutate the frozen selection");
+        // One explicit freeze stores exactly the previewed ids for today; a second one is a no-op.
+        bool frozeNow=(bool)Call(hub,"FreezeGroupPresetDay");
+        Require(frozeNow==!(hadSelection&&selectionDay==today),"freeze reports a change only when today was not yet frozen");
+        Require(life.hasDailySelection&&life.selectionDay==today,"selection is frozen for the current game day");
+        Require(!(bool)Call(hub,"FreezeGroupPresetDay"),"second freeze on the same day is a no-op");
+        var frozen=(string[])Call(hub,"GroupPresetChoices");
+        Require(frozen.Length==choices.Length&&Array.TrueForAll(frozen,x=>Array.IndexOf(choices,x)>=0),"frozen ids equal the pure preview");
+        // Sending one removes it for good and does not refill today, although the pool still has more presets.
+        string sentText=choices[0], sentId=ids[0];
+        Require((bool)Call(hub,"SendGroupPreset",sentText),"real preset send path accepts a shown bubble");
+        Require(life.sentIds.Contains(sentId),"sent id persisted in the lifecycle state");
+        var after=(string[])Call(hub,"GroupPresetChoices");
+        Require(after.Length==choices.Length-1&&Array.IndexOf(after,sentText)<0,"sent bubble disappears without same-day refill");
+        Require(Array.TrueForAll(after,x=>Array.IndexOf(choices,x)>=0),"remaining bubbles are today's frozen ones");
+        foreach(var preset in (IList)Call(hub,"AvailableGroupPresets"))Require(PresetId(preset)!=sentId,"sent preset leaves the eligible pool");
+        Require(!(bool)Call(hub,"SendGroupPreset",sentText),"a sent preset text is no longer a preset send");
+        // Next game day: a fresh frozen set, still at most three and never the sent id.
+        GameCalendar.Advance(runtime.Sim.S,today+1);
+        var tomorrow=(string[])Call(hub,"GroupPresetChoices");
+        Require(tomorrow.Length<=3&&Array.IndexOf(tomorrow,sentText)<0,"next day never cycles a sent preset back");
+        Require((bool)Call(hub,"FreezeGroupPresetDay")&&life.selectionDay==today+1,"next day freezes once");
+        Call(hub,"StopPresetReplies",true); // The inactive fixture never plays the queued replies.
     }
     [MenuItem("LingGuang/Checks/World group photos")]
     public static void RunPhotos()

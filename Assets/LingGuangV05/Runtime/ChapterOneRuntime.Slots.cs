@@ -48,10 +48,10 @@ namespace LingGuangV05.Runtime
         {
             if (index == 1) return SaveNow();
             var archive = ArchiveStore(index, false);
-            if (archive == null || !useDiskSave || Sim.InPrologue || persistenceBlocked) return false;
+            if (archive == null || !useDiskSave || Sim.InPrologue || persistenceBlocked || endingArchiveBusy) return false;
             try {
                 Saving?.Invoke();
-                bool saved = archive.TrySave(JsonUtility.ToJson(Sim.S), out var message);
+                bool saved = archive.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var message);
                 SaveStatus = message; Changed?.Invoke(); return saved;
             } catch (Exception e) { SaveStatus = e.Message; return false; }
         }
@@ -59,7 +59,7 @@ namespace LingGuangV05.Runtime
         public bool LoadArchive(int index, bool chapter = false)
         {
             var archive = ArchiveStore(index, chapter);
-            if (archive == null || !useDiskSave || persistenceBlocked) return false;
+            if (archive == null || !useDiskSave || persistenceBlocked || endingArchiveBusy) return false;
             var loaded = archive.Load(ValidArchive);
             if (!loaded.Success) { SaveStatus = loaded.Message; return false; }
             // Validate and instantiate before touching the active save. Atomic replacement retains a backup.
@@ -72,7 +72,7 @@ namespace LingGuangV05.Runtime
                 return false;
             }
             restored.S.lastSeenUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            if (!store.TrySave(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }
+            if (!store.TrySaveSnapshot(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }
             Attach(restored); KnownProfile(restored, false);
             SaveStatus = GameText.T("已读取，当前进度已切换。", "Loaded. Current progress has changed.");
             Changed?.Invoke(); return true;
@@ -81,12 +81,12 @@ namespace LingGuangV05.Runtime
         public bool CaptureChapter(int chapter)
         {
             var archive = ArchiveStore(chapter, true);
-            if (archive == null || !useDiskSave || TestMode || Sim.InPrologue || persistenceBlocked) return false;
+            if (archive == null || !useDiskSave || TestMode || Sim.InPrologue || persistenceBlocked || endingArchiveBusy) return false;
             // First-unlock snapshots are immutable across reloads and new games.
             if (File.Exists(archive.SavePath) || File.Exists(archive.SavePath + ".bak")) return true;
             try {
                 Saving?.Invoke();
-                bool saved = archive.TrySave(JsonUtility.ToJson(Sim.S), out var message);
+                bool saved = archive.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var message);
                 if (!saved) SaveStatus = message;
                 return saved;
             } catch (Exception e) { SaveStatus = e.Message; return false; }

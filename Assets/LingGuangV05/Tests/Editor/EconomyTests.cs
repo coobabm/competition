@@ -31,7 +31,7 @@ namespace LingGuangV05.Tests
         /// <summary>Rent days in one settlement of play.</summary>
         static double DaysPerSettlement(ChapterOneSim sim) => sim.Config.dayLengthSeconds / sim.Config.rentDaySeconds;
 
-        [Test] public void NoRentBeforeTheLabsFirstDayThenRentByPlayTime()
+        [Test] public void NoRentBeforeTheLabsFirstDayThenMonthlyInvoiceWithoutDebit()
         {
             var sim = new ChapterOneSim(); double start = sim.S.money;
             sim.Tick(5); Assert.IsFalse(sim.EconomyActive); Assert.That(sim.S.bills.Total, Is.Zero);
@@ -39,7 +39,7 @@ namespace LingGuangV05.Tests
             Assert.IsTrue(sim.EconomyActive); Assert.AreEqual(100, sim.S.bills.broadband);
             MoveTo(sim, Day(6, 20)); Assert.That(sim.S.bills.rent, Is.Zero);
             PlayDay(sim);
-            Assert.AreEqual(2100, sim.Debt, "a seven-day invoice, not an automatic debit");
+            Assert.AreEqual(2100, sim.Debt, "one calendar-month invoice, not an automatic debit");
             Assert.That(sim.S.bills.rent, Is.Zero); Assert.That(sim.S.money, Is.EqualTo(start - sim.S.bills.Total).Within(1e-6));
             Assert.IsTrue(sim.TransferRent(100, out _)); Assert.AreEqual(2000, sim.Debt);
             Assert.AreEqual(100, sim.S.bills.rent); Assert.That(sim.S.money, Is.EqualTo(start - sim.S.bills.Total).Within(1e-6));
@@ -49,6 +49,7 @@ namespace LingGuangV05.Tests
         [Test] public void FromOctoberTheRentIsThreeHundredAndFiftyAndTheLandlordSaysSo()
         {
             var sim = Started(Day(9, 29)); string raised = null;
+            Assert.IsTrue(sim.TransferRent(sim.Debt, out _)); sim.S.bills = new HouseBills();
             sim.Signal += (name, arg) => { if (name == "rent.raised") raised = name; };
             MoveTo(sim, Day(10, 2)); Assert.AreEqual("rent.raised", raised);
             PlayDay(sim); Assert.AreEqual(2450, sim.Debt); Assert.That(sim.S.bills.rent, Is.Zero);
@@ -106,6 +107,52 @@ namespace LingGuangV05.Tests
             Assert.AreEqual(2100, sim.Debt);
             Assert.IsTrue(sim.TransferRent(100, out _));
             Assert.AreEqual(100, sim.S.bills.rent);
+        }
+
+        [Test] public void MonthlyInvoicesSurviveReloadAndNeverRepeatWithinTheSameMonth()
+        {
+            var sim = Started(Day(6, 1));
+            Assert.AreEqual(2100, sim.Debt);
+            Assert.IsTrue(sim.TransferRent(100, out _));
+            MoveTo(sim, Day(6, 30));
+            for (int i = 0; i < 12; i++) sim.Tick(sim.Config.rentDaySeconds);
+            Assert.AreEqual(2000, sim.Debt, "waiting never issues another bill in June");
+            sim = new ChapterOneSim(UnityEngine.JsonUtility.FromJson<GameState>(UnityEngine.JsonUtility.ToJson(sim.S)));
+            sim.SettleCalendar(); Assert.AreEqual(2000, sim.Debt);
+            int invoices = 0; sim.Signal += (name, _) => { if (name == "rent.due") invoices++; };
+            MoveTo(sim, Day(7, 1)); Assert.AreEqual(4100, sim.Debt); Assert.AreEqual(1, invoices);
+            sim.SettleCalendar(); Assert.AreEqual(1, invoices);
+            Assert.AreEqual(201607, sim.S.rentBilledMonth);
+            Assert.AreEqual(new DateTime(2016, 8, 1), sim.NextRentDueDate);
+        }
+
+        [Test] public void CalendarJumpBillsEachMonthAtItsOwnPriceWithoutInstantForeclosure()
+        {
+            var sim = Started(Day(9, 30)); Assert.IsTrue(sim.TransferRent(sim.Debt, out _));
+            var months = new System.Collections.Generic.List<int>();
+            sim.Signal += (name, _) => { if (name == "rent.due") months.Add(sim.S.rentBilledMonth); };
+            double money = sim.S.money;
+            MoveTo(sim, Day(12, 1));
+            CollectionAssert.AreEqual(new[] { 201610, 201611, 201612 }, months);
+            Assert.AreEqual(7350, sim.Debt); Assert.AreEqual(0, sim.S.debtDays);
+            Assert.IsFalse(sim.S.landlordCut); Assert.AreEqual(money - 300, sim.S.money, "only broadband debits automatically");
+            MoveTo(sim, Day(12, 30)); Assert.AreEqual(3, months.Count);
+        }
+
+        [Test] public void PreviousWeeklyScheduleKeepsDebtAndPaidMonthsWithoutDuplicateInvoiceOnLoad()
+        {
+            foreach (double outstanding in new[] { 0.0, 1234.5 })
+            {
+                var state = Started(Day(8, 12)).S;
+                state.rentTransferVersion = 1; state.rentBilledMonth = 0;
+                state.rentOutstanding = outstanding; state.rentPeriodsOpen = outstanding > 0 ? 1 : 0;
+                double wallet = state.money;
+                var sim = new ChapterOneSim(UnityEngine.JsonUtility.FromJson<GameState>(UnityEngine.JsonUtility.ToJson(state)));
+                sim.SettleCalendar();
+                Assert.AreEqual(wallet, sim.S.money); Assert.AreEqual(outstanding, sim.Debt);
+                Assert.AreEqual(201608, sim.S.rentBilledMonth);
+                MoveTo(sim, Day(9, 1)); Assert.AreEqual(outstanding + 2100, sim.Debt);
+            }
         }
 
         // ───────────── electricity ─────────────
@@ -265,10 +312,12 @@ namespace LingGuangV05.Tests
 
         [Test] public void ThreeDaysBelowZeroTextThenCutThenAskThenSell()
         {
-            var sim = Started(Day(6, 5), -500); string signals = "";
+            var sim = new ChapterOneSim(); string signals = "";
+            sim.S.prologue = 2; sim.S.appInstallState = 2;
             sim.Signal += (name, arg) => { if (name == "rent.due" || name == "rent.reminder" || name == "rent.warning" || name == "power.cut" || name == "rent.decision" || name == "bankrupt") signals += name + ";"; };
             double day = sim.Config.rentDaySeconds; Assert.That(sim.HeartbeatsPerSecond, Is.GreaterThan(0));
-            sim.Tick(day); Assert.AreEqual(0, sim.S.debtDays); Assert.AreEqual("rent.due;", signals);
+            MoveTo(sim, Day(6, 5)); sim.S.money = -500;
+            Assert.AreEqual(0, sim.S.debtDays); Assert.AreEqual("rent.due;", signals);
             Assert.IsFalse(sim.ConfirmComputerSale(), "invoice day is not foreclosure");
             sim.Tick(day); Assert.AreEqual(1, sim.S.debtDays); Assert.IsFalse(sim.S.landlordCut);
             Assert.AreEqual("rent.due;rent.reminder;", signals);
@@ -297,7 +346,8 @@ namespace LingGuangV05.Tests
             Assert.AreEqual(0, sim.S.debtDays); Assert.AreEqual(2100, sim.S.bills.rent);
             Assert.That(sim.HeartbeatsPerSecond, Is.GreaterThan(0));
             double paid = sim.S.money; Assert.IsFalse(sim.TransferRent(1, out _)); Assert.AreEqual(paid, sim.S.money);
-            sim.Tick(day * 4); Assert.AreEqual(2100, sim.Debt, "next invoice is separate"); Assert.AreEqual(2100, sim.S.bills.rent);
+            sim.Tick(day * 4); Assert.AreEqual(0, sim.Debt, "play time alone cannot create another month's rent");
+            MoveTo(sim, Day(7, 1)); Assert.AreEqual(2100, sim.Debt, "next month's invoice is separate"); Assert.AreEqual(2100, sim.S.bills.rent);
             sim.Tick(day); Assert.AreEqual(1, sim.S.debtDays, "new invoice restarts escalation");
         }
 
@@ -328,7 +378,7 @@ namespace LingGuangV05.Tests
             var json = UnityEngine.JsonUtility.ToJson(sim.S);
             var loaded = new ChapterOneSim(UnityEngine.JsonUtility.FromJson<GameState>(json));
             Assert.That(loaded.S.money, Is.EqualTo(-1234.5));
-            Assert.That(loaded.Debt, Is.Zero, "a current-version negative wallet is not automatically rent debt");
+            Assert.That(loaded.Debt, Is.EqualTo(sim.Debt), "a negative wallet cannot add to the monthly rent debt on reload");
         }
         [Test] public void LegacyNegativeRentDebtMigratesWithoutChangingNetWealth()
         {

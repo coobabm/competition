@@ -23,7 +23,7 @@ namespace LingGuangV05.Desktop.Story
         sealed class Notice
         {
             public string who, text;
-            public bool systemBalloon;
+            public bool systemBalloon, aiReply;
             public float seconds;
             public System.Action open;
             public System.Func<bool> valid, held;
@@ -48,10 +48,10 @@ namespace LingGuangV05.Desktop.Story
 
         /// <summary>Message notices are invalidated on save swap and hidden/paused during a cutscene.</summary>
         public void EnqueueNotification(string who, string text, float seconds, System.Action open,
-            System.Func<bool> valid, System.Func<bool> held, bool systemBalloon = false)
+            System.Func<bool> valid, System.Func<bool> held, bool systemBalloon = false, bool aiReply = false)
         {
             if (string.IsNullOrEmpty(text)) return;
-            queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open, valid = valid, held = held, systemBalloon = systemBalloon });
+            queue.Enqueue(new Notice { who = who ?? "", text = text, seconds = Mathf.Max(3, seconds), open = open, valid = valid, held = held, systemBalloon = systemBalloon, aiReply = aiReply });
             if (running == null && isActiveAndEnabled) running = StartCoroutine(Run());
         }
 
@@ -92,7 +92,7 @@ namespace LingGuangV05.Desktop.Story
                 {
                     closed = true;
                     if (item.valid == null || item.valid()) item.open?.Invoke();
-                }, item.open != null, out var hover, item.systemBalloon);
+                }, item.open != null, out var hover, item.systemBalloon, item.aiReply);
                 LingGuangV05.Desktop.Media.DesktopNotifications.Ping();
                 // Slide up out of the taskbar.
                 for (float t = 0; t < .35f && Valid(item);)
@@ -184,7 +184,7 @@ namespace LingGuangV05.Desktop.Story
             return box;
         }
 
-        RectTransform Build(string who, string text, System.Action close, System.Action open, bool canOpen, out Hover hover, bool systemBalloon = false)
+        RectTransform Build(string who, string text, System.Action close, System.Action open, bool canOpen, out Hover hover, bool systemBalloon = false, bool aiReply = false)
         {
             if (area == null)
             {
@@ -225,9 +225,10 @@ namespace LingGuangV05.Desktop.Story
             desk.Text(PrologueDesk.Rect("X", x, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), "×", 20, Color.white, TextAlignmentOptions.Center);
 
             // Message.
-            var message = desk.Text(PrologueDesk.Rect("Text", inner, Vector2.zero, Vector2.one, new Vector2(16, 52), new Vector2(-16, -44)), text, 16, PrologueDesk.Ink, TextAlignmentOptions.TopLeft);
+            var message = desk.Text(PrologueDesk.Rect("Text", inner, Vector2.zero, Vector2.one, new Vector2(16, aiReply ? 76 : 52), new Vector2(-16, -44)), text, 16, PrologueDesk.Ink, TextAlignmentOptions.TopLeft);
             message.richText = false;
             message.overflowMode = TextOverflowModes.Ellipsis;
+            if (aiReply) AiContentNotice.CreateFooter(inner, message.font, new Color32(110, 116, 128, 255), 48);
 
             // Footer: greyed opt-out on the left, the action button on the right.
             PrologueDesk.Fill(PrologueDesk.Rect("Rule", inner, Vector2.zero, new Vector2(1, 0), new Vector2(10, 44), new Vector2(-10, 45)), new Color32(228, 230, 234, 255), false);

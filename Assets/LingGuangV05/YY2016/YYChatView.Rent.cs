@@ -89,6 +89,8 @@ namespace LingGuangV05.Desktop.YY
             bool active = hub.CurrentRentRequest(message);
             string status = message.transferPaid ? GameText.T("已转账", "Transferred") : active ? GameText.T("房租待付", "Rent due") : GameText.T("账单记录", "Invoice history");
             double amount = active ? hub.runtime.Sim.Debt : message.transferAmount;
+            if (message.rentInvoiceMonth > 0)
+                status = (message.rentInvoiceMonth % 100) + GameText.T(" 月 · ", " / ") + status;
             Text(Rect("Amount", card, new Vector2(0, 1), Vector2.one, new Vector2(12, -44), new Vector2(-12, -10)), "¥" + amount.ToString("0.00", CultureInfo.InvariantCulture), 22, Color.white, TextAlignmentOptions.MidlineLeft);
             Text(Rect("Status", card, Vector2.zero, new Vector2(1, 0), new Vector2(12, 12), new Vector2(-100, 40)), status, 13, Color.white, TextAlignmentOptions.MidlineLeft);
             if (active)

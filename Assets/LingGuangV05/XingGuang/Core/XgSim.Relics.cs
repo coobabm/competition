@@ -5,7 +5,7 @@ namespace LingGuangV05.XingGuang
 {
     public sealed partial class XgState
     {
-        /// <summary>Every relic the player owns (the backpack), the four equipped slots ("" = empty), and the ones ever seen (the collection book).</summary>
+        /// <summary>Every relic the player owns (the backpack), the purchased equipped slots ("" = empty), and the ones ever seen (the collection book).</summary>
         public List<string> relicOwned = new List<string>();
         public List<string> relicSlots = new List<string> { "", "", "", "" };
         public List<string> relicSeen = new List<string>();
@@ -25,7 +25,7 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>
-    /// 稀有道具 in the sim: owning and equipping (the backpack and four slots), the sources (a pick of three when 灵光 learns
+    /// 稀有道具 in the sim: owning and equipping (the backpack and purchased slots), the sources (a pick of three when 灵光 learns
     /// something, small chances from mini-games, the spider and new records) and the hooks that carry the equipped effects into
     /// the real numbers. Only equipped relics count. The table is in XgRelics.cs.
     /// </summary>
@@ -50,20 +50,34 @@ namespace LingGuangV05.XingGuang
         public event Action RelicPickOffered;
 
         XgRelicFx relicFx;
-        readonly string[] relicFxKey = new string[XgRelics.Slots];
+        readonly string[] relicFxKey = new string[XgRelics.MaxSlots];
         long relicRunTicket;
         int relicRunRight;
         bool relicRunClean = true;
 
         // ───────────── what is held ─────────────
 
+        public const string RelicExpansion8Node = "relic.slots8", RelicExpansion12Node = "relic.slots12";
+        public static bool IsRelicExpansion(string id) => id == RelicExpansion8Node || id == RelicExpansion12Node;
+        public int RelicSlotCapacity => Has(RelicExpansion12Node) ? 12 : Has(RelicExpansion8Node) ? 8 : XgRelics.Slots;
+        public static string RelicExpansionForSlot(int slot) => slot >= 8 ? RelicExpansion12Node : slot >= 4 ? RelicExpansion8Node : null;
+        // Capacity comes from bought nodes, never from list length. Invalid extra equipped slots
+        // return to the existing backpack; purchased slots and their items survive repair.
+        void ResizeRelicSlots()
+        {
+            if (S.relicSlots == null) S.relicSlots = new List<string>();
+            int capacity = RelicSlotCapacity;
+            while (S.relicSlots.Count < capacity) S.relicSlots.Add("");
+            if (S.relicSlots.Count > capacity) S.relicSlots.RemoveRange(capacity, S.relicSlots.Count - capacity);
+            relicFx = null;
+        }
         public IReadOnlyList<string> RelicsOwned => S.relicOwned;
         public bool RelicOwned(string id) => S.relicOwned.Contains(id);
         public bool RelicEquipped(string id) => !string.IsNullOrEmpty(id) && S.relicSlots.Contains(id);
         public bool RelicSeen(string id) => S.relicSeen.Contains(id);
-        public XgRelic RelicInSlot(int slot) => slot < 0 || slot >= S.relicSlots.Count ? null : XgRelics.Get(S.relicSlots[slot]);
+        public XgRelic RelicInSlot(int slot) => slot < 0 || slot >= RelicSlotCapacity || slot >= S.relicSlots.Count ? null : XgRelics.Get(S.relicSlots[slot]);
         public int RelicsEquippedCount { get { int n = 0; foreach (var id in S.relicSlots) if (!string.IsNullOrEmpty(id)) n++; return n; } }
-        public int RelicFreeSlot { get { for (int i = 0; i < XgRelics.Slots; i++) if (string.IsNullOrEmpty(S.relicSlots[i])) return i; return -1; } }
+        public int RelicFreeSlot { get { for (int i = 0; i < RelicSlotCapacity; i++) if (string.IsNullOrEmpty(S.relicSlots[i])) return i; return -1; } }
         /// <summary>The backpack has relics the player has not looked at yet.</summary>
         public bool RelicsFresh => S.relicFresh.Count > 0;
         public bool RelicFresh(string id) => S.relicFresh.Contains(id);
@@ -75,23 +89,23 @@ namespace LingGuangV05.XingGuang
             get
             {
                 bool same = relicFx != null;
-                for (int i = 0; i < XgRelics.Slots; i++)
+                for (int i = 0; i < XgRelics.MaxSlots; i++)
                 {
-                    string id = i < S.relicSlots.Count ? S.relicSlots[i] : "";
+                    string id = i < RelicSlotCapacity && i < S.relicSlots.Count ? S.relicSlots[i] : "";
                     if (relicFxKey[i] != id) { relicFxKey[i] = id; same = false; }
                 }
-                if (!same) relicFx = XgRelics.Build(S.relicSlots);
+                if (!same) relicFx = XgRelics.Build(relicFxKey);
                 return relicFx;
             }
         }
 
         /// <summary>
-        /// Equips an owned relic. With <paramref name="slot"/> -1 it takes the first free slot (false if all four are full);
+        /// Equips an owned relic. With <paramref name="slot"/> -1 it takes the first free slot (false if all purchased slots are full);
         /// with a slot it goes there and whatever was there goes back to the backpack. An equipped relic moves.
         /// </summary>
         public bool EquipRelic(string id, int slot = -1)
         {
-            if (!RelicOwned(id) || slot < -1 || slot >= XgRelics.Slots) return false;
+            if (!RelicOwned(id) || slot < -1 || slot >= RelicSlotCapacity) return false;
             int at = S.relicSlots.IndexOf(id);
             if (slot == -1)
             {
@@ -116,7 +130,7 @@ namespace LingGuangV05.XingGuang
             return true;
         }
 
-        public bool UnequipSlot(int slot) => slot >= 0 && slot < XgRelics.Slots && UnequipRelic(S.relicSlots[slot]);
+        public bool UnequipSlot(int slot) => slot >= 0 && slot < RelicSlotCapacity && UnequipRelic(S.relicSlots[slot]);
 
         void AfterRelicChange()
         {
@@ -327,8 +341,7 @@ namespace LingGuangV05.XingGuang
             S.relicSeen.RemoveAll(id => XgRelics.Get(id) == null || !seen.Add(id));
             foreach (var id in S.relicOwned) if (!S.relicSeen.Contains(id)) S.relicSeen.Add(id);
             S.relicFresh.RemoveAll(id => !S.relicOwned.Contains(id));
-            while (S.relicSlots.Count < XgRelics.Slots) S.relicSlots.Add("");
-            if (S.relicSlots.Count > XgRelics.Slots) S.relicSlots.RemoveRange(XgRelics.Slots, S.relicSlots.Count - XgRelics.Slots);
+            ResizeRelicSlots();
             seen.Clear();
             for (int i = 0; i < S.relicSlots.Count; i++)
                 if (string.IsNullOrEmpty(S.relicSlots[i]) || !S.relicOwned.Contains(S.relicSlots[i]) || !seen.Add(S.relicSlots[i])) S.relicSlots[i] = "";

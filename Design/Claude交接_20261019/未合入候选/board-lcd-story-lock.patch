@@ -1,0 +1,44 @@
+--- a/Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs
++++ b/Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs
+@@ -80,7 +80,7 @@
+     {
+         if (component == null) return;
+         string name = component.GetType().Name;
+-        if (name == "PrologueDirector" || name == "StoryDirector" || name == "StoryDesktopPresenter" || name == "StageOneTutor" || name == "SpiderIntroScene" || name == "LaoZhouYY")
++        if (name == "PrologueDirector" || name == "StoryDirector" || name == "StoryDesktopPresenter" || name == "StageOneTutor" || name == "SpiderIntroScene" || name == "LaoZhouYY" || name == "AiJoinsYy")
+         { component.CancelInvoke(); component.StopAllCoroutines(); component.enabled = false; }
+     }
+     static void State(PlayModeStateChange state)
+@@ -156,6 +156,7 @@
+         hub=UnityEngine.Object.FindAnyObjectByType<GameHubView>(FindObjectsInactive.Include);
+         Require(hub!=null,"Actual Main GameHubView exists");gameWindow=hub.GetComponentInParent<Michsky.DreamOS.WindowManager>(true);
+         Require(gameWindow!=null,"Native Game Hub window exists");gameWindow.OpenWindow();
++        Check(true,"Prepared-desktop fixture isolates AiJoinsYy alongside the existing story hosts; native LCD and board rules remain live.");
+         running=true;deadline=EditorApplication.timeSinceStartup+(LogicMode=="all"?1080:LogicMode=="tools"?360:720);lastFrame=-1;routine=SelectedChecks();EditorApplication.update+=Tick;
+     }
+     static IEnumerator Checks()
+@@ -303,7 +304,23 @@
+     {
+         var bridge=UnityEngine.Object.FindAnyObjectByType<AeroLcdSourceBridge>();
+         if(bridge?.inputSurface==null||!bridge.inputSurface.isActiveAndEnabled||!bridge.inputSurface.inputEnabled)
+-            throw new InvalidOperationException("Actual Main LCD input is unavailable");
++        {
++            var surface=bridge==null?null:bridge.inputSurface;
++            var lcd=bridge==null?null:bridge.controller;
++            var source=surface==null?null:surface.sourceCamera;
++            var prologue=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.Story.PrologueDirector>(FindObjectsInactive.Include);
++            var join=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.Desktop.Story.AiJoinsYy>(FindObjectsInactive.Include);
++            var title=UnityEngine.Object.FindAnyObjectByType<LingGuangV05.CaseMenu.CaseMenuMainDisplay>(FindObjectsInactive.Include);
++            throw new InvalidOperationException("Actual Main LCD input is unavailable; scene="+SceneManager.GetActiveScene().path+
++                "; bridge="+(bridge!=null)+"; surface="+(surface!=null)+"; surfaceActive="+(surface!=null&&surface.isActiveAndEnabled)+
++                "; inputEnabled="+(surface!=null&&surface.inputEnabled)+"; sourceCamera="+(source!=null)+"; cameraActive="+(source!=null&&source.isActiveAndEnabled)+
++                "; lcdActive="+(lcd!=null&&lcd.isActiveAndEnabled)+"; powered="+(lcd!=null&&lcd.IsPowered)+"; powerTransition="+(lcd!=null&&lcd.IsTransitioning)+
++                "; eventSystem="+(EventSystem.current!=null&&EventSystem.current.isActiveAndEnabled)+
++                "; prologue="+(prologue==null?"absent":prologue.enabled+"/"+prologue.Running+"/"+prologue.Step)+
++                "; AiJoinsYy="+(join==null?"absent":join.enabled.ToString())+"/playing="+LingGuangV05.Desktop.Story.AiJoinsYy.Playing+
++                "; AutoLabelPlaying="+LingGuangV05.Desktop.Story.AutoLabelEpiphany.Playing+
++                "; titleDisplay="+(title==null?"absent":title.HasEnteredDesktop+"/"+title.IsScreenPowered+"/"+title.IsRevealingDesktop));
++        }
+         return bridge.inputSurface;
+     }
+     static Vector2 LcdPoint(RectTransform rect,Vector2 local)

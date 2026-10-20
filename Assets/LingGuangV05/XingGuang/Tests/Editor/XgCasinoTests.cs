@@ -5,6 +5,7 @@ namespace LingGuangV05.XingGuang.Tests
 {
     public sealed class XgCasinoTests
     {
+        static XgSim Lab(){var sim=new XgSim();sim.S.stage=5;return sim;}
         sealed class Host : IXgHost
         {
             public double money = 10000;
@@ -84,7 +85,7 @@ namespace LingGuangV05.XingGuang.Tests
         [TestCase(0)][TestCase(-10)][TestCase(int.MaxValue)][TestCase(long.MaxValue)][TestCase(long.MinValue)]
         public void UnsupportedStakesDoNothing(long stake)
         {
-            var sim = new XgSim(); var host = new Host();
+            var sim = Lab(); var host = new Host();
             Assert.IsFalse(sim.TryCasinoBet("dice", 0, stake, host, out _));
             Assert.AreEqual(10000, host.money); Assert.AreEqual(0, host.debits);
             Assert.AreEqual(0, sim.Casino.rounds);
@@ -95,29 +96,29 @@ namespace LingGuangV05.XingGuang.Tests
         {
             foreach (long stake in new long[] { 1, 7, 10, 501, 12345, 99999 })
             {
-                var sim = new XgSim(); var host = new Host { money = 100000 };
+                var sim = Lab(); var host = new Host { money = 100000 };
                 Assert.IsTrue(sim.TryCasinoBet(game, 0, stake, host, out var round), "stake " + stake);
                 Assert.AreEqual(stake, round.stake);
-                Assert.AreEqual(100000 - stake + round.returned, host.money);
+                Assert.AreEqual(100000 - stake + round.returned - sim.S.casinoFrozen, host.money);
             }
             // The whole wallet, all in.
             foreach (long wallet in new long[] { 1, 10, 777, 10000, 3_000_000_007 })
             {
-                var sim = new XgSim(); var host = new Host { money = wallet };
+                var sim = Lab(); var host = new Host { money = wallet };
                 Assert.IsTrue(sim.TryCasinoBet(game, 0, wallet, host, out var round), "all in " + wallet);
-                Assert.AreEqual(wallet - wallet + round.returned, host.money);
-                Assert.AreEqual(1, host.debits);
+                Assert.AreEqual(round.returned - sim.S.casinoFrozen, host.money);
+                Assert.AreEqual(1 + (sim.S.casinoFrozen > 0 ? 1 : 0), host.debits);
             }
             // One yuan more than the wallet is refused and nothing moves.
             foreach (long wallet in new long[] { 1, 10, 5000, 3_000_000_007 })
             {
-                var sim = new XgSim(); var host = new Host { money = wallet }; long rng = sim.Casino.rng;
+                var sim = Lab(); var host = new Host { money = wallet }; long rng = sim.Casino.rng;
                 Assert.IsFalse(sim.TryCasinoBet(game, 0, wallet + 1, host, out _), "over wallet " + wallet);
                 Assert.AreEqual(wallet, host.money); Assert.AreEqual(0, host.debits);
                 Assert.AreEqual(0, sim.Casino.rounds); Assert.AreEqual(rng, sim.Casino.rng);
             }
             // A fractional balance can cover the whole-yuan part only.
-            var frac = new XgSim(); var fracHost = new Host { money = 100.75 };
+            var frac = Lab(); var fracHost = new Host { money = 100.75 };
             Assert.IsFalse(frac.TryCasinoBet(game, 0, 101, fracHost, out _));
             Assert.IsTrue(frac.TryCasinoBet(game, 0, 100, fracHost, out _));
         }
@@ -126,8 +127,8 @@ namespace LingGuangV05.XingGuang.Tests
         public void HugeStakesPayExactlyWithoutOverflow()
         {
             long stake = 40_000_000_000; // 20x of this would overflow a 32-bit int
-            var sim = new XgSim(); var host = new Host { money = 5e12 };
-            for (int i = 0; i < 50; i++)
+            var sim = Lab(); var host = new Host { money = 5e12 };
+            for (int i = 0; i < 50 && !sim.CasinoScamBlocks; i++)
             {
                 sim.Clock = i * 2;
                 Assert.IsTrue(sim.TryCasinoBet("slots", 0, stake, host, out var round));
@@ -149,7 +150,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void BadChoiceAndNonFiniteOrInsufficientWalletDoNotAdvanceRng()
         {
-            var sim = new XgSim(); var host = new Host(); long rng = sim.Casino.rng;
+            var sim = Lab(); var host = new Host(); long rng = sim.Casino.rng;
             Assert.IsFalse(sim.TryCasinoBet("dice", 2, 10, host, out _));
             Assert.IsFalse(sim.TryCasinoBet("oops", 0, 10, host, out _));
             foreach (var money in new[] { 9.0, double.NaN, double.PositiveInfinity })
@@ -160,35 +161,35 @@ namespace LingGuangV05.XingGuang.Tests
         [TestCase("slots")][TestCase("dice")][TestCase("roulette")][TestCase("dragon")]
         public void SettlementHappensOnceAndReloadCannotClaimItAgain(string game)
         {
-            var sim = new XgSim(); var host = new Host(); long trainingRng = sim.S.rng;
+            var sim = Lab(); var host = new Host(); long trainingRng = sim.S.rng;
             Assert.IsTrue(sim.TryCasinoBet(game, 0, 50, host, out var round));
-            Assert.AreEqual(10000 - 50 + round.returned, host.money);
-            Assert.AreEqual(1, host.debits); Assert.AreEqual(trainingRng, sim.S.rng);
+            Assert.AreEqual(10000 - 50 + round.returned - sim.S.casinoFrozen, host.money);
+            Assert.AreEqual(1 + (sim.S.casinoFrozen > 0 ? 1 : 0), host.debits); Assert.AreEqual(trainingRng, sim.S.rng);
             Assert.IsFalse(sim.TryCasinoBet(game, 0, 50, host, out _));
             sim = new XgSim(sim.S) { Clock = 0.5 };
             Assert.IsFalse(sim.TryCasinoBet(game, 0, 50, host, out _));
-            Assert.AreEqual(1, sim.Casino.rounds); Assert.AreEqual(1, host.debits);
+            Assert.AreEqual(1, sim.Casino.rounds); Assert.AreEqual(1 + (sim.S.casinoFrozen > 0 ? 1 : 0), host.debits);
             sim.Clock = 2;
-            Assert.IsTrue(sim.TryCasinoBet(game, 0, 50, host, out _));
+            Assert.AreEqual(!sim.CasinoScamBlocks, sim.TryCasinoBet(game, 0, 50, host, out _));
         }
 
         [Test]
         public void SessionsHaveWinsLossesAndBoundedHistory()
         {
-            var sim = new XgSim(); var host = new Host(); bool won = false, lost = false;
-            for (int i = 0; i < 200; i++)
+            var sim = Lab(); var host = new Host(); bool won = false, lost = false;
+            for (int i = 0; i < XgSim.CasinoScamRounds && !sim.CasinoScamBlocks; i++)
             { sim.Clock = i * 2; Assert.IsTrue(sim.TryCasinoBet("roulette", 0, 10, host, out var r)); won |= r.returned > 10; lost |= r.returned == 0; }
             Assert.IsTrue(won); Assert.IsTrue(lost); Assert.AreEqual(8, sim.Casino.history.Count);
-            Assert.AreEqual(200, sim.Casino.rounds); Assert.AreEqual(10000 - sim.Casino.wagered + sim.Casino.returned, host.money);
+            Assert.AreEqual(XgSim.CasinoScamRounds, sim.Casino.rounds); Assert.IsTrue(sim.CasinoFrozenNow); Assert.AreEqual(10000 - sim.Casino.wagered + sim.Casino.returned - sim.S.casinoFrozen, host.money);
             Assert.AreEqual(0, new XgSim().Casino.rounds);
         }
 
         [Test]
         public void JsonRoundTripPreservesRngWalletCooldownHistoryAndAdvertisement()
         {
-            var sim = new XgSim(); var host = new Host();
+            var sim = Lab(); var host = new Host();
             Assert.IsTrue(sim.TryCasinoBet("slots", 0, 100, host, out _));
-            sim.S.stage = 3; sim.AdvanceCasinoAd(120, false);
+            sim.AdvanceCasinoAd(120, false);
 #if UNITY_5_3_OR_NEWER
             string json = UnityEngine.JsonUtility.ToJson(sim.S);
             var state = UnityEngine.JsonUtility.FromJson<XgState>(json);
@@ -214,7 +215,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void AdWaitsForMidgameStaysUntilCloseAndDoesNotStack()
         {
-            var sim = new XgSim(); sim.S.stage = 2;
+            var sim = Lab(); sim.S.stage = 2;
             sim.AdvanceCasinoAd(1000, false); Assert.IsFalse(sim.Casino.adVisible);
             sim.S.stage = 3;
             sim.AdvanceCasinoAd(119, false); Assert.IsFalse(sim.Casino.adVisible);

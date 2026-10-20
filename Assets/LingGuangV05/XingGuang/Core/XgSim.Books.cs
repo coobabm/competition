@@ -81,7 +81,8 @@ namespace LingGuangV05.XingGuang
         public int BookDoneDay(XgBook book) { var e = book == null ? null : BookEntry(book.id, false); return e == null || !BookDone(book) ? 0 : (int)e.value; }
 
         /// <summary>The ability opens the book on the shelf.</summary>
-        public bool BookOpen(XgBook book) => book != null && AbilitiesCount >= book.ability;
+        public bool BookOpen(XgBook book) => book != null && BookOwned(book.id)
+            && (AbilitiesCount >= book.ability || ChaptersRead(book) > 0 || S.bookReading == book.id);
 
         /// <summary>Books it has finished, in shelf order.</summary>
         public List<XgBook> BooksDone() { var l = new List<XgBook>(); foreach (var b in XgBooks.All) if (BookDone(b)) l.Add(b); return l; }
@@ -89,7 +90,7 @@ namespace LingGuangV05.XingGuang
         public List<XgBook> BooksStarted() { var l = new List<XgBook>(); foreach (var b in XgBooks.All) if (ChaptersRead(b) > 0) l.Add(b); return l; }
 
         /// <summary>Parameters (K) the finished books added to the bar.</summary>
-        public double BookParamsK { get { double k = 0; foreach (var b in XgBooks.All) if (BookDone(b)) k += b.paramsK; return k; } }
+        public double BookParamsK { get { double k = 0; foreach (var b in XgBooks.All) if (b.paramsK != 0 && BookDone(b)) k += b.paramsK; return k; } }
         /// <summary>Characters read off the shelf in all (= samples booked).</summary>
         public double BookCharsRead
         {
@@ -121,6 +122,7 @@ namespace LingGuangV05.XingGuang
         public string ReadBlocker(XgBook book, IXgHost host)
         {
             if (book == null) return T("没有这本书。", "No such book.");
+            if (!BookOwned(book.id)) return T("先在图书馆购买这本书。", "Buy this book in the library first.");
             if (!BookOpen(book)) return T("学会「" + AbilityName(book.ability, false) + "」以后才读得懂。", "It can read this once it has learnt '" + AbilityName(book.ability, true) + "'.");
             if (BookDone(book)) return T("读完了。", "Finished.");
             if (Reading) return S.bookReading == book.id ? T("正在读。", "Reading.") : T("一次只读一本。", "One book at a time.");
@@ -168,29 +170,44 @@ namespace LingGuangV05.XingGuang
             // A character read is worth what a word read is worth now (XgSim.Reading.cs: more in the later stages).
             double samples = ch.chars * ReadWorth;
             SetCount(S.dataExtra, book.dataset, ExtraSamples(book.dataset) + samples);
-            foreach (var run in Runs) if (run != null && run.dataset == book.dataset) Evaluate(run);
             string line = BookReaction(book, index);
             S.bookLineBook = book.id; S.bookLineChapter = index; S.bookLine = line;
             var d = XgCatalog.Dataset(book.dataset);
             string corpus = d != null ? T(d.name, d.nameEn) : book.dataset;
+            bool done = e.count >= book.chapters.Length;
+            bool redBeat = book.id == RedMansionId && done && S.redMansionBeat == 0;
+            if (redBeat) S.redMansionBeat = 1;
+            bool completedNow = false;
+            if (done)
+            {
+                e.value = TodayKnown ? Today : 0;
+                completedNow = CommitBookCompletion(book);
+                Earn("book." + book.id);
+            }
+            foreach (var run in Runs) if (run != null && run.dataset == book.dataset) Evaluate(run);
             Say(T("读完《" + book.name + "》" + ch.title + "：" + ch.chars.ToString("#,0") + " 字，记作 " + samples.ToString("#,0") + " 条样本，进了「" + corpus + "」。",
                 "Read " + book.nameEn + ", " + ch.titleEn + ": " + ch.chars.ToString("#,0") + " characters, " + samples.ToString("#,0") + " samples into " + corpus + "."));
             if (!string.IsNullOrEmpty(line)) Say(T("它：", "It: ") + line);
-            BookChapterRead?.Invoke(book, index, line);
-            if (e.count >= book.chapters.Length)
+            if (done)
             {
-                e.value = Today;
                 double now = TrainedParamsK;
-                Say(T("《" + book.name + "》读完了。参数 +" + ParamsText(book.paramsK) + "：", book.nameEn + " is finished. Parameters +" + ParamsText(book.paramsK) + ": ")
-                    + ParamsText(now - book.paramsK) + " → " + ParamsText(now));
-                Earn("book." + book.id);
-                BookFinished?.Invoke(book);
+                if (book.paramsK > 0)
+                    Say(T("《" + book.name + "》选段读完了。参数 +" + ParamsText(book.paramsK) + "：", "Finished the selected excerpts from " + book.nameEn + ". Parameters +" + ParamsText(book.paramsK) + ": ")
+                        + ParamsText(now - book.paramsK) + " → " + ParamsText(now));
+                else Say(T("《" + book.name + "》的原创导读读完了。", "Finished the original guide to " + book.nameEn + "."));
             }
-            if (book.id == RedMansionId && e.count >= book.chapters.Length && S.redMansionBeat == 0)
+            if (redBeat)
             {
-                S.redMansionBeat = 1;
                 Say(T("它：后面呢？", "It: What comes next?"));
             }
+            if (completedNow && S.stage < BookAskStage)
+            {
+                var completion = S.bookCompletions.Find(c => c.bookId == book.id);
+                AddLine("ai", BookCompletionText(completion) + (line.Length == 0 ? "" : " " + line));
+            }
+            // Observers can save only after the chapter, completion and legacy story beat are committed.
+            BookChapterRead?.Invoke(book, index, line);
+            if (completedNow) BookFinished?.Invoke(book);
         }
 
         /// <summary>The player answers 「后面呢？」: the last forty chapters were written by someone else. It will write one too.</summary>
@@ -219,8 +236,10 @@ namespace LingGuangV05.XingGuang
             if (book == null || chapter < 0 || chapter >= book.chapters.Length) return "";
             var ch = book.chapters[chapter];
             int ability = AbilitiesCount;
-            if (ability <= 2) return (ch.names.Length > 0 ? ch.names[0] : ch.words.Length > 0 ? ch.words[0] : "") + T("？", "?");
-            if (ability == 3) return string.Join(" / ", ch.words);
+            var names = English && ch.namesEn.Length > 0 ? ch.namesEn : ch.names;
+            var words = English && ch.wordsEn.Length > 0 ? ch.wordsEn : ch.words;
+            if (ability <= 2) return (names.Length > 0 ? names[0] : words.Length > 0 ? words[0] : "") + T("？", "?");
+            if (ability == 3) return string.Join(" / ", words);
             string gist = T(ch.gist, ch.gistEn);
             if (ability == 4) return gist;
             var link = BookLink(book, ch);
@@ -255,8 +274,8 @@ namespace LingGuangV05.XingGuang
             if (book == null || chapter < 0 || chapter >= book.chapters.Length) return "";
             var ch = book.chapters[chapter];
             var sb = new StringBuilder();
-            sb.Append(T("你刚读完《" + book.name + "》" + ch.title + "。原文节选：" + ch.excerpt + "\n",
-                "You just read " + book.nameEn + ", " + ch.titleEn + ". Excerpt: " + ch.excerpt + "\n"));
+            sb.Append(T("你刚读完《" + book.name + "》" + ch.title + "。材料类型：" + XgBooks.MaterialLabel(book, false) + "。材料：" + XgBooks.Excerpt(ch, false) + "\n",
+                "You just read " + book.nameEn + ", " + ch.titleEn + ". Material: " + XgBooks.MaterialLabel(book, true) + ". Text: " + XgBooks.Excerpt(ch, true) + "\n"));
             string shelf = BooksReadLine();
             if (shelf.Length > 0) sb.Append(shelf).Append('\n');
             sb.Append(T("用你自己的话说一句读后感，不超过 40 字，可以联系读过的别的书。只输出这一句。",
@@ -287,8 +306,13 @@ namespace LingGuangV05.XingGuang
             if (ability <= 3)
             {
                 for (int i = 0; i < read; i++)
-                    foreach (var w in ability <= 2 ? book.chapters[i].names : book.chapters[i].words)
+                {
+                    var chapter = book.chapters[i];
+                    var names = English && chapter.namesEn.Length > 0 ? chapter.namesEn : chapter.names;
+                    var words = English && chapter.wordsEn.Length > 0 ? chapter.wordsEn : chapter.words;
+                    foreach (var w in ability <= 2 ? names : words)
                         if (!seen.Contains(w) && seen.Count < 6) seen.Add(w);
+                }
                 return string.Join(ability <= 2 ? T("、", ", ") : " / ", seen) + (ability <= 2 ? T("？", "?") : "");
             }
             var last = book.chapters[read - 1];
@@ -367,13 +391,15 @@ namespace LingGuangV05.XingGuang
             {
                 int r = ChaptersRead(b);
                 if (r <= 0) continue;
-                if (BookDone(b)) done.Add(T("《" + b.name + "》", b.nameEn));
+                string material = XgBooks.LibraryEntry(b.id).IsGuide ? T("导读", " (guide)") : T("选段", " (selections)");
+                if (BookDone(b)) done.Add(T("《" + b.name + "》", b.nameEn) + material);
                 else part.Add(T("《" + b.name + "》读到「" + b.chapters[r - 1].title + "」", b.nameEn + " up to " + b.chapters[r - 1].titleEn));
             }
             if (done.Count == 0 && part.Count == 0) return "";
             string zh = "你读过：" + string.Join("", done) + (part.Count > 0 ? (done.Count > 0 ? "；" : "") + string.Join("；", part) : "") + "。可以偶尔引用，别卖弄；没读过的书不要引用。";
             string en = "Books you have read: " + string.Join(", ", done) + (part.Count > 0 ? (done.Count > 0 ? "; " : "") + string.Join("; ", part) : "") + ". Quote them now and then, don't show off; never quote a book you haven't read.";
-            return T(zh, en);
+            return T(zh, en) + T("原创导读只可概括已提供的材料，不表示读过原著全文，也不要编造原文引句。",
+                " Original guides cover only the supplied material, not the full books; do not invent quotations.");
         }
 
         /// <summary>Keeps a loaded save's shelf sane (unknown books, a stale reading bar).</summary>
@@ -381,6 +407,14 @@ namespace LingGuangV05.XingGuang
         {
             if (S.books == null) S.books = new List<XgScore>();
             S.books.RemoveAll(e => e == null || XgBooks.Get(e.key) == null);
+            var unique = new Dictionary<string, XgScore>();
+            foreach (var e in S.books)
+            {
+                e.count = Math.Max(0, Math.Min(XgBooks.Get(e.key).chapters.Length, e.count));
+                if (!unique.TryGetValue(e.key, out var kept)) unique.Add(e.key, e);
+                else if (e.count > kept.count) { kept.count = e.count; kept.value = e.value; }
+            }
+            S.books = new List<XgScore>(unique.Values);
             if (S.bookReading == null) S.bookReading = "";
             if (S.bookLine == null) S.bookLine = "";
             if (S.bookLineBook == null) S.bookLineBook = "";

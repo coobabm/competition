@@ -58,7 +58,8 @@ public static class NamingChecks
             go = new GameObject("Restarted naming check"); go.SetActive(false);
             runtime = go.AddComponent<ChapterOneRuntime>(); runtime.EnsureInitialized();
             Check(runtime.Sim.S.aiName == "CON" && runtime.Sim.S.money == 12345, "Fresh runtime preserves legacy save");
-            Check(Application.productName == "LingGuang-Playability-20261008", "Existing save identity unchanged");
+            Check(Application.companyName == "DefaultCompany" && Application.productName == "competition",
+                "Release save identity unchanged (DefaultCompany/competition), found " + Application.companyName + "/" + Application.productName);
         }
         catch (Exception error) { report.failure = error.ToString(); throw; }
         finally

@@ -1,0 +1,7 @@
+﻿topic,id,eventDate,eventPrecision,earliestVisibleDate,date,sourceUrl,rights
+T01,lz2_t01_alphago,2016-03-15,day,2016-03-16,2016-05-25,https://blog.google/technology/ai/alphagos-ultimate-challenge/,"Original bilingual summary; no source article text, images or product assets reproduced."
+T02,lz2_t02_xiaoice,2014,year,2016-01-01,2016-05-29,https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/,"Original bilingual summary; no source article text, images or product assets reproduced."
+T03,lz2_t03_tay,2016-03-25,official-report-day,2016-03-26,2016-06-02,https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/,"Original bilingual summary; no source article text, images or product assets reproduced."
+T04,lz2_t04_resnet,2015-12-10,paper-v1-submission,2016-01-01,2016-06-06,https://arxiv.org/abs/1512.03385,"Original bilingual summary; no source article text, images or product assets reproduced."
+T05,n0928,2016-09-27,official-product-announcement,2016-09-28,2016-09-28,https://research.google/blog/a-neural-network-for-machine-translation-at-production-scale/,"Original bilingual summary; no source article text, images or product assets reproduced."
+T06,lz2_t06_siri,2011-10-04,announcement-day,2016-01-01,2016-06-10,https://www.apple.com/newsroom/2011/10/04Apple-Launches-iPhone-4S-iOS-5-iCloud/,"Original bilingual summary; no source article text, images or product assets reproduced."

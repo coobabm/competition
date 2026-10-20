@@ -162,7 +162,9 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual("ability", sim.SpiderAnswerBlocker("spam", host));
             Assert.IsFalse(sim.SpiderAnswer("spam", host).accepted);
             Assert.AreEqual(1000, host.money);
-            Assert.AreEqual("closed", sim.SpiderAnswerBlocker("danmu", host));
+            Assert.AreEqual("ability", sim.SpiderAnswerBlocker("danmu", host), "the free stage-two teaching desk is open but has no checkpoint");
+            Assert.IsFalse(sim.DeskOpen("review"));
+            Assert.AreEqual("closed", sim.SpiderAnswerBlocker("review", host));
             var ok = WithCheckpoint("spam", .9);
             Assert.IsNull(ok.SpiderAnswerBlocker("spam", host));
             ok.S.residentQuiet = true;

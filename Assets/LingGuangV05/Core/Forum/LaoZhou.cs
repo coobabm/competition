@@ -7,9 +7,7 @@ using LingGuangV05.Core.Era;
 namespace LingGuangV05.Core.Forum
 {
     /// <summary>
-    /// What sophon.dll lets 老周 see before he answers (design v1.1 §9): stage, the next ability and its shorter bar, the latest
-    /// phenomenon, money, cards, heat, NaNs. Filled by the desktop from the save and the lab; never contains the
-    /// golden settings, so neither the model nor the fallback can give them away.
+    /// Legacy compatibility data. Private fields are never authorized character knowledge.
     /// </summary>
     public sealed class LaoZhouFacts
     {
@@ -66,29 +64,19 @@ namespace LingGuangV05.Core.Forum
         /// <summary>The offline answer. <paramref name="times"/> is how often this topic was asked, this time included.</summary>
         public static string Reply(string question, LaoZhouFacts f, int times, bool english)
         {
-            return Answer(question, f, times, english) + Regard(question, f, times, english);
-        }
-
-        /// <summary>
-        /// What he lets slip about the player as the player really gets on (stage 3 on): he is gruff, so it is only on some
-        /// answers and always short, specific to how the player works, and by stage 5 he is asking the player's opinion.
-        /// Nothing here says he can see the player's computer.
-        /// </summary>
-        static string Regard(string question, LaoZhouFacts f, int times, bool english)
-        {
-            if (f.stage < 3 || f.finale) return "";
+            // Retain authored identity/finale clues, but route all practical advice without private save fields.
             string topic = Topic(question, f);
-            switch (topic)
-            {
-                case "hello": case "other": case "stuck": case "overfit": case "nan": case "gpu": case "power": break;
-                default: if (!topic.StartsWith("short:", StringComparison.Ordinal)) return ""; break;
-            }
-            if (((question ?? "").Length + times + f.stage) % 2 != 0) return "";
-            string T(string zh, string en) => english ? en : zh;
-            if (f.stage == 3) return T(" 你最近问得比一般人准哈。", " Your questions have been sharper than most lately, huh.");
-            if (f.stage == 4) return T(" 说实话，你这种一样一样试的路子，比我们组有些人系统。", " Honestly, trying one thing at a time like you do is more systematic than some people in our group.");
-            if (f.stage == 5) return T(" 你问的这些，换成一年前的我，自己都想不到要问。……对了，要是换你，你会怎么选？", " A year ago I wouldn't have thought to ask any of this myself. … By the way, what would you pick in my place?");
-            return T(" 说真的，现在遇到拿不准的，我第一个想问的是你。哈。", " Honestly, when I'm unsure these days, you're the first person I want to ask. Huh.");
+            if (topic == "identity" || topic == "floor7" || topic == "404" || topic == "zhounow" || topic == "master" || topic == "shutdown" || topic == "rule")
+                return Answer(question, f, times, english);
+            if(topic=="gpu")return Gpu(new LaoZhouFacts { today=f.today },false,english);
+            // Public technical knowledge is selected only by the player's question, never by private metrics.
+            if(topic=="nan")return english
+                ? "NaN means a calculation produced no valid number. Check the inputs and loss for invalid values, try a lower learning rate, and verify training on a small batch first."
+                : "NaN 表示计算没有得到有效数字。先检查输入和损失里有没有无效值，再试着降低学习率，用一个小 batch 验证训练。";
+            if(topic=="overfit")return english
+                ? "Overfitting means doing well on the training data but poorly on unseen data. Keep a separate test set; more varied data, regularization or a smaller model may help."
+                : "过拟合是训练数据上表现好，换成没见过的数据就变差。留一份独立测试集；增加数据多样性、正则化或减小模型都可以试试。";
+            return LaoZhouQuestions.GeneralReply(english);
         }
 
         static string Answer(string question, LaoZhouFacts f, int times, bool english)
@@ -166,48 +154,17 @@ namespace LingGuangV05.Core.Forum
         /// <summary>How he feels about the player at this stage: he starts as the gruff old-timer and, as the player really gets somewhere, respects him more (never flattery for nothing).</summary>
         public static string Attitude(int stage, bool english)
         {
-            if (english)
-            {
-                if (stage <= 2) return "Attitude: you see him as a hobbyist who likes to tinker; you grumble at him, but you respect that he actually does things.";
-                if (stage == 3) return "Attitude: his questions keep getting sharper and you quietly think more of him. Praise is rare, short and specific.";
-                if (stage <= 5) return "Attitude: you are quietly impressed: a fresh graduate doing it step by step on his own, more solid than some in your lab. You sometimes ask for his opinion. Praise names what he got right, never gushing.";
-                return "Attitude: you treat him as a peer; when you are unsure, you want to ask him first. There is respect in your tone, still in your gruff voice.";
-            }
-            if (stage <= 2) return "你对他的态度：把他当个爱折腾的发烧友，嘴上嫌他瞎折腾，心里认可他肯动手。";
-            if (stage == 3) return "你对他的态度：他问的问题越来越像样，你心里多看他一眼。夸人很少，短，而且具体。";
-            if (stage <= 5) return "你对他的态度：暗暗佩服。一个刚毕业的人，一个人一步一步做出来，比你们实验室有些人踏实。你有时会问他的看法。夸要点出他做对了什么，不肉麻。";
-            return "你对他的态度：把他当同行，遇到拿不准的事第一个想问他。语气里有敬意，但仍是老周的直脾气。";
+            return english ? "Respond to what the person actually said; do not infer achievement from progression."
+                : "只根据对方实际说的话回应，不按游戏进度推断成就。";
         }
 
         /// <summary>The local model's system prompt: persona, hard rules, and what sophon.dll shows him right now.</summary>
         public static string SystemPrompt(LaoZhouFacts f, bool english)
         {
-            var sb = new StringBuilder();
-            if (english)
-            {
-                sb.Append("You are \"周而复始\" (Zhou), a second-year master's student in 2016 China who trains models in a lab and hangs out in the GPU forum, chatting by private message. You know deep learning well and talk casually, like a hardware forum regular. ");
-                sb.Append("Rules: only answer what you are asked, briefly (1–3 sentences). Never start new topics. Never claim to see the player's computer; if asked how you know, say it's a guess. ");
-                sb.Append("Give a direction, not a full solution; never give exact settings or numbers for the current problem. It is 2016. ");
-            }
-            else
-            {
-                sb.Append("你是贴吧 ID「周而复始」，也就是老周：省城某大学研二，实验室做深度学习，显卡吧的老哥，在贴吧私信里跟人聊（不用 YY）。你很懂深度学习，说话专业又随手，句末爱加“哈”，管调参叫“炼丹”。");
-                sb.Append("规则：只回答对方问的，一到三句。不要主动开新话题。永远不承认能看到对方电脑；被问你怎么知道，就说“猜的。你这种情况我见多了。”");
-                sb.Append("只给方向，不给完整答案；当前卡住的问题不要说出具体参数和数值。现在是 2016 年。");
-            }
-            sb.Append(EraLexicon.PromptRule(english)).Append('\n');
-            sb.Append(Attitude(f.stage, english)).Append('\n');
-            sb.Append(english ? "What you can see of the player's game (do not quote it as a list): " : "你能看到的对方游戏状态（不要原样念出来）：");
-            sb.Append(english ? "stage " : "阶段 ").Append(f.stage).Append("; ");
-            if (f.nextAbility.Length > 0) sb.Append(english ? "next ability: " : "下一项能力：").Append(f.nextAbility)
-                .Append(f.shortOf == "params" ? (english ? " (short of trained parameters)" : "（差的是练过的参数量）") : f.shortOf == "data" ? (english ? " (short of data)" : "（差的是数据量）") : "").Append("; ");
-            if (f.phenomenon.Length > 0) sb.Append(english ? "latest phenomenon: " : "最近出现的现象：").Append(f.phenomenon).Append("; ");
-            sb.Append(english ? "money ¥" : "钱 ¥").Append(f.money.ToString("0", CultureInfo.InvariantCulture)).Append("; ");
-            sb.Append(english ? "GPUs " : "显卡 ").Append(f.gpus).Append(english ? ", temperature " : " 张，温度 ").Append(f.temperature.ToString("0", CultureInfo.InvariantCulture)).Append("°C; ");
-            sb.Append("NaN ").Append(f.nanCount).Append("; ");
-            if (f.bestAccuracy > 0) sb.Append(english ? "best accuracy " : "最好准确率 ").Append((f.bestAccuracy * 100).ToString("0", CultureInfo.InvariantCulture)).Append("%; ");
-            sb.Append(english ? "date " : "日期 ").Append(f.today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)).Append('.');
-            return sb.ToString();
+            return (english
+                ? "You are Lao Zhou, a graduate student and GPU forum regular in 2016. Answer the current question briefly. Only use actual direct messages or source-tagged public material you have read and linked to this person. Hidden identity does not grant access to private training, exams, equipment, money, books, or progress. Do not infer those from game state or an old NPC claim. "
+                : "你是老周，2016年的研究生和显卡吧网友。简短回应当前问题。你只知道实际收到的私信，以及有来源、确实看过且关联到对方身份的公开内容。特殊身份不意味着能查看对方的训练、考试、设备、资金、书籍或进度；不能按游戏状态或旧NPC的话推断这些私事。")
+                + EraLexicon.PromptRule(english);
         }
 
         /// <summary>

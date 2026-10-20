@@ -1,0 +1,17 @@
+{
+    "downloadOnStart": false,
+    "modelEntries": [
+        {
+            "label": "",
+            "filename": "LingGuang/Models/Qwen3.5-2B-Q5_K_S-emb5.gguf",
+            "path": "LingGuang/Models/Qwen3.5-2B-Q5_K_S-emb5.gguf",
+            "lora": false,
+            "url": "",
+            "embeddingOnly": false,
+            "embeddingLength": 2048,
+            "includeInBuild": true,
+            "contextLength": 262144
+        }
+    ],
+    "debugMode": 1
+}

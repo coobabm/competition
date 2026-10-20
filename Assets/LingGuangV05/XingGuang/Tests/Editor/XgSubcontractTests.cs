@@ -34,7 +34,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void UnlocksAtStageTwoWithAutoLabellingAndAjieAsksInYY()
+        public void UnlocksAtStageTwoWithAutoLabellingThroughCrowdNotYY()
         {
             var host = new Host();
             var sim = new XgSim { GoldChance = 0 };
@@ -48,10 +48,8 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.SubcontractUnlocked);
             Assert.AreEqual(1, opened);
             var lines = sim.TakeYYLines();
-            Assert.AreEqual(1, lines.Count);
-            Assert.AreEqual("ajie", lines[0].from);
-            Assert.AreEqual("你那个众包还缺人不？我在网吧上班，闲着也是闲着。", lines[0].zh);
-            Assert.IsFalse(string.IsNullOrEmpty(lines[0].en));
+            Assert.AreEqual(0, lines.Count, "the YY group does not learn about the player's work");
+            Assert.That(sim.S.log, Has.Some.Contains("摆渡众包开放了「分包」"));
             Assert.AreEqual(0, sim.PendingYYLines);
         }
 

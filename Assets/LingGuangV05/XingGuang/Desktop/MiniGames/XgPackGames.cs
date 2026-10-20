@@ -6,6 +6,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         {
             switch(id)
             {
+                case "board_nextmove": return new XgNextMoveQuestions(c);
+                case "daily_probability": case "daily_affairs": return new XgDailyQuestions(c);
                 case "stage_sentence": return new XgSentenceLesson(c);
                 case "stage_translation": return new XgTranslationLesson(c);
                 case "stage_compare": return new XgBetterAnswerLesson(c);

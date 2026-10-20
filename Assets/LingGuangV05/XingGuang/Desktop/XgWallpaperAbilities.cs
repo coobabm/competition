@@ -50,7 +50,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void Update()
         {
             if (wallpaper == null || controller?.Sim == null) return;
-            float alpha = wallpaper.Reveal.Visible ? Mathf.SmoothStep(0, 1, (wallpaper.Reveal.Age - XgWallpaperReveal.CompleteSeconds) / .8f) : 0;
+            float alpha = wallpaper.Reveal.Visible ? wallpaper.ReduceMotion ? 1 : Mathf.SmoothStep(0, 1, (wallpaper.Reveal.Age - XgWallpaperReveal.CompleteSeconds) / .8f) : 0;
             alpha *= presentation != null ? presentation.LightLevel : 1;
             canvasRenderer.SetAlpha(alpha);
             for (int i = 0; i < names.Length; i++) { names[i].canvasRenderer.SetAlpha(alpha); progress[i].canvasRenderer.SetAlpha(alpha); }

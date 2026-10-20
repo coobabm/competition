@@ -1586,3 +1586,22 @@ Original period-inspired teaching illustrations, 2026-10-18:
 - teach_meme_power_original.png: original generic smiling mascot celebrating effort; evokes the 2016 "洪荒之力" phrase without any athlete image or likeness. Game-date gate 2016-08-08.
 Created for this game with original procedural vector drawing code draw_original_memes.py. No third-party images, photographs, fonts, or stock art used. In-game use/export permitted as project-original assets; source retained in integration staging.
 These are minigame illustrations only; not substitutes for the 13 group-chat photographs.
+
+Ending trial photographs / 终局试炼照片：
+See ENDING_TRIAL_PHOTO_CREDITS.txt in this directory for all five sources, authors, licenses and image modifications.
+五张照片的作者、来源、许可与修改说明见本目录 ENDING_TRIAL_PHOTO_CREDITS.txt。
+
+Group-chat photo illustrations / 群聊情景照片配图：
+See GROUP_CHAT_PHOTO_CREDITS.txt for the three licensed photographs used to illustrate fictional group chats, with original authors, source dates, license links and modifications. These are not newly AI-generated images.
+三张照片用于虚构群聊情节配图，并非本轮AI生成。作者、原图日期、来源、许可和改动见本目录 GROUP_CHAT_PHOTO_CREDITS.txt。
+
+Original group-chat illustrations / 原创群聊插画：
+Ten project-original procedural scene illustrations were added as the authorized non-photographic alternative; no image-generation API was used. Full authorship, method, rights and scene notes are in GROUP_CHAT_PHOTO_CREDITS.txt. Existing three licensed photos and five ending-trial photos are separate and unchanged.
+新增十张为授权替代方案下的原创情境插画，非摄影、非图像API生成；作者、方法、使用范围和逐图说明见 GROUP_CHAT_PHOTO_CREDITS.txt。已有三张许可照片和五张终局图独立保留。
+
+2026-10-20 original forum diagrams / 原创论坛知识配图
+era_lz2_t03_discussion — Community input review before learning; original project diagram.
+era_lz2_t04_discussion — Residual connection concept; original project diagram, not a reproduced paper figure.
+Creator: this project, generated with original geometric drawing code in Design/素材源码/forum-discussions/generate.py. No external photograph, logo, or likeness used. These are explanatory illustrations, not historical photographs.
+字体 / Font: Inter Regular, SIL OFL 1.1; bundled font license applies. Source notes: Design/素材源码/forum-discussions/README.md.
+thread_ask_imagenet / thread_ask_translate — Original project diagrams for the player-created help threads: varied picture examples and paired sentences. Not ImageNet samples or UN corpus reproductions. Same original geometry source and Inter OFL license as above.

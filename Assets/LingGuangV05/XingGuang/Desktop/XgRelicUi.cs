@@ -80,8 +80,8 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         /// <summary>The tip for an empty slot.</summary>
-        public static string EmptyTip(XgSim sim) => sim.English
-            ? "<b>Empty slot</b>\nFour rare items can be equipped at once. Open the backpack to equip or swap any of them, any time."
-            : "<b>空位</b>\n稀有道具最多同时装备 4 件。打开背包，随时装备或互换。";
+        public static string EmptyTip(XgSim sim) => sim != null && sim.English
+            ? "<b>Empty slot</b>\nUp to " + (sim == null ? XgRelics.Slots : sim.RelicSlotCapacity) + " rare items can be equipped at once. Open the backpack to equip or swap any of them, any time."
+            : "<b>空位</b>\n稀有道具最多同时装备 " + (sim == null ? XgRelics.Slots : sim.RelicSlotCapacity) + " 件。打开背包，随时装备或互换。";
     }
 }

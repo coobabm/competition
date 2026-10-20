@@ -23,6 +23,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         RectTransform workspace, body, timerBar, timerFill;
         TMP_Text wkTitle, wkRule, qno, lessonProgress;
+        /// <summary>Funds while teaching: the desk header shows the wallet the desk pays into, so a miss's fine is visible.</summary>
+        TMP_Text wkMoney;
         RectTransform confidenceRoot, confidenceFill, coopPanel, feedRoot, captionFocus;
         UnityEngine.UI.Slider threshold;
         RectTransform previewRoot, previewMemoryRoot, previewMemoryFill;
@@ -83,6 +85,7 @@ namespace LingGuangV05.Desktop.XingGuang
         float feedbackTimer, redTimer;
         long commentCardId = -1;
         string comment;
+        bool commentGenerated;
 
         public RectTransform Paper => paper;
         RectTransform paper;
@@ -177,6 +180,16 @@ namespace LingGuangV05.Desktop.XingGuang
             workspace = LabelBox(ui, root, "Workspace", Vector2.zero, Vector2.one, new Vector2(HallW + ColumnGap, 0), new Vector2(-(SideW + ColumnGap), 0));
             LabelHeader(ui, workspace, "标注台", "Labelling desk", out wkTitle, out wkRule);
             UiTip.Add(wkRule, () => Sim == null ? "" : PayTip());
+            // The wallet, where the desk's own pay rules sit: teaching hides the desktop HUD, so the header carries it.
+            var headStrip = workspace.Find("Header") as RectTransform;
+            if (headStrip != null)
+            {
+                wkRule.rectTransform.offsetMax = new Vector2(-170, wkRule.rectTransform.offsetMax.y);
+                wkMoney = ui.Text(Rect("Funds", headStrip, new Vector2(0, 0), new Vector2(1, 1), new Vector2(-160, 0), new Vector2(-12, 0)), "", 15, DarkTeaching ? XgDark.Money : XgPalette.Money, TextAlignmentOptions.MidlineRight);
+                wkMoney.fontStyle = FontStyles.Bold;
+                wkMoney.textWrappingMode = TextWrappingModes.NoWrap;
+                UiTip.Add(wkMoney, "经费。答对加钱，答错、超时扣钱；科技和道具也花这笔钱。", "Funds. Right answers pay, misses and timeouts cost; tech and items spend the same wallet.");
+            }
             body = Rect("Body", workspace, Vector2.zero, Vector2.one, new Vector2(1, 38), new Vector2(-1, -35));
             BuildFeed(body);
             BuildFrozenBanner(body);
@@ -301,7 +314,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "logic": what = Lang.T("逻辑和推理题。要动脑子，所以报酬最高。"); break;
                 case "sense": what = T("常识判断：一句人人都知道的话，说得对就点「对」，不对点「错」。判断题目本身，把正确答案教给它；点错只断连击，不扣钱。", "Common sense: judge the statement itself. Press True if it is correct, False otherwise. Teach it the correct answer; a miss only breaks the combo."); break;
                 case "danmu": what = Lang.T("判断弹幕是不是在夸。"); break;
-                case "spam": what = Lang.T("判断短信是不是垃圾或诈骗。"); break;
+                case "spam": what = Lang.T("判断短信是不是垃圾或诈片。"); break;
                 default: what = d != null ? T(d.name, d.nameEn) : id; break;
             }
             double pay = desk?.pay ?? 1;
@@ -460,6 +473,9 @@ namespace LingGuangV05.Desktop.XingGuang
             lessonFeedbackBack.gameObject.SetActive(lessonFeedback);
             var button = answer ? yes.rt : no.rt;
             var binaryReview = !WorkContext && !queued && direct ? Sim.PredictTeachingBinary(card) : null;
+            // Capture the displayed/inferred answer before submission can advance the current card.
+            string learnedAiAnswer = shownGuessValid ? YesNoWord(shownGuess)
+                : binaryReview != null && !binaryReview.guessed ? YesNoWord(binaryReview.yes) : "";
             int oldDeskLevel = Sim.LevelOf(desk);
             XgAnswer r;
             if (WorkContext)
@@ -477,7 +493,7 @@ namespace LingGuangV05.Desktop.XingGuang
             else r = queued ? Sim.AnswerQueued(card.id, answer, Host) : Sim.Answer(desk, answer, Host);
             if (queued && !r.accepted) { Refresh(); return; }
             if (binaryReview != null) Sim.RememberTeachingBinary(card, answer, binaryReview, card.why, card.whyEn);
-            if (!WorkContext) Sim.RecordTeachingQuestion(card.question, card.questionEn, card.truth, answer, card.why, card.whyEn, desk, card);
+            if (!WorkContext) Sim.RecordTeachingQuestion(card.question, card.questionEn, card.truth, answer, card.why, card.whyEn, desk, card, aiAnswer: learnedAiAnswer);
             LastAnswerDisagreed = teachingAnswer ? !answer : shownGuessValid && shownGuess != answer;
             lastAnsweredFrame = Time.frameCount;
             AnswerCount++;
@@ -606,9 +622,21 @@ namespace LingGuangV05.Desktop.XingGuang
             Refresh();
         }
 
+        /// <summary>Keeps the desk header's wallet line in step; the page is on screen during teaching, where the HUD is hidden.</summary>
+        void UpdateFunds()
+        {
+            if (wkMoney == null || Sim == null) return;
+            var ink = DarkTeaching ? XgDark.Money : XgPalette.Money;
+            string text = "¥ " + Money(Host.Money);
+            if (wkMoney.text == text && wkMoney.color == ink) return;
+            wkMoney.text = text;
+            wkMoney.color = ink;
+        }
+
         public override void Tick(float dt)
         {
             if(teachingReviewOverlay!=null&&teachingReviewOverlay.gameObject.activeInHierarchy)return;
+            UpdateFunds();
             RefreshVisibleHall();
             // The setup arms this window; start its clock only after an actual rendered, usable teaching card.
             if (lessonPresented && Time.frameCount > lessonPresentedFrame && host.Visible && FrontWindow()
@@ -658,7 +686,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (RefreshDeskGame(true)) { RefreshHall(Mode != 0); return; }
             if (displayedSim != Sim)
             {
-                displayedId = 0; commentCardId = -1; commentOwner = null; comment = null; lastFeedId = 0;
+                displayedId = 0; commentCardId = -1; commentOwner = null; comment = null; commentGenerated = false; lastFeedId = 0;
                 for (int i = 0; i < feedIds.Count; i++) { feedIds[i] = -1; feedAges[i] = 2; }
                 displayedSim = Sim;
                 // Rebinding can open or remove desks. Rebuild before using stale tab callbacks.
@@ -802,6 +830,7 @@ namespace LingGuangV05.Desktop.XingGuang
             {
                 if (card.id != commentCardId || commentOwner != Sim)
                 {
+                    commentGenerated = false;
                     comment = queued ? XgSpeechPolicy.Constrain(Lang.T("这个……我拿不准。你来。"), Sim.S.stage, En) : null;
                     RequestComment(desk, card, guess, confidence);
                 }
@@ -810,6 +839,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (teaching) suggestion.text = Sim.AiDisplayName + T("猜：", " guesses: ") + (guess ? T("是", "Yes") : T("否", "No"));
             if (direct || WorkContext) suggestion.text = "";
             if (card.family) suggestion.text = Sim.AiDisplayName + T("：这条消息，你在意吗？", ": Does this message matter to you?");
+            if ((hasGuess && !direct && !WorkContext) || card.family)
+                suggestion.text += "\n<size=10><color=#6F95A5>" + LingGuangV05.Runtime.AiContentNotice.Footer(En) + "</color></size>";
             suggestion.fontSize = teaching ? 34 : 16;
             // Keep the answer beside the question on spacious windows; the narrow
             // fallback remains directly above the answer buttons.
@@ -1590,6 +1621,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (replyEnglish != En) { commentCardId = -1; return; }
                     if (string.IsNullOrWhiteSpace(reply)) return;
                     comment = FormatCardComment(reply, q, Sim.S.stage, replyEnglish);
+                    commentGenerated = true;
                     Refresh();
                 });
             if (!queued) { commentCardId = previousId; commentOwner = previousOwner; }

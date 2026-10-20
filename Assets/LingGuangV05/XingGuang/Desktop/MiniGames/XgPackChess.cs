@@ -85,14 +85,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 if(count<least){least=count;defence=reply;}if(count==0){escapes=true;break;}
             }
             if(!defence.IsValid){Submit(false,"对手没有合法着法，但没有被将杀。","The opponent has no legal move, but is not checkmated.");return;}
-            board.Move(defence);chosenText+=" ["+defence+"]";SuggestMove();Paint();
+            board.Move(defence);chosenText+=" ["+defence+"]";SuggestMove(!escapes);Paint();
             if(escapes)Submit(false,"对手走 "+defence+" 后，可以逃脱将杀。","After "+defence+", the opponent escapes mate.");
             else C.Say(XgUi.T("对手应了 "+defence+"，请走最后一步。","The opponent answered "+defence+". Find the final move."));
         }
-        void SuggestMove()
+        void SuggestMove(bool capture=true)
         {
             aiText="";if(!C.Sim.TeachingAiReady)return;
-            if(C.Skill<.55){aiText=XgUi.T("……不知道","…not sure");return;}
+            if(C.Skill<.55){aiText=XgUi.T("……不知道","…not sure");if(capture)CapturePrediction(null);return;}
             var legal=new List<ChessMove>(board.LegalMoves());if(legal.Count==0)return;
             ChessMove suggestion=legal[C.Random.Next(legal.Count)];
             if(C.Random.NextDouble()<C.Skill)foreach(var move in legal)
@@ -104,6 +104,17 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 if(wins){suggestion=move;break;}
             }
             aiText=suggestion.ToString();
+            // An escaping defence is already a finished player answer. Its new preview must not
+            // replace the prediction the player actually saw before making that move.
+            if(capture)CapturePrediction(SuggestionWins(suggestion));
+        }
+        bool SuggestionWins(ChessMove suggestion)
+        {
+            var next=new ChessGame(board.ToFen());if(!next.Move(suggestion))return false;
+            if(next.Result==student&&next.ResultReasonEnglish=="Checkmate")return true;
+            if(maxMoves-moves<2||next.Result!=ChessGame.Ongoing)return false;
+            foreach(var defence in next.LegalMoves()){var reply=new ChessGame(next.ToFen());reply.Move(defence);if(MatingReplies(reply,student)==0)return false;}
+            return true;
         }
         internal static int MatingReplies(ChessGame position,int player)
         {

@@ -66,7 +66,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// </summary>
     public sealed class XgContractsPage : XgPage
     {
-        const float CardH = 174, Gap = 12;
+        const float CardH = 198, Gap = 12;
         const float FilterH = 28, InfoY = 36, StripY = 58;
 
         /// <summary>One order card and the parts that change.</summary>
@@ -164,6 +164,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 Fx.Knock(row, .02f, new Vector2(12, 0));
                 Fx.Play(XgJuice.Sfx.Id.Thud);
                 host.ShowToast(c.dataset != chip.dataset ? Lang.T("这个检查点干不了这活：需要「") + XgCatalog.Dataset(c.dataset).name + T("」", "")
+                    : Sim.S.stage < XgSim.ContractRequiredStage(c) ? T("阶段 ", "Stage ") + XgSim.ContractRequiredStage(c) + T(" 开放", " required")
                     : c.realtime && Sim.BestAcc(c.dataset) + 1e-9 >= c.threshold ? Lang.T("直播等不了：循环网络一个字一个字地算，跟不上。要不用循环的模型达到 ") + XgSim.Pct(c.threshold)
                     : Lang.T("准确率还没到门槛 ") + XgSim.Pct(c.threshold), 2.5f);
                 return;
@@ -222,14 +223,16 @@ namespace LingGuangV05.Desktop.XingGuang
             k.client = Label("Client", 11, 18, 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineLeft, 12, 70);
             k.title = Label("Job", 30, 22, 15, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
             k.title.fontStyle = FontStyles.Bold;
-            k.acc = ui.Text(Rect("Accuracy", inner, new Vector2(0, 1), new Vector2(0, 1), new Vector2(12, -74), new Vector2(162, -58)), "", 12, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
+            // Give the localized score its own full-width line; the bar must not reserve text space.
+            // Keep the authored type size and let these anchors follow the card's available width.
+            k.acc = ui.Text(Line("Accuracy", 56, 24, 12, 12), "", 12, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
             k.acc.textWrappingMode = TextWrappingModes.NoWrap;
-            var bar = Rect("Bar", inner, new Vector2(0, 1), new Vector2(1, 1), new Vector2(168, -69), new Vector2(-12, -63));
+            var bar = Line("Bar", 84, 6, 12, 12);
             k.fill = Bar(bar, "Fill", ZhongbaoSkin.Track, ZhongbaoSkin.Blue2);
             k.fillImg = k.fill.GetComponent<Image>();
-            k.note = ui.Text(Line("Note", 80, 26, 12, 12), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.TopLeft);
-            k.moneyL = Label("Money", 108, 24, 12, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
-            k.moneyR = Label("Bonus", 108, 24, 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
+            k.note = ui.Text(Line("Note", 94, 26, 12, 12), "", 11, ZhongbaoSkin.Mute, TextAlignmentOptions.TopLeft);
+            k.moneyL = Label("Money", 124, 26, 12, ZhongbaoSkin.Ink, TextAlignmentOptions.MidlineLeft);
+            k.moneyR = Label("Bonus", 124, 26, 12, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);
             k.btn = ui.Button(inner, "", () => Sign(c, row), 13);
             k.btn.rt.anchorMin = new Vector2(0, 0); k.btn.rt.anchorMax = new Vector2(1, 0);
             k.btn.rt.offsetMin = new Vector2(12, 12); k.btn.rt.offsetMax = new Vector2(-12, 40);
@@ -343,6 +346,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 k.stamp.gameObject.SetActive(signed);
                 if (signed) ZhongbaoSkin.Ghost(k.btn, T("每秒结算中", "Paying every second"), false);
                 else if (can) ZhongbaoSkin.Primary(k.btn, T("签约", "Sign"), true);
+                else if (Sim.S.stage < XgSim.ContractRequiredStage(c))
+                    ZhongbaoSkin.Primary(k.btn, T("第 "+XgSim.ContractRequiredStage(c)+" 阶段开放", "Opens at stage "+XgSim.ContractRequiredStage(c)), false);
                 else
                 {
                     // Short of the bar: whole percentage points to go (at least 1); the button does nothing.

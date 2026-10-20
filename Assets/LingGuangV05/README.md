@@ -1,5 +1,7 @@
 # 灵光.exe — 第一章桌面集成
 
+> 本文含早期实现记录；本次发行状态以仓库 RELEASE_NOTES_2026.10.19.5.md 为准。旧人设、页面和解锁描述不作为当前设计依据。
+
 ## 时代设定
 
 游戏发生在 **2016 年**：新游戏从 2016 年 5 月 24 日（星期二）深夜开始（序章只有这一夜），在 AlphaGo 战胜李世石两个半月之后；设置完成后日历跳到 6 月 1 日，12 月 31 日收尾。日期由 `Core/GameCalendar.cs` 统一换算。右下角时钟和锁屏时间由 `GameEraClock` 驱动：日期走游戏日历，时和分跟随玩家电脑的真实时间，所以剧情文本里不写具体钟点。经济系统里的 120 秒「天」只是电费账期，不是日历日；它只改本场景的时钟对象，不写入 DreamOS 用户数据。系统改名 hongmengos 2016（桌面水印、设置 → 关于、开始菜单）；YY 的经典界面保留，设定为老版本客户端。玩家是 2016 届应届本科毕业生，合租在省城的城中村，手上唯一值钱的是读书时攒的游戏电脑（i7-6700K + GTX 980 Ti）。
@@ -80,14 +82,15 @@ YY 从未修改的 `2010desktop` 原生 Messaging 组件树恢复，保留了 Ma
 - The opening story is seen once. When the opening's setup completes, the game writes `player-profile.json` next to the save (opening finished, plus the name, self-reference, what it calls the player, the personality sentence and its axes; the previous file is kept as `.bak`). It belongs to the player, not to one game. Every later new game (「重新开始」 after bankruptcy, reset progress, or a missing save) skips the prologue, the install and the setup, and ends the prologue through the real `ChapterOneRuntime.CompletePrologue` path with that profile: stage 1, 灵光.exe installed, the opening quiet window and the to-do note as for a first-timer. An older install without the file learns the profile from its existing save (including `.bak`, `.gameover-*` and `.reset-*` copies) and writes it. A first-ever player (no profile, no finished save) still gets the full opening. The game-over card has a smaller 「从开场重新开始」 button (`StartOverAfterBankruptcy(true)`; `ResetProgress(true)` likewise) to see the opening again; the setup chosen then becomes the profile. Code: `Core/Prologue/PlayerProfile.cs`, `Runtime/Persistence/PlayerProfileStore.cs`, `ChapterOneRuntime.BeginNewGame`. Tests: `Tests/PersistenceEditor/OpeningSkipTests.cs`, `PrologueTests`.
 - 同目录临时文件 + 原子替换 + 上次有效备份；支持 UTF-8、SHA-256 损坏校验、版本保护。校验不是加密或防作弊。
 - 再次启动按同一模拟规则结算最多 30 分钟离线时间（含电费）；结算后立即写入时间锚点，避免重复领取；时间回拨不产生收益。
-- 所有本章 AI 答案/置信度为可复现的规则模拟。不下载模型、不联网、不调用付费服务、不执行系统命令。
+- 教学训练中的模拟指标不等于实际重训模型权重；自由聊天使用随包本地模型推理，不需要玩家填写 API 密钥。
 
 ## 本地模型（LLM for Unity）
 
-自由聊天、判题和灵光说话用的是本地 Qwen3.5-4B。现在由 LLM for Unity（`ai.undream.llm` 3.0.3，底层 LlamaLib v2.0.5）在游戏进程内运行，不再启动 llama-server 子进程。代码在 `LocalLLM/LocalLlm.cs`。排队、按角色分槽、预热、超时和 GPU→CPU 降级的规则在 `Core/Chat/LlmScheduling.cs`，这些都跟以前一样。
+本地聊天模型为 Qwen3.5-2B（合并了本团队用游戏对话训练的 LoRA，Q5_K_S，1,306,533,984 字节），让整包小于 2 GB；训练流程与原模型/微调后的对照见 `Exports/model-work/lora`。当前由 LLM for Unity（`ai.undream.llm` 3.0.3，底层 LlamaLib v2.0.5）在游戏进程内运行。代码在 `LocalLLM/LocalLlm.cs`，请求调度规则在 `Core/Chat/LlmScheduling.cs`。
 
-- 运行库：第一次打开工程时，LLM for Unity 会把 LlamaLib 下载到 `Assets/StreamingAssets/LlamaLib-v2.0.5/`（约 1.7 GB，已 gitignore）。打包时它自己只留目标平台；Windows 包里的 GPU 库由 `LocalLLM/Editor/LlamaBuildStrip.cs` 删掉，因为 Windows 只走 CPU。
-- 模型：`StreamingAssets/LingGuang/Models/Qwen_Qwen3.5-4B-Q4_K_M.gguf`。LlamaLib 的 llama.cpp 是 2026-03 的版本，不认新版 GGUF 里的 MTP（nextn）层，会报 `missing tensor 'blk.32.ssm_conv1d.weight'`。用 `Tools/LocalLLM/strip_qwen_mtp.py` 去掉这一层，其余权重原样复制（用法写在脚本开头）。
+- 运行库：第一次打开工程时，LLM for Unity 会把 LlamaLib 下载到 `Assets/StreamingAssets/LlamaLib-v2.0.5/`（已 gitignore）。打包时只保留目标平台；Windows 包由 `LocalLLM/Editor/LlamaBuildStrip.cs` 去除 GPU 库，当前方案使用 CPU，目标模型的隔离场景 CPU AVX2 加载与真实回复已通过，完整 Player 性能仍待验证。
+- 目标模型：`StreamingAssets/LingGuang/Models/Qwen3.5-2B-Q5_K_S-emb5.gguf`（已 gitignore），1,306,533,984 字节。来源、做法与 SHA256 见 [模型来源](../StreamingAssets/LingGuang/Models/MODEL_SOURCE.json)、[量化与微调说明](../StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md)及[校验文件](../StreamingAssets/LingGuang/Models/SHA256SUMS.txt)。
+- 转换：去掉 MTP/nextn 层（`Tools/LocalLLM/strip_qwen_mtp.py`），用 imatrix 量化（`Tools/LocalLLM/quantize_qwen35_2b.sh`）。游戏槽 context 4096，不携带多模态 projector。
 - 已知限制：llama.cpp 原生层如果 abort，会连游戏一起退出（以前只是子进程退出，然后自动重启）。LlamaLib 的 `apply_template` 不能并发，所以 `LocalLlm` 给它加了锁。`SixStageParallelQa` 通过 LlamaLib 自带的 HTTP 服务读 `/props`（POST），slot 占用改从 `LocalLlm.NativeCallsInFlight` 读。
 
 ## 检索（RAG）：晴雯和灵光的记忆
@@ -95,10 +98,10 @@ YY 从未修改的 `2010desktop` 原生 Messaging 组件树恢复，保留了 Ma
 回复之前，游戏先找出和对方最新一句相关的几条资料，放进这一轮的状态块。系统提示词不变，所以前缀缓存照常生效。
 
 - 打分：`Core/Chat/Rag.cs` 的 `HybridScorer`，用 BM25 加向量余弦。语义相近（余弦 ≥ .46）就算相关；字面命中但意思无关（余弦 < .36）就过滤掉。没有向量时退回纯 BM25。
-- 向量模型：Qwen3-Embedding-0.6B（`StreamingAssets/LingGuang/Embedding/*.gguf`，已 gitignore），由 `LocalLLM/LocalEmbedder.cs` 在进程内单开一个 LlamaLib 服务、一条工作线程。向量缓存在 `persistentDataPath/LingGuangV05/embeddings-*.bin`。发问前会先算问句的向量，最多等 1.5 秒；资料在后台计算，还没算好的条目先只用 BM25。
+- 向量模型：`StreamingAssets/LingGuang/Embedding/bge-small-zh-v1.5-q8_0.gguf`（26 MB，`LocalLLM/LocalEmbedder.cs`）。只给中文文本算向量，英文退回 BM25。
 - 知识库：`Resources/LingGuang/Rag/qingwen.json` 是晴雯的生活设定，`era2016.json` 是 2016 年的常识和新闻。每条带 `from`/`until`（游戏内日期），过期或还没发生的不会被检索到。可以直接改 JSON。
 - 晴雯：每轮带 3 条自身设定、1 条时代常识、2 段窗口之外的旧聊天。实现在 `GirlfriendPromptText.Knowledge` 和 `GirlfriendPrompt.Recall`。
-- 灵光：`XingGuang/Core/XgSim.Knowledge.cs`。从阶段 3 起能检索被教过的卡和时代新闻，阶段 4 起加上读过的书（按回目和概要检索），阶段 5 起加上和主人的旧对话。研究「词向量」之后才按意思检索，之前只按字面。
+- 灵光：`XingGuang/Core/XgSim.Knowledge.cs`。从阶段 3 起能检索被教过的卡和时代新闻，阶段 4 起加上读过的书（按回目和概要检索），阶段 5 起加上和主人的旧对话。研究「词向量」后的语义检索还依赖可用的向量模型；当前无 embedding GGUF，仍使用 BM25。
 
 ## 工程结构
 

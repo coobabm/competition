@@ -88,8 +88,8 @@ namespace LingGuangV05.XingGuang
                 if (!FiniteCollaboration(c.confidence) || c.confidence < (comboSnapshot ? 0 : .5) || c.confidence > 1) c.hasJudgment = false;
                 c.judgeSource = c.judgeSource ?? ""; c.judgeFailure = c.judgeFailure ?? "";
             }
-            S.prefetch.RemoveAll(c => c == null || XgCatalog.Desk(c.dataset) == null);
-            S.queue.RemoveAll(c => c == null || XgCatalog.Desk(c.dataset) == null);
+            S.prefetch.RemoveAll(c => c == null || XgCatalog.CrowdDesk(c.dataset) == null);
+            S.queue.RemoveAll(c => c == null || XgCatalog.CrowdDesk(c.dataset) == null);
             // Recover oversize legacy/corrupt buffers without silently paying or losing user review cards.
             if (S.queue.Count > ReviewLimit)
             {
@@ -98,7 +98,7 @@ namespace LingGuangV05.XingGuang
             }
             S.noise.RemoveAll(n => n == null || XgCatalog.Dataset(n.dataset) == null || !FiniteCollaboration(n.count) || n.count < 0);
             Trim(S.routeHistory, RouteWindow); Trim(S.autoFeed, FeedWindow);
-            S.brainStats.RemoveAll(r => r == null || XgCatalog.Desk(r.dataset) == null);
+            S.brainStats.RemoveAll(r => r == null || XgCatalog.CrowdDesk(r.dataset) == null);
             foreach (var desk in XgCatalog.Desks) TrimBrainStats(desk.id);
         }
 
@@ -378,7 +378,7 @@ namespace LingGuangV05.XingGuang
         {
             if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || ReviewFull || AutomationHeld) return false;
             var card = S.prefetch.Find(c => c.id == cardId);
-            if (card == null || XgCatalog.Desk(card.dataset) == null || !card.hasJudgment || card.awaitingBrain) return false;
+            if (card == null || XgCatalog.CrowdDesk(card.dataset) == null || !card.hasJudgment || card.awaitingBrain) return false;
             S.prefetch.Remove(card); // Claim once before any reward or event callback.
             // 题库比对: a trap item the platform already checked once goes to a human instead.
             if (CollaborationEnabled && (card.confidence < S.coopThreshold || TrapRecognized(card)))
@@ -422,7 +422,7 @@ namespace LingGuangV05.XingGuang
         public XgAnswer AnswerQueued(long cardId, bool yes, IXgHost host)
         {
             var card = S.queue.Find(c => c.id == cardId);
-            if (card == null || host == null || XgCatalog.Desk(card.dataset) == null) return default;
+            if (card == null || host == null || XgCatalog.CrowdDesk(card.dataset) == null) return default;
             S.queue.Remove(card);
             ObserveProgressionAnswer(card);
             NoteLabelSpeed();

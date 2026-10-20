@@ -2,8 +2,8 @@
   "note": "「教」页的数据包小游戏（《第五轮设计》）。每个包 = 一个题库 + 一种玩法。玩法里每做一步就算一条样本（和现在的小游戏一样走 XgSim.SettleMiniAction）。unlock：stage = 最早阶段；needs = 额外条件（vision = 已选看图线或买过卷积；memory = 买过 RNN；lstm = 买过门控记忆；buy = 要在科技「数据」分支买）。existing = main 上已有的小游戏 id（XgMiniGames），只需挪进「教」并改解锁条件；new = 要新做。所有显示「灵光」的地方一律换成玩家给 AI 起的名字（Sim.AiDisplayName）。",
   "packs": [
     { "id": "spam_swipe", "name": "划短信", "nameEn": "Swipe the texts", "dataset": "spam", "stage": 1, "needs": "", "buy": false, "status": "existing",
-      "play": "短信一条条从上面掉下来，左划是诈骗，右划是正常。越到后面掉得越快。", "playEn": "Texts fall one by one: swipe left for scam, right for genuine. They fall faster as you go.",
-      "fun": "连击时手机震一下；漏掉的诈骗短信会「叮」地落进表姐的收件箱。" },
+      "play": "短信一条条从上面掉下来，左划是垃圾短信，右划是正常。越到后面掉得越快。", "playEn": "Texts fall one by one: swipe left for spam, right for genuine. They fall faster as you go.",
+      "fun": "连击时手机震一下；漏掉的诈片短信会「叮」地落进表姐的收件箱。" },
     { "id": "arith_mole", "name": "算术打地鼠", "nameEn": "Whack-a-sum", "dataset": "arith", "stage": 1, "needs": "", "buy": false, "status": "existing",
       "play": "地洞里冒出带算式的地鼠（7+5=12），算对的敲，算错的放过。", "playEn": "Moles pop up wearing sums (7+5=12): whack the right ones, leave the wrong ones.",
       "fun": "敲错一只，它会龇牙；连敲十只，出一只金地鼠，分数翻倍。" },

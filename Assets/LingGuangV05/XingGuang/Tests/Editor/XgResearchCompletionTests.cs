@@ -13,6 +13,8 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim=new XgSim(new XgState()); var run=sim.S.vision;
             sim.S.owned.Add("mnist");run.arch="lenet";run.depth=12;run.width=4;
+            sim.S.installedDataBatches.Add(new XgLabelCount { dataset = "mnist", count = XgSim.PackBatches("mnist") });
+            Assert.That(sim.InstalledBatches("mnist"), Is.GreaterThan(0), "fixture has installed training data");
             double before=sim.CapacityFraction(run,3);
             sim.S.unlocked.Add("relu");
             Assert.That(sim.CapacityFraction(run,3),Is.LessThan(before));

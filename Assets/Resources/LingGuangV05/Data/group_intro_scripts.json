@@ -1,0 +1,475 @@
+{
+  "note": "下班屁股群的「剧本对话」（《第七轮设计》第二节）。只播一次，存档记 flag。群友只聊自己知道的事：他们知道摆渡众包、淘货、喵鱼，但不知道玩家在练 AI，也不会问。step 类型：group = 群友发言（[谁] 文本，间隔 2–4 秒，先显示「正在输入…」）；self = 主角心里话，用桌面底部的文字冒险对话框，点一下继续；choice = YY 输入框换成选项框，玩家点一个就以玩家身份发出去，然后播这个选项的 replies；link = 群友发下载链接卡片（点了打开浏览器下载页）；todo = 往桌面便签加一条待办；wait = 等某个条件。所有 {name} 换成 Sim.AiDisplayName（剧本里目前没用到）。",
+  "scripts": [
+    {
+      "id": "taohuo_intro",
+      "app": "taohuo",
+      "trigger": {
+        "stageEnter": 2,
+        "delaySec": 20,
+        "minStage": 2,
+        "minDate": 20160617
+      },
+      "steps": [
+        {
+          "type": "group",
+          "text": "[阿杰] 我的 1080 到了！！淘货上买的，昨天下单今天到",
+          "textEn": "[A-Jie] My 1080 arrived!! Bought it on Taohuo, ordered yesterday, here today"
+        },
+        {
+          "type": "group",
+          "text": "[莉莉] 淘货我天天逛，衣服比商场便宜一半",
+          "textEn": "[Lili] I browse Taohuo every day. Clothes are half the mall price"
+        },
+        {
+          "type": "self",
+          "text": "群里在晒显卡……我这张卡也撑不了多久了。",
+          "textEn": "They're showing off GPUs… mine won't hold out much longer."
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "淘货是啥？",
+              "textEn": "What's Taohuo?",
+              "replies": [
+                "[莉莉] 网上商城呀，什么都有",
+                "[阿杰] 显卡、内存、硬盘，比电脑城便宜，还不用跟老板磨嘴皮"
+              ],
+              "repliesEn": [
+                "[Lili] An online shop, it has everything",
+                "[A-Jie] GPUs, RAM, drives. Cheaper than the computer mall, and no haggling"
+              ]
+            },
+            {
+              "text": "1080 多少钱？",
+              "textEn": "How much was the 1080?",
+              "replies": [
+                "[阿杰] 五千多，信仰无价",
+                "[大伟] 够我交两个月房租了"
+              ],
+              "repliesEn": [
+                "[A-Jie] Five grand and change. Faith is priceless",
+                "[Da Wei] That's two months of my rent"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "who": "莉莉",
+          "app": "taohuo",
+          "label": "淘货 · 客户端下载（9.8 MB）",
+          "labelEn": "Taohuo · Download client (9.8 MB)",
+          "text": "[莉莉] 客户端链接在这，先看看价格",
+          "textEn": "[Lili] Here's the client link. Have a look at the prices first"
+        },
+        {
+          "type": "self",
+          "text": "先装上，看看显卡什么价。",
+          "textEn": "Install it first. See what cards cost."
+        },
+        {
+          "type": "todo",
+          "text": "下载淘货（群里莉莉发的链接）",
+          "textEn": "Download Taohuo (Lili's link in the group)",
+          "done": "appInstalled:taohuo"
+        }
+      ]
+    },
+    {
+      "id": "datapack_intro",
+      "trigger": {
+        "firstTime": "examBlockedBySamples",
+        "requires": "appInstalled:taohuo",
+        "delaySec": 8,
+        "minStage": 2
+      },
+      "steps": [
+        {
+          "type": "group",
+          "text": "[阿杰] 我同事在淘货上买了一包「标好的图片」，一万张才几十块",
+          "textEn": "[A-Jie] A colleague bought a pack of 'labelled photos' on Taohuo. Ten thousand for a few dozen yuan"
+        },
+        {
+          "type": "group",
+          "text": "[小刚] 图片还要买？摆渡一搜一大把",
+          "textEn": "[Xiao Gang] Who buys photos? Search and you get loads"
+        },
+        {
+          "type": "group",
+          "text": "[阿杰] 不一样，每张都写好了是啥，猫就写猫，狗就写狗",
+          "textEn": "[A-Jie] Not the same. Every one says what it is. Cat says cat, dog says dog"
+        },
+        {
+          "type": "self",
+          "text": "每张都写好了答案……这不就是我天天在「教」里干的事？",
+          "textEn": "Every one already has its answer… isn't that what I do in Teach all day?"
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "这种东西谁买啊？",
+              "textEn": "Who even buys that?",
+              "replies": [
+                "[阿杰] 搞人工智能的公司、做毕设的学生。机器要学认图，得先喂它一大堆有答案的图",
+                "[阿杰] 说白了，数据就是饲料"
+              ],
+              "repliesEn": [
+                "[A-Jie] AI companies, students doing theses. A machine learns to see by eating piles of answered pictures",
+                "[A-Jie] Data is feed, basically"
+              ]
+            },
+            {
+              "text": "买来怎么用？",
+              "textEn": "How do you use it once you buy it?",
+              "replies": [
+                "[阿杰] 下下来是个压缩包，拖进程序里就行，我同事就这么弄的",
+                "[小刚] 听着像给游戏装 MOD"
+              ],
+              "repliesEn": [
+                "[A-Jie] It downloads as a zip, you drag it into the program. That's what my colleague did",
+                "[Xiao Gang] Sounds like installing a game mod"
+              ]
+            },
+            {
+              "text": "有没有免费的？",
+              "textEn": "Any free ones?",
+              "replies": [
+                "[阿杰] 有，好多是大学公开的，贴吧里有人贴网址，直接下",
+                "[阿杰] 就是大，ADSL 得下半天"
+              ],
+              "repliesEn": [
+                "[A-Jie] Yeah, lots are released by universities. People post the URLs on Tieba",
+                "[A-Jie] They're big though. Takes ages on ADSL"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "self",
+          "text": "数据包……下好放进资料文件夹，再拖进「练」。贴吧里说不定还有免费的网址。",
+          "textEn": "Data packs… download into the folder, drag into Train. Maybe Tieba has free URLs too."
+        },
+        {
+          "type": "todo",
+          "text": "弄一个数据包，拖进「练 › 数据来源」",
+          "textEn": "Get a data pack and drag it into Train › Data",
+          "done": "packInstalled:any"
+        }
+      ]
+    },
+    {
+      "id": "zhongbao_intro",
+      "app": "zhongbao",
+      "trigger": {
+        "stageEnter": 3,
+        "afterStageCutscene": true,
+        "delaySec": 10,
+        "minStage": 3,
+        "minDate": 20160617
+      },
+      "steps": [
+        {
+          "type": "group",
+          "text": "[小刚] 我发现摆渡众包上有基础委托，接之前得先看验收要求",
+          "textEn": "[Xiao Gang] I found basic contracts on Bodu Crowd. You have to check the acceptance requirements first"
+        },
+        {
+          "type": "group",
+          "text": "[大伟] 别光看报酬，看清楚要交付什么",
+          "textEn": "[Da Wei] Read what you have to deliver, not just what it pays"
+        },
+        {
+          "type": "self",
+          "text": "群里在聊新的接活平台……先听听他们怎么说。",
+          "textEn": "A new contracting platform… let me hear what they say.",
+          "action": "blinkYY",
+          "button": "看看群聊",
+          "buttonEn": "Check the group"
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "是什么样的委托？",
+              "textEn": "What kinds of contracts?",
+              "replies": [
+                "[阿杰] 我同事接过数字识别的活。每单都有自己的质量要求",
+                "[小刚] 先看能不能达到要求，再决定接不接"
+              ],
+              "repliesEn": [
+                "[A-Jie] A colleague took a digit-recognition job. Each contract has its own quality requirement",
+                "[Xiao Gang] See whether you can meet it before signing"
+              ]
+            },
+            {
+              "text": "怎么拿报酬？",
+              "textEn": "How do you get paid?",
+              "replies": [
+                "[小刚] 通过验收才能签约。有的先给一笔签约费，之后持续交付持续结算",
+                "[大伟] 每单的价格和要求都得看清楚"
+              ],
+              "repliesEn": [
+                "[Xiao Gang] You need to pass acceptance before signing. Some pay a signing bonus, then ongoing pay for ongoing deliveries",
+                "[Da Wei] Read each contract’s price and requirements"
+              ]
+            },
+            {
+              "text": "先看看再说",
+              "textEn": "I’ll have a look first",
+              "replies": [
+                "[小刚] 对，没签约之前先看要求"
+              ],
+              "repliesEn": [
+                "[Xiao Gang] Right. Read the requirements before signing"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "链接在哪？",
+              "textEn": "Where is the link?",
+              "replies": [
+                "[小刚] 我贴下面了"
+              ],
+              "repliesEn": [
+                "[Xiao Gang] I'll put it below"
+              ]
+            },
+            {
+              "text": "新手先看哪？",
+              "textEn": "Where should a beginner look?",
+              "replies": [
+                "[阿杰] 先看基础委托，要求达不到的不要硬接"
+              ],
+              "repliesEn": [
+                "[A-Jie] Start with basic contracts. Don't sign what you can't deliver"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "who": "小刚",
+          "app": "zhongbao",
+          "label": "摆渡众包 · 客户端下载（12.6 MB）",
+          "labelEn": "Bodu Crowd · Download client (12.6 MB)",
+          "text": "[小刚] 链接，拿去",
+          "textEn": "[Xiao Gang] Link. Take it"
+        },
+        {
+          "type": "self",
+          "text": "先装好，看看有哪些基础委托。",
+          "textEn": "Install it and see what basic contracts are available.",
+          "action": "",
+          "button": "",
+          "buttonEn": ""
+        },
+        {
+          "type": "todo",
+          "text": "下载摆渡众包（群里小刚发的链接）",
+          "textEn": "Download Bodu Crowd (Xiao Gang's link in the group)",
+          "done": "appInstalled:zhongbao"
+        }
+      ]
+    },
+    {
+      "id": "miaoyu_intro",
+      "app": "miaoyu",
+      "trigger": {
+        "after": "appInstalled:zhongbao",
+        "delaySec": 180,
+        "orEra": "netbar_upgrade",
+        "minStage": 3,
+        "minDate": 20160719
+      },
+      "steps": [
+        {
+          "type": "group",
+          "text": "[小刚] 我们楼下网吧全换 1060 了，旧的 970 全挂喵鱼上",
+          "textEn": "[Xiao Gang] The internet café downstairs switched to 1060s. All the old 970s are on Miaoyu"
+        },
+        {
+          "type": "group",
+          "text": "[阿杰] 二手 970 一千出头，就是不知道被网吧折腾成啥样",
+          "textEn": "[A-Jie] Used 970s for just over a grand. Who knows what the café did to them though"
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "喵鱼是什么？",
+              "textEn": "What's Miaoyu?",
+              "replies": [
+                "[小刚] 二手市场，家里闲着的东西都能挂上去卖",
+                "[莉莉] 我把前任送的包挂上去了"
+              ],
+              "repliesEn": [
+                "[Xiao Gang] Second-hand market. Anything lying around, you list it",
+                "[Lili] I listed the bag my ex gave me"
+              ]
+            },
+            {
+              "text": "二手卡靠谱吗？",
+              "textEn": "Are used cards safe?",
+              "replies": [
+                "[阿杰] 看卖家，问清楚用了多久，有没有保修",
+                "[大伟] 便宜是真便宜，坏了也是真坏了"
+              ],
+              "repliesEn": [
+                "[A-Jie] Depends on the seller. Ask how long it was used, and if there's warranty",
+                "[Da Wei] Cheap is really cheap. Broken is really broken"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "who": "小刚",
+          "app": "miaoyu",
+          "label": "喵鱼 · 客户端下载（8.1 MB）",
+          "labelEn": "Miaoyu · Download client (8.1 MB)",
+          "text": "[小刚] 链接在这，我还挂了两个手办",
+          "textEn": "[Xiao Gang] Link's here. I listed two figurines too"
+        },
+        {
+          "type": "todo",
+          "text": "下载喵鱼（二手显卡在这儿）",
+          "textEn": "Download Miaoyu (used GPUs are here)",
+          "done": "appInstalled:miaoyu"
+        }
+      ]
+    },
+    {
+      "id": "enterprise_intro",
+      "trigger": {
+        "stageEnter": 4,
+        "requires": "appInstalled:zhongbao",
+        "afterStageCutscene": true,
+        "delaySec": 15,
+        "minStage": 4
+      },
+      "steps": [
+        {
+          "type": "group",
+          "text": "[大伟] 我同事最近在看更复杂的企业订单，各家的质量要求差挺多",
+          "textEn": "[Da Wei] A colleague is looking at more complex business contracts. Their quality requirements vary a lot"
+        },
+        {
+          "type": "group",
+          "text": "[阿杰] 有的还要求实时处理，光看准确率不够",
+          "textEn": "[A-Jie] Some need real-time processing too. Accuracy alone is not enough"
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "怎么知道能不能接？",
+              "textEn": "How do you know you qualify?",
+              "replies": [
+                "[大伟] 看每单的验收条件，先达到要求，再签约",
+                "[阿杰] 基础单和高阶单分开看"
+              ],
+              "repliesEn": [
+                "[Da Wei] Read each contract’s acceptance conditions. Meet them before signing",
+                "[A-Jie] Keep basic and advanced contracts separate"
+              ]
+            },
+            {
+              "text": "签约以后呢？",
+              "textEn": "What happens after signing?",
+              "replies": [
+                "[大伟] 持续交付，按约定结算；先看清每单的签约费和收入",
+                "[小刚] 别只盯着最大的数字"
+              ],
+              "repliesEn": [
+                "[Da Wei] Ongoing delivery and payment under the contract. Check its signing bonus and income",
+                "[Xiao Gang] Don’t just stare at the biggest number"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "self",
+          "text": "先挑现在能稳定交付的，再考虑更难的订单。",
+          "textEn": "Start with what I can reliably deliver, then consider harder contracts.",
+          "action": "",
+          "button": "",
+          "buttonEn": ""
+        },
+        {
+          "type": "todo",
+          "text": "在摆渡众包查看验收要求，签下一份能完成的订单",
+          "textEn": "Check acceptance requirements on Bodu Crowd and sign a contract you can fulfil",
+          "done": "enterpriseOrderTaken"
+        }
+      ]
+    },
+    {
+      "id": "gamecenter_intro",
+      "app": "gamecenter",
+      "trigger": {
+        "after": "appInstalled:miaoyu",
+        "delaySec": 240,
+        "minStage": 3
+      },
+      "steps": [
+        {
+          "type": "group",
+          "text": "[大伟] 加班加到想下棋，有人陪吗",
+          "textEn": "[Da Wei] Overtime has me wanting to play chess. Anyone?"
+        },
+        {
+          "type": "group",
+          "text": "[阿杰] 游戏中心里有象棋五子棋，我天天被电脑虐",
+          "textEn": "[A-Jie] The Game Center has chess and gomoku. The computer crushes me daily"
+        },
+        {
+          "type": "choice",
+          "options": [
+            {
+              "text": "来一盘",
+              "textEn": "I'm in",
+              "replies": [
+                "[大伟] 等我下班"
+              ],
+              "repliesEn": [
+                "[Da Wei] After I clock off"
+              ]
+            },
+            {
+              "text": "电脑下得很厉害？",
+              "textEn": "Is the computer that good?",
+              "replies": [
+                "[阿杰] 简单难度都打不过，别笑"
+              ],
+              "repliesEn": [
+                "[A-Jie] Can't even beat easy mode. Don't laugh"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "open",
+          "who": "阿杰",
+          "app": "gamecenter",
+          "label": "游戏中心 · 打开已安装的游戏",
+          "labelEn": "Game Hub · Open installed games",
+          "text": "[阿杰] 就是电脑里那个游戏中心，点这儿打开",
+          "textEn": "[A-Jie] It’s the Game Hub already on the computer. Open it here"
+        },
+        {
+          "type": "todo",
+          "text": "打开游戏中心，看看有哪些游戏",
+          "textEn": "Open Game Hub and browse the games",
+          "done": "gamecenterOpened"
+        }
+      ]
+    }
+  ]
+}

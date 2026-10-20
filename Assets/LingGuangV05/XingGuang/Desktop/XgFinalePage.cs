@@ -190,6 +190,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void RequestEndingConfirmation(bool delegated)
         {
+            if (Sim != null && Sim.S.fullOpen && !Sim.S.chapterComplete) return;
             var sim = Sim;
             if (endingOwner != null || sim == null || !root.gameObject.activeInHierarchy || !view.Visible) return;
             endingOwner = sim;
@@ -317,6 +318,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void ConfirmEnding()
         {
+            if (Sim != null && Sim.S.fullOpen && !Sim.S.chapterComplete) return;
             if (endingOwner == null) return;
             string reason = EndingConfirmationBlocker();
             if (reason != null) { CancelEndingConfirmation(); view.ShowToast(reason, 4); Refresh(); return; }
@@ -336,6 +338,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>The next final-test question: the model answers if it runs; the story passes either way (§8 E-1).</summary>
         void AskNext()
         {
+            if (Sim != null && Sim.S.fullOpen && !Sim.S.chapterComplete) return;
             var sim = Sim;
             int i = sim.S.examDone;
             if (asking || !sim.EndingOpen || i >= XgSim.ExamQuestions) return;
@@ -347,8 +350,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 asking = false;
                 // A reply that arrives after a save switch belongs to the old save: never answer the new one with it.
                 if (!ReferenceEquals(sim, Sim)) { Refresh(); return; }
-                reply = EraLexicon.Scrub((reply ?? "").Trim());
-                int end = reply.IndexOf("</think>", StringComparison.Ordinal); if (end >= 0) reply = reply.Substring(end + 8).Trim();
+                reply = EraLexicon.Scrub((LingGuangV05.Core.Chat.LlmScheduling.AfterThinking(reply, false) ?? "").Trim()) ?? "";
                 bool weak = reply.Length < 4;
                 if (weak) reply = Sim.ExamFallback(i);
                 answers[i] = reply + (weak || i == 1 && !reply.Contains("16") ? "\n<color=#6F95A5>" + Lang.T("（我：……错了，但错得像个人。）") + "</color>" : "");
@@ -369,6 +371,12 @@ namespace LingGuangV05.Desktop.XingGuang
         public override void Refresh()
         {
             if (header == null || Sim == null) return;
+            if (Sim.S.stage >= 6 && Sim.S.fullOpen && (!Sim.S.chapterComplete || XgEpilogueFlow.HasCommittedRelease(Sim.S)))
+            {
+                CancelEndingConfirmation();
+                var endingHost = XgEndingPreparationHost.Install(host.Controller);
+                if (endingHost.Show(root)) return;
+            }
             // Rule ticks and final-test answers are page state for one save; another save starts clean.
             if (!ReferenceEquals(pageSim, Sim)) { chosen.Clear(); answers.Clear(); pageSim = Sim; stack.Snap(); stackShownLit = -1; stackLitAt = -99; }
             if (endingOwner != null)
@@ -459,7 +467,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     var c = Sim.AlignCard(Sim.S.alignDone);
                     sb.Append(Lang.T("这两个回答，哪个更好？")).Append('\n');
                     sb.Append("<color=#6F95A5>").Append(T(c.question, c.questionEn)).Append("</color>\n");
-                    sb.Append("A：").Append(T(c.a, c.aEn)).Append("\nB：").Append(T(c.b, c.bEn)).Append('\n');
+                    sb.Append("A：").Append(T(c.a, c.aEn)).Append(ReplyNotice()).Append("\nB：").Append(T(c.b, c.bEn)).Append(ReplyNotice()).Append('\n');
                     sb.Append("<size=12><color=#6F95A5>").Append(Lang.T("微软 Tay 上线 16 小时就被教坏：教它什么，它就是什么。")).Append("</color></size>\n");
                 }
                 else if (Sim.S.fullOpen) sb.Append(T("全部放开：思考模式，上下文 4096。", "Everything open: thinking mode, 4096 context.")).Append('\n');
@@ -504,7 +512,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 for (int i = 0; i < XgSim.ExamQuestions; i++)
                 {
                     sb.Append(i < Sim.S.examDone ? "<color=#5DCAA5>✓</color> " : "· ").Append("<size=12>").Append(Sim.ExamQuestion(i)).Append("</size>\n");
-                    if (answers.TryGetValue(i, out var a)) sb.Append("<size=12><color=#8FB8FF>").Append(a.Replace("<", "‹").Replace(">", "›").Replace("‹color=#6F95A5›", "<color=#6F95A5>").Replace("‹/color›", "</color>")).Append("</color></size>\n");
+                    if (answers.TryGetValue(i, out var a)) sb.Append("<size=12><color=#8FB8FF>").Append(a.Replace("<", "‹").Replace(">", "›").Replace("‹color=#6F95A5›", "<color=#6F95A5>").Replace("‹/color›", "</color>")).Append("</color></size>").Append(ReplyNotice()).Append('\n');
                 }
                 if (Sim.LetterReady) sb.Append("\n<b>").Append(T("去「摆渡」搜那串数字。", "Search the long number on Bodu.")).Append("</b>");
                 return sb.ToString();
@@ -514,8 +522,12 @@ namespace LingGuangV05.Desktop.XingGuang
                 sb.Append("<b>").Append(T("写之前", "Before you write")).Append("</b>\n\n");
                 string ai = Sim.Profile.name.Length > 0 ? Sim.Profile.name : T(LingGuangV05.Core.AppNames.AiZh, LingGuangV05.Core.AppNames.AiEn);
                 foreach (var line in Sim.FinaleTalkLines())
+                {
                     sb.Append(line.me ? "<color=#6F95A5>" + T("我", "Me") + "：</color>" : "<color=#8FB8FF>" + ai + "：</color>")
-                      .Append(line.text.Replace("<", "‹").Replace(">", "›")).Append("\n\n");
+                      .Append(line.text.Replace("<", "‹").Replace(">", "›"));
+                    if(!line.me)sb.Append(ReplyNotice());
+                    sb.Append("\n\n");
+                }
                 if (Sim.FinaleTalkLines().Count == 0) sb.Append("<color=#6F95A5>").Append(T("信读完了。它在等你开口。", "The letter is read. It is waiting for you to speak.")).Append("</color>");
                 return sb.ToString();
             }
@@ -540,6 +552,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         string AppNamesExe() => (Sim != null ? Sim.AiDisplayName : LingGuangV05.Core.AppNames.Ai(GameText.IsEnglish)) + ".exe";
+        static string ReplyNotice()=>"\n<size=10><color=#6F95A5>"+AiContentNotice.Footer(GameText.IsEnglish)+"</color></size>";
     }
 
     // Same page-root lifetime pattern as the trial/depth confirmation; no shared input lock is acquired.

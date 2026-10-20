@@ -25,6 +25,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<Life> lives = new List<Life>();
         readonly Dictionary<int, Life> births = new Dictionary<int, Life>();
         readonly List<Wave> waves = new List<Wave>();
+        readonly List<XgConceptTransition> pendingChanges = new List<XgConceptTransition>(MaxLives);
         XingGuangController controller;
         XgBrainWallpaper wallpaper;
         XgWallpaperConcepts concepts;
@@ -33,7 +34,8 @@ namespace LingGuangV05.Desktop.XingGuang
         XgSim source;
         XgBoard board;
         bool refreshConcepts;
-        bool Reduced => GamePerformance.Low || controller?.View?.Juice != null && controller.View.Juice.Reduced;
+        bool Reduced => XgBrainWallpaper.MotionReduced(controller);
+        bool wasReduced;
 
         public static void Install(XingGuangController controller, XgBrainWallpaper wallpaper)
         {
@@ -58,7 +60,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Clear()
         {
-            lives.Clear(); births.Clear(); waves.Clear(); refreshConcepts = false;
+            lives.Clear(); births.Clear(); waves.Clear(); pendingChanges.Clear(); refreshConcepts = false;
             SetVerticesDirty(); if (concepts != null) concepts.SetVerticesDirty();
         }
         void Detach()
@@ -85,7 +87,9 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Started(XgEpoch epoch)
         {
-            if (!Visible || epoch == null || GamePerformance.Low) return;
+            if (!Visible || epoch == null) return;
+            string region = XgBoardData.DisplayRegion(source.Run((XgTrack)epoch.track).dataset);
+            if (!Reduced && !wallpaper.TryStartGlow(region)) return;
             if (waves.Count == MaxWaves) waves.RemoveAt(0);
             waves.Add(new Wave { started = Time.unscaledTime, strength = epoch.hand ? 1 : .35f,
                 stage = Mathf.Clamp(source.S.stage, 1, 6) });
@@ -94,7 +98,26 @@ namespace LingGuangV05.Desktop.XingGuang
         void Changed(IReadOnlyList<XgConceptTransition> changes)
         {
             if (!Visible || !ReferenceEquals(board, source.Board)) return;
-            if(GamePerformance.Low){presentation?.DataChanged();refreshConcepts=true;return;}
+            if(Reduced){presentation?.DataChanged();refreshConcepts=true;return;}
+            if (changes == null || changes.Count == 0) return;
+            presentation?.DataChanged(); refreshConcepts = true;
+            if (wallpaper.WindowMode)
+            {
+                // Board.Train publishes before CardAnswered/EpochDone. Let the settled event
+                // claim the shared onset first, then consider these lower-priority changes.
+                foreach (var change in changes)
+                {
+                    pendingChanges.RemoveAll(previous => previous.Id == change.Id);
+                    if (pendingChanges.Count == MaxLives) pendingChanges.RemoveAt(0);
+                    pendingChanges.Add(change);
+                }
+                return;
+            }
+            AnimateChanges(changes);
+        }
+        void AnimateChanges(IReadOnlyList<XgConceptTransition> changes)
+        {
+            if (!wallpaper.TryStartGlow(changes[0].Region)) return;
             foreach (var change in changes)
             {
                 lives.RemoveAll(life => life.change.Id == change.Id);
@@ -113,7 +136,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             Observe();
             if (!Visible) { if (lives.Count > 0 || waves.Count > 0) Clear(); return; }
-            if(GamePerformance.Low){if(lives.Count>0||waves.Count>0)Clear();return;}
+            bool reduced = Reduced, modeChanged = reduced != wasReduced;
+            wasReduced = reduced;
             bool hadLife = lives.Count > 0;
             bool active = hadLife || waves.Count > 0;
             int beforeLives = lives.Count, beforeWaves = waves.Count;
@@ -123,11 +147,16 @@ namespace LingGuangV05.Desktop.XingGuang
             waves.RemoveAll(wave => Time.unscaledTime - wave.started >= WaveSeconds);
             bool draw = presentation == null || presentation.DrawDue(ref nextDraw);
             bool expired = lives.Count != beforeLives || waves.Count != beforeWaves;
-            if (active && (draw || expired)) SetVerticesDirty();
-            if (hadLife && (draw || expired) && concepts != null) concepts.SetVerticesDirty();
+            if (active && (!reduced && draw || expired || modeChanged)) SetVerticesDirty();
+            if (hadLife && (!reduced && draw || expired || modeChanged) && concepts != null) concepts.SetVerticesDirty();
         }
         void LateUpdate()
         {
+            if (pendingChanges.Count > 0)
+            {
+                if (Visible && !Reduced && ReferenceEquals(board, source.Board)) AnimateChanges(pendingChanges);
+                pendingChanges.Clear();
+            }
             if (refreshConcepts && concepts != null)
             {
                 refreshConcepts = false;
@@ -230,7 +259,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         void DrawTrainingResponse(VertexHelper vh, Wave wave, float scale, bool reduced)
         {
-            float age = Mathf.Clamp01((Time.unscaledTime - wave.started) / WaveSeconds);
+            float age = reduced ? 0 : Mathf.Clamp01((Time.unscaledTime - wave.started) / WaveSeconds);
             if (age >= 1) return;
             // Nonzero on the first frame, even on an empty board or a no-growth epoch.
             // This acknowledges training effort; it never claims a new concept or better score.

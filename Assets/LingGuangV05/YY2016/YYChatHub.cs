@@ -1,4 +1,5 @@
 using System;
+using VerificationTrace = LingGuangV05.Runtime.Persistence.ReleaseVerificationTrace;
 using System.Collections.Generic;
 using System.Globalization;
 using LingGuangV05.Core;
@@ -11,7 +12,7 @@ using AppNames = LingGuangV05.Core.AppNames;
 
 namespace LingGuangV05.Desktop.YY
 {
-    public enum YYKind { Text = 0, File = 1, System = 2, Transfer = 3 }
+    public enum YYKind { Text = 0, File = 1, System = 2, Transfer = 3, AppLink = 4 }
     public enum YYFileState { Offered = 0, Receiving = 1, Done = 2 }
 
     [Serializable]
@@ -22,7 +23,9 @@ namespace LingGuangV05.Desktop.YY
         public string text = "";
         // Exact player input for authored unlock phrases; empty in older saves.
         public string rawPlayerText = "";
+        public bool laoZhouObserved;
         public string attentionWord = "";
+        public string introApp="",introLabelZh="",introLabelEn="";
         /// <summary>Legacy/generated player line. Never authorizes giving a held gift. Defaults to false.</summary>
         public bool byAi;
         public int learningReplyId, learningComparison;
@@ -30,6 +33,7 @@ namespace LingGuangV05.Desktop.YY
         public double gameSeconds;
         public YYKind kind;
         public double transferAmount;
+        public int rentInvoiceMonth; // yyyyMM for monthly rent cards; 0 for existing cards / transfers.
         public bool transferPaid;
         public string file = "";
         public double sizeMB;
@@ -37,6 +41,7 @@ namespace LingGuangV05.Desktop.YY
         public double received;
         /// <summary>A 斗图 sticker id (YYStickers) when this text message is a sticker; empty otherwise. Old saves load with "".</summary>
         public string sticker = "";
+        public string dailyEventId = "";
         /// <summary>灵光's replies: 1 赞, -1 踩, 0 not rated (the lab keeps the tone card; this is what YY shows).</summary>
         public int rating;
     }
@@ -52,7 +57,10 @@ namespace LingGuangV05.Desktop.YY
     [Serializable]
     public sealed class YYState
     {
-        public int groupPresetTurn;
+        public EndingPrivateState endingPrivate = new EndingPrivateState();
+        public int groupPresetTurn; // Legacy counter retained for compatible saves/diagnostics; no longer selects bubbles.
+        /// <summary>Ordinary group preset lifecycle (daily frozen ids, sent ids, weekly silence). Old saves load a fresh one.</summary>
+        public GroupPresetState groupPresets = new GroupPresetState();
         public int friendMonth, gfStage, gfReceived, gfReplies, gfIgnoredStage;
         public int version = 1;
         public string selected = YYChatHub.LaoZhou;
@@ -138,7 +146,7 @@ namespace LingGuangV05.Desktop.YY
         public event Action Changed;
         /// <summary>The view registers itself so the hub knows what the player can see.</summary>
         public YYChatView View { get; set; }
-        public bool IsTyping(string id) => pending.ContainsKey(id) || (id == GirlfriendId && GirlfriendTyping) || (id != null && id == TypingShown)
+        public bool IsTyping(string id) => (id==EraGroup&&IntroHost?.Typing==true)||pending.ContainsKey(id) || (id == GirlfriendId && GirlfriendTyping) || (id != null && id == TypingShown)
             || (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Thinking);
         /// <summary>The lab answers in 灵光's conversation (XgYyTalk registers itself); without it the generic replies below run.</summary>
         public ILingGuangTalk LingGuangTalk { get; set; }
@@ -154,7 +162,7 @@ namespace LingGuangV05.Desktop.YY
         /// </summary>
         /// <summary>老周 shows up on a new save once he has written in YY (LaoZhouYY); old saves always had him.</summary>
         public bool IsVisible(YYContact c) => c != null && (!c.hidden || (c.id == LingGuangId && S.lingguangUnlocked))
-            && !(c.id == LaoZhou && runtime != null && runtime.Sim != null && runtime.Sim.S.prologue != 0 && Conversation(LaoZhou).messages.Count == 0);
+            && (c.id != LaoZhou || ZhouContactReady);
 
         const int MaxHistory = 200;
         /// <summary>Contacts with a reply on the way, and when it may start (a short "reading" pause).</summary>
@@ -185,6 +193,8 @@ namespace LingGuangV05.Desktop.YY
         /// <summary>Chat history lives inside the 灵光 save (GameState.chatState), so it always matches the game it belongs to.</summary>
         void BindSave(ChapterOneSim sim)
         {
+            // The previous save's silent-group playback and pending group replies must never reach this save.
+            StopPresetReplies(true); StopGroupColdScenes(); groupReplyGeneration++; observedGroupDay = -1;
             linked = sim;
             YYState parsed = null;
             string json = sim != null ? sim.S.chatState : null;
@@ -196,11 +206,16 @@ namespace LingGuangV05.Desktop.YY
             if (parsed != null)
                 foreach (var c in Contacts) if (parsed.conversations.Find(x => x.id == c.id) == null) parsed.conversations.Add(new YYConversation { id = c.id });
             S = parsed ?? Fresh();
+            // Old saves: null-safe lifecycle plus exact preset history backfill (before any new player line).
+            RepairGroupLifecycle();
             // Rewrite only obsolete NPC knowledge; preserve player lines, timestamps,
             // unread counts, normal conversation and every progression flag.
             YYGroup.MigratePrivateKnowledge(S, sim?.S.aiName);
             pending.Clear(); inFlight.Clear(); standing.Clear(); quizReplies.Clear();
             script = null; scriptFor = null; Choices = null; ChoicesFor = null;
+            // Observe today and freeze its choices from the loaded save without MarkDirty.
+            BindGroupPresetDay(sim);
+            StartGroupColdScenes();
             Changed?.Invoke();
         }
 
@@ -256,6 +271,7 @@ namespace LingGuangV05.Desktop.YY
         /// <summary>A scripted scene may already show and sound this arrival; only its duplicate notification is suppressed.</summary>
         public void Receive(string id, string text, bool notify)
         {
+            if (id == LaoZhou && !ZhouContactReady) return;
             var conv = Conversation(id);
             if (conv == null || string.IsNullOrEmpty(text)) return;
             if (id == GirlfriendId) { TrackGirlfriendStage(); S.gfReceived++; }
@@ -265,7 +281,8 @@ namespace LingGuangV05.Desktop.YY
                 return;
             }
             if (id == "netbar" && YYGroup.RevealsPrivateLab(text, runtime?.Sim?.S.aiName)) text = YYGroup.PrivateLabReplacement(text);
-            conv.messages.Add(new YYMessage { from = id, text = text, gameSeconds = Now });
+            if(id==EraGroup&&IntroHost?.DeferGroup(text)==true)return;
+            conv.messages.Add(new YYMessage { from = id, text = text, gameSeconds = Now, laoZhouObserved = id == LaoZhou });
             if (!IsShowing(id)) conv.unread++;
             if (notify) NotifyReceived(id, text);
             EnsureFileOffer();
@@ -278,22 +295,31 @@ namespace LingGuangV05.Desktop.YY
             var contact = Contact(id);
             string sender = contact == null ? id : GameText.T(contact.name, contact.nameEn);
             DesktopNotifications.Notify(runtime, "YY", sender, text, IsShowing(id),
-                () => { if (router != null) router.Open(AppId, id); });
+                () => { if (router != null) router.Open(AppId, id); }, aiReply: true);
         }
 
         /// <summary>Records an explicit player choice from an authored scene; its reply is owned by StoryRunner.</summary>
         public bool SendAuthoredChoice(string id, string text)
         {
+            if (id == LaoZhou && !ZhouContactReady) return false;
             if (S == null) return false;
             var conv = Conversation(id); text = (text ?? "").Trim();
             if (conv == null || text.Length == 0) return false;
             if (text.Length > 1000) text = text.Substring(0, 1000);
-            conv.messages.Add(new YYMessage { from = Me, text = text, gameSeconds = Now });
+            var dailyLine = new YYMessage { from = Me, text = text, gameSeconds = Now, dailyEventId = Guid.NewGuid().ToString("N") };
+            conv.messages.Add(dailyLine);
+            FindLab()?.RecordDailySentMessage(id, dailyLine.dailyEventId, text);
+            if (id == LaoZhou) LingGuangV05.Desktop.Tieba.TiebaHub.Instance.ZhouObserveYy(text,Now,conv.messages.Count-1);
             Touch(); return true;
         }
 
-        public void Send(string id, string text)
+        public void Send(string id, string text) => Send(id, text, "");
+
+        public void Send(string id, string text, string stickerId)
         {
+            if(id==EraGroup&&IntroPlaying){IntroHost.Choose((text??"").Trim());return;}
+            if (id == LaoZhou && (!ZhouContactReady || LingGuangV05.Desktop.Tieba.TiebaHub.Instance.TryZhouYyChoice((text ?? "").Trim()))) return;
+            if (id == EraGroup) RepairGroupLifecycle(); // Import exact history before this new player line is added.
             string rawPlayerText = text ?? "";
             if (id == GirlfriendId && !string.IsNullOrWhiteSpace(text)) NoteGirlfriendReply(text);
             text = (text ?? "").Trim();
@@ -301,8 +327,10 @@ namespace LingGuangV05.Desktop.YY
             if (text.Length > 300) text = text.Substring(0, 300);
             var conv = Conversation(id);
             if (conv == null) return;
-            var line = new YYMessage { from = Me, text = text, rawPlayerText = rawPlayerText, gameSeconds = Now };
+            var line = new YYMessage { from = Me, text = text, rawPlayerText = rawPlayerText, gameSeconds = Now, sticker = stickerId ?? "", dailyEventId = Guid.NewGuid().ToString("N") };
             conv.messages.Add(line);
+            FindLab()?.RecordDailySentMessage(id, line.dailyEventId, text, line.sticker);
+            if (id == LaoZhou) LingGuangV05.Desktop.Tieba.TiebaHub.Instance.ZhouObserveYy(text,Now,conv.messages.Count-1);
             Touch();
             if (id == LaoZhou) runtime.RaiseSignal("chat.sent", LaoZhou);
             if (ChoicesFor == id) { Choices = null; ChoicesFor = null; Changed?.Invoke(); }
@@ -314,6 +342,9 @@ namespace LingGuangV05.Desktop.YY
             if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
             if (id == LaoZhou && LaoZhouHeard != null && LaoZhouHeard(text)) return;
             if (id == EraGroup && SendGroupPreset(text)) return;
+            if (id == EraGroup && string.IsNullOrEmpty(stickerId) && SendGroupFutureNameReply(text)) return;
+            // Ordinary free text only (scripts, quiz, presets and intro already declined it; stickers never count).
+            if (id == EraGroup && string.IsNullOrEmpty(stickerId) && TryGroupColdTurn(text)) return;
             // Everyone answers in their own time; the group only sometimes. Several quick lines get one answer.
             if (id == "netbar" && UnityEngine.Random.value > .7f) return;
             float pause = id == "cousin" ? 5f : id == "netbar" ? 3f : id == LingGuangId ? 1.2f : 1.5f;
@@ -354,7 +385,8 @@ namespace LingGuangV05.Desktop.YY
         {
             if (id == null) return null;
             if (ChoicesFor == id && Choices != null) return Choices;
-            if (id == EraGroup) return GroupPresetChoices();
+            if (id == LaoZhou && ZhouContactReady) { var qa = LingGuangV05.Desktop.Tieba.TiebaHub.Instance.ZhouYyChoices(); if (qa != null) return qa; var ending = EndingPrivateChoices(); if (ending != null) return ending; }
+            if (id == EraGroup) return IntroPlaying?IntroHost.Choices():GroupPresetChoices();
             return standing.TryGetValue(id, out var c) ? c : null;
         }
 
@@ -369,33 +401,49 @@ namespace LingGuangV05.Desktop.YY
             if (pending.Count == 0) return;
             foreach (var id in new List<string>(pending.Keys))
             {
+                if(id==EraGroup&&IntroPlaying)continue;
                 if (inFlight.Contains(id) || Time.unscaledTime < pending[id]) continue;
                 inFlight.Add(id);
                 float requestAt = pending[id];
                 bool delivered = false;
+                int replyingGroupGeneration = groupReplyGeneration;
                 var replyingState = S;
                 var replyingSimulation = runtime.Sim;
+                long verificationRequestId=VerificationTrace.NewRequest();string replySource="scripted";
+                VerificationTrace.Emit(verificationRequestId,"yy_reply_requested",id==LingGuangId?"ai_private":id==GirlfriendId?"girlfriend_private":id=="netbar"?"group":"other");
                 Reply(id, text =>
                 {
-                    if (!ReferenceEquals(S, replyingState) || !ReferenceEquals(runtime.Sim, replyingSimulation)) return;
+                    if (id == EraGroup && replyingGroupGeneration != groupReplyGeneration) { VerificationTrace.Emit(verificationRequestId, "yy_not_delivered", "group_cold_turn"); return; }
+                    if (!ReferenceEquals(S, replyingState) || !ReferenceEquals(runtime.Sim, replyingSimulation)) {VerificationTrace.Emit(verificationRequestId,"yy_not_delivered","stale_owner");return;}
                     if (delivered) return;
                     delivered = true;
                     inFlight.Remove(id);
                     if (pending.TryGetValue(id, out var due) && due == requestAt) pending.Remove(id);
-                    if (!string.IsNullOrEmpty(text)) Receive(id, text);
-                });
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        if(verificationRequestId==0)Receive(id,text);
+                        else
+                        {
+                            var receiving=Conversation(id);int count=receiving?.messages.Count??0;
+                            string source=id=="netbar"&&YYGroup.RevealsPrivateLab(text,runtime?.Sim?.S.aiName)?"policy_replacement":replySource;
+                            Receive(id,text);
+                            VerificationTrace.Emit(verificationRequestId,receiving!=null&&receiving.messages.Count>count?"yy_delivered":"yy_not_delivered",source);
+                        }
+                    }
+                    else VerificationTrace.Emit(verificationRequestId,"yy_not_delivered","empty");
+                },verificationRequestId,verificationRequestId==0?null:(Action<string>)(source=>replySource=source));
             }
         }
 
-        void Reply(string id, Action<string> done)
+        void Reply(string id, Action<string> done,long verificationRequestId,Action<string> provenance)
         {
-            if (quizReplies.TryGetValue(id, out var scripted)) { quizReplies.Remove(id); done(scripted); return; }
+            if (quizReplies.TryGetValue(id, out var scripted)) { quizReplies.Remove(id);provenance?.Invoke("scripted_quiz"); done(scripted); return; }
             var lab = FindLab();
             var conv = Conversation(id);
             string latest = LastPlayerLine(conv);
             if (id == "netbar") {
                 var preset = YYGroup.FutureNameReply(latest);
-                if (preset != null) { done(preset); return; }
+                if (preset != null) {provenance?.Invoke("scripted_group"); done(preset); return; }
                 if (offlineRng.NextDouble() < .5) { done(null); return; }
             }
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
@@ -408,7 +456,8 @@ namespace LingGuangV05.Desktop.YY
                 llm.Chat(messages, LingGuangV05.Desktop.LLM.LlmPersonas.MaxTokens(id, lab), LingGuangV05.Desktop.LLM.LlmPersonas.Temperature(id), text =>
                 {
                     if (!ReferenceEquals(S, expectedState)) { done(null); return; }
-                    if (text == null) { done(Fallback(id, conv, lab)); if (id == LingGuangId && userMessage != null && lab != null) lab.RememberOffline(userMessage.text); return; }
+                    if (text == null) {provenance?.Invoke("fallback_null"); done(Fallback(id, conv, lab)); if (id == LingGuangId && userMessage != null && lab != null) lab.RememberOffline(userMessage.text); return; }
+                    string nativeText=verificationRequestId==0?null:text;bool fallbackUsed=false;
                     text = LingGuangV05.Core.Era.EraLexicon.Scrub(text); // it is 2016: no later memes
                     if (id == LingGuangId)
                     {
@@ -421,16 +470,18 @@ namespace LingGuangV05.Desktop.YY
                         }
                         text = XgSpeechPolicy.Constrain(text, stage, GameText.IsEnglish);
                         // A line it said a moment ago reads like a bot: swap it for a fresh one.
-                        if (RepeatsInYY(conv, text)) text = Fallback(id, conv, lab);
+                        if (RepeatsInYY(conv, text)) {provenance?.Invoke("fallback_repeat");fallbackUsed=true;text = Fallback(id, conv, lab);}
                     }
-                    if (id != LingGuangId && RepeatsInYY(conv, text)) text = Fallback(id, conv, lab);
-                    done(Shape(id, text));
+                    if (id != LingGuangId && RepeatsInYY(conv, text)) {provenance?.Invoke("fallback_repeat");fallbackUsed=true;text = Fallback(id, conv, lab);}
+                    string shaped=Shape(id,text);
+                    if(verificationRequestId!=0&&!fallbackUsed)provenance?.Invoke(string.Equals(nativeText,shaped,StringComparison.Ordinal)?"native":"native_filtered");
+                    done(shaped);
                     if (id == LingGuangId && userMessage != null) LingGuangV05.Desktop.LLM.LlmMemory.AfterExchange(lab, userMessage.text, text);
                 }, false, LingGuangV05.Desktop.LLM.LlmPersonas.Sampling(id, lab),
-                    id == LingGuangId ? LingGuangV05.Core.Chat.LlmSeat.LingGuang : LingGuangV05.Core.Chat.LlmSeat.Others);
+                    id == LingGuangId ? LingGuangV05.Core.Chat.LlmSeat.LingGuang : LingGuangV05.Core.Chat.LlmSeat.Others,verificationRequestId:verificationRequestId);
                 return;
             }
-            done(Fallback(id, conv, lab));
+            provenance?.Invoke("fallback_offline");done(Fallback(id, conv, lab));
             if (id == LingGuangId && lab != null && conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { lab.RememberOffline(conv.messages[i].text); break; }
         }
 
@@ -452,7 +503,7 @@ namespace LingGuangV05.Desktop.YY
             if (conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { last = conv.messages[i].text; break; }
             switch (id)
             {
-                case LaoZhou: return lab != null ? lab.ZhouSteerNow(LingGuangV05.Desktop.Story.GuideNote.TopStep, GameText.IsEnglish) : XgSim.ZhouSteer(LingGuangV05.Desktop.Story.GuideNote.TopStep, GameText.IsEnglish);
+                case LaoZhou: return LingGuangV05.Core.Forum.LaoZhouQuestions.GeneralReply(GameText.IsEnglish);
                 case "landlord":
                     {
                         // The landlord softens as the tenant proves himself: on time, no fuss, then plainly fond of him.
@@ -557,7 +608,7 @@ namespace LingGuangV05.Desktop.YY
                 return null;
             }
             if (Any("不是", "没事", "正常", "不像", "否", "正经", "no", "legit")) return false;
-            if (Any("骗", "垃圾", "别信", "诈骗", "假的", "是", "yes", "scam")) return true;
+            if (Any("骗", "垃圾", "别信", "诈片", "假的", "是", "yes", "scam")) return true;
             return null;
         }
 
@@ -657,6 +708,8 @@ namespace LingGuangV05.Desktop.YY
         void Update()
         {
             if (S == null || runtime == null || runtime.Sim == null) return;
+            FlushPendingRentInvoices();
+            TickGroupPresetDate();
             float dt = Mathf.Min(Time.unscaledDeltaTime, 1f);
             EnsureFileOffer();
             TickTransfers(dt);
@@ -687,18 +740,8 @@ namespace LingGuangV05.Desktop.YY
             var lab = FindLab();
             if (lab == null) return;
             int hand = lab.S.handCorrect + lab.S.handWrong;
-            if (!S.seedZhouHand && hand >= SeedZhouHandLabels)
-            {
-                S.seedZhouHand = true;
-                if (IsVisible(Contact(LaoZhou))) Receive(LaoZhou, Lang.T("标注这活我也干过，标到最后手都是麻的。"));
-                else
-                {
-                    // 老周 is not on YY: he grumbles in his 贴吧 private messages instead (the one thing he starts by himself).
-                    var tieba = LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
-                    if (tieba != null) tieba.Receive(LingGuangV05.Core.Forum.ForumLibrary.LaoZhou, Lang.T("你还在一张一张手标啊？标到最后手都是麻的，这么标得标到猴年马月去。"));
-                    Touch();
-                }
-            }
+            // A private label count must never cause a human contact to claim knowledge.
+            if (!S.seedZhouHand && hand >= SeedZhouHandLabels) S.seedZhouHand = true;
             // The group knows nothing of the player's work and never talks to him about it: no 阿杰 line here any more.
             else if (!S.seedJieAsk && hand >= SeedJieAskLabels) S.seedJieAsk = true;
         }

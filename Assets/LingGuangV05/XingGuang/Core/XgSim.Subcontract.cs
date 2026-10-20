@@ -131,7 +131,7 @@ namespace LingGuangV05.XingGuang
             if (CaptchaPending) return T("等你输验证码");
             // Their labels leave through your account, so the platform's pause after a failed captcha holds them too.
             if (CaptchaPauseLeft > 0) return T("账号被暂停提交，干等着");
-            if (!DeskOpen(w.desk)) return T("这张桌还没开");
+            if (!CrowdDeskOpen(w.desk)) return T("这张桌还没开");
             return null;
         }
 
@@ -147,7 +147,7 @@ namespace LingGuangV05.XingGuang
             foreach (var w in S.scWorkers)
             {
                 w.desk = w.desk ?? "";
-                if (XgCatalog.Desk(w.desk) == null) w.desk = "";
+                if (XgCatalog.CrowdDesk(w.desk) == null) w.desk = "";
                 if (!FiniteMarket(w.timer) || w.timer < 0) w.timer = 0;
                 w.timer = Math.Min(w.timer, .999999);
                 if (!FiniteMarket(w.wageTimer) || w.wageTimer < 0) w.wageTimer = 0;
@@ -207,8 +207,8 @@ namespace LingGuangV05.XingGuang
 
         string DefaultWorkerDesk()
         {
-            if (DeskOpen(S.desk)) return S.desk;
-            foreach (var d in XgCatalog.Desks) if (DeskOpen(d.id)) return d.id;
+            if (CrowdDeskOpen(S.desk)) return S.desk;
+            foreach (var d in XgCatalog.Desks) if (CrowdDeskOpen(d.id)) return d.id;
             return "";
         }
 
@@ -216,7 +216,7 @@ namespace LingGuangV05.XingGuang
         public bool AssignWorkerDesk(string id, string desk)
         {
             var w = Worker(id);
-            if (w == null || !S.scUnlocked || !DeskOpen(desk)) return false;
+            if (w == null || !S.scUnlocked || !CrowdDeskOpen(desk)) return false;
             if (w.desk != desk) w.timer = 0;
             w.desk = desk;
             return true;
@@ -238,7 +238,7 @@ namespace LingGuangV05.XingGuang
         {
             var w = Worker(id);
             if (w == null) return "";
-            return DeskOpen(w.desk) ? w.desk : DefaultWorkerDesk();
+            return CrowdDeskOpen(w.desk) ? w.desk : DefaultWorkerDesk();
         }
 
         public bool CanHire(string id, IXgHost host, out string why)
@@ -402,7 +402,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public XgAutoRecord SubmitExternalLabel(XgCard card, IXgHost host)
         {
-            if (card == null || host == null || XgCatalog.Desk(card.dataset) == null || XgCatalog.Dataset(card.dataset) == null) return null;
+            if (card == null || host == null || XgCatalog.CrowdDesk(card.dataset) == null || XgCatalog.Dataset(card.dataset) == null) return null;
             // The platform takes nothing from the account while it is frozen, waiting for a captcha or paused.
             if (AutomationHeld) return null;
             EnsureCardId(card);

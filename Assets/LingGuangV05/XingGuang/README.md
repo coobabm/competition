@@ -1,5 +1,7 @@
 # 灵光.exe — 深度学习工作站（CNN / RNN 训练增量游戏）
 
+> 本文包含旧实现记录；历史人设和解锁描述不作为当前设计依据。当前发行状态见仓库 RELEASE_NOTES_2026.10.19.5.md。
+
 > **2026-10-04 · 策划案 v0.2 第一步（已完成）**：论文与引用整体删除，下文提到“论文”的段落已过时。
 > - 突破改为“本阶段必修节点买齐 + 看懂瓶颈 + 原有评级条件”：`XgCatalog.Mandatory`，`XgSim.MissingMandatory / RequirementName`。技能树详情页逐条列出“必修 · …”。
 > - 新增必修概念节点：权重、感知机学习规则、阶跃激活（阶段 1）；Sigmoid、反向传播、链式法则（阶段 2）；LayerNorm、残差连接、学习率预热（阶段 6，随 Transformer 一起获得）。
@@ -136,14 +138,13 @@
 >
 > Bot (`Tools/XingGuang/bot 90`, 2026-10-08): completes, careless still goes bankrupt at 06:00, `--guide-check` 0 faults. The route is slower because the bot spreads its labels over one more stage-1 desk (and chases one more S grade): ability 2 at 08:29 (was 06:13), ability 3 at 11:11 (07:15), chapter complete at 44:36 (33:25).
 
-## 本地大模型（Qwen3.5-4B）
+## 本地大模型（Qwen3.5-2B + 灵光 LoRA）
 
-自由聊天和"灵光开口"由本机运行的 Qwen3.5-4B（Q4_K_M 量化，约 3.0 GB，Apache 2.0）驱动，完全离线。代码在 `Assets/LingGuangV05/LocalLLM/`。
+模型为 Qwen3.5-2B，合并了本团队用游戏对话（晴雯、老周、灵光和其他联系人）训练的 LoRA，Q5_K_S，1,306,533,984 字节，约 1.31 GB。代码在 `Assets/LingGuangV05/LocalLLM/`。
 
-- **启动**：`LocalLlm` 在进入场景后启动 llama.cpp 的 `llama-server`（只监听 127.0.0.1:18088），退出 Play 或游戏时会一并关掉。在 M2 Max 上每秒约 44 个 token，一条回复约 2 秒。
-- **模型位置**：`Assets/StreamingAssets/LingGuang/Models/Qwen_Qwen3.5-4B-Q4_K_M.gguf`，会原样打进安装包。编辑器里另外也会去项目根目录的 `Models/` 找。
-- **服务程序位置**：`Assets/StreamingAssets/LingGuang/llama/`，包含 llama-server 和 14 个库（llama、ggml、Metal / CPU / BLAS 后端、OpenSSL、libomp），共 28 MB，已自带全部依赖。找不到时再退回 Homebrew 装的版本。
-- **关闭思考**：启动参数 `--reasoning-budget 0`，请求里再带 `enable_thinking: false`。
+- **运行方式**：LLM for Unity 3.0.3 / LlamaLib v2.0.5 在游戏进程内运行，当前 Windows 方案使用 CPU。旧 Mac llama-server 的速度记录不代表本版本 Windows 性能。
+- **模型位置**：`Assets/StreamingAssets/LingGuang/Models/Qwen3.5-2B-Q5_K_S-emb5.gguf`，来源与哈希见[模型来源](../../StreamingAssets/LingGuang/Models/MODEL_SOURCE.json)与[校验文件](../../StreamingAssets/LingGuang/Models/SHA256SUMS.txt)；训练流程与对照报告在 `Exports/model-work/lora`。
+- **检索**：bge-small-zh-v1.5 向量（中文）+ BM25。
 - **人设**（`LlmPersonas`）：
   - 老周：拿到存档里的真实数据（钱、显卡、电费、样本、准确率、论文），引用的数字必须一致。
   - 表姐、网吧群（阿杰 / 老板 / 小刚轮流接话）。
@@ -155,14 +156,8 @@
   
   标注台上，它还会对当前这张卡用一句话说出自己的判断理由。
 - **兜底**：模型或服务程序不存在、启动失败或请求失败时，退回预设回复（老周用关键词帮助），游戏照常能玩。
-- **打包**：
-  - 重新生成服务程序目录：`python3 Tools/LocalLLM/bundle_llama_macos.py Assets/StreamingAssets/LingGuang/llama`。脚本会复制依赖、把引用改成 `@loader_path`、去掉编译进库里的 Homebrew 后端路径，并 ad-hoc 签名。
-  - 2026-10-03 打出的 macOS 包在 `Builds/LingGuang-macOS/LingGuang.app`（3.1 GB）。实测运行时用的是包内的服务程序和模型，11 秒后可以对话，退出游戏时服务一起关闭。
-  - 打包时只指定了 Main.unity，没有改 Build Settings 的场景列表。
-- **限制**：
-  - 只支持 Apple Silicon（arm64）。Intel Mac 和 Windows 上没有对应的服务程序，会自动退回预设回复。
-  - 安装包没有签名和公证。发到别人的 Mac 上时，Gatekeeper 可能拦截，需要签名公证，或者对方执行 `xattr -dr com.apple.quarantine LingGuang.app`。
-  - 3 GB 的模型在 Assets 里，如果用 Unity Version Control，会被提交上去。
+- **打包**：由 `Assets/LocalBuild/Editor/IntegratedReleaseBuild.cs` 构建 Windows x64，包含标题与主场景；最终只允许一个规范聊天 GGUF。模型许可、模型卡与校验文件须随包保存。旧模型和旧包保留在活动打包目录之外，模型权重不纳入普通 Git。
+- **验证状态**：隔离场景原生 CPU 加载、真实回复与串行调度已通过；独立 Player 加载状态见对应发行说明，完整玩法及性能不在该技术验证范围内；不能以预设兜底回复证明本地模型可用。旧 Mac server 打包流程不再作为当前 Windows 操作步骤。
 
 ## Laya（2026-10-03 本机实测未达标，未接入）
 

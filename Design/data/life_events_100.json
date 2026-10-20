@@ -1,5 +1,5 @@
 {
-  "note": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率：每个阶段最多弹 2 个，第一个在进入阶段后 3–8 分钟随机出现，两个之间至少隔 6 分钟；过场、考试、验证码、升阶界面期间不弹。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。每条只出现一次。",
+  "note": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率按最新确认：上一个结果确认结束后累计 8 分钟活跃游玩时间，可在当前存档改为 15 分钟或关闭；整游戏最小化或明确暂停停表，失焦和游戏内 AI 程序隐藏不停表；到期遇冲突时，冲突结束后留出 30 秒。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。当前阶段已满足条件的池抽完后再循环，新解锁事件优先；永久历史与选择标记保留。",
   "events": [
     {
       "id": "e001",
@@ -494,8 +494,8 @@
               1
             ]
           },
-          "result": "「卷王啊。」他笑着走开了。",
-          "resultEn": "\"Overachiever.\" He laughs and walks off."
+          "result": "他笑着走开了。",
+          "resultEn": "He laughs and walks off."
         }
       ]
     },
@@ -1166,8 +1166,8 @@
       "whoEn": "Moments",
       "title": "奥运凌晨",
       "titleEn": "Olympics at dawn",
-      "body": "凌晨四点女排决赛。你醒着，它也醒着。",
-      "bodyEn": "Volleyball final at 4 a.m. You're up, and so is it.",
+      "body": "女排决赛开始了。你醒着，它也醒着。",
+      "bodyEn": "The women's volleyball final begins. You're awake, and so is it.",
       "choices": [
         {
           "label": "看完再睡",
@@ -1194,7 +1194,8 @@
           "result": "早上看新闻才知道赢了。",
           "resultEn": "You learn they won from the morning news."
         }
-      ]
+      ],
+      "minDate": 20160821
     },
     {
       "id": "e034",
@@ -1712,8 +1713,8 @@
       "whoEn": "The PC",
       "title": "驱动更新",
       "titleEn": "Driver update",
-      "body": "GeForce Experience：「新驱动 372.70 可用，游戏性能提升！」",
-      "bodyEn": "GeForce Experience: \"New driver 372.70. Better game performance!\"",
+      "body": "GeForce Experience：「新驱动可用，游戏性能提升！」",
+      "bodyEn": "GeForce Experience: \"New driver available. Better game performance!\"",
       "choices": [
         {
           "label": "更新",
@@ -3487,7 +3488,7 @@
       "whoEn": "The PC",
       "title": "鼠标双击",
       "titleEn": "Mouse double-clicks",
-      "body": "鼠标开始单击变双击，标题的时候点错了好几次。",
+      "body": "鼠标开始单击变双击，标注的时候点错了好几次。",
       "bodyEn": "The mouse double-clicks on single clicks. Several labels went wrong.",
       "choices": [
         {
@@ -3496,8 +3497,8 @@
           "effects": {
             "money": -69
           },
-          "result": "罗技 G102，稳。",
-          "resultEn": "A new Logitech. Solid."
+          "result": "新鼠标，稳。",
+          "resultEn": "A new mouse. Solid."
         },
         {
           "label": "将就",
@@ -3637,8 +3638,8 @@
               1
             ]
           },
-          "result": "十题，然后关灯。",
-          "resultEn": "Ten questions, then lights out."
+          "result": "二十题，然后关灯。",
+          "resultEn": "Twenty questions, then lights out."
         },
         {
           "label": "直接睡",

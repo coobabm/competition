@@ -46,7 +46,7 @@ namespace LingGuangV05.XingGuang
             S(1, false, "冰是烫的。", "Ice is hot.", "冰是凉的。", "Ice is cold."),
             S(1, false, "狗会下蛋。", "Dogs lay eggs.", "狗是生小狗的，下蛋的是鸡。", "Dogs have puppies; hens lay eggs."),
             S(1, false, "一个星期有十天。", "A week has ten days.", "一个星期只有七天。", "A week has only seven days."),
-            S(1, false, "鸟没有翅膀。", "Birds have no wings.", "鸟类长有翅膀。", "Every bird has wings."),
+            S(1, false, "鸟没有翅膀。", "Birds have no wings.", "鸟类长有翅膀。", "Birds have wings."),
             S(1, false, "冬天比夏天热。", "Winter is hotter than summer.", "在中国，冬天冷、夏天热。", "In China, winter is cold and summer is hot."),
             S(1, false, "西瓜是一种动物。", "A watermelon is an animal.", "西瓜是水果。", "A watermelon is a fruit."),
             S(1, false, "人用耳朵看东西。", "People see with their ears.", "看东西靠眼睛。", "We see with our eyes."),
@@ -82,6 +82,7 @@ namespace LingGuangV05.XingGuang
 
             // ───────────── 级别 2 · 否 ─────────────
             S(2, false, "太阳绕着地球转。", "The sun goes around the Earth.", "是地球绕着太阳转。", "It is the Earth that goes around the sun."),
+            S(2, false, "黄河是中国最长的河。", "The Yellow River is the longest river in China.", "最长的是长江，黄河排第二。", "The Yangtze is the longest; the Yellow River comes second."),
             S(2, false, "一小时有一百分钟。", "An hour has a hundred minutes.", "一小时是六十分钟。", "An hour is sixty minutes."),
             S(2, false, "铁永远不会生锈。", "Iron never rusts.", "铁放在潮湿的地方会生锈。", "Iron rusts in a damp place."),
             S(2, false, "一米等于十厘米。", "One metre is ten centimetres.", "1 米是 100 厘米。", "1 m is 100 cm."),
@@ -98,7 +99,6 @@ namespace LingGuangV05.XingGuang
             S(2, false, "三角形有四条边。", "A triangle has four sides.", "三角形有三条边。", "A triangle has three sides."),
             S(2, false, "月亮比太阳大得多。", "The moon is much bigger than the sun.", "太阳比月亮大得多，只是离得远。", "The sun is far bigger; it is just far away."),
             S(2, false, "冰淇淋放在太阳底下会越来越硬。", "Ice cream left in the sun gets harder and harder.", "冰淇淋晒了会化。", "Ice cream melts in the sun."),
-            S(2, false, "黄河比长江还要长。", "The Yellow River is longer than the Yangtze.", "中国最长的河是长江。", "The longest river in China is the Yangtze."),
 
             // ───────────── 级别 3 · 再多知道一点 · 是 ─────────────
             S(3, true, "光比声音传得快。", "Light travels faster than sound.", "先看到闪电，后听到雷声。", "You see the lightning before you hear the thunder."),
@@ -154,7 +154,7 @@ namespace LingGuangV05.XingGuang
             S(1, true, "西红柿炒鸡蛋是一道菜。", "Tomato and scrambled egg is a dish.", "家常菜，酸酸甜甜，配米饭最香。", "A home-cooked classic, sweet and sour, best with rice."),
             S(1, true, "熊猫身上是黑白两种颜色。", "A panda is black and white.", "黑眼圈、黑耳朵、白肚子。", "Black eye patches, black ears, white belly."),
             S(1, true, "刚泡好的方便面是烫的。", "Freshly made instant noodles are hot.", "开水泡的，小心烫嘴。", "Made with boiling water. Mind your tongue."),
-            S(1, true, "长颈鹿的脖子很长。", "A giraffe has a long neck.", "名字里就写着呢。", "It is in the name."),
+            S(1, true, "长颈鹿的脖子很长。", "A giraffe has a long neck.", "长脖子是它的显著特征。", "Its long neck is a distinctive feature."),
             S(1, true, "柠檬是酸的。", "Lemons are sour.", "咬一口，脸都皱起来。", "One bite and your whole face scrunches up."),
             S(1, true, "牙刷是用来刷牙的。", "A toothbrush is for brushing teeth.", "早晚各一次。", "Morning and night."),
             S(1, true, "人的血是红色的。", "Human blood is red.", "划破手指流出来的是红的。", "Cut a finger and it bleeds red."),
@@ -231,7 +231,7 @@ namespace LingGuangV05.XingGuang
             On(20160725, S(2, false, "「葛优躺」是站着睡觉。", "The Ge You slouch is sleeping standing up.", "是瘫着，越瘫越像。", "It is slumping. The flatter the better.")),
             On(20160808, S(2, true, "傅园慧说自己「已经用了洪荒之力」。", "Fu Yuanhui said she had used her primal powers.", "里约游泳采访，表情包一夜刷屏。", "A Rio swimming interview, memes everywhere overnight.")),
             On(20160808, S(2, false, "「洪荒之力」是一种新出的洗衣粉。", "Primal powers is a new washing powder.", "是傅园慧采访时说的话。", "It is what Fu Yuanhui said in an interview.")),
-            On(20160809, S(3, true, "孙杨在里约拿了 200 米自由泳金牌。", "Sun Yang won gold in the men's 200 m in Rio.", "中国游泳队又一块金牌。", "Another gold for China's swimmers.")),
+            On(20160809, S(3, true, "孙杨在里约拿了 200 米自由泳金牌。", "Sun Yang won gold in the men's 200 m freestyle in Rio.", "中国游泳队又一块金牌。", "Another gold for China's swimmers.")),
             On(20160809, S(3, false, "孙杨是中国女排的队员。", "Sun Yang plays for China's women's volleyball team.", "孙杨是游泳运动员。", "Sun Yang is a swimmer.")),
             On(20160814, S(3, true, "中国战队 Wings 拿了 TI6 冠军。", "The Chinese team Wings won TI6.", "Dota 2 世界赛，奖金九百多万美元。", "The Dota 2 world championship, over nine million dollars.")),
             On(20160814, S(3, false, "TI6 是一场围棋比赛。", "TI6 is a Go tournament.", "是 Dota 2 的世界赛。", "It is the Dota 2 world championship.")),

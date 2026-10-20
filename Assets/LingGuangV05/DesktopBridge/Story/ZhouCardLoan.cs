@@ -48,7 +48,7 @@ namespace LingGuangV05.Desktop.Story
         static string T(string zh, string en) => GameText.T(zh, en);
         static string T(string[] pair) => GameText.T(pair[0], pair[1]);
 
-        static XingGuangController Lab => FindAnyObjectByType<XingGuangController>();
+        static XingGuangController Lab => XingGuangController.Instance;
         static XgSim Sim { get { var lab = Lab; return lab != null ? lab.Sim : null; } }
 
         bool Busy()
@@ -69,12 +69,13 @@ namespace LingGuangV05.Desktop.Story
             var sim = Sim;
             if (runtime == null || runtime.Sim == null || runtime.TestMode || runtime.Sim.InPrologue || sim == null || !sim.DesktopHosted) return;
             var hub = YYChatHub.Instance;
-            if (hub == null || busy) return;
+            sim.CardLoanContactAvailable = hub != null && hub.ZhouContactReady;
+            if (hub == null || !sim.CardLoanContactAvailable || busy) return;
             switch (sim.S.clStep)
             {
                 case 0:
-                    // 老周 must not be typing something of his own, nor waiting on an answer to it.
-                    if (!sim.CardLoanDue || Busy() || InnerVoice.Busy || hub.TypingShown == YYChatHub.LaoZhou || hub.ChoicesOf(YYChatHub.LaoZhou) != null) return;
+                    // An active story script owns the conversation. Optional knowledge-question buttons never hold the mainline loan.
+                    if (!sim.CardLoanDue || Busy() || InnerVoice.Busy || hub.TypingShown == YYChatHub.LaoZhou || hub.ChoicesFor == YYChatHub.LaoZhou) return;
                     StartCoroutine(Ask(sim, hub));
                     break;
                 case 1:

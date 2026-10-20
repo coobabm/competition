@@ -14,9 +14,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
     /// </summary>
     public sealed class XgDeskGamePage : XgPage
     {
-        const float TopBar = 46, ChromeHeight = 92;
+        const float TopBar = 46, ChromeHeight = 116;
         RectTransform viewport, surface;
-        TMP_Text heading, speech, status, payLine;
+        TMP_Text heading, speech, status, payLine, replyNotice;
         Image headingIcon;
         string headingIconId;
         XgBtn classic, raise;
@@ -60,6 +60,8 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             status.enableAutoSizing = true; status.fontSizeMin = 11; status.fontSizeMax = 15; status.overflowMode = TextOverflowModes.Ellipsis;
             payLine = ui.Text(XgUi.Rect("PayRule", root, Vector2.zero, new Vector2(1, 0), new Vector2(14, 6), new Vector2(-14, 34)), "", 13, ui.dark ? XgDark.Muted : XgPalette.Muted, TextAlignmentOptions.MidlineLeft);
             payLine.enableAutoSizing = true; payLine.fontSizeMin = 10; payLine.fontSizeMax = 13; payLine.overflowMode = TextOverflowModes.Ellipsis;
+            replyNotice = LingGuangV05.Runtime.AiContentNotice.CreateFooter(root, ui.font, ui.dark ? XgDark.Muted : XgPalette.Muted);
+            replyNotice.transform.parent.gameObject.SetActive(false);
         }
 
         public bool Focused
@@ -106,6 +108,13 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 rt.anchorMin = new Vector2(0, 1); rt.anchorMax = Vector2.one;
                 rt.offsetMin = new Vector2(14, -(y + 28)); rt.offsetMax = new Vector2(-14, -y);
                 y += 28;
+                if (line == speech)
+                {
+                    var notice = (RectTransform)replyNotice.transform.parent;
+                    notice.anchorMin = new Vector2(0, 1); notice.anchorMax = Vector2.one;
+                    notice.offsetMin = new Vector2(0, -(y + 24)); notice.offsetMax = new Vector2(0, -y);
+                    y += 24;
+                }
             }
         }
 
@@ -131,12 +140,13 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             ticket = owner.BeginMiniGame(id, Host);
             if (ticket == 0) return false;
             selected = id; NewSurface();
-            context = new XgMiniContext(surface, new XgUi(ui.font, ui.window, ui.dark && id == "kaixincidian"), owner, Host, id,
+            context = new XgMiniContext(surface, new XgUi(ui.font, ui.window, ui.dark && (id == "kaixincidian" || id == "arith_mole")), owner, Host, id,
                 () => Focused && ReferenceEquals(owner, Sim), () => owner.MiniGameSkill(id),
-                text => { if (speech != null) speech.text = (text ?? "").Replace("\n", "  ·  "); }, Settle);
+                text => { if (speech != null) speech.text = (text ?? "").Replace("\n", "  ·  "); if (replyNotice != null) replyNotice.transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(text)); }, Settle);
             game = XgPackGames.Create(id, context) ?? XgActionGames.Create(id, context) ?? XgBoardGames.Create(id, context) ?? XgSocialGames.Create(id, context);
             if (game == null) { Stop(); return false; }
             speech.text = ""; showingIntroStatus = true;
+            replyNotice.transform.parent.gameObject.SetActive(false);
             game.Build(); gameEnglish = XgUi.En; Fit(); RefreshTexts();
             return true;
         }
@@ -157,7 +167,22 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 {
                     // Audio advances once per accepted answer; its 3-second restart never changes the saved streak.
                     Fx.PlayCombo(owner.S.combo);
-                    Fx.ComboHit(Fx.At(status.rectTransform), surface, status.rectTransform, host.ComboChip,
+                    // Question feedback is static and sits next to the stage's mask edge.
+                    // Punch only its visual background, never the shared coordinate system containing
+                    // LastAnswer/LastAiAnswer and the next question's input rectangles.
+                    RectTransform struck = surface;
+                    if (game is XgPackQuestion)
+                    {
+                        struck = null;
+                        for (int i = 0; surface != null && i < surface.childCount; i++)
+                        {
+                            var child = surface.GetChild(i);
+                            // Clear defers destruction until the frame ends; skip the previous background.
+                            if (child.name != "SocialBackground" || !child.gameObject.activeSelf) continue;
+                            struck = child as RectTransform; break;
+                        }
+                    }
+                    Fx.ComboHit(Fx.At(status.rectTransform), struck, status.rectTransform, host.ComboChip,
                         owner.S.combo, Vector2.up, XgPalette.Good);
                 }
                 else Fx.Play(XgJuice.Sfx.Id.Clack);

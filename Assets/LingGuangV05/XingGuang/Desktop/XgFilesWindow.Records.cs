@@ -4,11 +4,58 @@ using System.Linq;
 using System.Text;
 using LingGuangV05.XingGuang;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 namespace LingGuangV05.Desktop.XingGuang
 {
     public sealed partial class XgFilesWindow
     {
+        int recordPageOffset;
+        XgSim recordPageOwner;
+        string recordPageFolder = "";
+        int csvOffset, csvTotal;
+        XgSim csvOwner;
+        string csvKind;
+        RectTransform recordPreviewPager;
+        TMP_Text recordPreviewPage;
+        Button recordPreviewPrevious, recordPreviewNext;
+        static bool IsRecordCsv(string id) => id == "answers" || id == "asked";
+        void BuildRecordPreviewPager(RectTransform detail)
+        {
+            recordPreviewPager=Rect("Record preview pages",detail,Vector2.zero,Vector2.right,new Vector2(12,4),new Vector2(-12,36));
+            var previous=Button(recordPreviewPager,"Previous preview page",Vector2.zero,new Vector2(40,32),()=>{csvOffset=Math.Max(0,csvOffset-50);ShowRecordCsv(true);});
+            previous.text="‹";recordPreviewPrevious=previous.transform.parent.GetComponent<Button>();
+            var next=Button(recordPreviewPager,"Next preview page",new Vector2(-40,0),new Vector2(40,32),()=>{csvOffset+=50;ShowRecordCsv(true);},true);
+            next.text="›";recordPreviewNext=next.transform.parent.GetComponent<Button>();
+            recordPreviewPage=Text(Rect("Page",recordPreviewPager,Vector2.zero,Vector2.one,new Vector2(44,0),new Vector2(-44,0)),"",13);
+            recordPreviewPage.alignment=TextAlignmentOptions.Center;
+            recordPreviewPager.gameObject.SetActive(false);
+        }
+        void ShowRecordCsv(bool resetScroll)
+        {
+            if(Sim==null||!IsRecordCsv(previewId))return;
+            if(!ReferenceEquals(csvOwner,Sim)||csvKind!=previewId){csvOwner=Sim;csvKind=previewId;csvOffset=0;}
+            string text=previewId=="answers"?AnswerCsv():AskedCsv();
+            if(csvOffset>=csvTotal&&csvOffset>0){csvOffset=Math.Max(0,((csvTotal-1)/50)*50);text=previewId=="answers"?AnswerCsv():AskedCsv();}
+            ShowPreview(text,null,resetScroll);
+        }
+        void RefreshRecordPreviewPager()
+        {
+            bool show=folder.Length==0&&IsRecordCsv(previewId);
+            recordPreviewPager.gameObject.SetActive(show);
+            previewViewport.offsetMin=new Vector2(14,show?44:12);
+            if(!show)return;
+            recordPreviewPrevious.interactable=csvOffset>0;
+            recordPreviewNext.interactable=csvOffset+50<csvTotal;
+            recordPreviewPage.text=(csvOffset/50+1)+" / "+Math.Max(1,(csvTotal+49)/50);
+        }
+        void RecordPageButton(ref int index, string label, int offset)
+        {
+            var text = Button(rows,"Record page",new Vector2(0,-(index+1)*46),new Vector2(260,42),()=>{recordPageOffset=offset;previewId=null;Refresh();});
+            var rect=(RectTransform)text.transform.parent;rect.anchorMin=rect.anchorMax=new Vector2(0,1);
+            text.text=label;index++;
+        }
         string FolderTitle(string id)
         {
             switch(id){case "packs":return T("训练数据","Training data");case "notes":return T("标注记录","Labelled questions");case "images":return T("训练图片","Training images");case "models":return T("模型检查点","Model checkpoints");default:return id;}
@@ -18,7 +65,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             var asked=Sim.S.askedLog;
             return "|"+Sim.S.stage+":"+Sim.Has("train.checkpoint")+":"+Sim.S.teachingNoteSerial
-                +":"+(asked==null?0:asked.Count)+":"+(asked==null||asked.Count==0?0:asked[asked.Count-1].at)
+                +":"+Sim.S.learningRecordSerial+":"+recordPageOffset+":"+(asked==null?0:asked.Count)+":"+(asked==null||asked.Count==0?0:asked[asked.Count-1].at)
                 +":"+string.Join(";",Sim.S.models.Select(m=>m.id+":"+m.name+":"+m.starred))
                 +":"+string.Join(";",Sim.Runs.Select(r=>r.epoch+":"+r.dataset+":"+r.trainAcc+":"+r.valAcc+":"+r.histTrain.Count))
                 +":"+(client!=null?client.rect.width:0);
@@ -46,26 +93,28 @@ namespace LingGuangV05.Desktop.XingGuang
         static string Csv(string value)=>"\""+(value??"").Replace("\"","\"\"")+"\"";
         string AnswerCsv()
         {
-            if(Sim.S.teachingNotebook==null||Sim.S.teachingNotebook.Count==0)return EmptyRecords;
-            var b=new StringBuilder(T("记录ID,题目,玩家答案,题目标签,AI答案\n","Record ID,Question,Player answer,Question label,AI answer\n"));
-            foreach(var n in Sim.S.teachingNotebook)
+            var page=Sim.QueryTeachingNotes(csvOffset,50);csvTotal=page.total;
+            if(page.total==0)return EmptyRecords;
+            var b=new StringBuilder(T("记录ID,游戏时间,题目,记录答案,题目标签,AI答案,答案来源\n","Record ID,Game time,Question,Recorded answer,Question label,AI answer,Answer source\n"));
+            foreach(var n in page.records)
             {
                 if(n==null)continue;
-                b.Append(n.id).Append(',').Append(Csv(T(n.text,n.textEn))).Append(',')
+                b.Append(n.id).Append(',').Append(Csv(Sim.LearningTimestamp(Sim.LearningRecord(n.learningRecordId)))).Append(',').Append(Csv(T(n.text,n.textEn))).Append(',')
                     .Append(Csv(string.IsNullOrEmpty(n.answerText)?T(n.playerAnswer?"是":"否",n.playerAnswer?"Yes":"No"):n.answerText)).Append(',')
-                    .Append(Csv(T(n.truth?"是":"否",n.truth?"Yes":"No"))).Append(',').AppendLine(Csv(n.aiAnswer));
+                    .Append(Csv(T(n.truth?"是":"否",n.truth?"Yes":"No"))).Append(',').Append(Csv(n.aiAnswer)).Append(',').AppendLine(Csv(n.answerSource));
             }
             return b.ToString();
         }
         string AskedCsv()
         {
-            if(Sim.S.askedLog==null||Sim.S.askedLog.Count==0)return EmptyRecords;
-            var b=new StringBuilder(T("题库,题目,玩家答案,AI答案,游戏时钟秒\n","Bank,Question,Player answer,AI answer,Game clock seconds\n"));
-            foreach(var n in Sim.S.askedLog)
+            var page=Sim.QueryLearningRecords(new XgLearningQuery{offset=csvOffset,limit=50});csvTotal=page.total;
+            if(page.total==0)return EmptyRecords;
+            var b=new StringBuilder(T("记录ID,来源类型,题库,题目,记录答案,AI答案,纠正,游戏时间,答案来源\n","Record ID,Source kind,Bank,Question,Recorded answer,AI answer,Correction,Game time,Answer source\n"));
+            foreach(var n in page.records)
             {
                 if(n==null)continue;
-                b.Append(Csv(n.bankId)).Append(',').Append(Csv(n.question)).Append(',').Append(Csv(n.playerAnswer)).Append(',')
-                    .Append(Csv(n.aiAnswer)).Append(',').AppendLine(n.at.ToString("F2",CultureInfo.InvariantCulture));
+                b.Append(n.id).Append(',').Append(Csv(n.sourceKind)).Append(',').Append(Csv(n.bankId)).Append(',').Append(Csv(T(n.question,n.questionEn))).Append(',').Append(Csv(n.playerAnswer)).Append(',')
+                    .Append(Csv(n.aiAnswer)).Append(',').Append(Csv(n.correction)).Append(',').Append(Csv(Sim.LearningTimestamp(n))).Append(',').AppendLine(Csv(n.answerSource));
             }
             return b.ToString();
         }
@@ -77,8 +126,7 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         string NoteText(XgTeachingNote n)
         {
-            return T(n.text,n.textEn)+"\n\n"+T("你的答案：","Your answer: ")
-                +(string.IsNullOrEmpty(n.answerText)?T(n.playerAnswer?"是":"否",n.playerAnswer?"Yes":"No"):n.answerText)
+            return T("游戏时间：","Game time: ")+Sim.LearningTimestamp(Sim.LearningRecord(n.learningRecordId))+"\n"+T(n.text,n.textEn)+"\n\n"+Sim.TeachingAnswerSummary(n)
                 +"\n"+T("题目标签：","Question label: ")+T(n.truth?"是":"否",n.truth?"Yes":"No")
                 +(string.IsNullOrEmpty(n.aiAnswer)?"":"\n"+Sim.AiDisplayName+": "+n.aiAnswer)
                 +"\n\n"+T(n.why,n.whyEn);
@@ -87,14 +135,18 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if(folder=="notes"||folder=="images")
             {
-                if(Sim.S.teachingNotebook!=null)foreach(var note in Sim.S.teachingNotebook)
+                if(!ReferenceEquals(recordPageOwner,Sim)||recordPageFolder!=folder){recordPageOwner=Sim;recordPageFolder=folder;recordPageOffset=0;}
+                var page=Sim.QueryTeachingNotes(recordPageOffset,50,folder=="images"?(Func<XgTeachingNote,bool>)PictureAvailable:null);
+                if(recordPageOffset>=page.total&&recordPageOffset>0){recordPageOffset=Math.Max(0,((page.total-1)/50)*50);page=Sim.QueryTeachingNotes(recordPageOffset,50,folder=="images"?(Func<XgTeachingNote,bool>)PictureAvailable:null);}
+                if(recordPageOffset>0)RecordPageButton(ref index,T("上一页","Previous"),Math.Max(0,recordPageOffset-50));
+                foreach(var note in page.records)
                 {
-                    if(note==null)continue;
-                    bool image=PictureAvailable(note);if(folder=="images"&&!image)continue;
+                    bool image=PictureAvailable(note);
                     var saved=note;
                     string label=folder=="images"?T("题图_","Question image_")+note.id+".png":T("标注_","Label_")+note.id+".txt";
                     AddRow(index++,folder+":"+note.id,label,NoteText(note),false,false,image?(Func<Texture2D>)(()=>XgTeachingPictures.ForNote(saved)):null);
                 }
+                if(page.HasMore)RecordPageButton(ref index,T("下一页","Next"),recordPageOffset+50);
             }
             else if(folder=="models"&&Sim.Has("train.checkpoint"))
             {
@@ -125,6 +177,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 r.anchorMin=r.anchorMax=new Vector2(.5f,1);r.pivot=new Vector2(.5f,1);r.anchoredPosition=new Vector2(0,-12);r.sizeDelta=new Vector2(texture.width*scale,texture.height*scale);
             }
             if(resetScroll)previewScroll.verticalNormalizedPosition=1;
+            RefreshRecordPreviewPager();
         }
     }
 }

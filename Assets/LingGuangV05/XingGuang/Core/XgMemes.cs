@@ -50,6 +50,9 @@ namespace LingGuangV05.XingGuang
         static XgPhrase P(string text, bool yes, string why, string source = "", int since = 20150101, int level = 1, bool trick = false, string topic = "")
         { return new XgPhrase { text = text, yes = yes, why = why, source = source, since = since, level = trick ? 3 : level, trick = trick, topic = topic }; }
 
+        static XgPhrase B(XgPhrase phrase, string textEn, string whyEn)
+        { phrase.textEn = textEn; phrase.whyEn = whyEn; return phrase; }
+
         /// <summary>An SMS with its sender.</summary>
         static XgPhrase M(string from, string text, bool yes, string why, string source = "", int since = 20150101, int level = 1, bool trick = false, string topic = "")
         { var p = P(text, yes, why, source, since, level, trick, topic); p.from = from; p.family = Array.IndexOf(new[] { "妈", "爸", "表姐", "表哥", "姐", "外婆", "奶奶" }, from) >= 0; return p; }
@@ -222,6 +225,13 @@ namespace LingGuangV05.XingGuang
 
         static T Choose<T>(Random r, T[] items) => items[r.Next(items.Length)];
 
+        static (string text, int since) ChooseAvailable(Random r, (string text, int since)[] items, int today)
+        {
+            var available = new List<(string text, int since)>();
+            foreach (var item in items) if (item.since <= today) available.Add(item);
+            return available[r.Next(available.Count)];
+        }
+
         static readonly string[] DanmuTargets = { "这波走位", "这段剪辑", "这个转场", "这段配音", "刚才那波操作", "这个踩点" };
         static readonly string[] DanmuPraises = { "太溜了 666666", "给跪了，up 主辛苦了", "看得鸡皮疙瘩都起来了", "可以的，这剪辑我服" };
         static readonly string[] DanmuGripes = { "真的辣眼睛，看不下去了", "尴尬癌都犯了，关了", "一言不合就插广告，退钱！" };
@@ -238,34 +248,47 @@ namespace LingGuangV05.XingGuang
         static readonly string[] HeadlineOpeners = { "震惊！", "刚刚曝光！", "朋友圈传疯了！" };
         static readonly string[] HeadlineSubjects = { "小伙半夜在网吧连坐三天", "男子把旧电脑拆开清理灰尘", "姑娘连喝一星期可乐", "房东打开租客退租的房间", "大学生花三百块淘了张旧显卡" };
         static readonly string[] HeadlineHooks = { "结果所有人沉默了……", "打开一看彻底惊呆了！", "背后的原因99%的人都不知道", "看完这一幕我哭了", "最后一个动作让人不敢相信！" };
-        static readonly string[] HeadlineAgencies = { "市气象台", "市市政公用局", "县城南街道办", "市交通委" };
         static readonly string[] HeadlinePlainEvents =
         {
-            "明日最高气温 34℃，午后局部有雷阵雨，请注意防暑",
-            "6 月起 3 路公交车末班延时至 22:30，方便市民夜间出行",
-            "周四上午 9:00 至 12:00 城南片区线路检修停电通知",
-            "普通高校招生考试期间考点周边路段实行临时交通管制",
-            "老旧小区水表改造工程将于本周六正式启动",
+            "市气象台：明日午后局部有雷阵雨，请注意携带雨具",
+            "市交通委：3 路公交车末班延时至 22:30，方便市民夜间出行",
+            "供电局：周四上午 9:00 至 12:00 城南片区线路检修停电通知",
+            "市交通委：学校周边路段早晚高峰实行临时交通管制",
+            "市市政公用局：老旧小区水表改造工程将于本周六正式启动",
         };
-        static readonly string[] HeadlineTrickYes =
+        static readonly (string text, int since)[] HeadlineTrickYes =
         {
-            "震惊！围棋世界冠军连输三盘，对手的真实身份竟然是……",
-            "千万别在夜里十一点后去星光网吧！去过的人竟然都……",
-            "男子花三百块买二手显卡，插上电脑那一刻全家沉默了！",
+            ("震惊！围棋世界冠军连输三盘，对手的真实身份竟然是……", 20160312),
+            ("千万别在夜里十一点后去星光网吧！去过的人竟然都……", 20150101),
+            ("男子花三百块买二手显卡，插上电脑那一刻全家沉默了！", 20150101),
         };
-        static readonly string[] HeadlineTrickNo =
+        static readonly (string text, int since)[] HeadlineTrickNo =
         {
-            "全国高考报名人数达 940 万，明日上午九点开考",
-            "千万别忘带准考证！市招办发布 2016 高考考前提醒",
-            "震惊世界的引力波是怎么测出来的？LIGO 实验原理图解",
+            ("2016 年全国高考报名人数达 940 万，考试于 6 月 7 日上午九点开始", 20160606),
+            ("千万别忘带准考证！市招办 6 月 1 日发布 2016 高考考前提醒", 20160601),
+            ("震惊世界的引力波是怎么测出来的？LIGO 实验原理图解", 20160211),
+            ("千万别忘带证件！铁路部门提醒乘客凭有效身份证件进站乘车", 20150101),
         };
 
         static readonly string[] ReviewSpamOpens = { "好评好评好评", "宝贝收到了，非常满意", "质量不错，物流很快，包装很好", "掌柜服务态度超好，必须五星好评" };
         static readonly string[] ReviewSpamMids = { "跟描述的一模一样", "打开包装很有档次", "比实体店便宜太多了" };
         static readonly string[] ReviewSpamTails = { "老板人很好，下次还来！", "物超所值，强烈推荐，亲们放心买！", "非常好非常好，全五分给力！！！" };
-        static readonly string[] ReviewRealItems = { "淘的二手显卡用了两天，", "给出租屋买的台灯到了，", "星光网吧同款鼠标收到了，", "替室友带的机械键盘试了下，" };
-        static readonly string[] ReviewRealPros = { "玩守望先锋帧数够用", "微动按起来手感挺脆", "包装盒塞了泡沫没压坏", "插上电脑一次点亮" };
-        static readonly string[] ReviewRealCons = { "就是风扇转起来有点响", "不过快递走了四天才到", "但是线材稍微有点硬，习惯性好评", "就是外壳有一道小划痕，凑合用吧" };
+        // Keep each product's usage and faults together; a lamp cannot run a game or have a mouse switch.
+        static readonly (string intro, (string text, int since)[] pros, string[] cons)[] ReviewRealProducts =
+        {
+            ("淘的二手显卡用了两天，",
+                new[] { ("玩守望先锋帧数够用", 20160524), ("插上电脑一次点亮", 20150101), ("包装盒塞了泡沫没压坏", 20150101) },
+                new[] { "就是风扇转起来有点响", "不过快递走了四天才到", "就是挡板有一道小划痕，凑合用吧" }),
+            ("给出租屋买的台灯到了，",
+                new[] { ("看书时亮度够用", 20150101), ("灯臂角度能调，摆桌角正好", 20150101), ("包装盒塞了泡沫没压坏", 20150101) },
+                new[] { "就是底座有点轻，碰一下会晃", "不过快递走了四天才到", "就是外壳有一道小划痕，凑合用吧" }),
+            ("星光网吧同款鼠标收到了，",
+                new[] { ("微动按起来手感挺脆", 20150101), ("握着不顶手，滚轮刻度清楚", 20150101), ("包装盒塞了泡沫没压坏", 20150101) },
+                new[] { "但是线材稍微有点硬，习惯性好评", "不过快递走了四天才到", "就是外壳有一道小划痕，凑合用吧" }),
+            ("替室友带的机械键盘试了下，",
+                new[] { ("按键回弹挺利落，打字没漏字", 20150101), ("键帽字符印得清楚", 20150101), ("包装盒塞了泡沫没压坏", 20150101) },
+                new[] { "就是空格键声音有点大", "但是线材稍微有点硬，习惯性好评", "不过快递走了四天才到" }),
+        };
         static readonly string[] ReviewTrickYes =
         {
             "差评！发货太快了，害我机箱还没到显卡就先到了，必须给老板五星好评！",
@@ -279,9 +302,109 @@ namespace LingGuangV05.XingGuang
             "默认五星好评免得卖家一直打电话骚扰，其实硅脂都干透了，大家自己避坑",
         };
 
+        // Translate the already-selected slots, so both languages retain the same product, amount and date.
+        static readonly (string zh, string en)[] TemplateTranslations = BuildTemplateTranslations();
+
+        static (string zh, string en)[] BuildTemplateTranslations()
+        {
+            var slots = new[]
+            {
+                ("这波走位", "That movement"), ("这段剪辑", "This editing"), ("这个转场", "This transition"),
+                ("这段配音", "This voice-over"), ("刚才那波操作", "That last play"), ("这个踩点", "This beat timing"),
+                ("太溜了 666666", "is so slick, 666666"), ("给跪了，up 主辛苦了", "has me bowing down; thanks for the hard work, uploader"),
+                ("看得鸡皮疙瘩都起来了", "gave me goosebumps"), ("可以的，这剪辑我服", "is great; respect for the editing"),
+                ("真的辣眼睛，看不下去了", "is painful to watch; I cannot keep watching"),
+                ("尴尬癌都犯了，关了", "makes me cringe; closing it"), ("一言不合就插广告，退钱！", "keeps inserting ads; refund me!"),
+                ("空降 02:15，前排打卡", "Skipping to 02:15, checking in up front"),
+                ("前排卖瓜子矿泉水，打卡", "Seeds and water for sale in the front row; checking in"),
+                ("弹幕护体，第一！", "Comment shield up, first!"), ("来了来了，前排占座", "Here I am, saving a front-row seat"),
+                ("一集水了三十分钟回忆", "thirty minutes of flashback filler in one episode"),
+                ("字幕把人名全打错了", "the subtitles got every name wrong"), ("背景音乐吵得听不清人话", "the music drowns out the dialogue"),
+                ("害我单曲循环了二十遍", "you made me replay it twenty times"), ("大半夜看得我泡了两桶面", "watching this at midnight made me cook two cups of noodles"),
+                ("笑得我眼泪都止不住", "I laughed until I could not stop crying"),
+                ("这 up 主有毒，", "This uploader is addictive: "), ("真棒，", "Just great: "), ("，感谢 up 主替我省时间", "; thanks for saving me time, uploader"),
+                ("工商银行", "ICBC"), ("招商银行", "China Merchants Bank"), ("建设银行", "China Construction Bank"), ("农业银行", "Agricultural Bank of China"),
+                ("天猫商城", "Tmall"), ("聚美优品", "Jumei"), ("京东商城", "JD"), ("苏宁易购", "Suning"), ("唯品会", "Vipshop"),
+                ("顺丰速运", "SF Express"), ("圆通速递", "YTO Express"), ("中通快递", "ZTO Express"), ("韵达快运", "Yunda Express"),
+                ("小区门口菜鸟驿站", "the Cainiao pickup point at the estate gate"), ("南门丰巢快递柜", "the Hive Box locker at the south gate"),
+                ("星光网吧旁代收点", "the pickup point beside Starlight Internet Cafe"), ("3 号楼下超市货架", "the supermarket shelf below Building 3"), ("菜鸟驿站", "Cainiao Station"),
+                ("我是房东，旧卡不用了，这个月房租 1350 元直接打到新卡 6222 **** ", "This is your landlord. My old card is no longer in use. Transfer this month's 1350 yuan rent to my new card 6222 **** "),
+                ("供电局", "Power company"), ("您户本月电费 ", "Your electricity bill this month is "), (" 元，请按时到营业厅或网上缴纳，无需回复。", " yuan. Pay on time at a service counter or online. No reply needed."),
+                ("尊敬的客户，您尾号 ", "Dear customer, your account ending "), (" 积分满 ", " has points totaling "), (" 可兑 ", " redeemable for "), (" 元现金，请登录 ", " yuan cash. Visit "), (" 领取", " to claim"),
+                ("会员专享满 199 减 100 优惠券明日到期，戳 t.cn/", "Members: your 100-yuan-off-199 coupon expires tomorrow. Shop at t.cn/"), (" 抢购，退订回 TD", "; reply TD to unsubscribe"),
+                ("您的包裹已到", "Your parcel is at "), ("，取件码 ", ". Pickup code: "), ("您尾号 ", "Your savings card ending "), (" 的储蓄卡消费 ", " was charged "), (" 元，余额 ", " yuan; balance "), (" 元。", " yuan."),
+                ("震惊！", "Shocking! "), ("刚刚曝光！", "Just revealed! "), ("朋友圈传疯了！", "Going viral in Moments! "),
+                ("小伙半夜在网吧连坐三天", "A young man spends three straight nights in an internet cafe"),
+                ("男子把旧电脑拆开清理灰尘", "A man opens an old computer to remove the dust"), ("姑娘连喝一星期可乐", "A woman drinks cola for a week"),
+                ("房东打开租客退租的房间", "A landlord opens the room after a tenant moves out"), ("大学生花三百块淘了张旧显卡", "A student buys an old graphics card for 300 yuan"),
+                ("结果所有人沉默了……", "and the result leaves everyone speechless..."), ("打开一看彻底惊呆了！", "what was inside left everyone stunned!"),
+                ("背后的原因99%的人都不知道", "99% of people do not know the reason"), ("看完这一幕我哭了", "this scene made me cry"), ("最后一个动作让人不敢相信！", "the final move is unbelievable!"),
+                ("市气象台：明日午后局部有雷阵雨，请注意携带雨具", "City weather office: scattered thunderstorms tomorrow afternoon; bring rain gear"),
+                ("市交通委：3 路公交车末班延时至 22:30，方便市民夜间出行", "City transport office: the last Route 3 bus now leaves at 22:30 for evening travelers"),
+                ("供电局：周四上午 9:00 至 12:00 城南片区线路检修停电通知", "Power company: maintenance outage in the south district on Thursday, 9:00-12:00"),
+                ("市交通委：学校周边路段早晚高峰实行临时交通管制", "City transport office: temporary traffic controls near schools during morning and evening rush hours"),
+                ("市市政公用局：老旧小区水表改造工程将于本周六正式启动", "City utilities office: water-meter upgrades in older estates begin this Saturday"),
+                ("震惊！围棋世界冠军连输三盘，对手的真实身份竟然是……", "Shocking! World Go champion loses three straight games; the opponent's real identity is..."),
+                ("千万别在夜里十一点后去星光网吧！去过的人竟然都……", "Never visit Starlight Internet Cafe after 11 p.m.! Everyone who went there..."),
+                ("男子花三百块买二手显卡，插上电脑那一刻全家沉默了！", "A man buys a used graphics card for 300 yuan; plugging it in leaves the family speechless!"),
+                ("2016 年全国高考报名人数达 940 万，考试于 6 月 7 日上午九点开始", "China's 2016 college entrance exam has 9.4 million applicants; exams start at 9 a.m. on June 7"),
+                ("千万别忘带准考证！市招办 6 月 1 日发布 2016 高考考前提醒", "Do not forget your admission ticket! City admissions office issues its 2016 exam reminder on June 1"),
+                ("震惊世界的引力波是怎么测出来的？LIGO 实验原理图解", "How were the gravitational waves that stunned the world detected? An illustrated guide to the LIGO experiment"),
+                ("千万别忘带证件！铁路部门提醒乘客凭有效身份证件进站乘车", "Do not forget your ID! Railway officials remind passengers to enter and travel with valid identification"),
+                ("好评好评好评", "Great great great"), ("宝贝收到了，非常满意", "Item received, very satisfied"), ("质量不错，物流很快，包装很好", "Good quality, fast shipping, great packaging"),
+                ("掌柜服务态度超好，必须五星好评", "The seller is so nice; must give five stars"), ("跟描述的一模一样", "exactly as described"), ("打开包装很有档次", "looks classy out of the box"), ("比实体店便宜太多了", "much cheaper than physical shops"),
+                ("老板人很好，下次还来！", "nice seller, will buy again!"), ("物超所值，强烈推荐，亲们放心买！", "great value, highly recommended, buy with confidence!"), ("非常好非常好，全五分给力！！！", "very good, very good, full marks!!!"),
+                ("淘的二手显卡用了两天，", "I used the secondhand graphics card for two days: "), ("给出租屋买的台灯到了，", "The desk lamp for my rented room arrived: "),
+                ("星光网吧同款鼠标收到了，", "The mouse matching Starlight Internet Cafe's arrived: "), ("替室友带的机械键盘试了下，", "I tried the mechanical keyboard I bought for my roommate: "),
+                ("玩守望先锋帧数够用", "the frame rate is enough for Overwatch"), ("插上电脑一次点亮", "the computer booted on the first try"), ("包装盒塞了泡沫没压坏", "foam in the box protected it from damage"),
+                ("就是风扇转起来有点响", "but the fan is a bit loud"), ("不过快递走了四天才到", "but delivery took four days"), ("就是挡板有一道小划痕，凑合用吧", "but the bracket has a small scratch; it will do"),
+                ("看书时亮度够用", "it is bright enough for reading"), ("灯臂角度能调，摆桌角正好", "the adjustable arm fits the corner of my desk"), ("就是底座有点轻，碰一下会晃", "but the light base wobbles when touched"),
+                ("就是外壳有一道小划痕，凑合用吧", "but the shell has a small scratch; it will do"), ("微动按起来手感挺脆", "the microswitch clicks feel crisp"), ("握着不顶手，滚轮刻度清楚", "the grip is comfortable and the wheel steps are distinct"),
+                ("但是线材稍微有点硬，习惯性好评", "but the cable is a little stiff; giving a positive review out of habit"), ("按键回弹挺利落，打字没漏字", "the keys spring back cleanly without missed keystrokes"), ("键帽字符印得清楚", "the keycap lettering is clear"), ("就是空格键声音有点大", "but the space bar is a little loud"),
+                ("差评！发货太快了，害我机箱还没到显卡就先到了，必须给老板五星好评！", "Bad review! Shipping was so fast the graphics card beat my case here; I must give the seller five stars!"),
+                ("本来想给差评的，结果打开一看质量好得离谱，物超所值，强烈推荐购买！", "I meant to leave a bad review, but the quality was amazingly good when I opened it. Great value, highly recommended!"),
+                ("在星光网吧用了三年电脑，都没见过这么好用的宝贝，掌柜人超好，全五分好评！", "Three years using computers at Starlight Internet Cafe and I have never seen such a great item. Lovely seller, five stars!"),
+                ("好评！二手电源刚插上有点啸叫，找客服换了一根供电线就好了，带 980Ti 很稳", "Positive review! The used power supply whined at first; customer service replaced a power cable and it stopped. Stable with a 980Ti"),
+                ("冲着掌柜说的「物超所值」买的，结果风扇轴承是歪的，退货还要我自己垫运费", "Bought it for the seller's 'great value' claim, but the fan bearing was crooked and I had to advance the return postage"),
+                ("默认五星好评免得卖家一直打电话骚扰，其实硅脂都干透了，大家自己避坑", "Defaulting to five stars to stop the seller's calls, but the thermal paste was completely dry. Buyer beware"),
+                ("嘴上说「有毒」，其实是夸内容吸引人。", "Calling it addictive praises how engaging it is."),
+                ("反话：「真棒」「感谢」是在讽刺视频注水粗糙。", "Sarcasm: 'great' and 'thanks' criticize filler and poor production."),
+                ("直接夸视频操作或制作水平。", "Direct praise for the play or production quality."), ("只是签到占座或报时间点，没有在夸。", "Only checking in, claiming a seat or giving a timestamp; not praise."), ("直接吐槽视频难看或广告烦。", "Direct criticism of an unpleasant video or annoying ads."),
+                ("陌生号码冒充房东说换卡号要转账，经典诈片。", "An unknown number claims to be the landlord and asks for a transfer to a new card: a classic scam."),
+                ("正规电费通知，无钓鱼链接，也没让你向私人卡号转账。", "A routine electricity bill with no phishing link or transfer to a private card."),
+                ("伪基站冒充银行发陌生 .cc 链接领现金，是钓鱼短信。", "A spoofed bank message offering cash at an unfamiliar .cc link is phishing."),
+                ("群发电商促销短信，末尾带「退订回 TD」，算垃圾短信。", "A mass retail promotion with 'reply TD to unsubscribe' counts as spam."),
+                ("正常的快递取件码通知。", "A routine parcel pickup notification."), ("正常的银行消费提醒，没有链接也不索要验证码。", "A routine bank transaction alert, with no link or request for verification codes."),
+                ("虽然借了真实事件或日常场景，但用「震惊！」「竟然……」留悬念吊胃口，属于标题党。", "It uses a real event or everyday scene but withholds the reveal behind sensational wording: clickbait."),
+                ("虽然带有感叹词或大数字，但把核心事实与结论直接交代清楚，不是标题党。", "Despite an exclamation or a large number, it states the key facts directly: not clickbait."),
+                ("用夸张开头加悬念省略号，只吊胃口不交代事实，是标题党。", "A sensational opening and an unfinished reveal tease the reader instead of giving facts: clickbait."),
+                ("直接把通知内容说清楚，不是标题党。", "It states the notice directly: not clickbait."),
+                ("表面欲扬先抑或套近乎，实则全是空洞套话，是刷单套路。", "A fake complaint or friendly tone disguises empty promotional praise: a fake-review pattern."),
+                ("虽然表面带「好评」或「物超所值」，但写明了具体故障与真实体验，是真买家。", "Despite 'positive review' or 'great value', it describes specific faults and experience: a real buyer."),
+                ("套话堆砌、哪件商品都能复制粘贴，是刷单评论。", "Generic praise that could be pasted onto any product: a fake review."),
+                ("有具体的使用场景和优缺点细节，是真买家。", "Specific usage, strengths and drawbacks indicate a real buyer."),
+            };
+            Array.Sort(slots, (a, b) => b.Item1.Length.CompareTo(a.Item1.Length));
+            return slots;
+        }
+
+        static string TemplateEnglish(string text)
+        {
+            foreach (var slot in TemplateTranslations) text = text.Replace(slot.zh, slot.en);
+            return text.Replace("【", "[").Replace("】", "] ").Replace("，", ", ").Replace("。", ".");
+        }
+
         /// <summary>Assembles a fresh 2016 card from slot templates while keeping core vocabulary bigrams aligned with the board.</summary>
         public static XgPhrase PickTemplated(string desk, Random r, int level, int today, bool want, bool trick)
         {
+            var phrase = PickTemplateChinese(desk, r, level, today, want, trick);
+            if (phrase != null) B(phrase, TemplateEnglish(phrase.text), TemplateEnglish(phrase.why));
+            return phrase;
+        }
+
+        static XgPhrase PickTemplateChinese(string desk, Random r, int level, int today, bool want, bool trick)
+        {
+            if (today < 20150101) return null;
             switch (desk)
             {
                 case "danmu":
@@ -307,7 +430,7 @@ namespace LingGuangV05.XingGuang
                         if (want)
                         {
                             int cardTail = 1000 + r.Next(9000);
-                            return M("138 0000 " + code4, "我是房东，旧卡不用了，这个月房租 1350 元直接打到新卡 6222 **** " + cardTail, true, "陌生号码冒充房东说换卡号要转账，经典诈骗。", "冒充房东诈骗", trick: true);
+                            return M("138 0000 " + code4, "我是房东，旧卡不用了，这个月房租 1350 元直接打到新卡 6222 **** " + cardTail, true, "陌生号码冒充房东说换卡号要转账，经典诈片。", "冒充房东诈片", trick: true);
                         }
                         int bill = 120 + r.Next(180);
                         return M("95598", "【供电局】您户本月电费 " + bill + ".40 元，请按时到营业厅或网上缴纳，无需回复。", false, "正规电费通知，无钓鱼链接，也没让你向私人卡号转账。", "电费通知", trick: true);
@@ -337,13 +460,14 @@ namespace LingGuangV05.XingGuang
                 case "headline":
                     if (trick)
                     {
+                        var headline = ChooseAvailable(r, want ? HeadlineTrickYes : HeadlineTrickNo, today);
                         return want
-                            ? P(Choose(r, HeadlineTrickYes), true, "虽然借了真实事件或日常场景，但用「震惊！」「竟然……」留悬念吊胃口，属于标题党。", "UC 震惊部", trick: true)
-                            : P(Choose(r, HeadlineTrickNo), false, "虽然带有感叹词或大数字，但把核心事实与结论直接交代清楚，不是标题党。", "新闻", trick: true);
+                            ? P(headline.text, true, "虽然借了真实事件或日常场景，但用「震惊！」「竟然……」留悬念吊胃口，属于标题党。", "UC 震惊部", since: headline.since, trick: true)
+                            : P(headline.text, false, "虽然带有感叹词或大数字，但把核心事实与结论直接交代清楚，不是标题党。", "新闻", since: headline.since, trick: true);
                     }
                     if (want)
                         return P(Choose(r, HeadlineOpeners) + Choose(r, HeadlineSubjects) + "，" + Choose(r, HeadlineHooks), true, "用夸张开头加悬念省略号，只吊胃口不交代事实，是标题党。", "公众号标题");
-                    return P(Choose(r, HeadlineAgencies) + "：" + Choose(r, HeadlinePlainEvents), false, "直接把通知内容说清楚，不是标题党。", "新闻");
+                    return P(Choose(r, HeadlinePlainEvents), false, "直接把通知内容说清楚，不是标题党。", "新闻");
 
                 case "review":
                     if (trick)
@@ -354,7 +478,9 @@ namespace LingGuangV05.XingGuang
                     }
                     if (want)
                         return P(Choose(r, ReviewSpamOpens) + "，" + Choose(r, ReviewSpamMids) + "，" + Choose(r, ReviewSpamTails), true, "套话堆砌、哪件商品都能复制粘贴，是刷单评论。", "淘宝刷单");
-                    return P(Choose(r, ReviewRealItems) + Choose(r, ReviewRealPros) + "，" + Choose(r, ReviewRealCons), false, "有具体的使用场景和优缺点细节，是真买家。", "真实评价");
+                    var product = Choose(r, ReviewRealProducts);
+                    var pro = ChooseAvailable(r, product.pros, today);
+                    return P(product.intro + pro.text + "，" + Choose(r, product.cons), false, "有具体的使用场景和优缺点细节，是真买家。", "真实评价", since: pro.since);
 
                 default:
                     return null;
@@ -426,12 +552,12 @@ namespace LingGuangV05.XingGuang
 
         static readonly XgPhrase[] Spam =
         {
-            P("【我是歌手】恭喜您被栏目组抽中为场外幸运观众，获得奖金 98000 元，请登录 wsgs-hd.cc 领取", true, "冒充综艺节目中奖，经典诈骗。", "冒充综艺中奖诈骗，2015—2016 年常见"),
+            P("【我是歌手】恭喜您被栏目组抽中为场外幸运观众，获得奖金 98000 元，请登录 wsgs-hd.cc 领取", true, "冒充综艺节目中奖，经典诈片。", "冒充综艺中奖诈片，2015—2016 年常见"),
             P("老板您好，本公司可代开各类发票，联系 138****2016", true, "代开发票是违法广告。", "代开发票短信"),
             P("亲，一手货源正品代购，加微信 dg2016 了解一下", true, "群发的微商广告。", "微商刷屏，2015—2016"),
-            P("您的银行卡积分可兑换 368 元现金，回复 Y 领取", true, "积分兑现金 + 让你回复，是钓鱼。", "积分兑换诈骗"),
-            P("澳门首家线上赌场上线啦，注册即送 88 元", true, "赌博广告。", "赌博广告短信"),
-            P("低价出售 iPhone 6s，全新未拆封，只要 1888", true, "价格离谱的群发广告。", "手机诈骗广告"),
+            P("您的银行卡积分可兑换 368 元现金，回复 Y 领取", true, "积分兑现金 + 让你回复，是钓鱼。", "积分兑换诈片"),
+            P("澳门首家线上堵场上线啦，注册即送 88 元", true, "堵博广告。", "堵博广告短信"),
+            P("低价出售 iPhone 6s，全新未拆封，只要 1888", true, "价格离谱的群发广告。", "手机诈片广告"),
             P("【集五福】恭喜获得敬业福！点击 jwf2016.cc 领取 2016 元现金", true, "冒充支付宝集五福，链接是假的。", "支付宝集五福，2016 年春节", 20160128, topic: "集五福"),
             P("papi 酱同款面膜今日特价，戳链接抢购", true, "蹭热点的群发广告。", "papi 酱走红，2016 年初", 20160301, topic: "papi酱"),
             P("宋仲基同款军装外套 5 折包邮，仅限今天", true, "蹭剧的群发广告。", "《太阳的后裔》，2016-02-24 开播", 20160224, topic: "太阳的后裔"),
@@ -454,12 +580,12 @@ namespace LingGuangV05.XingGuang
             P("【中国移动】充 100 送 20，回复 1 办理", true, "运营商群发的充值促销推销，也算垃圾短信。", "运营商营销", level: 2),
 
             // 字面规则 vs 语义反转（老司机题）
-            P("我是你领导，明天上午来我办公室一趟，先把这个号存一下", true, "冒充领导，下一步就是借钱。", "冒充领导诈骗", trick: true),
-            P("爸，我换号了，这是新号码。没钱了，先打 2000 到这张卡", true, "冒充子女要钱。", "冒充亲人诈骗", trick: true),
+            P("我是你领导，明天上午来我办公室一趟，先把这个号存一下", true, "冒充领导，下一步就是借钱。", "冒充领导诈片", trick: true),
+            P("爸，我换号了，这是新号码。没钱了，先打 2000 到这张卡", true, "冒充子女要钱。", "冒充亲人诈片", trick: true),
             P("【中国移动】尊敬的客户，您的积分即将清零，请登录 10086jf.cc 兑换", true, "网址不是 10086.cn，是钓鱼。", "钓鱼短信", trick: true),
             P("【电业局】您户本月电费 238.6 元，请按时到营业厅或网上缴纳", false, "正规缴费通知：没有可疑链接，没让你转账。", "电费通知", trick: true),
-            M("139 0000 4399", "我是房东，原来的卡注销了，这个月房租现在直接转到新卡 6228 **** 9981", true, "经典「我是房东换卡号」群发诈骗，陌生号码直接让你转账。", "冒充房东诈骗，2016 年高发", trick: true),
-            M("1069 8800 1234", "【顺丰速运】您有一份违禁包裹被扣留，请立即登录 sf-check.cc 配合清查", true, "顺丰不会发陌生链接让你清查违禁包裹，是冒充快递钓鱼。", "快递诈骗", trick: true),
+            M("139 0000 4399", "我是房东，原来的卡注销了，这个月房租现在直接转到新卡 6228 **** 9981", true, "经典「我是房东换卡号」群发诈片，陌生号码直接让你转账。", "冒充房东诈片，2016 年高发", trick: true),
+            M("1069 8800 1234", "【顺丰速运】您有一份违禁包裹被扣留，请立即登录 sf-check.cc 配合清查", true, "顺丰不会发陌生链接让你清查违禁包裹，是冒充快递钓鱼。", "快递诈片", trick: true),
 
             // 带发件人的短信：先看号码，再看内容。号码只是线索，内容才定输赢。
             M("10086", "尊敬的客户，您 5 月话费 58.30 元，账户余额 12.70 元。", false, "10086 的月结提醒，没有链接，没让你回复。", "运营商通知"),
@@ -471,24 +597,24 @@ namespace LingGuangV05.XingGuang
             M("1069 5555 0001", "【聚美】亲爱的会员，你的 30 元无门槛券明天过期，回 TD 退订", true, "催你下单的营销短信。", "电商营销短信"),
             M("1065 0000 7788", "【驾校】暑假学车特惠 2980 元包拿证，学生凭证再减 200，退订回 T", true, "暑假群发的招生广告。", "暑期招生广告", 20160701),
             M("1069 2016 0911", "【XX 教育】开学季英语四六级包过班，报名立减 500，退订回 TD", true, "开学季群发广告。", "开学季广告", 20160901),
-            M("1065 1111 1111", "【天猫】双 11 预售开始，定金 50 抵 150，速抢！退订回 TD", true, "双 11 前的营销短信。不是诈骗，但算垃圾短信。", "双 11 预热，2016-10", 20161020, topic: "双11"),
+            M("1065 1111 1111", "【天猫】双 11 预售开始，定金 50 抵 150，速抢！退订回 TD", true, "双 11 前的营销短信。不是诈片，但算垃圾短信。", "双 11 预热，2016-10", 20161020, topic: "双11"),
             M("1069 1111 2016", "【XX 电器】双 11 返场，冰箱彩电低至 3 折，仅剩今天！退订回 T", true, "双 11 之后的返场广告，照样是群发。", "双 11 返场，2016-11", 20161112, topic: "双11"),
             M("1065 8000 4321", "【XX 健身】私教体验课 9.9 元，戳 t.cn/xxx 抢名额，退订回 TD", true, "群发广告。", "营销短信", level: 2),
 
-            M("10086", "【中国移动】您的手机积分已满 5000 分，可兑换 450 元现金，请登录 10086cy.cc 领取。", true, "10086 不送现金，网址也不是 10086.cn。号码可以伪基站伪造。", "伪基站积分诈骗，2016 年高发", trick: true),
+            M("10086", "【中国移动】您的手机积分已满 5000 分，可兑换 450 元现金，请登录 10086cy.cc 领取。", true, "10086 不送现金，网址也不是 10086.cn。号码可以伪基站伪造。", "伪基站积分诈片，2016 年高发", trick: true),
             M("95588", "【工商银行】您的电子密码器于今日失效，请登录 www.icbcxv.cc 进行升级，逾期账户停用。", true, "银行不会让你点陌生网址升级密码器。伪基站冒充的银行号码。", "伪基站钓鱼短信", trick: true),
             M("106 9000 3311", "【三星】Note7 召回登记：请回复姓名、身份证号和银行卡号，退款 5988 元直接到账。", true, "正规召回去门店换机，不要你的卡号。", "Note7 召回，2016-09", 20160903),
             M("1065 7000 7777", "【三星服务】Note7 用户请尽快到店更换新机，详询 400 热线或附近服务中心。", false, "让你去服务中心，不要钱，不要卡号。正常通知。", "Note7 召回，2016-09", 20160903, level: 2),
             M("1065 0920 0000", "【Note7 全球召回】您的手机存在爆炸风险，点击 note7-zh.cc 填写银行卡领 1000 元补偿", true, "补偿要你填卡号，就是钓鱼。", "Note7 第二次召回，2016-10", 20161011),
-            M("1069 1115 0001", "【淘宝】您双 11 购买的商品因库存不足需退款，请点击 tb-tk.cc 填写银行卡办理。", true, "淘宝退款原路退回，不用你填卡号。双 11 后最常见的骗局。", "双 11 退款诈骗，2016-11", 20161115, topic: "双11"),
-            M("1069 1115 0002", "【快递】您的双 11 包裹地址不详，无法派送，请点击 kd-sh.cc 重新填写。", true, "快递员会直接打电话，不会发陌生链接。", "双 11 快递诈骗，2016-11", 20161113, topic: "双11"),
+            M("1069 1115 0001", "【淘宝】您双 11 购买的商品因库存不足需退款，请点击 tb-tk.cc 填写银行卡办理。", true, "淘宝退款原路退回，不用你填卡号。双 11 后最常见的骗局。", "双 11 退款诈片，2016-11", 20161115, topic: "双11"),
+            M("1069 1115 0002", "【快递】您的双 11 包裹地址不详，无法派送，请点击 kd-sh.cc 重新填写。", true, "快递员会直接打电话，不会发陌生链接。", "双 11 快递诈片，2016-11", 20161113, topic: "双11"),
             M("1069 1111 9999", "【支付宝】您的双 11 订单退款 268 元已原路退回，请注意查收。", false, "原路退回，没让你点链接、没要卡号，是正常通知。", "双 11 退款通知", 20161115, level: 2, topic: "双11"),
             M("1065 2016 0808", "【里约奥运】恭喜您获得中国体育代表团纪念金币一枚，点击 ay2016.cc 填写地址领取", true, "中奖 + 陌生链接。", "里约奥运，2016-08", 20160806, topic: "里约奥运"),
-            M("138 0000 2016", "我是你们班主任，学校要收资料费 360，打到这个卡：6222 **** 1234，下午前交齐", true, "冒充老师收钱。真要收费，学校会开收据。", "冒充老师诈骗，2016-09 开学季", 20160901),
+            M("138 0000 2016", "我是你们班主任，学校要收资料费 360，打到这个卡：6222 **** 1234，下午前交齐", true, "冒充老师收钱。真要收费，学校会开收据。", "冒充老师诈片，2016-09 开学季", 20160901),
             M("1069 0000 0909", "【阴阳师】您的账号存在异常登录，请点击 yys-163.cc 验证身份，否则将封号。", true, "吓唬你点链接，盗号用的。", "《阴阳师》盗号，2016-09", 20160910, topic: "阴阳师"),
-            M("189 0000 6666", "亲，我是淘宝店主，您的宝贝卡单了，加 QQ 2016xxxx 给您退款", true, "店主不会让你加 QQ 退款，下一步就是让你转账。", "淘宝卡单诈骗"),
-            M("135 0000 8888", "猜猜我是谁？我换号了，存一下，明天找你有点事", true, "「猜猜我是谁」+ 换号，下一步就是借钱。", "冒充熟人诈骗"),
-            M("1065 0000 0110", "【12306】您购买的 G1234 次列车因故停运，请点击 12306tk.cc 办理改签退款。", true, "12306 的网址是 12306.cn，退票去官网或车站。", "铁路退票诈骗"),
+            M("189 0000 6666", "亲，我是淘宝店主，您的宝贝卡单了，加 QQ 2016xxxx 给您退款", true, "店主不会让你加 QQ 退款，下一步就是让你转账。", "淘宝卡单诈片"),
+            M("135 0000 8888", "猜猜我是谁？我换号了，存一下，明天找你有点事", true, "「猜猜我是谁」+ 换号，下一步就是借钱。", "冒充熟人诈片"),
+            M("1065 0000 0110", "【12306】您购买的 G1234 次列车因故停运，请点击 12306tk.cc 办理改签退款。", true, "12306 的网址是 12306.cn，退票去官网或车站。", "铁路退票诈片"),
             M("12306", "【铁路客服】您已购 10 月 1 日 G1234 次车票，6 车 8F 号，请按时乘车。", false, "国庆的购票回执，没链接、不要钱。", "国庆出行，2016-10", 20160925),
             M("95555", "【招商银行】您账户 0524 于 10 月 3 日支出 168.00 元，余额 2316.45 元。", false, "银行官方号码的消费提醒，没让你干什么。", "银行通知", 20161003),
             M("106 5500 1000", "【顺丰速运】您的快件 9527 已由小区丰巢柜签收，取件码 6688。", false, "正常的取件通知。", "快递通知", 20160601),

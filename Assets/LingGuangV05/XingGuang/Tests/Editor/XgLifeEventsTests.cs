@@ -48,11 +48,12 @@ namespace LingGuangV05.XingGuang.Tests
             public double SecondsOfDay { get; set; } = 12 * 3600;
         }
 
-        /// <summary>Past the opening: the second ability is learned.</summary>
+        /// <summary>Training curve is owned; the requested ability stage is available.</summary>
         static XgSim Lab(long seed = 7, int stage = 2)
         {
             var sim = new XgSim { GoldChance = 0 };
             sim.S.rng = seed;
+            sim.S.unlocked.Add("train.curve");
             sim.S.stage = sim.S.stageVision = sim.S.stageSequence = stage;
             for (int a = 2; a <= stage; a++) sim.S.abilitiesEmerged.Add(a);
             return sim;
@@ -81,6 +82,7 @@ namespace LingGuangV05.XingGuang.Tests
                     var v = sim.LifeEventView(host);
                     int pick = answer < v.choices.Count && v.choices[answer].enabled ? answer : v.choices.FindIndex(c => c.enabled);
                     Assert.IsTrue(sim.AnswerLifeEvent(pick, host));
+                    Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
                     if (clearCooldowns) sim.S.lifeCooldowns.Clear();
                 }
             }
@@ -164,31 +166,39 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void TheIntervalIsThreeToFiveMinutes()
+        public void TheIntervalIsEightMinutesFromResultClose()
         {
             var sim = Lab(3); var host = new Host(1000000);
             sim.S.best.Add(new XgBest { dataset = "spam", acc = .9 });
             var opened = Run(sim, host, 4000, answer: 1, clearCooldowns: true);
-            Assert.That(opened.Count, Is.GreaterThanOrEqualTo(10));
-            Assert.That(opened[0].Key, Is.InRange(XgSim.LifeIntervalMin - 1, XgSim.LifeIntervalMax + 1));
+            Assert.That(opened.Count, Is.GreaterThanOrEqualTo(8));
+            Assert.That(opened[0].Key, Is.InRange(479, 481));
             for (int i = 1; i < opened.Count; i++)
-                Assert.That(opened[i].Key - opened[i - 1].Key, Is.InRange(XgSim.LifeIntervalMin - 1, XgSim.LifeIntervalMax + 1));
+                Assert.That(opened[i].Key - opened[i - 1].Key, Is.InRange(479, 481));
         }
 
         [Test]
-        public void ABusyPlayerPutsTheDrawOff()
+        public void ABusyPlayerPausesTimeAndAnAlreadyDueDrawGetsGrace()
         {
             var sim = Lab(); var host = new Host(1000000);
             bool busy = true;
             sim.LifeEventHold = () => busy;
             Assert.IsEmpty(Run(sim, host, 900), "nothing during a cutscene, exam or story");
+            Assert.AreEqual(480, sim.LifeEventNext, 1e-6, "busy time never consumes the interval");
             busy = false;
-            var opened = Run(sim, host, XgSim.LifeHeldRetry + 1);
-            Assert.AreEqual(1, opened.Count, "the waiting draw comes soon after");
+            var opened = Run(sim, host, 481);
+            Assert.AreEqual(1, opened.Count, "the paused interval resumes in full");
+
+            var due = Lab(); due.LifeEventHold = () => busy;
+            _ = due.LifeEventNext; due.S.lifeNext = 0; busy = true;
+            due.ObserveLifeEventConflict();
+            Assert.IsTrue(due.S.lifeCadenceDeferred, "already due conflict is observed even without Tick");
+            busy = false;
+            Assert.AreEqual(1, Run(due, host, 31).Count, "due conflict receives thirty active seconds after it ends");
         }
 
         [Test]
-        public void NoEventBeforeTheOpeningEnds()
+        public void NoEventBeforeTrainingCurveAndFinaleRemainsQuiet()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host(1000000);
             sim.S.openingFocus = true;
@@ -196,12 +206,12 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsFalse(sim.LifeEventsUnlocked);
             Assert.IsEmpty(Run(sim, host, 1200), "the first minutes stay quiet");
             sim.S.openingFocus = false;
-            Assert.IsEmpty(Run(sim, host, 1200), "still nothing before the second ability");
-            sim.S.abilitiesEmerged.Add(2); sim.S.stage = 2;
+            Assert.IsEmpty(Run(sim, host, 1200), "still nothing before training curve purchase");
+            Assert.IsTrue(sim.BuyNode("train.curve", host), "curve purchase starts the cadence");
             Assert.IsTrue(sim.LifeEventsUnlocked);
             var opened = Run(sim, host, XgSim.LifeIntervalMax + 1);
             Assert.AreEqual(1, opened.Count);
-            Assert.That(opened[0].Key, Is.GreaterThanOrEqualTo(XgSim.LifeIntervalMin - 1), "a whole interval after the opening");
+            Assert.That(opened[0].Key, Is.GreaterThanOrEqualTo(XgSim.LifeIntervalMin - 1), "a whole interval after the curve purchase");
             sim.S.fullOpen = true;
             Assert.IsFalse(sim.LifeEventsUnlocked, "the finale is left alone");
         }
@@ -230,6 +240,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = Quiet(); var host = new RigHost(1000, 2);
             Assert.IsTrue(sim.OpenLifeEventNow("zhou_card", host));
             Assert.IsTrue(sim.AnswerLifeEvent("lend", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.IsTrue(sim.S.wiring.pulled.Contains("h:gtx970#1"), "the second card is out");
             Assert.IsTrue(sim.ZhouFavourOwed && sim.CardLent);
             sim.Tick(XgSim.LifeLendSeconds + 2, host);
@@ -246,9 +257,11 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.OpenLifeEventNow("zhou_card", host));
             StringAssert.Contains("卡烧了", sim.LifeEventView(host).body);
             Assert.IsTrue(sim.AnswerLifeEvent("refuse", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.IsTrue(sim.OpenLifeEventNow("zhou_card", host, true));
             StringAssert.Contains("还是上回那事儿", sim.LifeEventView(host).body, "asked again after a no");
             Assert.IsTrue(sim.AnswerLifeEvent("lend", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             sim.Tick(XgSim.LifeLendSeconds + 2, host);
             sim.S.lifeFavour = 0;
             Assert.IsTrue(sim.OpenLifeEventNow("zhou_card", host, true));
@@ -263,6 +276,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = Quiet(); var host = new RigHost(1000, 2);
             Assert.IsTrue(sim.OpenLifeEventNow("zhou_card", host));
             Assert.IsTrue(sim.AnswerLifeEvent("refuse", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(1, sim.ZhouCool);
             Assert.IsFalse(sim.ZhouFavourOwed);
             Assert.IsFalse(sim.S.wiring.pulled.Any());
@@ -280,9 +294,17 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.lifeFavour = 1;
             Assert.IsTrue(sim.OpenLifeEventNow("zhou_favour", host));
             Assert.IsTrue(sim.AnswerLifeEvent("redeem", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.IsFalse(sim.Downloading("imagenet"));
+            Assert.IsFalse(sim.Owns("imagenet"), "a copied file is downloaded, not installed");
+            Assert.AreEqual(XgSim.PackBatches("imagenet"), sim.BatchesArrived("imagenet"), "the purchased teaching file contains the full dataset");
+            var copied = sim.S.dataFiles.Single(f => f.dataset == "imagenet" && sim.DataFileReady(f.fileId));
+            Assert.IsTrue(sim.BuyNode(XgSim.DataEntryNode, host), "data import is purchased through the real gate");
+            double afterPurchase = host.money;
+            Assert.IsTrue(sim.InstallDataFile(copied.fileId), "copied file is installed explicitly");
             Assert.IsTrue(sim.Owns("imagenet"));
-            Assert.AreEqual(1, sim.BatchesArrived("imagenet"));
+            Assert.AreEqual(afterPurchase, host.money, 1e-6, "installation never charges the file again");
+            Assert.IsFalse(sim.InstallDataFile(copied.fileId), "repeat installation is rejected");
             Assert.IsFalse(sim.ZhouFavourOwed, "used up");
             Assert.IsFalse(sim.RedeemZhouFavour(), "only once");
         }
@@ -296,6 +318,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.lifeFavour = 1;
             Assert.IsTrue(sim.OpenLifeEventNow("zhou_favour", host));
             Assert.IsTrue(sim.AnswerLifeEvent("later", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.IsTrue(sim.Downloading("imagenet") && sim.ZhouFavourOwed);
         }
 
@@ -303,6 +326,11 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = Quiet(); host = new Host(money);
             sim.S.owned.Add("imagenet");
+            // This fixture represents pre-download installed data, so use the real migration before testing loss.
+            sim.S.dataFilesVersion = 0;
+            sim = new XgSim(sim.S);
+            sim.LifeEventHold = () => true;
+            Assert.AreEqual(sim.BatchesArrived("imagenet"), sim.InstalledBatches("imagenet"), "legacy fixture preserves already installed batches");
             return sim;
         }
 
@@ -315,6 +343,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(batches, Is.GreaterThanOrEqualTo(2));
             Assert.IsTrue(sim.OpenLifeEventNow("bad_sectors", host, force: true));
             Assert.IsTrue(sim.AnswerLifeEvent("lose", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(batches - 1, sim.BatchesArrived("imagenet"));
             Assert.AreEqual(batches - 1, sim.BatchesBought("imagenet"), "the batch can be bought again");
             Assert.AreEqual(samples - XgSim.BatchSamples(XgCatalog.Dataset("imagenet")), sim.PackSamples("imagenet"), 1e-6);
@@ -325,6 +354,7 @@ namespace LingGuangV05.XingGuang.Tests
             double price = paid.S.lifeArg;
             Assert.That(price, Is.GreaterThan(0));
             Assert.IsTrue(paid.AnswerLifeEvent("backup", payer));
+            Assert.IsTrue(paid.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(100000 - price, payer.money, 1e-6);
             Assert.AreEqual(batches, paid.BatchesArrived("imagenet"));
 
@@ -361,13 +391,25 @@ namespace LingGuangV05.XingGuang.Tests
             double before = host.money;
             Assert.IsTrue(sim.OpenLifeEventNow("broadband", host));
             Assert.IsTrue(sim.AnswerLifeEvent("renew", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(before - 2 * (XgSim.BroadbandMonthly[1] - XgSim.BroadbandMonthly[0]), host.money, 1e-6);
             Assert.AreEqual(201611, sim.S.broadbandBilled, "August is paid; September to November are covered");
             Assert.IsFalse(sim.LifeEventsEligible(host).Contains("broadband"), "once a month");
             sim.Today = 20160905; sim.Tick(1, host);
             Assert.IsFalse(sim.LifeEventsEligible(host).Contains("broadband"), "no reminder while the renewal covers the month");
             sim.Today = 20161105; double mid = host.spent; sim.Tick(1, host);
-            Assert.IsTrue(sim.LifeEventsEligible(host).Contains("broadband"), "the last covered month brings the next reminder");
+            // Newly eligible unseen nudges precede a recurring reminder. Their free choices preserve the billing assertions.
+            for (int pending = 0; pending < XgSim.LifeEventIds.Length && !sim.LifeEventsEligible(host).Contains("broadband"); pending++)
+            {
+                var pool = sim.LifeEventsEligible(host);
+                string other = pool.Find(id => id == "zhou_loan" || id == "licai_call" || id == "forum_post");
+                Assert.IsNotNull(other, "an unseen nudge explains why the repeat reminder is deferred");
+                Assert.IsFalse(sim.S.lifeDataSeen.Contains(other), "new events take priority over repeat reminders");
+                Assert.IsTrue(sim.OpenLifeEventNow(other, host));
+                Assert.IsTrue(sim.AnswerLifeEvent(other == "zhou_loan" ? "decline" : other == "licai_call" ? "hangup" : "tip", host));
+                Assert.IsTrue(sim.AcknowledgeLifeEventResult());
+            }
+            Assert.IsTrue(sim.LifeEventsEligible(host).Contains("broadband"), "the last covered month reminder is eligible after unseen nudges");
             Assert.AreEqual(mid, host.spent, 1e-6, "November is covered");
             sim.Today = 20161205; sim.Tick(1, host);
             Assert.AreEqual(mid + XgSim.BroadbandMonthly[1] - XgSim.BroadbandMonthly[0], host.spent, 1e-6, "December is billed again");
@@ -376,6 +418,7 @@ namespace LingGuangV05.XingGuang.Tests
             drop.Today = 20160805; drop.S.broadband = 2; drop.S.lifeBroadbandMonth = 201607;
             Assert.IsTrue(drop.OpenLifeEventNow("broadband", h2));
             Assert.IsTrue(drop.AnswerLifeEvent("drop", h2));
+            Assert.IsTrue(drop.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(1, drop.BroadbandTier);
         }
 
@@ -395,6 +438,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.OpenLifeEventNow("landlord_meter", host));
             double before = host.spent;
             Assert.IsTrue(sim.AnswerLifeEvent("pay", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(before + XgSim.LifeLandlordExtra, host.spent, 1e-6);
             Assert.AreEqual(0, sim.S.lifeHighMonths);
             Assert.IsFalse(sim.LifeEventsEligible(host).Contains("landlord_meter"));
@@ -408,6 +452,7 @@ namespace LingGuangV05.XingGuang.Tests
                 s.S.lifeHighMonths = 2;
                 Assert.IsTrue(s.OpenLifeEventNow("landlord_meter", h, force: true));
                 Assert.IsTrue(s.AnswerLifeEvent("explain", h));
+                Assert.IsTrue(s.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
                 Assert.IsTrue(s.S.lifeLandlordWary);
                 if (h.money == 10000) believed++; else { fined++; Assert.AreEqual(10000 - XgSim.LifeLandlordFine, h.money, 1e-6); }
             }
@@ -423,12 +468,15 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(early.OpenLifeEventNow("forum_post", he));
             StringAssert.DoesNotContain("大神", early.LifeEventView(he).body);
             Assert.IsTrue(early.AnswerLifeEvent("tip", he));
+            Assert.IsTrue(early.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.IsFalse(early.HasAchievement("life.praise.forum"));
             var late = Quiet(4); var hl = new Host(100);
             late.S.best.Add(new XgBest { dataset = "spam", acc = .9 });
             Assert.IsTrue(late.OpenLifeEventNow("forum_post", hl));
-            StringAssert.Contains("大神", late.LifeEventView(hl).body);
+            StringAssert.DoesNotContain("大神", late.LifeEventView(hl).body, "the neutral invitation does not praise a post before it exists");
+            StringAssert.Contains("分享自己的训练心得", late.LifeEventView(hl).body);
             Assert.IsTrue(late.AnswerLifeEvent("tip", hl));
+            Assert.IsTrue(late.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.IsTrue(late.HasAchievement("life.praise.forum"));
             StringAssert.Contains("大神", late.S.log.Last());
 
@@ -440,6 +488,7 @@ namespace LingGuangV05.XingGuang.Tests
                 s.S.rng = seed;
                 Assert.IsTrue(s.OpenLifeEventNow("landlord_meter", h, force: true));
                 Assert.IsTrue(s.AnswerLifeEvent("explain", h));
+                Assert.IsTrue(s.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
                 if (h.money == 10000) { nods++; Assert.IsTrue(s.HasAchievement("life.praise.landlord")); StringAssert.Contains("有出息", s.S.log.Last()); }
                 else Assert.IsFalse(s.HasAchievement("life.praise.landlord"));
             }
@@ -447,6 +496,7 @@ namespace LingGuangV05.XingGuang.Tests
             var young = Quiet(2); var hy = new Host(10000);
             Assert.IsTrue(young.OpenLifeEventNow("landlord_meter", hy, force: true));
             Assert.IsTrue(young.AnswerLifeEvent("explain", hy));
+            Assert.IsTrue(young.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.IsFalse(young.HasAchievement("life.praise.landlord"));
         }
 
@@ -458,6 +508,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.lifeLastTrain = sim.S.lifeClock;
             Assert.IsTrue(sim.OpenLifeEventNow("roommate_fan", host));
             Assert.IsTrue(sim.AnswerLifeEvent("throttle", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.IsTrue(sim.S.wiring.pulled.Contains("h:gtx970#1"));
             sim.Tick(XgSim.LifeQuietSeconds + 2, host);
             Assert.IsFalse(sim.S.wiring.pulled.Contains("h:gtx970#1"), "back on after the quiet spell");
@@ -465,6 +516,7 @@ namespace LingGuangV05.XingGuang.Tests
             var bull = Quiet(); var h2 = new RigHost(1000, 1);
             Assert.IsTrue(bull.OpenLifeEventNow("roommate_fan", h2, force: true));
             Assert.IsTrue(bull.AnswerLifeEvent("redbull", h2));
+            Assert.IsTrue(bull.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(1000 - XgSim.LifeRedBull, h2.money, 1e-6);
             Assert.IsFalse(bull.S.wiring.pulled.Any());
         }
@@ -476,6 +528,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.wiring.pulled.Add("h:gtx970#1");
             Assert.IsTrue(sim.OpenLifeEventNow("roommate_fan", host, force: true));
             Assert.IsTrue(sim.AnswerLifeEvent("throttle", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             sim.Tick(XgSim.LifeQuietSeconds + 2, host);
             Assert.IsTrue(sim.S.wiring.pulled.Contains("h:gtx970#1"), "it was off before the roommate came");
         }
@@ -491,12 +544,14 @@ namespace LingGuangV05.XingGuang.Tests
             double n = sim.S.lifeArg;
             Assert.That(n, Is.GreaterThanOrEqualTo(200));
             Assert.IsTrue(sim.AnswerLifeEvent("data", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(before + n, sim.Labels(ds), 1e-6);
 
             var tip = Quiet(); var h2 = new Host(100);
             tip.S.best.Add(new XgBest { dataset = "spam", acc = .9 });
             Assert.IsTrue(tip.OpenLifeEventNow("forum_post", h2));
             Assert.IsTrue(tip.AnswerLifeEvent("tip", h2));
+            Assert.IsTrue(tip.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.That(h2.money, Is.GreaterThan(100));
         }
 
@@ -508,6 +563,7 @@ namespace LingGuangV05.XingGuang.Tests
             double amount = sim.S.lifeArg;
             Assert.That(amount, Is.InRange(100, 5000));
             Assert.IsTrue(sim.AnswerLifeEvent("lend", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(1000000 - amount, host.money, 1e-6);
             Assert.IsFalse(host.earned.Contains(amount));
             sim.Tick(XgSim.LifeReturnSeconds + 2, host);
@@ -516,6 +572,7 @@ namespace LingGuangV05.XingGuang.Tests
             var no = Quiet(); var h2 = new Host(1000000);
             Assert.IsTrue(no.OpenLifeEventNow("zhou_loan", h2));
             Assert.IsTrue(no.AnswerLifeEvent("decline", h2));
+            Assert.IsTrue(no.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(0, h2.spent, 1e-6);
             Assert.AreEqual(0, no.ZhouCool, "saying no to a loan is fine");
         }
@@ -527,6 +584,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.OpenLifeEventNow("licai_call", host));
             double amount = sim.S.lifeArg;
             Assert.IsTrue(sim.AnswerLifeEvent("yuebao", host));
+            Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(1000000 - amount, host.money, 1e-6);
             sim.Tick(XgSim.LifeReturnSeconds + 2, host);
             Assert.IsTrue(host.earned.Any(e => e > amount && e < amount * 1.02), "back with a little interest");
@@ -534,6 +592,7 @@ namespace LingGuangV05.XingGuang.Tests
             var hang = Quiet(); var h2 = new Host(1000000);
             Assert.IsTrue(hang.OpenLifeEventNow("licai_call", h2));
             Assert.IsTrue(hang.AnswerLifeEvent("hangup", h2));
+            Assert.IsTrue(hang.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
             Assert.AreEqual(0, h2.spent, 1e-6);
             Assert.IsFalse(hang.LifeEventsEligible(h2).Contains("licai_call"), "the nudge rests a while");
         }
@@ -558,6 +617,7 @@ namespace LingGuangV05.XingGuang.Tests
                         Assert.IsFalse(text.Contains("✗"), id);
                     }
                     Assert.IsTrue(sim.AnswerLifeEvent(v.choices.FindIndex(c => c.enabled), host), id);
+                    Assert.IsTrue(sim.AcknowledgeLifeEventResult(), "result is explicitly closed after the committed choice");
                     Assert.IsFalse(sim.LifeEventOpen);
                     Assert.IsFalse(sim.S.log.Last().Contains("涌现"));
                 }

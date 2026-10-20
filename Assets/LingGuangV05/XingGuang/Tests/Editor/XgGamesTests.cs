@@ -16,14 +16,13 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AFinishedGameAddsSamplesAndCountsTheScore()
+        public void AFinishedGameCountsTheScoreWithoutBypassingDataInstallation()
         {
             var sim = Lab();
             double before = sim.Labels("go");
             int added = sim.GamePlayed(XgGames.Go, XgGameOutcome.PlayerWon, 40);
-            Assert.AreEqual(XgGames.SamplesFor(XgGames.Go, XgGameOutcome.PlayerWon, 40), added);
-            Assert.Greater(added, 0);
-            Assert.AreEqual(before + added, sim.Labels("go"), 1e-9, "go games feed the 围棋局面 dataset");
+            Assert.AreEqual(0, added);
+            Assert.AreEqual(before + added, sim.Labels("go"), 1e-9, "completion alone does not install a data pack");
 
             sim.GamePlayed(XgGames.Go, XgGameOutcome.PlayerLost, 30);
             sim.GamePlayed(XgGames.Go, XgGameOutcome.Draw, 50);
@@ -47,36 +46,20 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void EveryFewMovesAddSamples()
+        public void MovesNeverBypassTheRecordPurchaseAndInstallation()
         {
-            var sim = Lab();
-            Assert.AreEqual(0, sim.GameMove(XgGames.Gomoku, 9));
-            Assert.AreEqual(XgGames.SamplesPerBatch, sim.GameMove(XgGames.Gomoku, XgGames.MovesPerBatch));
-            Assert.AreEqual(0, sim.GameMove(XgGames.Gomoku, 0));
-            Assert.AreEqual(XgGames.SamplesPerBatch, sim.GameRecord(XgGames.Gomoku).samples);
-            Assert.AreEqual(XgGames.SamplesPerBatch, sim.Labels(sim.GameDataset(XgGames.Gomoku)), 1e-9);
+            var sim=Lab();double before=sim.Labels("go");
+            for(int i=0;i<=30;i++)Assert.AreEqual(0,sim.GameMove(XgGames.Gomoku,i));
+            Assert.AreEqual(before,sim.Labels("go"));Assert.AreEqual(0,sim.GameRecord(XgGames.Gomoku).samples);
         }
 
         [Test]
-        public void TheAiPlaysFromItsStageAndGetsStronger()
+        public void EveryKnownBoardGameAllowsThePlayersAiAtStageTwo()
         {
-            Assert.IsFalse(XgGames.AiPlays(XgGames.Gomoku, 2));
-            Assert.IsTrue(XgGames.AiPlays(XgGames.Gomoku, 3));
-            Assert.IsFalse(XgGames.AiPlays(XgGames.Go, 3));
-            Assert.IsTrue(XgGames.AiPlays(XgGames.Go, 4));
-            Assert.IsFalse(XgGames.AiPlays(XgGames.Chess, 5));
-            Assert.IsTrue(XgGames.AiPlays(XgGames.Chess, 6));
-
-            Assert.AreEqual(0, XgGames.Skill(XgGames.Go, 3, 1));
-            Assert.Less(XgGames.Skill(XgGames.Gomoku, 3, .5), XgGames.Skill(XgGames.Gomoku, 3, .95));
-            Assert.Less(XgGames.Skill(XgGames.Go, 4, .5), XgGames.Skill(XgGames.Go, 6, .5));
-            Assert.LessOrEqual(XgGames.Skill(XgGames.Gomoku, 6, 1), .98);
-
-            Assert.AreEqual(3, XgGames.ChessDepth(5, 0), "before stage 6 the built-in program searches");
-            Assert.AreEqual(1, XgGames.ChessDepth(6, .3));
-            Assert.AreEqual(3, XgGames.ChessDepth(6, .95));
-            Assert.Greater(XgGames.ChessRandomChance(6, .2), XgGames.ChessRandomChance(6, .9));
-            Assert.AreEqual(0, XgGames.ChessRandomChance(5, 0));
+            foreach(string id in new[]{"gomoku","go","chess","ludo","checkers_cn","monopoly"})
+            {Assert.False(XgGames.AiPlays(id,1));Assert.True(XgGames.AiPlays(id,2));}
+            Assert.False(XgGames.AiPlays("unknown",6));
+            var sim=Lab(2);Assert.AreEqual(0,sim.BoardLogicLevel,"labelled logic difficulty is not board skill");
         }
 
         [Test]

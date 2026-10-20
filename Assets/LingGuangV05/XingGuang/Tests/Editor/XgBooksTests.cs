@@ -23,7 +23,9 @@ namespace LingGuangV05.XingGuang.Tests
 
         static XgSim Able(int ability)
         {
-            var sim = new XgSim { GoldChance = 0 };
+            var sim = new XgSim(new XgState()) { GoldChance = 0 };
+            sim.Today = 20160601;
+            sim.S.abilitiesEmerged = new List<int> { 1 };
             for (int i = 2; i <= ability; i++) sim.S.abilitiesEmerged.Add(i);
             return sim;
         }
@@ -45,9 +47,9 @@ namespace LingGuangV05.XingGuang.Tests
 
         [Test] public void TheShelfHoldsTheEightBooksInOrder()
         {
-            CollectionAssert.AreEqual(new[] { "sanzijing", "lunyu", "tangshi", "xiyouji", "shuihu", "sanguo", "nahan", "hongloumeng" }, XgBooks.All.Select(b => b.id).ToArray());
-            CollectionAssert.AreEqual(new[] { 2.0, 6, 20, 40, 80, 100, 150, 300 }, XgBooks.All.Select(b => b.paramsK).ToArray());
-            foreach (var b in XgBooks.All)
+            CollectionAssert.AreEqual(new[] { "sanzijing", "lunyu", "tangshi", "xiyouji", "shuihu", "sanguo", "nahan", "hongloumeng" }, XgBooks.LegacyBooks.Select(b => b.id).ToArray());
+            CollectionAssert.AreEqual(new[] { 2.0, 6, 20, 40, 80, 100, 150, 300 }, XgBooks.LegacyBooks.Select(b => b.paramsK).ToArray());
+            foreach (var b in XgBooks.LegacyBooks)
             {
                 Assert.That(b.ability, Is.InRange(2, 5), b.id);
                 Assert.That(b.chapters.Length, Is.GreaterThanOrEqualTo(4), b.id);
@@ -156,7 +158,7 @@ namespace LingGuangV05.XingGuang.Tests
             // Ability 5: a chapter of another book it read with the same theme.
             var sim = Able(5);
             XgBook other = null; int at = -1;
-            foreach (var b in XgBooks.All)
+            foreach (var b in XgBooks.LegacyBooks)
             {
                 if (b == book) continue;
                 for (int c = 0; c < b.chapters.Length && other == null; c++) if (b.chapters[c].tag == ch.tag) { other = b; at = c; }
@@ -219,7 +221,7 @@ namespace LingGuangV05.XingGuang.Tests
             string said = sim.BookQuote(message, new Random(1));
             Assert.IsNotNull(said);
             StringAssert.StartsWith("《", said);
-            Assert.IsTrue(XgBooks.All.Where(b => sim.BookDone(b)).Any(b => said.StartsWith("《" + b.name + "》")), "only a finished book");
+            Assert.IsTrue(XgBooks.LegacyBooks.Where(b => sim.BookDone(b)).Any(b => said.StartsWith("《" + b.name + "》")), "only a finished book");
         }
 
         [Test] public void ThePromptListsWhatItRead()

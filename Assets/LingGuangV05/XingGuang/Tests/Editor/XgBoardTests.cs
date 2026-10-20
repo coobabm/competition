@@ -5,6 +5,35 @@ namespace LingGuangV05.XingGuang.Tests
     /// <summary>The concept board's phenomena must come out of the six rules on their own (design v1.1 §4.5).</summary>
     public sealed class XgBoardTests
     {
+        [TestCase(int.MaxValue)]
+        [TestCase(int.MaxValue - 1)]
+        [TestCase(int.MinValue)]
+        [TestCase(-1)]
+        [TestCase(0)]
+        public void PoemDistractorsStayWrongAtIntegerBoundaries(int pick)
+        {
+            foreach (string line in XgCatalog.PoemLines)
+                for (int pos = 0; pos < line.Length; pos++)
+                {
+                    string wrong = XgCatalog.PoemDistractor(line, pos, pick);
+                    Assert.That(wrong.Length, Is.EqualTo(1));
+                    Assert.That(wrong, Is.Not.EqualTo(line.Substring(pos, 1)), line + " at " + pos);
+                }
+        }
+
+        [Test]
+        public void DiagnosticCardsDoNotShareMutableResultsAcrossCallers()
+        {
+            var first = XgBoardData.TestSet("poems", 2, 20160524, 41);
+            string original = XgBoardData.Signature(first[0]);
+            int count = first.Count;
+            first[0].features.Clear();
+            first.Clear();
+            var second = XgBoardData.TestSet("poems", 2, 20160524, 41);
+            Assert.That(second.Count, Is.EqualTo(count));
+            Assert.That(XgBoardData.Signature(second[0]), Is.EqualTo(original));
+        }
+
         static double Train(XgKnobs k, System.Func<int, XgBoardCard> make, int pool, int cards, out XgBoard brain, out double train, out int diverged)
         {
             brain = new XgBoard();

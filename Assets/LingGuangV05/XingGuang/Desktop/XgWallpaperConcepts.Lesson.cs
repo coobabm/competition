@@ -16,7 +16,7 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly HashSet<int> lessonConceptIds = new HashSet<int>();
         int lessonRegion;
         float lessonUntil;
-        float LessonPulse => GamePerformance.Low ? 0 : lessonUntil <= 0 ? 0 : Mathf.Clamp01((lessonUntil - Time.unscaledTime) / LessonPulseSeconds);
+        float LessonPulse => StructureReduced ? 0 : lessonUntil <= 0 ? 0 : Mathf.Clamp01((lessonUntil - Time.unscaledTime) / LessonPulseSeconds);
 
         protected override void OnEnable()
         {
@@ -82,7 +82,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 foreach (var concept in board.concepts)
                     if (concept != null && !concept.seed && concept.region == region)
                         lessonConceptIds.Add(concept.id);
-            lessonUntil = Time.unscaledTime + LessonPulseSeconds;
+            lessonUntil = wallpaper.TryStartGlow(XgBoardData.DisplayRegion(taughtCard.dataset)) ? Time.unscaledTime + LessonPulseSeconds : 0;
             RememberAttention(taughtCard);
             presentation?.DataChanged();next = 0;
             Update(); // Refresh the learned board in this event; do not wait for the 100 ms poll.

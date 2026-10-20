@@ -195,6 +195,14 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual("final.align", align.id); Assert.AreEqual(XgSim.AlignCards, align.goal);
 
             s.alignDone = XgSim.AlignCards; s.fullOpen = true;
+            var preparation = First(XgGuide.Current(sim, 0));
+            Assert.AreEqual("final.preparation.redteam", preparation.id);
+            Assert.AreEqual(XgGuide.Lab, preparation.app); Assert.AreEqual("final", preparation.tab);
+            Assert.AreEqual("", preparation.target, "new flow must not target a retired legacy control");
+
+            // Explicit legacy completed marker, without a committed new release: retain the old
+            // guide branch and its legacy letter/rules helpers. New active saves stay on preparation.
+            s.chapterComplete = true;
             var exam = First(XgGuide.Current(sim, 0));
             Assert.AreEqual("final.exam", exam.id); Assert.AreEqual(XgSim.ExamQuestions, exam.goal);
 
@@ -316,8 +324,13 @@ namespace LingGuangV05.XingGuang.Tests
             StringAssert.Contains("「垃圾短信」数据包", pack.zh);
             StringAssert.DoesNotContain("或在科技买数据包", pack.whyZh);
 
-            // The pack is in. It would close the bar on its own, so the note drops the data line altogether.
+            // Ownership alone is not installed data in the current data-file schema.
             sim.S.unlocked.Add("spam.pack"); sim.S.owned.Add("spam");
+            Assert.AreEqual(0, sim.InstalledBatches("spam"));
+            Assert.Less(sim.TrainedSamples, sim.SamplesThreshold(2), "uninstalled ownership cannot fill the data bar");
+            // This fixture represents the full pack after import, before noise is added below.
+            sim.S.installedDataBatches.Add(new XgLabelCount { dataset = "spam", count = XgSim.PackBatches("spam") });
+            Assert.GreaterOrEqual(sim.TrainedSamples, sim.SamplesThreshold(2), "the installed fixture must actually fill the data bar");
             Assert.IsNull(Find(XgGuide.Current(sim, 0), "ability.label"), "a full bar needs no labels");
             // A dirty pack (noise subtracts from the effective samples) leaves a gap: what is left is labels, on the desks that count in full (算术 counts half).
             sim.S.noise.Add(new XgLabelCount { dataset = "spam", count = 4000 });
@@ -409,6 +422,87 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsNull(Find(XgGuide.Current(sim, 1e4), "label.auto"), "bought");
         }
 
+        [Test]
+        public void ReadyDataUsesPaidImportPrerequisitesThenOnlyTheExplicitDragStepInstalls()
+        {
+            var sim = Trained(); var host = new Host { money = 10000 };
+            Assert.IsTrue(sim.BuyNode("spam.pack", host));
+            for (int i = 0; i < 20 && sim.S.dataFiles.Count == 0; i++) sim.Tick(.5, host);
+            Assert.AreEqual(0, sim.InstalledBatches("spam"));
+            foreach (var id in new[] { "train.curve", XgSim.DataEntryNode })
+            {
+                var step = First(XgGuide.Current(sim, host.money));
+                Assert.AreEqual("data.import.unlock", step.id);
+                Assert.AreEqual("node:" + id, step.target);
+                Assert.AreEqual(step.id, XgGuide.BarStep(sim, host.money, host.VramMB, out _)?.id);
+                double price = sim.NodeCost(XgCatalog.Node(id)), before = host.money;
+                Follow(sim, host, step);
+                Assert.AreEqual(before - price, host.money, 1e-8, "existing purchase deducts its ordinary price");
+                Assert.AreEqual(0, sim.InstalledBatches("spam"), "a purchase cannot import a file");
+            }
+            var install = First(XgGuide.Current(sim, host.money));
+            Assert.AreEqual("data.install", install.id);
+            Assert.IsTrue(sim.DataFileReady(install.arg));
+            Assert.IsTrue(XgGuide.TabOpen(sim, install.app, install.tab));
+            StringAssert.Contains("拖", install.zh); StringAssert.Contains("drag", install.en);
+            Assert.AreEqual(0, sim.InstalledBatches("spam"), "reading the note does not install");
+            double wallet = host.money;
+            Follow(sim, host, install);
+            Assert.Greater(sim.InstalledBatches("spam"), 0);
+            Assert.AreEqual(wallet, host.money, "no second installation fee");
+            Assert.IsFalse(sim.InstallDataFile(install.arg), "the same file cannot install twice");
+            Assert.AreNotEqual("data.install", First(XgGuide.Current(sim, host.money)).id);
+        }
+
+        /// <summary>
+        /// Mirrors the Files UI guide fixture (FilesWindowUiChecks): an early assessed lab that buys 训练曲线, 数据导入 and the
+        /// spam pack in that order and downloads it. Without labelled samples the 练 page is closed, so the import step
+        /// (which points at 练) cannot appear; a few hand labels through the product answer API open it. Nothing installs.
+        /// </summary>
+        [Test]
+        public void TheUiImportFixtureNeedsTheTrainPageThatItsImportStepPointsAt()
+        {
+            XgSim Setup(bool labelled, Host host)
+            {
+                var sim = new XgSim { GoldChance = 0 };
+                sim.S.epochs = 1; sim.S.assessments = 1; sim.S.treeIntroDelivered = true;
+                Assert.IsFalse(XgGuide.TabOpen(sim, XgGuide.Lab, "train"), "setup: no labels, 练 closed");
+                if (labelled)
+                {
+                    sim.SelectDesk("spam");
+                    for (int i = 0; i < 40 && sim.Samples("spam") < XgCatalog.SamplesToTrain; i++) { var c = sim.Card("spam"); sim.Answer("spam", c.truth, host); }
+                    Assert.GreaterOrEqual(sim.Labels("spam"), XgCatalog.SamplesToTrain, "setup: hand labels only up to the training line");
+                }
+                foreach (var id in new[] { "train.curve", XgSim.DataEntryNode, "spam.pack" })
+                {
+                    double before = host.money, price = sim.NodeCost(XgCatalog.Node(id));
+                    Assert.IsTrue(sim.BuyNode(id, host), id);
+                    Assert.AreEqual(before - price, host.money, 1e-8, id + " charges its ordinary price once");
+                }
+                for (int i = 0; i < 20 && sim.S.dataFiles.Count == 0; i++) sim.Tick(.5, host);
+                Assert.IsTrue(sim.S.dataFiles.Exists(f => sim.DataFileReady(f.fileId)), "a downloaded, ready pack");
+                Assert.AreEqual(0, sim.InstalledBatches("spam"), "downloading installs nothing");
+                return sim;
+            }
+
+            var bare = Setup(false, new Host { money = 10000 });
+            Assert.IsTrue(bare.CanInstallData && XgGuide.TabOpen(bare, XgGuide.Lab, "tree"));
+            Assert.IsFalse(XgGuide.TabOpen(bare, XgGuide.Lab, "train"), "no labelled samples: 练 stays closed after the purchases");
+            var bareSteps = XgGuide.Current(bare, 10000);
+            Assert.IsNull(Find(bareSteps, "data.install"), "the import step never points at a closed page");
+            Assert.AreNotEqual("data.install", XgGuide.BarStep(bare, 10000, 1e5, out _)?.id, "nor does the top bar's 去做 link");
+
+            var host2 = new Host { money = 10000 };
+            var labelled = Setup(true, host2);
+            Assert.IsTrue(XgGuide.TabOpen(labelled, XgGuide.Lab, "train"));
+            var first = First(XgGuide.Current(labelled, host2.money));
+            Assert.AreEqual("data.install", first.id, "with 练 open the downloaded pack's import leads");
+            Assert.AreEqual(XgGuide.Lab, first.app); Assert.AreEqual("train", first.tab);
+            Assert.IsTrue(labelled.DataFileReady(first.arg));
+            StringAssert.Contains("训练数据", first.zh);
+            Assert.AreEqual(0, labelled.InstalledBatches("spam"), "hand labels and reading the note install nothing");
+        }
+
         /// <summary>
         /// Plays a new game doing only what the note's first line says (and labelling while it waits for money), and
         /// checks every line on the way: never an empty note, never a blank line, never a closed page. It must reach
@@ -452,6 +546,9 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.Greater(found, at, bought + " comes after the step before it");
                 at = found;
             }
+            StringAssert.Contains("数据导入", all);
+            StringAssert.Contains("拖到「练」", all);
+            Assert.Greater(sim.InstalledBatches("spam"), 0, "the note-led route imports its downloaded pack");
             StringAssert.Contains("练到 C 级", all);
             StringAssert.Contains("科技买「垃圾短信」", all);
             StringAssert.DoesNotContain("科技买「垃圾短信」数据包", all, "the pack is named once (the study line), not twice");
@@ -565,6 +662,8 @@ namespace LingGuangV05.XingGuang.Tests
             if (s.target.StartsWith("contract:", StringComparison.Ordinal)) { sim.Sign(s.target.Substring(9), host); return; }
             if (s.target.StartsWith("label:训练一轮", StringComparison.Ordinal)) { sim.TrainEpoch(Track(), host); return; }
             if (s.target.StartsWith("label:评估", StringComparison.Ordinal)) { sim.Assess(Track(), host); return; }
+            // This simulates only the explicit drag/import instruction; buying or downloading never installs.
+            if (s.id == "data.install") { Assert.IsTrue(sim.InstallDataFile(s.arg), "the named ready file imports through the product API"); return; }
             if (s.id == "raise") { sim.BuyNode("label.raise", host); return; }
             if (s.id == "label.auto") { if (!sim.BuyNode("label.auto", host)) Label(sim, host, ""); return; }
             Label(sim, host, s.arg);

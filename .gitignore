@@ -140,10 +140,6 @@ InitTestScene*.unity*
 *.jks
 
 # LingGuang: large local-only files (model weights, llama.cpp binaries, build outputs, exports, tool caches)
-/Assets/StreamingAssets/LingGuang/Models/*.gguf
-/Assets/StreamingAssets/LingGuang/Models/*.gguf.meta
-/Assets/StreamingAssets/LingGuang/Embedding/*.gguf
-/Assets/StreamingAssets/LingGuang/Embedding/*.gguf.meta
 /Assets/StreamingAssets/LingGuang/llama/mac-arm64/
 /Assets/StreamingAssets/LingGuang/llama/win-x64/
 # LLM for Unity downloads its LlamaLib runtime (~1.7 GB, every platform) here on editor load

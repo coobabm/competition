@@ -8,6 +8,8 @@ namespace LingGuangV05.Desktop.XingGuang
         static void Part(Component c,bool on) { if(c!=null && c.gameObject.activeSelf!=on)c.gameObject.SetActive(on); }
         void RefreshTrainingParts()
         {
+            RefreshDataInstallHint();
+            RefreshRelicAccess();
             bool legacy=!Sim.S.teachingFlow;
             bool model=Sim.TrainPart("model"), rates=Sim.TrainPart("rate");
             summary.Show(model); saveModel.Show(Sim.TrainPart("checkpoint"));
@@ -22,7 +24,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(learningView&&!learning)learningView=false;
             if(!gear&&!booksView&&!learningView){if(learning)learningView=true;else if(books)booksView=true;}
             Part(gearCard,gear||learning||books);
-            bool side=ledgerSeal!=null||Sim.TrainPart("next")||Sim.TrainPart("ledger")||gear||learning||books;
+            bool side=relicAccessCard!=null||ledgerSeal!=null||Sim.TrainPart("next")||Sim.TrainPart("ledger")||gear||learning||books;
             Part(right,side); left.offsetMin=new Vector2(side?RightWidth+ColumnGap:0,0);
             curveCard.offsetMax=new Vector2(0,model||Sim.TrainPart("tracks")? -TabsHeight-RowGap:0);
             chart.rectTransform.anchorMin=new Vector2(0,Sim.TrainPart("weights")?.37f:0);

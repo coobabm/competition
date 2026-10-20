@@ -38,7 +38,8 @@ namespace LingGuangV05.CaseMenu
             titleActions=root.gameObject.AddComponent<CanvasGroup>();
             var read=ActionButton(root,"ReadArchives",T("读取存档 [L]","Load game [L]"),new Vector2(-70,130),OpenArchives);
             var quit=ActionButton(root,"QuitGame",T("退出游戏 [Q]","Quit game [Q]"),new Vector2(-310,130),()=>quitRequested?.Invoke());
-            Link(read,quit,quit);Link(quit,read,read);
+            var endings=ActionButton(root,"EndingArchives",T("结局档案","Endings"),new Vector2(-550,130),OpenEndingArchives);
+            Link(read,endings,quit);Link(quit,read,endings);Link(endings,quit,read);
         }
         Button ActionButton(Transform parent,string name,string caption,Vector2 position,Action action)
         {
@@ -56,6 +57,7 @@ namespace LingGuangV05.CaseMenu
             if(titleActions==null||!titleActions.interactable||IsSettingsOpen)return;
             var rt=titleRuntime?.Invoke();
             if(rt==null){ShowError(T("桌面正在准备，请稍后读取存档。","The desktop is preparing. Please try loading shortly."));return;}
+            endingViewEpoch++;
             if(archiveGroup!=null){archiveGroup.gameObject.SetActive(false);if(Application.isPlaying)Destroy(archiveGroup.gameObject);else DestroyImmediate(archiveGroup.gameObject);}
             var backdrop=Panel("TitleArchives",canvasRoot,new Color(0,0,0,.86f),true);Stretch(backdrop.rectTransform);
             archiveGroup=backdrop.gameObject.AddComponent<CanvasGroup>();
@@ -86,6 +88,6 @@ namespace LingGuangV05.CaseMenu
             catch(Exception e){archiveStatus.text=T("读取失败：","Load failed: ")+e.Message;}
         }
         public void CloseArchives()
-        {if(archiveGroup!=null)archiveGroup.gameObject.SetActive(false);selectedArchive=0;EventSystem.current?.SetSelectedGameObject(null);}
+        {endingViewEpoch++;if(archiveGroup!=null)archiveGroup.gameObject.SetActive(false);selectedArchive=0;EventSystem.current?.SetSelectedGameObject(null);}
     }
 }

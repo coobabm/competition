@@ -53,12 +53,12 @@ namespace LingGuangV05.Desktop.Games
         /// A hub game ended: the lab records it and learns from it, then one reaction shows on the desktop. Returns
         /// the samples added (0 without a lab).
         /// </summary>
-        public static int Finish(XgSim lab, string game, XgGameOutcome outcome, int moves, IList<string> log)
+        public static int Finish(XgSim lab, string game, XgGameOutcome outcome, int moves, IList<string> log, bool? privateAi = null)
         {
             if (lab == null) return 0;
             int samples = lab.GamePlayed(game, outcome, moves);
             var host = Host();
-            if (host != null) host.React(lab, game, outcome, moves, log);
+            if (host != null) host.React(lab, game, outcome, moves, log, privateAi);
             return samples;
         }
 
@@ -69,9 +69,10 @@ namespace LingGuangV05.Desktop.Games
             return lab.S.stage >= 4 && !string.IsNullOrEmpty(name) ? name : T(AppNames.AppZh, AppNames.AppEn);
         }
 
-        void React(XgSim lab, string game, XgGameOutcome outcome, int moves, IList<string> log)
+        void React(XgSim lab, string game, XgGameOutcome outcome, int moves, IList<string> log, bool? privateAi)
         {
             var c = lab.GameContext(game, outcome, moves);
+            if(privateAi.HasValue)c.aiPlayed=privateAi.Value;
             var kind = lab.NextGameReaction(UnityEngine.Random.value);
             float roll = UnityEngine.Random.value;
             if (Play(kind, lab, c, roll, log)) return;

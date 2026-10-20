@@ -12,7 +12,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
     /// over <see cref="SignCenter"/>. It owns no child objects, so nothing has to be destroyed while a RectMask2D holds it.
     /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
-    public sealed class XgMoleGraphic : MaskableGraphic, IPointerDownHandler
+    public sealed class XgMoleGraphic : MaskableGraphic, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
     {
         public const float CellWidth = 245, CellHeight = 100;
         /// <summary>How long the hit flash and mallet stay.</summary>
@@ -28,13 +28,27 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         /// <summary>The mole wears LingGuang's purple hat.</summary>
         public bool Ai;
         public bool Golden;
+        public bool WideSign, Reduced;
         /// <summary>Seconds since the mole was whacked, or negative while it has not been.</summary>
         public float HitTime = -1;
         /// <summary>The whack was a right one (the sum was wrong), which flashes gold; a wrongful one flashes cool grey.</summary>
         public bool HitGood;
         public Action Down;
+        public Action<bool> Hover;
+        float paintedRise, paintedHit;
+        bool painted, paintedAi, paintedGold, paintedGood, paintedWide, paintedReduced;
 
-        public void Redraw() { SetVerticesDirty(); }
+        public void Redraw()
+        {
+            float visibleHit = Reduced ? (HitTime >= 0 && HitTime < HitSeconds ? 0 : -1) : HitTime;
+            if (painted && paintedRise == Rise && paintedHit == visibleHit && paintedAi == Ai && paintedGold == Golden
+                && paintedGood == HitGood && paintedWide == WideSign && paintedReduced == Reduced) return;
+            painted = true; paintedRise = Rise; paintedHit = visibleHit; paintedAi = Ai; paintedGold = Golden;
+            paintedGood = HitGood; paintedWide = WideSign; paintedReduced = Reduced;
+            SetVerticesDirty();
+        }
+        public void OnPointerEnter(PointerEventData e) => Hover?.Invoke(true);
+        public void OnPointerExit(PointerEventData e) => Hover?.Invoke(false);
 
         /// <summary>The sign shows once the mole is up; the label's centre, in pixels from the cell's top left.</summary>
         public bool SignShown => Rise >= .9f;
@@ -68,7 +82,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             bool hit = HitTime >= 0 && HitTime < HitSeconds;
             if (body > .5f)
             {
-                if (hit) Burst(vh, new Vector2(cx, cy + Mathf.Min(body, BodyHeight) * .6f));
+                if (hit && !Reduced) Burst(vh, new Vector2(cx, cy + Mathf.Min(body, BodyHeight) * .6f));
                 Mole(vh, cx, cy, body, hit);
                 if (rise >= .9f) Board(vh, cx, cy + SignLift - (1 - Mathf.Min(1, rise)) * 20);
                 if (Ai && body > 24) Hat(vh, cx, cy + body);
@@ -77,7 +91,7 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             var lip = new Vector2[17];
             for (int i = 0; i <= 16; i++) { float a = Mathf.PI + Mathf.PI * i / 16; lip[i] = new Vector2(cx + Mathf.Cos(a) * 82, cy + Mathf.Sin(a) * 18.5f); }
             XgDraw.Polyline(vh, lip, 4, Rim);
-            if (hit && body > .5f) Mallet(vh, cx, cy);
+            if (hit && body > .5f && !Reduced) Mallet(vh, cx, cy);
         }
 
         static void HalfEllipse(VertexHelper vh, Vector2 c, float rx, float ry, Color color)
@@ -129,8 +143,9 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
 
         void Board(VertexHelper vh, float cx, float cy)
         {
-            RoundBox(vh, new Vector2(cx - 70, cy - 17), new Vector2(cx + 70, cy + 15), 6, PlankEdge);
-            RoundBox(vh, new Vector2(cx - 67.5f, cy - 14.5f), new Vector2(cx + 67.5f, cy + 12.5f), 4, Golden?new Color(1,.91f,.35f):Plank);
+            float half = WideSign ? 119 : 70, low = WideSign ? 23 : 17, high = WideSign ? 23 : 15;
+            RoundBox(vh, new Vector2(cx - half, cy - low), new Vector2(cx + half, cy + high), 6, PlankEdge);
+            RoundBox(vh, new Vector2(cx - half + 2.5f, cy - low + 2.5f), new Vector2(cx + half - 2.5f, cy + high - 2.5f), 4, Golden?new Color(1,.91f,.35f):Plank);
             // The paws hold the sign up.
             XgDraw.Disc(vh, new Vector2(cx - 52, cy + 15), 7, FurDark, 12);
             XgDraw.Disc(vh, new Vector2(cx + 52, cy + 15), 7, FurDark, 12);

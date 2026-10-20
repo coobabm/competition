@@ -21,6 +21,8 @@ namespace LingGuangV05.XingGuang.Tests
             for (int round = 0; round < 40 && sim.OpeningFocus; round++)
             {
                 for (int i = 0; i < 10; i++) { var c = sim.Card(XgMemes.SenseDesk); sim.Answer(XgMemes.SenseDesk, c.truth, host); }
+                if (sim.TeachingTreeOpen && !sim.Has("train.curve"))
+                    Assert.IsTrue(sim.BuyNode("train.curve", host), "buy the current opening training prerequisite");
                 sim.TrainEpoch(XgTrack.Sequence, host);
             }
             Assert.IsFalse(sim.OpeningFocus, "the opening ends");

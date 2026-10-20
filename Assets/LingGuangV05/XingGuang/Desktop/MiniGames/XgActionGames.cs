@@ -292,70 +292,240 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         readonly bool[] wrong = new bool[Cells];
         readonly string[] truth = new string[Cells], aiAnswers = new string[Cells];
         readonly TMP_Text[] aiSigns = new TMP_Text[Cells];
+        readonly XgMoleQuestion[] questions = new XgMoleQuestion[Cells];
+        readonly XgMoleTurn[] turns = new XgMoleTurn[Cells];
+        readonly XgPredictionTrace[] predictions = new XgPredictionTrace[Cells];
+        readonly float[] autoDelay = new float[Cells];
+        XgBtn autoButton;
+        TMP_Text questionDetail;
+        int hovered = -1;
+        RectTransform reviewRoot;
+        TMP_Text reviewQuestion, reviewConditions, reviewResult;
+        XgBtn reviewTrue, reviewFalse;
+        int reviewSlot, reviewRevision;
+        bool reviewing;
+        int buildGeneration;
+        bool autoEnabled;
         float spawn;
         int missed,goldenMilestone,goldenBonus;
         public XgActionMoles(XgMiniContext c) : base(c) { }
         bool Target(int i) => C.Id == "arith_mole" ? !wrong[i] : wrong[i];
         public override void Build()
         {
+            int generation = ++buildGeneration;
+            autoEnabled = C.Sim.MoleAutoAvailable(C.Id);
             Header(XgUi.T("算术打地鼠", "Arithmetic whack-a-mole"), C.Id == "arith_mole" ? XgUi.T("敲正确的算式，放过错误的算式。", "Whack correct equations; leave wrong ones alone.") : XgUi.T("敲错误的算式，放过正确的算式。", "Whack wrong equations; leave correct ones alone."));
+            // Restart destroys old children at end-of-frame; bind only the new active controls.
+            foreach (var restart in C.Root.GetComponentsInChildren<Button>()) if (restart.name == "Restart")
+            { restart.onClick.RemoveAllListeners(); restart.onClick.AddListener(() => { if (generation == buildGeneration && C.IsActive) Restart(); }); }
+            hovered = -1;
+            reviewing = false; C.Sim.ClearMoleLessons();
+            questionDetail = null;
+            foreach (var label in C.Root.GetComponentsInChildren<TMP_Text>()) if (label.name == "Rule") questionDetail = label;
             Array.Clear(expires, 0, Cells); Array.Clear(rise, 0, Cells); missed = goldenMilestone = goldenBonus = 0; spawn = .2f;
+            autoButton = C.Button("MoleAuto", 545, 78, 190, 28, XgUi.T("自动：", "Auto: ") + (autoEnabled ? XgUi.T("开", "On") : XgUi.T("关", "Off")), () =>
+            {
+                if (generation != buildGeneration) return;
+                autoEnabled = !autoEnabled && C.Sim.MoleAutoAvailable(C.Id);
+                autoButton.Set(XgUi.T("自动：", "Auto: ") + (autoEnabled ? XgUi.T("开", "On") : XgUi.T("关", "Off")), true);
+                feedback.text = !C.Sim.MoleAutoAvailable(C.Id)
+                    ? XgUi.T("阶段2购买算术自动作答后开放。", "Buy arithmetic auto-answer in stage 2.")
+                    : XgUi.T("自动作答已", "Auto-answer ") + (autoEnabled ? XgUi.T("开启", "on") : XgUi.T("关闭", "off"));
+            }, 13);
+            C.Button("MoleReview", 745, 78, 135, 28, XgUi.T("题目回顾", "Review"), () => { if (generation == buildGeneration) OpenReview(); }, 14);
+            status.rectTransform.sizeDelta = new Vector2(520, 28);
             C.Box("Lawn", 15, 112, 870, 320, new Color(.36f, .56f, .33f));
             float[] x = { 42, 327, 612 };
             for (int i = 0; i < Cells; i++)
             {
                 int slot = i;
+                if (turns[i] == null) turns[i] = new XgMoleTurn();
+                turns[i].Invalidate(); predictions[i] = null; questions[i] = null;
                 var g = C.Rect("Hole" + i, x[i % 3], 122 + i / 3 * 102, XgMoleGraphic.CellWidth, XgMoleGraphic.CellHeight).gameObject.AddComponent<XgMoleGraphic>();
                 g.raycastTarget = true; g.HitTime = -1;
-                g.Down = () => { C.Ui.window?.FocusToWindow(); if (C.IsActive) Hit(slot); };
+                g.Down = () => { C.Ui.window?.FocusToWindow(); if (generation == buildGeneration && C.IsActive) Hit(slot, turns[slot].Token, false); };
                 holes[i] = g;
+                g.Hover = entered =>
+                {
+                    if (generation != buildGeneration || !C.IsActive) return;
+                    hovered = entered && expires[slot] > 0 ? slot : -1;
+                    RefreshQuestionDetail();
+                };
             }
             // The labels sit over their cells, so they are made after every graphic.
             for (int i = 0; i < Cells; i++)
             {
-                var t = C.Text("Sum" + i, 0, 0, 132, 28, "", 21, new Color(.2f, .12f, .05f));
+                var t = C.Text("Sum" + i, 0, 0, 226, 42, "", 18, new Color(.2f, .12f, .05f));
+                t.enableAutoSizing = false; t.textWrappingMode = TextWrappingModes.Normal; t.overflowMode = TextOverflowModes.Overflow;
                 t.alignment = TextAlignmentOptions.Center; t.raycastTarget = false; t.enabled = false; signs[i] = t;
                 var ai = C.Text("AiSum"+i,0,0,180,22,"",11,new Color(.45f,.28f,.65f));ai.raycastTarget=false;ai.enabled=false;aiSigns[i]=ai;
                 var b = C.Text("Bang" + i, 0, 0, 110, 44, "", 34, new Color(.86f, .2f, .12f));
                 b.alignment = TextAlignmentOptions.Center; b.fontStyle = FontStyles.Bold; b.raycastTarget = false; b.enabled = false; bangs[i] = b;
             }
+            BuildReview();
         }
-        void Hit(int i)
+        void BuildReview()
         {
-            if (!playing || expires[i] <= 0) return;
-            C.Sim.RecordTeachingQuestion(signs[i].text,signs[i].text,!wrong[i],C.Id=="arith_mole",
-                "正确算式："+truth[i],"Correct equation: "+truth[i],"arith",null,
-                C.Id=="arith_mole"?XgUi.T("敲：算式正确","Whack: correct equation"):XgUi.T("敲：算式错误","Whack: wrong equation"),aiAnswers[i]);
-            bool goldenHit=holes[i].Golden&&Target(i);
-            expires[i] = 0; holes[i].HitTime = 0; holes[i].HitGood = Target(i);
-            bangs[i].text = Target(i) ? XgUi.T("啪！", "Pow!") : XgUi.T("冤！", "Oops!");
-            bangs[i].color = Target(i) ? new Color(.86f, .2f, .12f) : new Color(.3f, .38f, .62f);
-            Result(Target(i), XgUi.T("正确算式：", "The right sum: ") + truth[i]);
+            int generation = buildGeneration;
+            reviewRoot = C.Rect("MoleReviewLayer", 0, 0, 900, 480);
+            var panel = C.Box("MoleReviewBackground", 12, 108, 876, 330, C.Ui.dark ? XgDark.Card : new Color(.97f, .97f, .94f));
+            panel.raycastTarget = true; panel.transform.SetParent(reviewRoot, false);
+            reviewQuestion = C.Text("ReviewQuestion", 35, 124, 825, 64, "", 24);
+            reviewQuestion.transform.SetParent(reviewRoot, false); reviewQuestion.enableAutoSizing = false;
+            reviewQuestion.textWrappingMode = TextWrappingModes.Normal; reviewQuestion.overflowMode = TextOverflowModes.Overflow;
+            reviewConditions = C.Text("ReviewConditions", 35, 196, 825, 62, "", 16);
+            reviewConditions.transform.SetParent(reviewRoot, false);
+            reviewResult = C.Text("ReviewResult", 35, 266, 825, 66, "", 17);
+            reviewResult.transform.SetParent(reviewRoot, false);
+            reviewTrue = C.Button("ReviewTrue", 35, 344, 195, 36, XgUi.T("题目正确", "Statement is true"), null, 17);
+            reviewFalse = C.Button("ReviewFalse", 242, 344, 195, 36, XgUi.T("题目错误", "Statement is false"), null, 17);
+            BindReviewInput(reviewTrue, true, generation);
+            BindReviewInput(reviewFalse, false, generation);
+            reviewTrue.rt.SetParent(reviewRoot, false); reviewFalse.rt.SetParent(reviewRoot, false);
+            var prev = C.Button("ReviewPrevious", 465, 344, 102, 36, XgUi.T("上一题", "Previous"), () => { if (generation == buildGeneration) StepReview(-1); }, 15);
+            var next = C.Button("ReviewNext", 577, 344, 102, 36, XgUi.T("下一题", "Next"), () => { if (generation == buildGeneration) StepReview(1); }, 15);
+            var back = C.Button("ReviewBack", 691, 344, 168, 36, XgUi.T("返回对局", "Back to game"), () => { if (generation != buildGeneration) return; reviewing = false; reviewRoot.gameObject.SetActive(false); }, 16);
+            prev.rt.SetParent(reviewRoot, false); next.rt.SetParent(reviewRoot, false); back.rt.SetParent(reviewRoot, false);
+            var note = C.Text("ReviewNote", 35, 390, 825, 36, XgUi.T("亲自判断一次，教它这道题；回顾不重复结算。", "Judge the statement yourself to teach this example. Reviewing does not pay again."), 14);
+            note.transform.SetParent(reviewRoot, false);
+            reviewRoot.gameObject.SetActive(false);
+        }
+        void OpenReview()
+        {
+            if (!C.IsActive) return;
+            long latest = 0; reviewSlot = -1;
+            for (int i = 0; i < Cells; i++) if (questions[i] != null && turns[i].Token > latest) { latest = turns[i].Token; reviewSlot = i; }
+            if (reviewSlot < 0) { feedback.text = XgUi.T("先看一道题，再来回顾。", "Wait for a question before reviewing."); return; }
+            reviewing = true; reviewRoot.gameObject.SetActive(true); RefreshReview();
+        }
+        void StepReview(int direction)
+        {
+            if (!reviewing || !C.IsActive) return;
+            for (int n = 1; n <= Cells; n++)
+            {
+                int slot = (reviewSlot + direction * n + Cells * 2) % Cells;
+                if (questions[slot] == null) continue;
+                reviewSlot = slot; RefreshReview(); return;
+            }
+        }
+        void RefreshReview()
+        {
+            reviewRevision++; // Even away-and-back navigation invalidates a held judgment.
+            var q = questions[reviewSlot];
+            reviewQuestion.text = q.Text;
+            reviewConditions.text = XgUi.T(q.ConditionsZh, q.ConditionsEn);
+            bool answered = C.Sim.MoleLessonAnswered(turns[reviewSlot].Token);
+            reviewTrue.button.interactable = reviewFalse.button.interactable = !answered;
+            reviewResult.text = answered ? XgUi.T(q.Why, q.WhyEn) : XgUi.T("这道题说得对吗？", "Is this statement true?");
+        }
+        void BindReviewInput(XgBtn button, bool label, int generation)
+        {
+            var input = button.rt.gameObject.AddComponent<XgMoleReviewInput>();
+            input.Available = () => generation == buildGeneration && reviewing && reviewSlot >= 0 && C.IsActive;
+            input.Capture = () =>
+            {
+                if (!input.Available()) return null;
+                int revision = reviewRevision;
+                long token = turns[reviewSlot].Token;
+                var question = questions[reviewSlot];
+                var sim = C.Sim;
+                var owner = XingGuangController.Instance;
+                bool used = false;
+                return () =>
+                {
+                    if (used) return;
+                    used = true;
+                    if (!input.Available() || revision != reviewRevision
+                        || owner != null && (!ReferenceEquals(owner, XingGuangController.Instance) || !ReferenceEquals(owner.Sim, sim))
+                        || !ReferenceEquals(question, questions[reviewSlot]) || token != turns[reviewSlot].Token
+                        || sim.MoleLessonAnswered(token)) return;
+                    TeachReviewed(token, label);
+                };
+            };
+        }
+        void TeachReviewed(long token, bool label)
+        {
+            if (!reviewing || reviewSlot < 0 || !C.IsActive) return;
+            var result = C.Sim.TeachMoleStatement(token, label);
+            if (!result.accepted) { reviewResult.text = XgUi.T("这道题已失效，请回到对局。", "This question has expired. Return to the game."); return; }
+            var owner = XingGuangController.Instance;
+            if (owner != null && ReferenceEquals(owner.Sim, C.Sim)) owner.runtime?.MarkDirty();
+            RefreshReview();
+            reviewResult.text = (result.trained ? XgUi.T("已教给它。", "Taught to it.") : XgUi.T("再看看题意。", "Check the statement again.")) + "\n" + reviewResult.text;
+        }
+        void RefreshQuestionDetail()
+        {
+            if (questionDetail == null) return;
+            if (hovered >= 0 && expires[hovered] > 0 && questions[hovered] != null)
+            {
+                var q = questions[hovered];
+                questionDetail.text = q.Text + "\n" + XgUi.T(q.ConditionsZh, q.ConditionsEn);
+            }
+            else questionDetail.text = (C.Id == "arith_mole"
+                ? XgUi.T("敲正确的算式，放过错误的算式。", "Whack correct equations; leave wrong ones alone.")
+                : XgUi.T("敲错误的算式，放过正确的算式。", "Whack wrong equations; leave correct ones alone."))
+                + XgUi.T(" 移到题牌上查看完整题意。", " Hover over a card for its full wording.");
+        }
+        void Hit(int i, long token, bool automatic)
+        {
+            if (!playing || reviewing || !C.IsActive) return;
+            if (expires[i] <= 0 || !turns[i].TryWhack(token, true))
+            {
+                if (!automatic) feedback.text = XgUi.T("这里没有尚未作答的题目。", "There is no unanswered live question here.");
+                return;
+            }
+            var question = questions[i];
+            var prediction = predictions[i];
+            int generation = buildGeneration;
+            bool correct = Target(i), goldenHit = holes[i].Golden && correct;
+            // The turn is consumed before notebook, settlement, or feedback callbacks can reenter.
+            expires[i] = 0; holes[i].HitTime = 0; holes[i].HitGood = correct;
+            if (automatic)
+                C.Sim.RecordAiAction("arith", question.Text, question.Text, XgUi.T("敲", "Whack"));
+            else C.Sim.RecordTeachingQuestion(question.Text, question.Text, question.Truth, C.Id=="arith_mole",
+                question.Why, question.WhyEn, "arith", question.Card(), XgUi.T("敲", "Whack"), aiAnswers[i]);
+            bangs[i].text = correct ? XgUi.T("啪！", "Pow!") : XgUi.T("冤！", "Oops!");
+            bangs[i].color = correct ? new Color(.86f, .2f, .12f) : new Color(.3f, .38f, .62f);
+            if (correct) { score++; combo++; } else { errors++; combo = 0; }
+            C.Report(correct);
+            // The host may close/switch/rebuild the surface while reporting the accepted answer.
+            if (generation != buildGeneration || !playing || !C.IsActive) return;
+            feedback.text = XgUi.T(question.Why, question.WhyEn); Hud();
             if(goldenHit){goldenBonus++;bangs[i].text=XgUi.T("金！+2分","Gold! +2");feedback.text=XgUi.T("金地鼠！得分 +2。","Golden mole! +2 points.");}
-            if(!Target(i))goldenMilestone=0;
+            if(!correct)goldenMilestone=0;
             ShowMoleScore();
+            Paint(i);
+            C.Sim.NotifyArithmeticMole(new XgMoleFeedback(C.Id, token, i, automatic, true, correct, true, question, prediction));
+        }
+        bool PredictedWhack(int i) => predictions[i] != null && (C.Id == "arith_mole" ? predictions[i].AnswerYes : !predictions[i].AnswerYes);
+        public override void Dispose()
+        {
+            playing = false; buildGeneration++;
+            reviewing = false; C.Sim.ClearMoleLessons();
+            foreach (var turn in turns) turn?.Invalidate();
         }
         /// <summary>Lays the hole's label over its sign and the 「啪」 over its head, and redraws the hole.</summary>
         void Paint(int i)
         {
             var g = holes[i];
-            float eased = Ease(rise[i]);
+            g.Reduced = C.Sim.S.reduceFx;
+            float eased = g.Reduced ? (expires[i] > 0 || g.HitTime >= 0 ? 1 : 0) : Ease(rise[i]);
             g.Rise = eased; g.Redraw();
             // The cell is placed with its top left at (cellX, cellY); the label follows the sign as the mole pops up.
             var cell = g.rectTransform; float left = cell.offsetMin.x, top = -cell.offsetMax.y;
             var sc = g.SignCenter;
             bool showSign = g.SignShown && (expires[i] > 0 || g.HitTime >= 0 && g.HitTime < XgMoleGraphic.HitSeconds || rise[i] > 0);
             signs[i].enabled = showSign;
-            aiSigns[i].enabled=showSign&&C.Sim.TeachingAiReady;
-            if(aiSigns[i].enabled){aiSigns[i].text=C.Sim.AiDisplayName+"："+aiAnswers[i];Place(aiSigns[i].rectTransform,left+sc.x-90,top+sc.y+12);}
-            if (showSign) Place(signs[i].rectTransform, left + sc.x - 66, top + sc.y - 14);
+            aiSigns[i].enabled=showSign&&(C.Sim.TeachingAiReady||autoEnabled);
+            if(aiSigns[i].enabled){aiSigns[i].text=C.Sim.AiDisplayName+"："+aiAnswers[i];Place(aiSigns[i].rectTransform,left+sc.x-90,top+sc.y-49);}
+            if (showSign) Place(signs[i].rectTransform, left + sc.x - 113, top + sc.y - 21);
             bool bang = g.HitTime >= 0 && g.HitTime < XgMoleGraphic.HitSeconds;
             bangs[i].enabled = bang;
             if (bang)
             {
                 float t = g.HitTime / XgMoleGraphic.HitSeconds;
-                bangs[i].rectTransform.localScale = Vector3.one * (1 + .4f * Mathf.Sin(Mathf.Min(1, t * 2.2f) * Mathf.PI));
-                Place(bangs[i].rectTransform, left + 18, top + 4 + 8 * t);
+                bangs[i].rectTransform.localScale = Vector3.one * (g.Reduced ? 1 : 1 + .4f * Mathf.Sin(Mathf.Min(1, t * 2.2f) * Mathf.PI));
+                Place(bangs[i].rectTransform, left + 18, top + 4 + (g.Reduced ? 0 : 8 * t));
             }
         }
         static float Ease(float t)
@@ -366,14 +536,34 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
         }
         public override void Tick(float dt)
         {
+            if (float.IsNaN(dt) || float.IsInfinity(dt) || dt <= 0) return;
+            if (reviewing) return;
             if (!Clock(dt)) { for (int i = 0; i < Cells; i++) Paint(i); return; }
+            int generation = buildGeneration;
             for (int i = 0; i < Cells; i++)
             {
                 var g = holes[i];
                 if (expires[i] > 0)
                 {
                     expires[i] -= dt; rise[i] = Mathf.Min(1, rise[i] + dt / PopSeconds);
-                    if (expires[i] <= 0) { if (Target(i)) { missed++; combo = 0; goldenMilestone=0; } }
+                    if (expires[i] <= 0)
+                    {
+                        turns[i].Invalidate();
+                        if (hovered == i) { hovered = -1; RefreshQuestionDetail(); }
+                        if (Target(i)) { missed++; combo = 0; goldenMilestone=0; }
+                    }
+                    else if (autoEnabled && C.Sim.MoleAutoAvailable(C.Id) && predictions[i] != null)
+                    {
+                        autoDelay[i] -= dt;
+                        long token = turns[i].Token;
+                        if (autoDelay[i] <= 0 && turns[i].TryAutoDecision(token, C.IsActive))
+                        {
+                            if (PredictedWhack(i)) Hit(i, token, true);
+                            else C.Sim.NotifyArithmeticMole(new XgMoleFeedback(C.Id, token, i, true, false,
+                                !Target(i), false, questions[i], predictions[i]));
+                            if (generation != buildGeneration || !playing || !C.IsActive) return;
+                        }
+                    }
                 }
                 else if (g.HitTime >= 0)
                 {
@@ -391,14 +581,20 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
                 if (free.Count > 0)
                 {
                     int i = free[C.Random.Next(free.Count)];
-                    var mole = XgMiniContent.NextMole(C.Random, C.Skill);
+                    var question = XgMoleArithmetic.Generate(C.Random.Next(), C.Sim.MoleArithmeticTier);
                     bool golden=C.Id=="arith_mole"&&combo>=10&&goldenMilestone<combo/10;
-                    if(golden)goldenMilestone=combo/10;holes[i].Golden=golden;
-                    wrong[i] = golden?false:mole.Wrong; truth[i] = mole.TruthText;
-                    signs[i].text = golden?mole.TruthText:mole.ShownText; holes[i].Ai = C.Sim.TeachingAiReady && mole.Ai;
-                    bool suggestion=C.Random.NextDouble()<C.Skill?Target(i):!Target(i);
-                    aiAnswers[i]=C.Skill<.55?XgUi.T("不知道","Not sure"):suggestion?XgUi.T("敲","Whack"):XgUi.T("不敲","Leave");
-                    if(C.Sim.Has("sigmoid")&&C.Skill>=.55)aiAnswers[i]+=" · "+Math.Round(C.Skill*100)+"%";
+                    if(golden) { goldenMilestone=combo/10; question=question.AsTrue(); }
+                    holes[i].Golden=golden;
+                    questions[i] = question; turns[i].Begin(C.Sim.NextMoleQuestionToken());
+                    C.Sim.RegisterMoleLesson(turns[i].Token, question);
+                    wrong[i] = !question.Truth; truth[i] = question.CorrectText; signs[i].text = question.Text;
+                    holes[i].WideSign = true;
+                    signs[i].fontSize = question.Text.Length > 20 ? 14 : 18;
+                    predictions[i] = C.Sim.TeachingAiReady || C.Sim.MoleAutoAvailable(C.Id) ? C.Sim.PredictMole(question.Card()) : null;
+                    holes[i].Ai = predictions[i] != null;
+                    aiAnswers[i] = predictions[i] == null ? "" : PredictedWhack(i) ? XgUi.T("敲", "Whack") : XgUi.T("不敲", "Leave");
+                    if(predictions[i] != null && predictions[i].Guessed) aiAnswers[i] += XgUi.T("（猜测）", " (guess)");
+                    autoDelay[i] = .55f;
                     expires[i] = 1.3f + time / 60 * 1.3f;
                 }
                 spawn = .42f + time / 60 * .55f;

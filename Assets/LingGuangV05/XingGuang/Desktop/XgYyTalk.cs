@@ -44,6 +44,7 @@ namespace LingGuangV05.Desktop.XingGuang
         bool echo;
         float askedAt;
         Reply due;
+        XgFnRequest pendingForgetNight;
         YYMessage queuedQuestion;
         bool replayQueued;
         readonly Dictionary<YYMessage, XgChatLine> lines = new Dictionary<YYMessage, XgChatLine>();
@@ -56,7 +57,7 @@ namespace LingGuangV05.Desktop.XingGuang
             public YYMessage asked;
             public bool model, tagged, early;
             public float at;
-            public XgVoiceLine[] fnVoice;
+            public XgFnRequest forgetNight;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -71,8 +72,10 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void OnDestroy()
         {
+            CancelForgetNight();
             if (bound != null) { bound.LineAdded -= OnLine; bound.ChatNodeUnlocked -= OnLearningUnlocked; }
             if (hooked != null && ReferenceEquals(hooked.LingGuangTalk, this)) hooked.LingGuangTalk = null;
+            if (bound != null) bound.BookCompletionHosted = false;
             if (instance == this) instance = null;
         }
 
@@ -143,6 +146,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var rt = controller.runtime;
             bound.DesktopHosted = hub.S.lingguangUnlocked && rt != null && !rt.TestMode && rt.Sim != null && !rt.Sim.InPrologue;
             if (!hub.S.lingguangUnlocked) { hub.Stand(Id, null); return; }
+            TickBookNotices(hub);
             // Stage 4: it can talk now. Its first sentence is fixed (design v1.1 §7 stage 4) and waits for you to look.
             if (bound.S.stage >= 4 && !bound.S.firstWordsSaid && hub.IsShowing(Id) && !waiting)
             {
@@ -156,9 +160,11 @@ namespace LingGuangV05.Desktop.XingGuang
 
         void Bind(XgSim sim)
         {
+            CancelForgetNight();
             if (bound != null) { bound.LineAdded -= OnLine; bound.ChatNodeUnlocked -= OnLearningUnlocked; }
             EnsureLearningData();
-            bound = sim;
+            if (bound != null) bound.BookCompletionHosted = false;
+            bound = sim; bound.BookCompletionHosted = true; ResetBookNotices();
             bound.RepairYyLearning();
             bound.ChatNodeUnlocked += OnLearningUnlocked;
             notebookSources.Clear(); personaSources.Clear();
@@ -174,6 +180,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void OnLine(XgChatLine line)
         {
             if (line == null || string.IsNullOrEmpty(line.text) || echo && line.from == "me") return;
+            if (composingBookNotice || DeferredBookCompletionLine(line)) return;
             var hub = YYChatHub.Instance;
             if (hub == null || hub.S == null || !hub.S.lingguangUnlocked) return;
             if (line.from == "me") { hub.SendAuthoredChoice(Id, line.text); return; }
@@ -202,6 +209,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if (text.Length == 0) return true;
             // 是否夜 (XgYyTalk.Night.cs): the round's question gets its scripted answer.
             if (!waiting && NightHeard(sim, text)) return true;
+            if (!waiting && HeardRedMansion(sim, text)) return true;
             if (!replayQueued) sim.CountLoveAsk(text);
             // The choices with rules of their own: 【读吧】【算了】 and the two answers to 「你觉得呢？」.
             if (sim.S.loveAwaitingConsent && Consent(sim, text, out bool read)) { Echo(() => sim.AnswerLoveConsent(read)); return true; }
@@ -226,15 +234,13 @@ namespace LingGuangV05.Desktop.XingGuang
             // Before stage 5 the first 「她……爱我吗？」 gets one word it cannot possibly know; the inner voice notices.
             if (sim.ForgetNightMatches(text))
             {
-                var fn = sim.ForgetNightAnswer(text);
-                if (fn != null)
-                {
-                    string fnReply = T(fn.replyZh, fn.replyEn);
-                    due = new Reply { text = fnReply, question = text, asked = message, at = askedAt + ReadPause, fnVoice = fn.voice };
-                    XgYyLens.Typing(sim, due.text, due.at);
-                    MarkNightDirty();
-                    return true;
-                }
+                var request = sim.BeginForgetNightRequest(text);
+                if (request == null) { waiting = false; return true; }
+                pendingForgetNight = request;
+                int ft = ++ticket;
+                // Use the actual chat history and normal model request. Never supply an authored answer or force forgetting.
+                Ask(sim, text, null, reply => AnswerForgetNight(sim, ft, request, message, reply));
+                return true;
             }
             bool early = XgSim.IsLoveQuestion(text) && sim.S.stage < XgSim.LoveStage && sim.S.loveEarlyAsked == 0;
             string scripted = sim.Scripted(text);
@@ -280,6 +286,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (night != null) return night;
             if (s.loveAwaitingConsent) return new[] { "【" + bound.LoveConsentText(true) + "】", "【" + bound.LoveConsentText(false) + "】" };
             if (s.originAwaitingAnswer) return new[] { bound.OriginAnswerText(true), bound.OriginAnswerText(false) };
+            if (s.redMansionBeat == 1) return new[] { BookContinuationChoice };
+            if (bound.BookPuzzlePending != null) return null;
             var list = new List<string>(3);
             if (bound.OfferForgetNight)
             {
@@ -321,6 +329,36 @@ namespace LingGuangV05.Desktop.XingGuang
             XgYyLens.Typing(sim, said, due.at);
         }
 
+        void OnDisable() { CancelForgetNight(); }
+
+        // Cancel only this optional exchange. Ordinary chat behaviour and the main story are unchanged.
+        public void CancelForgetNight()
+        {
+            if (pendingForgetNight == null) return;
+            bound?.CancelForgetNightRequest();
+            pendingForgetNight = null;
+            ticket++;
+            due = null; waiting = false;
+        }
+
+        void AnswerForgetNight(XgSim sim, int forTicket, XgFnRequest request, YYMessage asked, string response)
+        {
+            if (this == null || !ReferenceEquals(sim, bound) || forTicket != ticket) return;
+            if (!sim.ForgetNightRequestCurrent(request)) { CancelForgetNight(); ReplyToQueued(); return; }
+            string text = EraLexicon.Scrub(StripThinking(response ?? "")) ?? "";
+            // No offline fallback and no anti-repeat substitution: recalling the same code is a valid model answer.
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                CancelForgetNight();
+                InnerVoice.Say("这次模型没有回复。等它准备好，再问这一句。", "The model did not reply. Try this line again when it is ready.", 2.5f);
+                ReplyToQueued();
+                return;
+            }
+            due = new Reply { text = text, question = request.Question, asked = asked, model = true, tagged = true,
+                forgetNight = request, at = Math.Max(Time.unscaledTime, askedAt + ReadPause) };
+            XgYyLens.Typing(sim, text, due.at);
+        }
+
         void Deliver(YYChatHub hub)
         {
             var r = due;
@@ -328,6 +366,10 @@ namespace LingGuangV05.Desktop.XingGuang
             waiting = false;
             var sim = bound;
             if (r == null || sim == null || string.IsNullOrEmpty(r.text)) return;
+            var fnConversation = r.forgetNight != null && hub != null && hub.S != null && hub.S.lingguangUnlocked ? hub.Conversation(Id) : null;
+            if (r.forgetNight != null && (fnConversation == null || !sim.ForgetNightRequestCurrent(r.forgetNight)))
+            { CancelForgetNight(); ReplyToQueued(); return; }
+            int fnMessageCount = fnConversation != null ? fnConversation.messages.Count : 0;
             // The underline goes in before the reply, so YY redraws both at once.
             if (!string.IsNullOrEmpty(r.focus) && r.asked != null) r.asked.attentionWord = r.focus;
             sim.AddLine("ai", r.text);
@@ -346,8 +388,26 @@ namespace LingGuangV05.Desktop.XingGuang
                 if (yes) InnerVoice.Say("……可我居然有点高兴。", "…And yet I'm a little happy.", 2.4f);
                 else InnerVoice.Say("……它就会这两个字。别当真。", "…Those are the only two words it knows. Don't take it seriously.", 2.6f);
             }
-            if (r.fnVoice != null)
-                foreach (var line in r.fnVoice) InnerVoice.Say(line.zh, line.en, line.seconds);
+            if (r.forgetNight != null)
+            {
+                // OnLine must really have appended the reply to YY; LearningDelivered then supplies the receipt.
+                var last = fnConversation.messages.Count > fnMessageCount ? fnConversation.messages[fnConversation.messages.Count - 1] : null;
+                bool delivered = last != null && last.from == Id && last.text == r.text && last.learningReplyId > 0;
+                bool committed = delivered && sim.CommitForgetNightReply(r.forgetNight, last.learningReplyId, r.model);
+                if (committed)
+                {
+                    pendingForgetNight = null;
+                    MarkNightDirty();
+                    if (r.forgetNight.Round == 3)
+                    {
+                        var result = sim.ForgetNightResult;
+                        if (result == null) InnerVoice.Say("这次回答还不能判断。再问一次暗号。", "That reply is inconclusive. Ask for the code again.", 2.5f);
+                        else if (result.recall == XgFnRecall.Remembered) InnerVoice.Say("暗号答对了。这一次，它还记得。", "The code is right. This time it remembered.", 2.5f);
+                        else InnerVoice.Say("这一次，它说想不起来了。", "This time it said it could not remember.", 2.5f);
+                    }
+                }
+                else CancelForgetNight();
+            }
             // Its plain 是 / 否 at stage 1: what he makes of it (XgSim.YesNoVoice). The reply that carries the love line says only that.
             if (sim.S.stage == 1 && (r.tagged || r.early))
                 foreach (var line in sim.YesNoVoice(r.early)) InnerVoice.Say(line.zh, line.en, line.seconds);
@@ -363,11 +423,7 @@ namespace LingGuangV05.Desktop.XingGuang
             finally { replayQueued = false; }
         }
 
-        static string StripThinking(string reply)
-        {
-            int end = reply.IndexOf("</think>", StringComparison.Ordinal);
-            return end >= 0 ? reply.Substring(end + 8).Trim() : reply.Trim();
-        }
+        static string StripThinking(string reply) => (LingGuangV05.Core.Chat.LlmScheduling.AfterThinking(reply, false) ?? "").Trim();
 
         DateTime Now()
         {
@@ -407,6 +463,8 @@ namespace LingGuangV05.Desktop.XingGuang
             // RAG (XgSim.Knowledge.cs): taught cards, read chapters, older talks and 2016 news that fit the owner's line.
             string known = sim.PersonaKnowledge(null, null, start);
             if (known.Length > 0) state.Append('\n').Append(known);
+            string readNews = sim.PersonaReadNewsKnowledge(Id);
+            if (readNews.Length > 0) state.Append(readNews);
             // The learned tone habit (XgSim.Habits.cs): picked once per question, kept for the retry.
             if (stale == null) sim.PickHabit(question, today);
             string habit = sim.HabitOrder();
@@ -434,6 +492,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public static string StableSystem(XgSim sim, DateTime today)
         {
             var sb = new StringBuilder(sim.PersonaCore());
+            sb.Append('\n').Append(XgSim.ReadNewsPromptRule(GameText.IsEnglish));
             sb.Append('\n').Append(EraLexicon.PromptRule(GameText.IsEnglish));
             sb.Append('\n').Append(T("你们在 YY（一款像 QQ 的电脑聊天软件）上打字聊天。", "You are typing to each other on YY, a desktop chat app like QQ."));
             if (!sim.StageRuleVaries) sb.Append('\n').Append(sim.StageRule(""));
@@ -540,7 +599,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
             if (llm != null && llm.Ready && llm.Detail.Length > 0) sb.Append("\n<color=#E08A00>").Append(llm.Detail).Append("</color>");
             if (sim.Listening) sb.Append("\n<color=#E08A00>").Append(T("监听中", "Listening")).Append("</color>");
-            sb.Append("\n\n<b>").Append(T("性格", "Personality")).Append("</b>  <color=#9AA4B2>").Append(T("实际 / 目标（开局写的）", "actual / target (from the setup)")).Append("</color>");
+            sb.Append("\n\n<b>").Append(T("性格", "Personality")).Append("</b>  <color=#9AA4B2>").Append(T("当前表现 / 开局愿望", "current expression / opening wish")).Append("</color>");
+            if (!string.IsNullOrEmpty(sim.Profile.personality)) sb.Append('\n').Append(T("开局写下：", "You wrote at setup: ")).Append(Safe(sim.Profile.personality));
             string[] lo = { T("冷静", "calm"), T("正经", "serious"), T("顺从", "agreeable") };
             string[] hi = { T("热情", "warm"), T("皮", "cheeky"), T("有主见", "opinionated") };
             for (int axis = 0; axis < 3; axis++)

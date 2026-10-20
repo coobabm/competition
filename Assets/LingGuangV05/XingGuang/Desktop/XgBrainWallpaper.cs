@@ -44,13 +44,22 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         XingGuangController controller;
         public bool WindowMode { get; private set; }
+        public bool ReduceMotion => MotionReduced(controller);
+        public static bool MotionReduced(XingGuangController owner) => GamePerformance.Low
+            || owner?.Sim?.S.reduceFx == true || owner?.View?.Juice?.Reduced == true;
+        public bool TryStartGlow(string region)
+        {
+            if (ReduceMotion) return false;
+            var window = controller != null ? controller.GetComponent<XgBrainWindow>() : null;
+            return !WindowMode || window == null || window.OnsetGate.TryStart(Time.unscaledTime, region);
+        }
         CanvasGroup group;
         readonly CanvasGroup[] firstPoints = new CanvasGroup[4];
         ChapterOneSim observedSave;
         bool noticePending;float nextPresentation,lastPresentation;XgBrainWallpaperPresentation presentation;
         public int NoticesSent { get; private set; }
         public XgWallpaperReveal Reveal { get; } = new XgWallpaperReveal();
-        public static Vector2 SeedPosition => new Vector2(.52f, .35f);
+        public static Vector2 SeedPosition => new Vector2(.52f, .24f);
         public XgConcept SeedConcept { get; private set; }
 
         public static void Install(XingGuangController controller)
@@ -61,6 +70,11 @@ namespace LingGuangV05.Desktop.XingGuang
             if (wallpaper == null || desktop.Find("Brain Wallpaper") != null) return;
             var root = PrologueDesk.Rect("Brain Wallpaper", desktop, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             root.SetSiblingIndex(wallpaper.GetSiblingIndex() + 1);
+            // Every brain layer uses the same reference UVs as the 1280x832 window.
+            // Letterbox the shared drawing instead of stretching its anatomy on wide desktops.
+            var fit = root.gameObject.AddComponent<AspectRatioFitter>();
+            fit.aspectRatio = XgBrainWindowBody.DesignWidth / XgBrainWindowBody.DesignHeight;
+            fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             var view = root.gameObject.AddComponent<XgBrainWallpaper>();
             view.controller = controller;
             view.group = root.gameObject.AddComponent<CanvasGroup>();
@@ -80,6 +94,7 @@ namespace LingGuangV05.Desktop.XingGuang
             XgWallpaperAbilities.Install(controller, view);
             XgWallpaperFamilyStar.Install(controller, view);
             XgWallpaperRebirth.Install(controller, view);
+            XgBrainWindowBody.Install(view);
             view.Observe();
         }
 
@@ -98,6 +113,7 @@ namespace LingGuangV05.Desktop.XingGuang
             XgWallpaperPersona.Install(controller,view);
             XgWallpaperAbilities.Install(controller,view);
             XgWallpaperFamilyStar.Install(controller,view);
+            XgBrainWindowBody.Install(view);
             view.Observe();return view;
         }
 
@@ -150,7 +166,7 @@ namespace LingGuangV05.Desktop.XingGuang
             if(presentation==null)presentation=GetComponent<XgBrainWallpaperPresentation>();
             if(presentation!=null&&!presentation.DrawDue(ref nextPresentation))return;
             float now=Time.unscaledTime;float dt=lastPresentation==0?1f/15:now-lastPresentation;lastPresentation=now;
-            Observe(); Reveal.Tick(GamePerformance.Low?100:dt);
+            Observe(); Reveal.Tick(ReduceMotion?100:dt);
             SeedConcept = null;
             var concepts = controller.Sim?.S.board?.concepts;
             if (Reveal.Visible && concepts != null)

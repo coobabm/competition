@@ -71,6 +71,10 @@ namespace LingGuangV05.XingGuang
         public XgSim(XgState state = null)
         {
             S = state ?? new XgState();
+            RepairBoardSelfPlayPlaceholders();
+            S.endingPreparation?.RepairOptionalPlaceholders();
+            S.releaseOutcome?.RepairOptionalPlaceholders();
+            InitializeBookLibrary(state == null);
             // Data sources first: everything below evaluates runs, which reads samples (XgSim.DataSources.cs).
             RepairDataSources();
             RepairTraces();
@@ -79,6 +83,7 @@ namespace LingGuangV05.XingGuang
             Repair();
             FinishProgressionRepair();
             FinishCollaborationRepair();
+            RepairShutdownCardDispatch();
             RepairEpiphany();
             RepairMarket();
             RepairAfterthoughts();
@@ -92,6 +97,7 @@ namespace LingGuangV05.XingGuang
             EnsureSeed();
             RepairStagePresentations();
             RepairLedgerAccess(state == null);
+            InitializeAppAcquisition(state == null);
         }
 
         void Repair()
@@ -110,9 +116,12 @@ namespace LingGuangV05.XingGuang
             if (S.contracts == null) S.contracts = new List<string>();
             // Retired work cannot remain active through saved selections, cards or signed orders.
             S.contracts.RemoveAll(id => XgCatalog.Contract(id) == null);
-            S.desksOpen.RemoveAll(id => XgCatalog.Desk(id) == null);
-            S.cards.RemoveAll(c => c == null || XgCatalog.Desk(c.dataset) == null);
-            S.autoTimers.RemoveAll(c => c == null || XgCatalog.Desk(c.dataset) == null);
+            S.desksOpen.RemoveAll(id => XgCatalog.CrowdDesk(id) == null);
+            if (S.workCards == null) S.workCards = new List<XgCard>();
+            S.workCards.RemoveAll(c => c == null || XgCatalog.CrowdDesk(c.dataset) == null);
+            if (XgCatalog.CrowdDesk(S.workDesk) == null) S.workDesk = XgMemes.SenseDesk;
+            S.cards.RemoveAll(c => c == null || XgCatalog.CrowdDesk(c.dataset) == null && !SelectedTeachingDataset(c.dataset));
+            S.autoTimers.RemoveAll(c => c == null || XgCatalog.CrowdDesk(c.dataset) == null);
             if (S.best == null) S.best = new List<XgBest>();
             if (S.grades == null) S.grades = new List<string>();
             if (S.models == null) S.models = new List<XgModelEntry>();
@@ -146,7 +155,7 @@ namespace LingGuangV05.XingGuang
             var teachingPack = XgTeachingPacks.Find(S.teachingPack);
             bool restoreTeachingPack = teachingPack != null && TeachingPackAvailable(teachingPack.id);
             if (restoreTeachingPack) S.desk = teachingPack.dataset;
-            if (!restoreTeachingPack && (string.IsNullOrEmpty(S.desk) || XgCatalog.Desk(S.desk) == null))
+            if (!restoreTeachingPack && (string.IsNullOrEmpty(S.desk) || XgCatalog.CrowdDesk(S.desk) == null))
                 S.desk = XgCatalog.Desks[Math.Max(0, Math.Min(2, S.labelTrack))].id;
             S.visionCard = S.sequenceCard = S.logicCard = null;
             foreach (var d in XgCatalog.Desks) if (d.unlock == XgDeskUnlock.Start && !S.desksOpen.Contains(d.id) && !OpeningLocksDesk(d.id)) S.desksOpen.Add(d.id);
@@ -161,6 +170,7 @@ namespace LingGuangV05.XingGuang
             foreach (var run in Runs)
             {
                 // Unfinished UI actions have no settlement and do not survive a save reload.
+                RefundTrainingQuizBonus(run);
                 run.epochActive = false; run.epochProgress = 0; run.epochDuration = DurationFor(run);
                 var track = (XgTrack)run.track;
                 var a = XgCatalog.Arch(run.arch);
@@ -193,7 +203,7 @@ namespace LingGuangV05.XingGuang
 
         // ───────────── tech tree ─────────────
 
-        public bool Has(string id) { return id != null && id.StartsWith("persona.", StringComparison.Ordinal) ? OwnsPersonaPack(id.Substring(8)) : S.unlocked.Contains(id); }
+        public bool Has(string id) { return id != null && id != PersonaArchiveNode && id.StartsWith("persona.", StringComparison.Ordinal) ? OwnsPersonaPack(id.Substring(8)) : S.unlocked.Contains(id); }
         /// <summary>Some pack of this dataset is in: the public pack, or a junk / story pack (XgSim.DataSources.cs).</summary>
         public bool Owns(string datasetId) { return S.owned.Contains(datasetId) && InstalledBatches(datasetId) > 0 || OwnsExtraPack(datasetId); }
 
@@ -206,7 +216,7 @@ namespace LingGuangV05.XingGuang
             if (n.tree == "label") return StatusLabelNode(n, host);
             if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return NodeStatus.Locked;
             if (Has(n.id)) return NodeStatus.Owned;
-            if (!NodeVisible(n) || ProgressionBlocker(n) != null || !ChatNodeReady(n.id)) return NodeStatus.Locked;
+            if (!NodeVisible(n) || BoardLogicBlocker(n.id) != null || BoardRecordsBlocker(n.id) != null || DailyNodeBlocker(n.id) != null || ProgressionBlocker(n) != null || !ChatNodeReady(n.id)) return NodeStatus.Locked;
             if (n.parent != null && !Has(n.parent)) return NodeStatus.Locked;
             foreach (var need in n.needs) if (!Has(need)) return NodeStatus.Locked;
             if (host == null || host.Money + 1e-9 < NodeCost(n)) return NodeStatus.TooExpensive;
@@ -223,6 +233,12 @@ namespace LingGuangV05.XingGuang
                 case NodeStatus.Owned: return T("已拥有");
                 case NodeStatus.Locked:
                     if (AnyEpochActive && (n.kind == XgNodeKind.Breakthrough || n.kind == XgNodeKind.Project)) return T("先完成当前训练轮次");
+                    var boardLogic = BoardLogicBlocker(n.id);
+                    if(boardLogic != null)return boardLogic;
+                    var board = BoardRecordsBlocker(n.id);
+                    if(board != null)return board;
+                    var daily = DailyNodeBlocker(n.id);
+                    if (daily != null) return daily;
                     var progression = ProgressionBlocker(n);
                     if (progression != null) return progression;
                     if (!ChatNodeReady(n.id)) return T("对它说一句话：____。", "Say something to it: ____. ") + ChatNodeHint(n.id);
@@ -262,13 +278,13 @@ namespace LingGuangV05.XingGuang
         {
             var n = XgCatalog.Node(id);
             if (n == null) return false;
-            if (n.id.StartsWith("persona.",StringComparison.Ordinal)) return BuyPersonaPack(n.id.Substring(8),host);
+            if (n.id!=PersonaArchiveNode&&n.id.StartsWith("persona.",StringComparison.Ordinal)) return BuyPersonaPack(n.id.Substring(8),host);
             if (n.tree == "label") return BuyLabelNode(n, host);
             if (Status(n, host) != NodeStatus.Buyable) { Say(Why(n, host)); return false; }
             double price = NodeCost(n);
             if (!host.Spend(price)) { Say(T("经费不足 ¥") + F(NodeCost(n), "0")); return false; }
             S.totalSpent += price;
-            UseDiagnosisCoupon(n);
+            if (n.id != PersonaArchiveNode) UseDiagnosisCoupon(n);
             if (n.kind != XgNodeKind.Project) S.unlocked.Add(n.id);
             Say(T("解锁 ") + NodeName(n));
             switch (n.kind)
@@ -648,7 +664,10 @@ namespace LingGuangV05.XingGuang
             string blocker = Blocker(run, host);
             if (blocker != null) { if (hand) Say(blocker); return null; }
             if (hand) S.clicks++; // training has no combo (2026-10-18): the streak belongs to labelling
-            int cards = CardsPerEpoch(run, Math.Max(.5, host.Compute * TrainLearningFactor(track)), hand);
+            int baseCards = CardsPerEpoch(run, Math.Max(.5, host.Compute * TrainLearningFactor(track)), hand);
+            double quizBonus = ConsumeTrainingQuizBonus(run);
+            // Extra real training samples are rounded; pace, electricity and data ownership stay unchanged.
+            int cards = (int)Math.Round(baseCards * quizBonus);
             // A rate the player set too big may tear the round (XgSim.Rates.cs); 自动 never rolls.
             double tearChance = TearChance(run);
             bool torn = tearChance > 0 && Roll() < tearChance;
@@ -671,7 +690,7 @@ namespace LingGuangV05.XingGuang
             using (ProfileEpochAccuracy.Auto())
 #endif
             {
-            StepAccuracy(run, cards, e);
+            StepAccuracy(run, baseCards, e, quizBonus);
             }
             RelicRoundDone();
             run.shapeRounds++;
@@ -976,7 +995,10 @@ namespace LingGuangV05.XingGuang
         /// <summary>The stage that opens business orders for signing.</summary>
         public const int ContractStage = 4;
 
-        public bool CanSign(XgContract c) { return S.stage >= ContractStage && !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
+        public static int ContractRequiredStage(XgContract c) => c != null &&
+            (c.id == "cheque" || c.id == "acrostic" || c.id == "danmaku") ? 3 : ContractStage;
+
+        public bool CanSign(XgContract c) { return c != null && S.stage >= ContractRequiredStage(c) && !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
 
         /// <summary>The score a contract judges: the best checkpoint, or for a realtime job the best parallel one.</summary>
         public double ContractAcc(XgContract c) => c.realtime ? ParallelAcc(c.dataset) : BestAcc(c.dataset);
@@ -1096,6 +1118,14 @@ namespace LingGuangV05.XingGuang
             // Packs (public, junk, story), crowd rows and model-labelled logs (XgSim.DataSources.cs, XgSim.Flywheel.cs).
             return (d != null ? PackSamples(datasetId) + ExtraSamples(datasetId) : 0) + Labels(datasetId);
         }
+
+        bool SelectedTeachingDataset(string dataset)
+        {
+            var pack = XgTeachingPacks.Find(S.teachingPack);
+            return pack != null && pack.dataset == dataset && TeachingPackAvailable(pack.id);
+        }
+
+        public bool CrowdDeskOpen(string id) => XgCatalog.CrowdDesk(id) != null && DeskOpen(id);
 
         public bool DeskOpen(string id) { return XgCatalog.Desk(id) != null && (TeachingPackDeskOpen(id) || S.desksOpen.Contains(id) && !OpeningLocksDesk(id)); }
 
@@ -1281,6 +1311,7 @@ namespace LingGuangV05.XingGuang
         XgCard NewCard(string desk)
         {
             var card = CreateLabelCard(desk, true);
+            MaybeShutdownCard(card);
             S.cards.RemoveAll(c => c.dataset == desk);
             S.cards.Add(card);
             return card;
@@ -1347,7 +1378,6 @@ namespace LingGuangV05.XingGuang
             if (card.family) { card.gold = false; card.timeLimit = 0; }
             card.roll = Roll();
             DecorateProgressionCard(card);
-            if (!companyWork) MaybeShutdownCard(card);
             EnsureCardId(card);
             return card;
         }
@@ -1476,7 +1506,7 @@ namespace LingGuangV05.XingGuang
         /// </summary>
         public double ChatLabel(string desk, bool correct, IXgHost host)
         {
-            if (XgCatalog.Desk(desk) == null) return 0;
+            if (XgCatalog.CrowdDesk(desk) == null) return 0;
             if (!correct) { S.handWrong++; return 0; }
             double pay = ManualPayFor(desk, LevelOf(desk));
             host.Earn(pay); S.totalIncome += pay;

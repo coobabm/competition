@@ -128,14 +128,14 @@ namespace LingGuangV05.XingGuang.Tests
         // ───────────── the desk ─────────────
 
         [Test]
-        public void ArithmeticDeskOpensAtStageTwoAndPaysLeast()
+        public void ArithmeticDeskOpensFreeAtStageOneAndPaysLeast()
         {
             var sim = new XgSim { GoldChance = 0 }; var host = new Host();
-            Assert.IsFalse(sim.DeskOpen("arith"), "since the 2026-10-15 integration 算术 waits for stage two");
-            Assert.IsFalse(sim.ProgressionDeskAvailable("arith"));
+            Assert.IsTrue(sim.DeskOpen("arith"), "the approved free stage-one arithmetic mole opens this dataset");
+            Assert.IsTrue(sim.ProgressionDeskAvailable("arith"));
             Assert.IsTrue(sim.DeskOpen("logic") && sim.DeskOpen("spam"));
             Assert.AreEqual(XgMemes.SenseDesk, sim.S.desk, "a new player starts on 常识判断, not on arithmetic");
-            sim.S.stage = 2;
+            Assert.IsTrue(sim.TeachingPackAvailable("arith_mole"));
             Assert.IsTrue(sim.ProgressionDeskAvailable("arith"));
             for (int i = 0; i < 40; i++)
             {

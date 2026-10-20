@@ -41,11 +41,13 @@ namespace LingGuangV05.Desktop.XingGuang
 
         XingGuangController controller;
         XgSim bound;
+        ChapterOneSim boundHouse;
         HouseView house;
         XgUi ui;
         RectTransform overlay, card;
         TMP_Text who, title, body;
         Image eventIcon;
+        XgBtn confirm;
         readonly XgBtn[] buttons = new XgBtn[2];
         readonly TMP_Text[] details = new TMP_Text[2];
         string signature = "";
@@ -64,13 +66,14 @@ namespace LingGuangV05.Desktop.XingGuang
             busyTimer -= dt;
             if (busyTimer <= 0) { busyTimer = BusyCheckEvery; busy = ComputeBusy(); }
             var view = controller.View;
-            bool show = bound.LifeEventOpen && view != null && view.Visible && !busy;
-            if (!bound.LifeEventOpen) { remindTimer = 0; signature = ""; }
+            bool pending = bound.LifeEventOpen || bound.LifeEventResultPending;
+            bool show = pending && view != null && view.Visible && !busy && !bound.LifeEventConflict;
+            if (!pending) { remindTimer = 0; signature = ""; }
             else if (!show)
             {
                 // Still waiting while the window is away: a reminder now and then.
                 remindTimer += dt;
-                if (remindTimer >= RemindEvery && (view == null || !view.Visible)) { remindTimer = 0; Popup(bound.LifeEventView(controller.Host)); }
+                if (remindTimer >= RemindEvery && (view == null || !view.Visible)) { remindTimer = 0; Popup(bound.LifeEventResultPending ? bound.LifeEventResultView() : bound.LifeEventView(controller.Host)); }
             }
             if (!show) { if (overlay != null && overlay.gameObject.activeSelf) overlay.gameObject.SetActive(false); return; }
             if (overlay == null && !Build(view)) return;
@@ -97,6 +100,7 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if (bound != null) { bound.LifeEventOpened -= OnOpened; bound.LifeEventHold = null; if (house != null && ReferenceEquals(bound.Household, house)) bound.Household = null; }
             bound = sim;
+            boundHouse = controller.runtime != null ? controller.runtime.Sim : null;
             house = new HouseView(controller.runtime);
             bound.Household = house;
             bound.LifeEventHold = () => busy;
@@ -178,15 +182,20 @@ namespace LingGuangV05.Desktop.XingGuang
                 d.enableAutoSizing = true; d.fontSizeMin = 9; d.fontSizeMax = 12;
                 buttons[i] = b; details[i] = d;
             }
+            confirm = ui.Button(card, T("知道了", "Got it"), ConfirmResult, 16);
+            confirm.rt.anchorMin = confirm.rt.anchorMax = new Vector2(.5f, 0);
+            confirm.rt.offsetMin = new Vector2(-124, 24); confirm.rt.offsetMax = new Vector2(124, 72);
+            confirm.Show(false);
             overlay.gameObject.SetActive(false);
             return true;
         }
 
         void Fill()
         {
-            var e = bound.LifeEventView(controller.Host);
+            bool result = bound.LifeEventResultPending;
+            var e = result ? bound.LifeEventResultView() : bound.LifeEventView(controller.Host);
             if (e == null) return;
-            string sig = e.id + (bound.English ? "e" : "z");
+            string sig = e.id + (result ? ":result:" : ":choice:") + (bound.English ? "e" : "z");
             foreach (var c in e.choices) sig += c.enabled ? "1" : "0";
             if (sig == signature) return;
             signature = sig;
@@ -197,9 +206,11 @@ namespace LingGuangV05.Desktop.XingGuang
             who.text = e.who;
             title.text = e.title;
             body.text = e.body;
+            confirm.Show(result);
+            if (result) confirm.Set(T("知道了", "Got it"), true);
             for (int i = 0; i < buttons.Length; i++)
             {
-                bool has = i < e.choices.Count;
+                bool has = !result && i < e.choices.Count;
                 buttons[i].Show(has);
                 if (!has) continue;
                 var c = e.choices[i];
@@ -209,17 +220,37 @@ namespace LingGuangV05.Desktop.XingGuang
             }
         }
 
+        bool CurrentBinding() => controller != null && ReferenceEquals(bound, controller.Sim)
+            && (controller.runtime == null || ReferenceEquals(boundHouse, controller.runtime.Sim));
+
+        void SaveCurrentResult()
+        {
+            // Saving snapshots the lab and wallet together; its existing status UI reports a failed write.
+            if (CurrentBinding()) controller.SaveNow();
+        }
+
         void Answer(int index)
         {
+            if (!CurrentBinding()) { if (overlay != null) overlay.gameObject.SetActive(false); return; }
             var view = controller.View;
             if (bound == null || !bound.AnswerLifeEvent(index, controller.Host))
             {
                 if (view != null) view.Juice.Play(XgJuice.Sfx.Id.Thud);
                 return;
             }
+            SaveCurrentResult();
             if (view != null) { view.Juice.Play(XgJuice.Sfx.Id.Click); view.Refresh(true); }
             signature = "";
-            overlay.gameObject.SetActive(false);
+            Fill();
+        }
+
+        void ConfirmResult()
+        {
+            if (!CurrentBinding() || bound == null || !bound.AcknowledgeLifeEventResult()) return;
+            SaveCurrentResult();
+            if (controller.View != null) controller.View.Juice.Play(XgJuice.Sfx.Id.Click);
+            signature = "";
+            if (overlay != null) overlay.gameObject.SetActive(false);
         }
     }
 }

@@ -136,7 +136,8 @@ namespace LingGuangV05.Desktop.Taohuo
                 TipFor(b, TabTip(id));
             }
 
-            body = PrologueDesk.Rect("Body", root, Vector2.zero, Vector2.one, new Vector2(0, 30), new Vector2(0, -106));
+            body = PrologueDesk.Rect("Body", root, Vector2.zero, Vector2.one, new Vector2(0, 54), new Vector2(0, -106));
+            AiContentNotice.CreateFooter(root, font, new Color32(105, 105, 105, 255), 30);
             var listArea = PrologueDesk.Rect("List", body, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(-300, 0));
             list = Scroll(listArea, 14, 10);
             var side = PrologueDesk.Rect("Side", body, new Vector2(1, 0), Vector2.one, new Vector2(-292, 10), new Vector2(-10, -14));
@@ -147,7 +148,10 @@ namespace LingGuangV05.Desktop.Taohuo
             var wang = PrologueDesk.Rect("Wangwang", side, Vector2.zero, new Vector2(1, .38f), new Vector2(10, 10), new Vector2(-10, -6));
             PrologueDesk.Fill(wang, OrangeSoft);
             Label(wang, "WangTitle", new Vector2(0, 1), Vector2.one, new Vector2(12, -32), new Vector2(-8, -6), "", 15, Orange, TextAlignmentOptions.MidlineLeft).name = "WangTitle";
-            wangwang = Label(wang, "WangText", Vector2.zero, Vector2.one, new Vector2(12, 8), new Vector2(-10, -34), "", 15, Ink);
+            wangwang = Label(wang, "WangText", Vector2.zero, Vector2.one, new Vector2(12, 30), new Vector2(-10, -34), "", 15, Ink);
+            wangwang.enableAutoSizing = true; wangwang.fontSizeMin = 11; wangwang.fontSizeMax = 15;
+            wangwang.overflowMode = TextOverflowModes.Ellipsis;
+            AiContentNotice.CreateFooter(wang, font, new Color32(105, 105, 105, 255), 4);
 
             closed = PrologueDesk.Rect("Closed", body, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             PrologueDesk.Fill(closed, Page);

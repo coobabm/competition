@@ -28,6 +28,10 @@ public static partial class TeachingFullRoundChecks
         if(id=="chess_mate1"||id=="chess_mate2"){CompleteChess(game,correct);return;}
         if(id=="arith_mole")
         {
+            // The all-research fixture enables auto-answer on each restart. This case
+            // measures one manual verdict; turn automation off through its real control.
+            if((bool)Field(game,"autoEnabled"))Press(surface,"MoleAuto");
+            Require(!(bool)Field(game,"autoEnabled"),"Manual mole verdict requires Auto: Off");
             for(int tick=0;tick<300;tick++){
                 ((XgMiniGame)game).Tick(.05f);var expires=(float[])Field(game,"expires");var wrong=(bool[])Field(game,"wrong");
                 for(int i=0;i<9;i++)if(expires[i]>0&&wrong[i]!=correct){var holes=(Array)Field(game,"holes");var h=holes.GetValue(i);((Action)h.GetType().GetField("Down",Flags).GetValue(h)).Invoke();((XgMiniGame)game).Tick(61);Require(!(bool)Field(game,"playing"),"Mole session not ended");return;}

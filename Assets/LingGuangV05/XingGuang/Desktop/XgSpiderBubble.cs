@@ -17,7 +17,7 @@ namespace LingGuangV05.Desktop.XingGuang
         static readonly Color Rim = new Color32(42, 36, 72, 235);
         static readonly Color Ink = new Color32(40, 34, 70, 255);
 
-        RectTransform root;
+        RectTransform root,noticeBar;
         XgCrawlerLayer shape;
         TMP_Text text;
         CanvasGroup group;
@@ -61,6 +61,8 @@ namespace LingGuangV05.Desktop.XingGuang
             text.fontSize = 15; text.color = Ink; text.alignment = TextAlignmentOptions.Center;
             text.raycastTarget = false; text.richText = false;
             text.textWrappingMode = TextWrappingModes.Normal;
+            var notice=LingGuangV05.Runtime.AiContentNotice.CreateFooter(root,text.font,Ink);
+            noticeBar=(RectTransform)notice.transform.parent;
             go.SetActive(false);
         }
 
@@ -71,7 +73,7 @@ namespace LingGuangV05.Desktop.XingGuang
             bool fresh = age < 0 || age > PopSeconds;
             text.text = line;
             var pref = text.GetPreferredValues(line, MaxTextWidth, 0);
-            size = new Vector2(Mathf.Min(MaxTextWidth, pref.x) + PadX * 2, pref.y + PadY * 2);
+            size = new Vector2(Mathf.Max(224,Mathf.Min(MaxTextWidth, pref.x) + PadX * 2), pref.y + PadY * 2+24);
             life = Mathf.Max(1.5f, seconds);
             // A new line while one is still up replaces it without a second pop.
             age = fresh ? 0 : Mathf.Min(age, PopSeconds);
@@ -101,8 +103,10 @@ namespace LingGuangV05.Desktop.XingGuang
             root.anchoredPosition = new Vector2(x, y);
             tailX = Mathf.Clamp(at.x - x, -size.x / 2 + Corner + Tail, size.x / 2 - Corner - Tail);
             var textRt = text.rectTransform;
-            textRt.offsetMin = new Vector2(PadX, (below ? 0 : Tail) + PadY);
+            textRt.offsetMin = new Vector2(PadX, (below ? 0 : Tail) + PadY+24);
             textRt.offsetMax = new Vector2(-PadX, -(below ? Tail : 0) - PadY);
+            float noticeBottom=(below?0:Tail)+PadY;
+            noticeBar.offsetMin=new Vector2(0,noticeBottom);noticeBar.offsetMax=new Vector2(0,noticeBottom+24);
             // Pop: a quick overshoot, then hold; fade at the end.
             float p = Mathf.Clamp01(age / PopSeconds);
             float back = 1.70158f;

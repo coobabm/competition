@@ -32,9 +32,32 @@ namespace LingGuangV05.XingGuang.Tests
         static XgSim WithPack(params string[] packs)
         {
             var sim = LegacyStageThree();
-            foreach (var p in packs) { sim.S.owned.Add(p); sim.S.unlocked.Add(p + ".pack"); }
+            foreach (var p in packs)
+            {
+                sim.S.owned.Add(p); sim.S.unlocked.Add(p + ".pack");
+                sim.S.installedDataBatches.Add(new XgLabelCount { dataset = p, count = XgSim.PackBatches(p) });
+                Assert.That(sim.Samples(p), Is.GreaterThanOrEqualTo(XgCatalog.SamplesToTrain), p + " fixture has installed samples");
+            }
             foreach (var run in sim.Runs) sim.Evaluate(run);
             return sim;
+        }
+
+        static void BuyDataImport(XgSim sim, Host host)
+        {
+            if (!sim.Has("train.curve")) Assert.IsTrue(sim.BuyNode("train.curve", host));
+            if (!sim.CanInstallData) Assert.IsTrue(sim.BuyNode(XgSim.DataEntryNode, host));
+        }
+
+        static void InstallDownloaded(XgSim sim, Host host, string dataset)
+        {
+            for (int second = 0; second < 600 && sim.S.downloadQueue.Exists(f => f.dataset == dataset); second++)
+                sim.Tick(1, host);
+            Assert.IsFalse(sim.S.downloadQueue.Exists(f => f.dataset == dataset), "download completed: " + dataset);
+            var file = sim.S.dataFiles.Find(f => f.dataset == dataset && !f.installed);
+            Assert.IsNotNull(file, "download created an installable file: " + dataset);
+            Assert.IsTrue(sim.DataFileReady(file.fileId));
+            Assert.IsTrue(sim.InstallDataFile(file.fileId));
+            Assert.IsTrue(sim.Owns(dataset));
         }
 
         static void Label(XgSim sim, string desk, int n, IXgHost host)
@@ -420,7 +443,10 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = new XgSim(); var host = new Host { money = 5000 };
             Assert.IsFalse(sim.DatasetAvailable("news"));
+            BuyDataImport(sim, host);
             Assert.IsTrue(sim.BuyNode("spam.pack", host));
+            Assert.IsFalse(sim.Owns("spam"), "a purchase still needs explicit installation");
+            InstallDownloaded(sim, host, "spam");
             Assert.IsTrue(sim.Owns("spam"));
             Assert.IsTrue(sim.TrainingUnlocked(XgTrack.Sequence));
         }
@@ -477,7 +503,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void ComboIsSharedTimesOutAndHasTiers()
+        public void LabelComboSurvivesIdleAndTrainingAndHasTiers()
         {
             var sim = WithPack("mnist"); var host = new Host();
             var tiers = new List<int>(); sim.ComboTier += tiers.Add;
@@ -491,7 +517,11 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.LessOrEqual(sim.S.combo, combo, "training adds nothing to it");
             CollectionAssert.Contains(tiers, 0);
             sim.Tick(5, host);
-            Assert.AreEqual(0, sim.S.combo, "idle too long");
+            Assert.AreEqual(combo, sim.S.combo, "idle time preserves the unlimited streak");
+            sim.S.teachMode = false;
+            var wrong = sim.Card("mnist");
+            Assert.IsFalse(sim.Answer("mnist", !wrong.truth, host).correct);
+            Assert.AreEqual(0, sim.S.combo, "a wrong answer still breaks the streak");
             Assert.GreaterOrEqual(sim.S.bestCombo, 10);
         }
 
@@ -518,6 +548,7 @@ namespace LingGuangV05.XingGuang.Tests
             Label(sim, "mnist", 270, host);
             double more = sim.PeakAccuracy(sim.S.vision, 3);
             sim.S.owned.Add("mnist");
+            sim.S.installedDataBatches.Add(new XgLabelCount { dataset = "mnist", count = XgSim.PackBatches("mnist") });
             double pack = sim.PeakAccuracy(sim.S.vision, 3);
             Assert.Greater(more, few + .05);
             Assert.Greater(pack, more);
@@ -589,7 +620,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void GoldCardsPayTripleButExpire()
+        public void GoldCardsPayTripleButOnlyTheBonusExpires()
         {
             var sim = new XgSim { GoldChance = 1 }; var host = new Host { money = 0 };
             sim.S.teachMode = false; // the combo multiplier is what is being priced
@@ -600,9 +631,17 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.desk = "mnist"; sim.WindowOpen = true;
             int timeouts = 0; sim.CardTimedOut += _ => timeouts++;
             Label(sim, "mnist", 3, host);
+            var pending = sim.Card("mnist"); int streak = sim.S.combo;
             sim.Tick(3.5, host);
-            Assert.AreEqual(1, timeouts, "3 s limit on a picture card");
-            Assert.AreEqual(0, sim.S.combo);
+            Assert.AreEqual(0, timeouts, "the question remains answerable after its bonus timer");
+            Assert.AreEqual(pending.id, sim.Card("mnist").id);
+            Assert.AreEqual(streak, sim.S.combo);
+            double beforePay = host.money;
+            var late = sim.Answer("mnist", pending.truth, host);
+            Assert.IsTrue(late.correct); Assert.IsFalse(late.timeout); Assert.IsFalse(late.gold);
+            Assert.AreEqual(streak + 1, sim.S.combo);
+            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * sim.ComboMultiplier, host.money - beforePay, 1e-9,
+                "late correct answers receive the ordinary payment, without the triple bonus");
         }
 
         [Test]
@@ -624,22 +663,44 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void DesksOpenOnlyWhenTheirDataPackIsBought()
+        public void DesksOpenOnlyWhenTheirDataPackIsInstalled()
         {
             var sim = LegacyStageThree("lstm", "resnet"); var host = new Host { money = 1e6 };
             Assert.IsFalse(sim.DeskOpen("meme"));
             sim.Tick(1, host);
             Assert.IsFalse(sim.DeskOpen("meme"), "time alone does not open a desk");
             Assert.IsFalse(sim.DeskOpen("headline"));
-            Assert.IsTrue(sim.BuyNode("meme.pack", host)); Assert.IsTrue(sim.DeskOpen("meme"));
-            Assert.IsTrue(sim.BuyNode("headline.pack", host)); Assert.IsTrue(sim.DeskOpen("headline"));
-            Assert.IsTrue(sim.BuyNode("review.pack", host)); Assert.IsTrue(sim.DeskOpen("review"));
-            Assert.IsTrue(sim.BuyNode("cifar.pack", host)); Assert.IsTrue(sim.DeskOpen("cifar"));
+            BuyDataImport(sim, host);
+            Assert.IsTrue(sim.BuyNode("meme.pack", host));
+            Assert.IsFalse(sim.DeskOpen("meme"), "purchase alone does not open this desk");
+            InstallDownloaded(sim, host, "meme"); Assert.IsTrue(sim.DeskOpen("meme"));
+            Assert.IsTrue(sim.BuyNode("headline.pack", host));
+            Assert.IsFalse(sim.DeskOpen("headline"), "purchase alone does not open this desk");
+            InstallDownloaded(sim, host, "headline"); Assert.IsTrue(sim.DeskOpen("headline"));
+            Assert.IsTrue(sim.BuyNode("review.pack", host));
+            Assert.IsFalse(sim.DeskOpen("review"), "purchase alone does not open this desk");
+            InstallDownloaded(sim, host, "review"); Assert.IsTrue(sim.DeskOpen("review"));
+            Assert.IsTrue(sim.BuyNode("cifar.pack", host));
+            Assert.IsFalse(sim.DeskOpen("cifar"), "purchase alone does not open this desk");
+            InstallDownloaded(sim, host, "cifar"); Assert.IsTrue(sim.DeskOpen("cifar"));
             Assert.IsTrue(sim.DatasetAvailable("cifar"), "the purchased captcha desk makes CIFAR trainable");
-            Assert.IsFalse(sim.DeskOpen("go"));
+            // The stage-two free Gomoku lesson shares the go dataset; desk visibility is not pack ownership.
+            var freeGomoku = XgTeachingPacks.Find("gomoku_win");
+            Assert.IsNotNull(freeGomoku); Assert.IsFalse(freeGomoku.buy);
+            Assert.That(sim.S.stage, Is.GreaterThanOrEqualTo(freeGomoku.stage));
+            Assert.IsTrue(sim.TeachingPackAvailable("gomoku_win"));
+            Assert.IsTrue(sim.DeskOpen("go"), "the free teaching desk remains available");
+            Assert.AreEqual(0, sim.InstalledBatches("go"));
+            Assert.AreEqual(0, sim.PackSamples("go"), "free desk access grants no purchased pack samples");
             sim.S.labels.Add(new XgLabelCount { dataset = "poems", count = 500 }); sim.Tick(1, host);
-            Assert.IsFalse(sim.DeskOpen("go"), "label totals cannot bypass the data pack");
-            Assert.IsTrue(sim.BuyNode("go.pack", host)); Assert.IsTrue(sim.DeskOpen("go"));
+            Assert.AreEqual(0, sim.PackSamples("go"), "label totals do not install a data pack");
+            Assert.IsTrue(sim.BuyNode("go.pack", host));
+            Assert.AreEqual(0, sim.InstalledBatches("go"), "purchase alone does not install the pack");
+            Assert.AreEqual(0, sim.PackSamples("go"), "purchase alone adds no training samples");
+            InstallDownloaded(sim, host, "go");
+            Assert.That(sim.InstalledBatches("go"), Is.GreaterThan(0));
+            Assert.That(sim.PackSamples("go"), Is.GreaterThan(0), "only installed pack batches feed training");
+            Assert.IsTrue(sim.DeskOpen("go"));
         }
 
         [Test]
