@@ -31,6 +31,7 @@ public static class IntegratedReleaseBuild
         string[] scenes={"Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity","Assets/LingGuangV05/Scenes/Main.unity"};
         foreach(var scene in scenes)if(!File.Exists(scene))throw new FileNotFoundException(scene);
         Directory.CreateDirectory(directory);
+        ReleaseExecutableIcon.Apply();
         var provenance=CaptureSource();
         File.WriteAllText(Path.Combine(directory,"source-provenance.json"),JsonUtility.ToJson(provenance,true));
         try
