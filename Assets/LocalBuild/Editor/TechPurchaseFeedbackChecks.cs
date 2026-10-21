@@ -24,7 +24,7 @@ public static class TechPurchaseFeedbackChecks
         return tween != null && tween.IsActive() && tween.IsPlaying();
     }
     static int AudioIndex => (int)typeof(XgJuice.Sfx).GetField("next", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-    static GameObject ClickHandlerAt(EventSystem events, RectTransform rect, Vector2 local)
+    internal static GameObject ClickHandlerAt(EventSystem events, RectTransform rect, Vector2 local)
     {
         var pointer = new PointerEventData(events)
         {
@@ -73,7 +73,7 @@ public static class TechPurchaseFeedbackChecks
         if (!ok) throw new InvalidOperationException("Tech purchase feedback: " + label);
         report.passed.Add(label);
     }
-    sealed class Wallet : IXgHost
+    internal sealed class Wallet : IXgHost
     {
         public double money = 1e8;
         public bool refuse;
@@ -85,7 +85,7 @@ public static class TechPurchaseFeedbackChecks
         public void Earn(double amount) { money += amount; }
         public void Train(double seconds) { }
     }
-    sealed class PageHost : IXgPageHost
+    internal sealed class PageHost : IXgPageHost
     {
         public XgSim sim = new XgSim();
         public Wallet wallet = new Wallet();

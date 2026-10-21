@@ -7,3 +7,7 @@
 保持开场保护、发现演出及已解锁存档状态，购买仍需开放题包的准确率至少 60% 检查点。题包阶段和价格不变。
 
 专项 18 项测试通过，包括 BeginOpening → 手动题 → TrainEpoch 生成检查点 → 发现 → 购买，以及 BeginMiniGame → SubmitMiniGame 的正常交互 API 路径。额外验证真实 SpiderDragPeek/SpiderDragPress 连续自动作答不累计，超时打断连续但保留有效累计。随后纳入 Unity Editor 回归；不以直接修改进度字段代替正常流程验证。
+
+进一步修复真实界面生命周期：揭示后立即保存；Idle pending 被禁用时也揭示并解除延迟；Finishing 超时清理；切档中止旧演出，避免写错周目。
+
+AutoLabelUnlockRunner 的 22 项 Unity PlayMode 检查全部通过：真实组件 Update、教学发现、科技页名称变化、Canvas 射线命中、点击购买一次且正确扣款、即时保存后真实磁盘重载、Idle 禁用后重载。检查使用空场景的真实组件与科技页，不启动 Main；为覆盖生产超时路径只回拨 blockedAt，不直接调用 RevealAutoLabel。尚不代表完整演出自然播放或发布 EXE 人工鼠标验收。

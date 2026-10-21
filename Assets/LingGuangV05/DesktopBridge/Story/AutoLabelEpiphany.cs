@@ -38,7 +38,7 @@ namespace LingGuangV05.Desktop.Story
         /// <summary>Seconds without a hand answer before the scene may start, the wait after which it starts anyway,
         /// and the wait after which 自动答题 is revealed without a scene (something keeps blocking it).</summary>
         const float QuietAfterAnswer = 1.2f, ForceAfter = 40f, RevealWithoutScene = 240f;
-        const float BlockLimit = 40f, CardLimit = 60f;
+        const float BlockLimit = 40f, CardLimit = 60f, FinishLimit = 75f;
 
         /// <summary>The scene is running (other story layers can wait for it).</summary>
         public static bool Playing { get; private set; }
@@ -52,13 +52,14 @@ namespace LingGuangV05.Desktop.Story
         PrologueDirector prologue;
         XingGuangController lab;
         XgSim bound;
+        ChapterOneSim boundSave;
         readonly XgInnerMonologue monologue = new XgInnerMonologue();
         int lastHand = -1;
         float lastHandAt, pendingSince = -1;
 
         Phase phase;
         Coroutine timeline, finishing;
-        float blockedAt;
+        float blockedAt, finishingAt;
         bool canSkip, inputBlocked, unblockPending;
         float unblockAt;
         RectTransform dim, bang;
@@ -83,19 +84,53 @@ namespace LingGuangV05.Desktop.Story
             sound.playOnAwake = false; sound.spatialBlend = 0; sound.ignoreListenerPause = true;
         }
 
+        void OnEnable()
+        {
+            if (CurrentOwner(bound)) bound.DeferAutoLabelReveal = true;
+        }
+
         void OnDisable()
+        {
+            ResetPresentation();
+            if (bound != null) bound.DeferAutoLabelReveal = false;
+            // Pending includes the quiet-wait phase, before a cutscene has started.
+            RevealAndSave(bound);
+        }
+
+        void ResetPresentation()
         {
             // Never leave the desktop blocked or the node hidden because the scene was cut short.
             if (timeline != null) StopCoroutine(timeline);
             if (finishing != null) StopCoroutine(finishing);
             timeline = finishing = null;
             Unblock(true);
-            if (phase != Phase.Idle && bound != null && bound.EpiphanyPending) bound.RevealAutoLabel();
             phase = Phase.Idle;
             Playing = false;
         }
 
-        void OnDestroy() { if (bound != null) bound.DeferAutoLabelReveal = false; }
+        void OnDestroy()
+        {
+            if (bound != null) bound.DeferAutoLabelReveal = false;
+            RevealAndSave(bound); // Idempotent after OnDisable; never writes a replaced save.
+        }
+
+        bool CurrentOwner(XgSim sim) => sim != null && ReferenceEquals(sim, bound) && lab != null
+            && ReferenceEquals(lab.Sim, sim) && runtime != null && ReferenceEquals(lab.runtime, runtime)
+            && boundSave != null && ReferenceEquals(runtime.Sim, boundSave) && lab.BoundTo(boundSave);
+
+        bool RevealAndSave(XgSim sim)
+        {
+            if (!CurrentOwner(sim) || !sim.EpiphanyPending || !sim.RevealAutoLabel()) return false;
+            // Do not wait for the five-minute autosave after a visible unlock. Keep a failed
+            // write dirty for normal retry, and preserve test/save-directory isolation.
+            if (!runtime.TestMode)
+            {
+                runtime.MarkDirty();
+                if (runtime.useDiskSave) lab.SaveNow();
+            }
+            lab.View?.Refresh(true);
+            return true;
+        }
 
         bool PresenterBusy => host is StoryDesktopPresenter presenter && presenter.CutscenePlaying;
         bool ReduceMotion => host is StoryDesktopPresenter presenter && presenter.ReduceMotion;
@@ -106,7 +141,7 @@ namespace LingGuangV05.Desktop.Story
             if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
             if (lab == null) lab = FindAnyObjectByType<XingGuangController>();
             var sim = lab != null ? lab.Sim : null;
-            if (!ReferenceEquals(sim, bound)) Bind(sim);
+            if (!ReferenceEquals(sim, bound) || !ReferenceEquals(runtime != null ? runtime.Sim : null, boundSave)) Bind(sim);
             if (sim == null || runtime == null || runtime.Sim == null || runtime.TestMode) return;
 
             if (phase == Phase.Blocked)
@@ -114,7 +149,15 @@ namespace LingGuangV05.Desktop.Story
                 if (canSkip && SkipPressed() || Time.unscaledTime - blockedAt > BlockLimit) EndBlocked(true);
                 return;
             }
-            if (phase == Phase.Finishing) return;
+            if (phase == Phase.Finishing)
+            {
+                if (Time.unscaledTime - finishingAt > FinishLimit)
+                {
+                    ResetPresentation();
+                    RevealAndSave(sim);
+                }
+                return;
+            }
 
             int hand = sim.S.handCorrect + sim.S.handWrong;
             if (hand != lastHand)
@@ -128,13 +171,16 @@ namespace LingGuangV05.Desktop.Story
             if (pendingSince < 0) pendingSince = Time.unscaledTime;
             float waited = Time.unscaledTime - pendingSince;
             if (Quiet() || waited > ForceAfter && CanPlay()) StartScene(sim);
-            else if (waited > RevealWithoutScene && sim.RevealAutoLabel() && lab.View != null) lab.View.Refresh(true);
+            else if (waited > RevealWithoutScene) RevealAndSave(sim);
         }
 
         void Bind(XgSim sim)
         {
+            // An in-flight scene belongs to its original save, including its Finish coroutine.
+            if (phase != Phase.Idle) ResetPresentation();
             if (bound != null) bound.DeferAutoLabelReveal = false;
             bound = sim;
+            boundSave = runtime != null ? runtime.Sim : null;
             if (bound != null) bound.DeferAutoLabelReveal = true;
             lastHand = -1; pendingSince = -1;
         }
@@ -202,6 +248,7 @@ namespace LingGuangV05.Desktop.Story
             if (skipped) InnerVoice.Clear();
             Unblock(false);
             phase = Phase.Finishing;
+            finishingAt = Time.unscaledTime;
             finishing = StartCoroutine(Finish(bound));
         }
 
@@ -411,22 +458,22 @@ namespace LingGuangV05.Desktop.Story
         IEnumerator Finish(XgSim sim)
         {
             var c = lab;
-            bool ours = c != null && sim != null && ReferenceEquals(c.Sim, sim);
+            bool ours = CurrentOwner(sim);
             if (ours)
             {
                 if (router == null || !router.Open(XingGuangController.AppId, "tree")) c.Open();
                 for (float t = 0; t < 2f; t += Time.unscaledDeltaTime) { if (c.View != null && c.View.Visible) break; yield return null; }
                 yield return null;
                 var holo = c.View != null ? c.View.GetComponent<XgHoloCard>() : null;
-                if (holo != null && c.View.Visible)
+                if (CurrentOwner(sim) && holo != null && c.View.Visible)
                 {
                     holo.Show(XgSim.EpiphanyCardId);
                     yield return null;
                     for (float t = 0; t < CardLimit && holo != null && holo.Showing && c.View != null && c.View.Visible; t += Time.unscaledDeltaTime) yield return null;
                 }
             }
-            if (sim != null) sim.RevealAutoLabel();
-            if (ours && c.View != null && c.View.Visible)
+            RevealAndSave(sim);
+            if (CurrentOwner(sim) && c.View != null && c.View.Visible)
             {
                 if (c.View.Tab != "tree") c.View.ShowTab("tree");
                 c.View.Refresh(true);
