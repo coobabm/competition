@@ -7,6 +7,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgState
     {
         public List<string> afterthoughts = new List<string>();
+        public List<XgSim.XgAfterthought> pendingAfterthoughts = new List<XgSim.XgAfterthought>();
     }
 
     /// <summary>
@@ -17,7 +18,7 @@ namespace LingGuangV05.XingGuang
     /// </summary>
     public sealed partial class XgSim
     {
-        public sealed class XgAfterthought
+        [Serializable] public sealed class XgAfterthought
         {
             public string key, zh, en;
             public XgAfterthought(string key, string zh, string en) { this.key = key; this.zh = zh; this.en = en; }
@@ -56,6 +57,7 @@ namespace LingGuangV05.XingGuang
             if (string.IsNullOrEmpty(key)) return;
             if (S.afterthoughts == null) S.afterthoughts = new List<string>();
             if (!S.afterthoughts.Contains(key)) S.afterthoughts.Add(key);
+            S.pendingAfterthoughts?.RemoveAll(x => x != null && x.key == key);
         }
 
         /// <summary>The line for an afterthought, or null if it has been said already. Marks it said.</summary>
@@ -68,6 +70,27 @@ namespace LingGuangV05.XingGuang
 
         public bool AfterthoughtSaid(string key) => S.afterthoughts != null && S.afterthoughts.Contains(key);
 
+        public XgAfterthought QueueAfterthought(string key, string argZh = null, string argEn = null)
+        {
+            var thought=PeekAfterthought(key,argZh,argEn);
+            if(thought==null)return null;
+            if(S.pendingAfterthoughts==null)S.pendingAfterthoughts=new List<XgAfterthought>();
+            var pending=S.pendingAfterthoughts.Find(x=>x!=null&&x.key==key);
+            if(pending!=null)return pending;
+            S.pendingAfterthoughts.Add(thought);return thought;
+        }
+
+        public bool CommitAfterthought(string key, Func<bool> persist)
+        {
+            if(AfterthoughtSaid(key)||persist==null)return false;
+            var pending=S.pendingAfterthoughts==null?new List<XgAfterthought>():new List<XgAfterthought>(S.pendingAfterthoughts);
+            MarkAfterthought(key);
+            bool saved=false;
+            try { saved=persist(); }
+            finally { if(!saved){S.afterthoughts.Remove(key);S.pendingAfterthoughts=pending;} }
+            return saved;
+        }
+
         /// <summary>Every afterthought key, for tests.</summary>
         public static IEnumerable<string> AfterthoughtKeys => AfterthoughtLines.Keys;
 
@@ -76,10 +99,12 @@ namespace LingGuangV05.XingGuang
         /// Returns the line (already in the current language) and adds it to the 对话 log, or null if not due.
         /// </summary>
         public string TakeReflectionLine()
+            => TakeReflectionLine(() => true);
+
+        public string TakeReflectionLine(Func<bool> persist)
         {
             if (S.stage < 5 || S.autoCorrect < ReflectionLabels || AfterthoughtSaid(ReflectionKey)) return null;
-            if (S.afterthoughts == null) S.afterthoughts = new List<string>();
-            S.afterthoughts.Add(ReflectionKey);
+            if (!CommitAfterthought(ReflectionKey, persist)) return null;
             string line = T("我标的那些，是在教谁？");
             AddLine("ai", line);
             return line;
@@ -89,6 +114,9 @@ namespace LingGuangV05.XingGuang
         {
             if (S.afterthoughts == null) S.afterthoughts = new List<string>();
             S.afterthoughts.RemoveAll(k => string.IsNullOrEmpty(k));
+            if(S.pendingAfterthoughts==null)S.pendingAfterthoughts=new List<XgAfterthought>();
+            var unique=new HashSet<string>();
+            S.pendingAfterthoughts.RemoveAll(x=>x==null||!AfterthoughtLines.ContainsKey(x.key??"")||AfterthoughtSaid(x.key)||!unique.Add(x.key));
         }
     }
 }

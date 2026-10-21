@@ -225,9 +225,10 @@ namespace LingGuangV05.XingGuang.Tests
             var node = XgCatalog.Nodes.First(n => n.cost > 20 && !double.IsInfinity(n.cost) && !XgItems.IsItem(n.id));
             var plain = Fresh(); var coupon = With("coupon"); var angel = With("angel_term"); var both = With("coupon", "angel_term");
             double basePrice = plain.NodeCost(node);
-            Assert.AreEqual(System.Math.Ceiling(node.cost*XgSim.StoryResearchPrice*.9)*XgSim.EarlyTechnologyPriceFactor(node), coupon.NodeCost(node), 1e-6);
-            Assert.AreEqual(System.Math.Ceiling(node.cost*XgSim.StoryResearchPrice*.9)*XgSim.EarlyTechnologyPriceFactor(node), angel.NodeCost(node), 1e-6);
-            Assert.AreEqual(System.Math.Ceiling(node.cost*XgSim.StoryResearchPrice*.8)*XgSim.EarlyTechnologyPriceFactor(node), both.NodeCost(node), 1e-6, "discounts apply before final multiplier");
+            Assert.GreaterOrEqual(basePrice,100,"ordinary quote is scaled before discounts");
+            Assert.AreEqual(System.Math.Ceiling(basePrice*.9), coupon.NodeCost(node), 1e-6);
+            Assert.AreEqual(System.Math.Ceiling(basePrice*.9), angel.NodeCost(node), 1e-6);
+            Assert.AreEqual(System.Math.Ceiling(basePrice*.8), both.NodeCost(node), 1e-6, "discounts apply to the final ordinary quote and stack additively");
         }
 
         [Test] public void TheServerKeyCutsTheRent()
@@ -274,8 +275,13 @@ namespace LingGuangV05.XingGuang.Tests
             plain.S.combo = none.S.combo = one.S.combo = 4;
             Assert.AreEqual(2, plain.ComboMultiplier, 1e-9);
             Assert.AreEqual(2, none.ComboMultiplier, 1e-9);
-            Assert.AreEqual(3, one.ComboMultiplier, 1e-9, "a step every two right answers");
-            Assert.AreEqual(2, one.StreakToNext);
+            Assert.IsTrue(one.RelicFx.comboFastStep,"the pair effect is equipped");
+            Assert.AreEqual(2, one.ComboMultiplier, 1e-9, "two completed answers unlock the following answer, so the fifth pays x3");
+            Assert.AreEqual(1, one.StreakToNext);
+            plain.S.combo = none.S.combo = one.S.combo = 5;
+            Assert.AreEqual(3,plain.ComboMultiplier);
+            Assert.AreEqual(3,none.ComboMultiplier);
+            Assert.AreEqual(3,one.ComboMultiplier);
             plain.S.combo = one.S.combo = 100;
             Assert.AreEqual(5, plain.ComboMultiplier, 1e-9);
             Assert.AreEqual(5, one.ComboMultiplier, 1e-9, "still capped at ×5");
@@ -332,6 +338,7 @@ namespace LingGuangV05.XingGuang.Tests
             {
                 var s = With(relics);
                 s.S.best.Add(new XgBest { dataset = c.dataset, acc = .999 });
+                s.AppReceipt(XgSim.CrowdApp).installed = true;
                 s.S.contracts.Add(c.id);
                 return s.IncomePerSecond;
             }

@@ -23,11 +23,15 @@ public static partial class BoardGamesUiPlayQa
 {
     static string LogicMode=>SessionState.GetString(Key+".Mode","games");
     static string SelectedDetail=>
+        LogicMode=="yy-window" ? "Actual isolated Main YY window with 128 appended historical fixture messages and three recent player/group messages. Authored Miaoyu choice-step presentation fixture, live CanvasRenderer cull/opacity/viewport and TMP mesh checks, contact preview and choice labels, full LCD captures with and without introduction. No historical messages deleted; no natural unlock timing or Player-build claim." :
+        LogicMode=="center" ? "Six registered native game home cards and scrollable Chinese rule pages, real LCD records navigation to gamedata without spending, and stale-save callback rejection. Shortened viewport fixtures exercise real wheel scrolling when default Chinese already fits. Stage/ownership are fixtures; no complete rounds or purchase transaction claimed. Captures and TMP mesh bounds are from the isolated Main scene, not Player-build certification." :
         (LogicMode=="tools"?"Optional logic tools only; full native rounds were not run. ":"Actual Main boards, unrigged full rounds, rules pauses and Files-to-Train installation; recorder purchase uses the core transaction. ")+
         (LogicMode=="games"?"":"Bodu/Tieba public-image navigation, actual LCD mapped drag through live top-raycast hits, purchased/hidden/save-switch gates, and both verified composers with real isolated snapshot rebinds. Chinese/English LCD captures and TMP checks. Unlocks and window arrangements are fixture setup, not purchase/resize interaction tests. ")+
         "Synthetic pointer down/up/drag/scroll through production LCD input, not physical OS mouse or Player-build certification. Duplicate Files drop and stale composer callbacks are explicit adversarial guards. No model execution or injected game outcomes.";
     static IEnumerator SelectedChecks()
     {
+        if(LogicMode=="yy-window"){var yy=YYWindowChecks();while(yy.MoveNext())yield return yy.Current;yield break;}
+        if(LogicMode=="center"){var center=GameCenterChecks();while(center.MoveNext())yield return center.Current;yield break;}
         if(LogicMode!="tools"){var games=Checks();while(games.MoveNext())yield return games.Current;}
         if(LogicMode!="games"){var logic=LogicToolsChecks();while(logic.MoveNext())yield return logic.Current;}
     }

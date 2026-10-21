@@ -68,6 +68,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.stage = stage;
             Deploy(sim, "mnist", "lenet", .975);
             Deploy(sim, "logic", "mlp", .9, 3, 4);
+            sim.AppReceipt(XgSim.CrowdApp).installed = true;
             sim.S.contracts.Add("cheque");
             sim.S.contracts.Add("civilexam");
             sim.S.autoLevel = 2;

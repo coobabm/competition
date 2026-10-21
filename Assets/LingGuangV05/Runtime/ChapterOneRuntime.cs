@@ -93,7 +93,9 @@ namespace LingGuangV05.Runtime
                 return;
             }
             else SaveStatus = "测试模式：不写入本机存档";
-            Attach(new ChapterOneSim());
+            var fresh = new ChapterOneSim();
+            fresh.S.narrationRunId = Guid.NewGuid().ToString("N");
+            Attach(fresh);
         }
 
         bool TryRead(out ChapterOneSim result, out string message)
@@ -103,7 +105,7 @@ namespace LingGuangV05.Runtime
             var read = store.Load(payload =>
             {
                 if (!payload.Contains("\"version\"") || !payload.Contains("\"nodes\"") || !payload.Contains("\"rngState\"")) return false;
-                var state = JsonUtility.FromJson<GameState>(payload);
+                var state = ReadNarrationState(payload);
                 if (state == null) return false;
                 if (state.version != 1) throw new NotSupportedException("存档版本不受支持，未回退或覆盖。");
                 if (state.nodes == null || state.nodes.Count < 3 || state.edges == null) return false;
@@ -121,6 +123,7 @@ namespace LingGuangV05.Runtime
         {
             if (Sim != null) { Sim.Changed -= OnSimulationChanged; Sim.Signal -= OnSimulationSignal; }
             Sim = simulation;
+            NarrationReceiptStore.EnsureIdentity(Sim.S);
             Sim.Changed += OnSimulationChanged;
             Sim.Signal += OnSimulationSignal;
             sinceSave = 0;
@@ -336,7 +339,9 @@ namespace LingGuangV05.Runtime
         /// </summary>
         bool BeginNewGame(bool replayOpening, PlayerProfile known)
         {
-            Attach(new ChapterOneSim());
+            var fresh = new ChapterOneSim();
+            fresh.S.narrationRunId = Guid.NewGuid().ToString("N");
+            Attach(fresh);
             if (replayOpening || !PlayerProfile.IsUsable(known)) return true;
             return FinishPrologue(known.CopyOfSetup(), false) || Sim.InPrologue;
         }

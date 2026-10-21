@@ -19,7 +19,7 @@ namespace LingGuangV05.Desktop.Games
         static readonly Color Red=new Color32(207,74,72,255),Blue=new Color32(65,132,204,255);
         public override string Id=>"ludo";
         public override string Title=>T("飞行棋","Aeroplane chess");
-        public override string Blurb=>T("两人各2架，28格环道。掷5或6起飞，撞回对手，先全部回家获胜。","Two planes each on a 28-cell loop. Launch on 5 or 6, send rivals back, and bring both home.");
+        public override string Blurb=>T("掷 5 或 6 起飞，撞上对手可送回基地。各 2 架，先全部到家获胜。","Roll a 5 or 6 to take off; land on a rival to send it home. Two planes each on a 28-cell loop; first to bring both home wins.");
         public override string Glyph=>"✈";
         public override Color Accent=>Blue;
         public override void Build(RectTransform area)

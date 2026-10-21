@@ -22,6 +22,103 @@ namespace LingGuangV05.XingGuang.Tests
 
         const string Desk = "spam";
 
+        static XgSim PlayOpening(Host host)
+        {
+            var sim = new XgSim { GoldChance = 0, PlatformChecks = false };
+            sim.BeginOpening();
+            Assert.IsTrue(sim.OpeningFocus);
+            for (int round = 0; round < 40 && sim.OpeningFocus; round++)
+            {
+                for (int i = 0; i < 10 && sim.OpeningFocus; i++)
+                {
+                    var card = sim.Card("sense");
+                    Assert.IsTrue(sim.TeachingGuess(card, out bool guess));
+                    Assert.IsTrue(sim.TryEvaluateTeachingGuess("sense", card.id, guess, guess == card.truth, host, out _));
+                }
+                Assert.IsTrue(sim.AutoLabelHidden, "first lesson does not force discovery");
+                if (sim.TeachingTreeOpen && !sim.Has("train.curve")) Assert.IsTrue(sim.BuyNode("train.curve", host));
+                sim.TrainEpoch(XgTrack.Sequence, host);
+            }
+            Assert.IsFalse(sim.OpeningFocus, "ordinary teaching and training complete the first lesson");
+            Assert.GreaterOrEqual(sim.BestAcc("sense"), XgCatalog.AutoMinAccuracy, "real training stores an eligible checkpoint");
+            return sim;
+        }
+
+        [Test]
+        public void ActualTeachingGuessEntryDiscoversAndCanBuyWithoutInjectedProgress()
+        {
+            var host = new Host();var sim = PlayOpening(host);int stage = sim.S.stage;
+            for (int i = 0; i < EpiphanyAttemptLimit() && !sim.EpiphanyDone; i++)
+            {
+                var card=sim.Card("sense");
+                Assert.IsTrue(sim.TeachingGuess(card,out bool guess));
+                Assert.IsTrue(sim.TryEvaluateTeachingGuess("sense",card.id,guess,guess==card.truth,host,out _));
+            }
+            Assert.IsTrue(sim.AutoLabelRevealed);
+            Assert.IsTrue(sim.CanBuyGlobalAuto(out string why), why);
+            Assert.IsTrue(sim.BuyGlobalAuto(host));Assert.AreEqual(stage,sim.S.stage);
+        }
+        static int EpiphanyAttemptLimit()=>XgSim.EpiphanyFallbackLabels;
+
+        [Test]
+        public void RealSpiderDragPressDoesNotAdvanceDiscoveryButManualAnswersStillDo()
+        {
+            var host = new Host(); var sim = PlayOpening(host);
+            int streak = sim.S.ghostStreak, labels = sim.S.ghostLabels, fired = 0;
+            sim.Epiphany += () => fired++;
+            for (int i = 0; i < 20; i++)
+            {
+                Assert.IsTrue(sim.SpiderDragPeek("sense", host, out bool answer));
+                Assert.IsTrue(sim.SpiderDragPress("sense", host, answer).accepted);
+            }
+            Assert.AreEqual(20, sim.S.spiderDragAnswers, "the real spider route actually settled");
+            Assert.AreEqual(streak, sim.S.ghostStreak); Assert.AreEqual(labels, sim.S.ghostLabels);
+            Assert.AreEqual(0, fired); Assert.IsTrue(sim.AutoLabelHidden);
+            for (int i = 0; i < XgSim.EpiphanyFallbackLabels && !sim.EpiphanyDone; i++)
+            {
+                var card = sim.Card("sense");
+                Assert.IsTrue(sim.TeachingGuess(card, out bool guess));
+                Assert.IsTrue(sim.TryEvaluateTeachingGuess("sense", card.id, guess, guess == card.truth, host, out _));
+            }
+            Assert.IsTrue(sim.AutoLabelRevealed); Assert.AreEqual(1, fired);
+        }
+
+        [Test]
+        public void TimeoutBreaksAgreementWithoutErasingValidProgress()
+        {
+            var host = new Host(); var sim = Fresh(.8);
+            AnswerGhost(sim, host, true); AnswerGhost(sim, host, true);
+            int labels = sim.S.ghostLabels;
+            // The current card path has no live timeout; exercise the observer's timeout contract directly.
+            typeof(XgSim).GetMethod("ObserveGhost", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(sim, new object[] { true, true, true, true });
+            Assert.AreEqual(0, sim.S.ghostStreak); Assert.AreEqual(labels, sim.S.ghostLabels);
+            Assert.IsTrue(sim.AutoLabelHidden);
+            AnswerGhost(sim, host, true);
+            Assert.AreEqual(1, sim.S.ghostStreak); Assert.AreEqual(labels + 1, sim.S.ghostLabels);
+            Assert.IsTrue(sim.AutoLabelHidden);
+        }
+
+        [Test]
+        public void ActualMiniGameEntryCountsSuccessfulManualItemsAndRejectsDuplicatesAndAutomation()
+        {
+            var host=new Host();var sim=PlayOpening(host);int fired=0;sim.Epiphany+=()=>fired++;
+            long ticket=sim.BeginMiniGame("kaixincidian",host);Assert.AreNotEqual(0,ticket);int seq=0, baseline=sim.S.ghostLabels;
+            for(int i=0;i<15;i++)Assert.IsTrue(sim.SubmitMiniGame(ticket,++seq,true,host,1,automatic:true).accepted);
+            for(int i=0;i<15;i++)Assert.IsTrue(sim.SubmitMiniGame(ticket,++seq,false,host,20).accepted);
+            Assert.AreEqual(baseline,sim.S.ghostLabels,"automatic and wrong/timeout results do not count");
+            for(int i=baseline+1;i<=XgSim.EpiphanyFallbackLabels;i++)
+            {
+                Assert.IsTrue(sim.SubmitMiniGame(ticket,++seq,true,host,2).accepted);
+                Assert.IsFalse(sim.SubmitMiniGame(ticket,seq,true,host,2).accepted,"duplicate receipt");
+                Assert.AreEqual(i,sim.S.ghostLabels);
+                Assert.AreEqual(i==XgSim.EpiphanyFallbackLabels,sim.AutoLabelRevealed);
+            }
+            Assert.AreEqual(1,fired);Assert.AreEqual(0,sim.S.ghostStreak,"mini results never invent prediction agreement");
+            Assert.IsTrue(sim.CanBuyGlobalAuto(out string why),why);
+            Assert.IsTrue(sim.BuyGlobalAuto(host));
+        }
+
         static XgSim Fresh(double acc)
         {
             // The checkpoint's ghost is the classic mode's; in teaching mode the visible guess is the board's own (XgSim.Teaching.cs).
@@ -79,19 +176,19 @@ namespace LingGuangV05.XingGuang.Tests
         public void StreakCountsAgreementAndResetsOnAMismatch()
         {
             var sim = Fresh(.8); var host = new Host();
-            for (int i = 0; i < 5; i++) AnswerGhost(sim, host, true);
-            Assert.AreEqual(5, sim.S.ghostStreak);
+            for (int i = 0; i < 2; i++) AnswerGhost(sim, host, true);
+            Assert.AreEqual(2, sim.S.ghostStreak);
             Assert.IsTrue(sim.S.ghostSeen);
             AnswerGhost(sim, host, false);
             Assert.AreEqual(0, sim.S.ghostStreak, "a mismatch starts over");
             Assert.IsFalse(sim.S.epiphany);
-            for (int i = 0; i < 7; i++) AnswerGhost(sim, host, true);
-            Assert.AreEqual(7, sim.S.ghostStreak);
-            Assert.IsFalse(sim.S.epiphany, "seven is not yet eight");
+            for (int i = 0; i < 2; i++) AnswerGhost(sim, host, true);
+            Assert.AreEqual(2, sim.S.ghostStreak);
+            Assert.IsFalse(sim.S.epiphany, "two is not yet three");
         }
 
         [Test]
-        public void TheEventFiresOnceAtEightInARow()
+        public void TheEventFiresOnceAtThreeInARow()
         {
             var sim = Fresh(.8); var host = new Host(); int fired = 0;
             sim.Epiphany += () => fired++;
@@ -107,7 +204,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void FallbackFiresAHundredAndFiftyHandLabelsAfterTheGhostFirstAppeared()
+        public void FallbackFiresAfterTwelveHandLabels()
         {
             var sim = Fresh(0); var host = new Host(); int fired = 0;
             sim.Epiphany += () => fired++;
@@ -204,9 +301,9 @@ namespace LingGuangV05.XingGuang.Tests
         public void StateSurvivesAReload()
         {
             var sim = Fresh(.8); var host = new Host();
-            for (int i = 0; i < 3; i++) AnswerGhost(sim, host, true);
+            for (int i = 0; i < 2; i++) AnswerGhost(sim, host, true);
             var again = new XgSim(sim.S);
-            Assert.AreEqual(3, again.S.ghostStreak);
+            Assert.AreEqual(2, again.S.ghostStreak);
             Assert.IsTrue(again.S.ghostSeen);
             Assert.IsTrue(again.AutoLabelHidden);
         }

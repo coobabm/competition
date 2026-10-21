@@ -244,7 +244,10 @@ namespace LingGuangV05.Desktop.Games
                     Text(PrologueDesk.Rect("Glyph", art, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), g.Glyph, 48, Color.white, TextAlignmentOptions.Center);
                 var title = Text(PrologueDesk.Rect("Name", card, new Vector2(0, 1), Vector2.one, new Vector2(15,-111),new Vector2(-15,-76)), "", 26, new Color32(30, 36, 52, 255), TextAlignmentOptions.MidlineLeft);
                 title.fontStyle = FontStyles.Bold;
-                var blurb = Text(PrologueDesk.Rect("Blurb", card, Vector2.zero, Vector2.one, new Vector2(15,78),new Vector2(-15,-114)), "", 16, new Color32(90, 98, 114, 255));
+                var blurb = Text(PrologueDesk.Rect("Blurb", card, Vector2.zero, Vector2.one, new Vector2(15,96),new Vector2(-15,-114)), "", 16, new Color32(90, 98, 114, 255));
+                // Keep a 4px gap above State; fit the complete introduction inside its own area.
+                blurb.textWrappingMode = TextWrappingModes.Normal;
+                blurb.enableAutoSizing = true; blurb.fontSizeMin = 12; blurb.fontSizeMax = 16;
                 var state = Text(PrologueDesk.Rect("State", card, Vector2.zero, new Vector2(1, 0), new Vector2(20, 66), new Vector2(-20, 92)), "", 14, new Color32(200, 90, 40, 255), TextAlignmentOptions.MidlineLeft);
                 var play = PrologueDesk.Rect("Play", card, Vector2.zero, new Vector2(1, 0), new Vector2(20, 14), new Vector2(-20, 58));
                 var playImg = PrologueDesk.Fill(play, g.Accent);

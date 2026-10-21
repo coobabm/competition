@@ -205,7 +205,7 @@ public static class TechPurchaseFeedbackChecks
             node.OnPointerEnter(pointer);
             var ownedHint = Field<TMPro.TMP_Text>(tree, "ownedPointerHint");
             Check(report, ownedHint != null && ownedHint.gameObject.activeSelf && !ownedHint.raycastTarget &&
-                ownedHint.text.Contains("再点击一次"), "Owned node shows a passive nearby knowledge-click hint");
+                ownedHint.text.Contains("右键看科普"), "Owned repeatable node says a click upgrades and a right click opens its topic");
             var hintFrame = Field<RectTransform>(tree, "ownedPointerHintFrame");
             var hintFill = hintFrame.GetComponent<Image>();
             Check(report, hintFrame.gameObject.activeSelf && hintFrame.rect.width >= 200 && hintFrame.rect.width <= 230 &&
@@ -214,11 +214,11 @@ public static class TechPurchaseFeedbackChecks
             node.OnPointerExit(pointer);
             Check(report, !ownedHint.gameObject.activeSelf, "Leaving the owned node removes its nearby hint");
             Check(report, !hintFrame.gameObject.activeSelf, "Leaving the owned node also hides its frame");
-            node.OnPointerDown(pointer); node.OnPointerUp(pointer); node.OnPointerClick(pointer);
+            pointer.button = PointerEventData.InputButton.Right; node.OnPointerClick(pointer); pointer.button = PointerEventData.InputButton.Left;
             yield return null;
             var knowledge = Field<RectTransform>(tree, "knowledgeRoot");
             Check(report, knowledge.gameObject.activeInHierarchy && !tree.Pan.viewport.gameObject.activeSelf,
-                "Clicking an owned icon opens its knowledge reader and suspends tree hit targets");
+                "Right-clicking an owned icon opens its knowledge reader and suspends tree hit targets");
             var article = Field<XgKnowledge.Entry>(tree, "knowledgeSelected");
             Check(report, article != null && article.Key == XgTechTreeCopy.KnowledgeFor(node.entry.First, host.sim).Key,
                 "Owned icon selects its own article instead of reusing an unrelated glossary selection");
@@ -396,6 +396,52 @@ public static class TechPurchaseFeedbackChecks
             }
             finally { XgTreePage.OpenInsightCard = previousInsight; }
             Check(report, exercised.Count > 0, "Catalog sweep exercised available entries via real pointer click");
+            // Mouse-button contract: left upgrades, right selects the clicked node regardless of hover.
+            host.sim.NodeBought -= onBought; host.sim = new XgSim(); host.sim.NodeBought += onBought;
+            host.wallet.money = 1e8; tree.Refresh(); tree.Pan.CancelMotion();
+            var repeatable = tree.NodeTarget("label.raise").GetComponent<XgTechNodeView>();
+            int clickPurchases = bought;
+            for (int level = 0; level < 2; level++)
+            {
+                double walletBefore = host.wallet.money;
+                double nextPrice = host.sim.NodeCost(XgTechTree.Next(repeatable.entry, host.sim));
+                repeatable.OnPointerDown(pointer); repeatable.OnPointerUp(pointer); repeatable.OnPointerClick(pointer);
+                Check(report, XgTechTree.Level(repeatable.entry, host.sim) == level + 1 && bought == clickPurchases + level + 1
+                    && Math.Abs(walletBefore - host.wallet.money - nextPrice) < 1e-6,
+                    "Left node click buys exactly one level, including already-owned repeatable level " + level);
+                Check(report, !Field<RectTransform>(tree, "knowledgeRoot").gameObject.activeSelf,
+                    "Upgradeable left click never forces a knowledge page");
+            }
+            repeatable.OnPointerEnter(pointer);
+            var footer = Field<TMPro.TMP_Text>(tree, "tipTopicHint");
+            Check(report, footer.gameObject.activeSelf && footer.text.Contains("右键看科普") && !footer.raycastTarget,
+                "Topic card has a passive right-click hint below its price row");
+            Check(report, footer.transform.GetSiblingIndex() > Field<Image>(tree, "tipCostBar").transform.GetSiblingIndex(),
+                "Right-click hint is at the bottom of the card");
+            var mystery = tree.NodeTarget("label.auto").GetComponent<XgTechNodeView>();
+            Check(report, mystery != null && mystery.gameObject.activeInHierarchy && XgTechTreeCopy.KnowledgeFor(mystery.entry.First, host.sim) == null,
+                "Unrevealed automation is a real visible no-topic node");
+            mystery.OnPointerEnter(pointer);
+            Check(report, Field<XgTechNodeView>(tree, "detailShown") == mystery && !footer.gameObject.activeSelf,
+                "No-topic hover does not advertise a knowledge action");
+            double unchangedWallet = host.wallet.money; int unchangedPurchases = bought;
+            pointer.button = PointerEventData.InputButton.Right; repeatable.OnPointerClick(pointer); pointer.button = PointerEventData.InputButton.Left;
+            Check(report, Field<XgKnowledge.Entry>(tree, "knowledgeSelected").Key == XgTechTreeCopy.KnowledgeFor(repeatable.entry.First, host.sim).Key
+                && Field<string>(tree, "knowledgeOrigin") == repeatable.entry.First.id,
+                "Right click chooses the clicked node's article and return origin, not the current hover card");
+            Check(report, host.wallet.money == unchangedWallet && bought == unchangedPurchases, "Right click never purchases");
+            Field<XgBtn>(tree, "knowledgeBack").rt.GetComponent<Button>().onClick.Invoke(); tree.Pan.CancelMotion();
+            pointer.button = PointerEventData.InputButton.Right; mystery.OnPointerClick(pointer); pointer.button = PointerEventData.InputButton.Left;
+            Check(report, !Field<RectTransform>(tree, "knowledgeRoot").gameObject.activeSelf
+                && host.wallet.money == unchangedWallet && bought == unchangedPurchases,
+                "No-topic right click gives feedback without navigation or purchase");
+            host.sim.S.payRaise = XgCatalog.RaiseMax; tree.Refresh(); tree.Pan.CancelMotion();
+            repeatable.OnPointerDown(pointer); repeatable.OnPointerUp(pointer); repeatable.OnPointerClick(pointer);
+            Check(report, Field<RectTransform>(tree, "knowledgeRoot").gameObject.activeSelf
+                && Field<XgKnowledge.Entry>(tree, "knowledgeSelected").Key == XgTechTreeCopy.KnowledgeFor(repeatable.entry.First, host.sim).Key
+                && host.wallet.money == unchangedWallet && bought == unchangedPurchases,
+                "Maxed left click opens its own topic without spending");
+            Field<XgBtn>(tree, "knowledgeBack").rt.GetComponent<Button>().onClick.Invoke(); tree.Pan.CancelMotion();
             var artFixture = new GameObject("Achievement art equality fixture", typeof(RectTransform));
             // Match Install's live Canvas: TMP must run Awake before Build applies material outlines.
             // Build itself hides the overlay before this coroutine yields, so no card is flashed on screen.

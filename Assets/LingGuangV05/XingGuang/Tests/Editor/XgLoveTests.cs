@@ -14,6 +14,61 @@ namespace LingGuangV05.XingGuang.Tests
 
         static string Last(XgSim sim) => sim.S.chat[sim.S.chat.Count - 1].text;
 
+        static XgState Reload(XgState state)
+        {
+#if UNITY_5_3_OR_NEWER
+            return UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(state));
+#else
+            var options = new System.Text.Json.JsonSerializerOptions { IncludeFields = true };
+            return System.Text.Json.JsonSerializer.Deserialize<XgState>(System.Text.Json.JsonSerializer.Serialize(state, options), options);
+#endif
+        }
+
+        [TestCase(1)]
+        [TestCase(5)]
+        public void UsedEntryStaysGoneAfterSaveReloadWithoutRemovingHistory(int stage)
+        {
+            var sim = Ready(); sim.S.stage = stage; sim.OfferLoveHint();
+            sim.AddLine("me", sim.LoveQuestion);
+            Assert.IsTrue(sim.ConsumeLoveQuestion());
+            Assert.IsFalse(sim.ConsumeLoveQuestion(), "only the first acceptance needs a save");
+            sim.Scripted(sim.LoveQuestion);
+            if (sim.S.loveAwaitingConsent) sim.AnswerLoveConsent(false);
+            var copy = Reload(sim.S); var loaded = new XgSim(copy) { LoveToday = 100, LoveDataReady = true };
+            Assert.IsFalse(loaded.OfferLoveQuestion);
+            Assert.IsFalse(loaded.OfferLoveHint(), "inner voice must not re-offer a consumed entry");
+            Assert.AreEqual(sim.S.chat.Count, loaded.S.chat.Count);
+            Assert.AreEqual(sim.S.chat[0].text, loaded.S.chat[0].text);
+            Assert.IsNotNull(loaded.Scripted("她爱我吗"), "manual input remains supported");
+            var fresh = Ready(); Assert.IsTrue(fresh.OfferLoveHint()); Assert.IsTrue(fresh.OfferLoveQuestion);
+        }
+
+        [Test]
+        public void InsufficientHistoryStillConsumesTheEntry()
+        {
+            var sim = Ready(); sim.LoveDataReady = false; sim.OfferLoveHint();
+            sim.Scripted(sim.LoveQuestion);
+            Assert.IsTrue(sim.S.loveQuestionConsumed);
+            sim.LoveDataReady = true;
+            Assert.IsFalse(new XgSim(Reload(sim.S)).OfferLoveQuestion);
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void LegacyAskedSavesDoNotResurrectTheEntry(int evidence)
+        {
+            var sim = Ready(); sim.S.loveOffered = true;
+            if (evidence == 0) sim.S.loveEarlyAsked = 1;
+            if (evidence == 1) sim.S.loveConsent = -1;
+            if (evidence == 2) sim.S.loveVerdicts = 1;
+            if (evidence == 3) sim.AddLine("me", "她爱我吗");
+            var loaded = new XgSim(Reload(sim.S)) { LoveToday = 100 };
+            Assert.IsFalse(loaded.OfferLoveQuestion);
+            Assert.IsTrue(loaded.S.loveQuestionConsumed);
+        }
+
         [Test]
         public void RecognisesTheQuestionInBothLanguages()
         {
@@ -40,7 +95,7 @@ namespace LingGuangV05.XingGuang.Tests
             }
             Assert.AreEqual(0, asked, "it never reads her chats before stage 5");
             Assert.IsFalse(sim.S.loveAwaitingConsent);
-            Assert.IsTrue(sim.OfferLoveQuestion, "asked once, the chip stays");
+            Assert.IsFalse(sim.OfferLoveQuestion, "asked once, the suggested chip stays consumed");
         }
 
         [Test]
@@ -136,13 +191,15 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void CancelLetsItBeAskedAgain()
+        public void CancelAllowsTypedRetryButDoesNotRestoreTheChip()
         {
             var sim = Ready(); sim.S.loveConsent = 1; sim.OfferLoveHint();
             sim.Scripted("她爱我吗");
             Assert.IsFalse(sim.OfferLoveQuestion);
             sim.CancelLoveVerdict();
-            Assert.IsTrue(sim.OfferLoveQuestion);
+            Assert.IsFalse(sim.OfferLoveQuestion);
+            Assert.AreEqual("我再读一遍。", sim.Scripted("她爱我吗"));
+            Assert.IsTrue(sim.LoveVerdictPending);
             Assert.AreEqual(0, sim.S.loveVerdicts);
         }
 
@@ -216,7 +273,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void TheStateSurvivesASave()
         {
             var sim = Ready();
-            sim.S.loveOffered = true; sim.S.loveConsent = -1; sim.S.loveAskedDay = 41; sim.S.loveVerdicts = 2; sim.S.loveLastYes = true;
+            sim.S.loveOffered = true; sim.S.loveQuestionConsumed = true; sim.S.loveConsent = -1; sim.S.loveAskedDay = 41; sim.S.loveVerdicts = 2; sim.S.loveLastYes = true;
 #if UNITY_5_3_OR_NEWER
             var copy = UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S));
             var old = UnityEngine.JsonUtility.FromJson<XgState>("{\"version\":1}");
@@ -226,6 +283,8 @@ namespace LingGuangV05.XingGuang.Tests
             var old = System.Text.Json.JsonSerializer.Deserialize<XgState>("{\"version\":1}", options);
 #endif
             Assert.IsTrue(copy.loveOffered);
+            Assert.IsTrue(copy.loveQuestionConsumed);
+            Assert.IsFalse(old.loveQuestionConsumed);
             Assert.AreEqual(-1, copy.loveConsent);
             Assert.AreEqual(41, copy.loveAskedDay);
             Assert.AreEqual(2, copy.loveVerdicts);

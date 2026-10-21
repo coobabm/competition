@@ -34,7 +34,7 @@ namespace LingGuangV05.Runtime
         bool ValidEndingSnapshot(string payload, string checkpoint, Func<string, bool> isPreChoice)
         {
             if (!ValidArchive(payload) || isPreChoice == null) return false;
-            var state = JsonUtility.FromJson<GameState>(payload);
+            var state = ReadNarrationState(payload);
             return state.endingCheckpointId == checkpoint && isPreChoice(state.labState);
         }
 
@@ -51,7 +51,7 @@ namespace LingGuangV05.Runtime
                 Saving?.Invoke();
                 if (!ReferenceEquals(Sim, expected) || !isPreChoice(expected.S.labState)) return EndingFailure("not_before_choice");
                 // Serialize a detached copy; collection does not install an ID in the live state.
-                var copy = JsonUtility.FromJson<GameState>(JsonUtility.ToJson(expected.S));
+                var copy = ReadNarrationState(JsonUtility.ToJson(expected.S));
                 string id = Guid.NewGuid().ToString("N");
                 copy.endingCheckpointId = id;
                 var destination = EndingStore("checkpoints", id);
@@ -93,7 +93,7 @@ namespace LingGuangV05.Runtime
             {
                 var loaded = EndingStore("checkpoints", expectedCheckpoint).Load(p => ValidEndingSnapshot(p, expectedCheckpoint, isPreChoice));
                 if (!loaded.Success) return EndingFailure(loaded.Message);
-                var state = JsonUtility.FromJson<GameState>(loaded.Payload);
+                var state = ReadNarrationState(loaded.Payload);
                 string id = Guid.NewGuid().ToString("N");
                 state.endingBranchId = id;
                 state.lastSeenUnix = Math.Max(state.lastSeenUnix, UtcNow);
@@ -146,7 +146,7 @@ namespace LingGuangV05.Runtime
                     var read = source.Load(ValidArchive);
                     var profile = new PlayerProfileStore(source);
                     if (!read.Success || File.Exists(profile.Path) && profile.Read() == null) continue;
-                    var state = JsonUtility.FromJson<GameState>(read.Payload);
+                    var state = ReadNarrationState(read.Payload);
                     if (state.endingBranchId == id && EndingId(state.endingCheckpointId))
                         rows.Add(new EndingBranchSummary { Id = id, Name = state.aiName, LabJson = state.labState });
                 }
@@ -166,7 +166,7 @@ namespace LingGuangV05.Runtime
                 var source = EndingStore("branches", id);
                 var read = source.Load(ValidArchive);
                 if (!read.Success) return EndingFailure(read.Message);
-                var state = JsonUtility.FromJson<GameState>(read.Payload);
+                var state = ReadNarrationState(read.Payload);
                 var profile = new PlayerProfileStore(source);
                 if (state.endingBranchId != id || !EndingId(state.endingCheckpointId) || File.Exists(profile.Path) && profile.Read() == null)
                     return EndingFailure("invalid_branch");

@@ -87,6 +87,7 @@ namespace LingGuangV05.XingGuang
             RepairEpiphany();
             RepairMarket();
             RepairAfterthoughts();
+            RepairTeachingThoughts();
             RepairAlignment();
             RepairMemoryBook();
             RepairKnowledge();
@@ -1027,7 +1028,7 @@ namespace LingGuangV05.XingGuang
         public static int ContractRequiredStage(XgContract c) => c != null &&
             (c.id == "cheque" || c.id == "acrostic" || c.id == "danmaku") ? 3 : ContractStage;
 
-        public bool CanSign(XgContract c) { return c != null && S.stage >= ContractRequiredStage(c) && !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
+        public bool CanSign(XgContract c) { return c != null && DesktopAppInstalled(CrowdApp) && S.stage >= ContractRequiredStage(c) && !Signed(c.id) && ContractAcc(c) + 1e-9 >= c.threshold; }
 
         /// <summary>The score a contract judges: the best checkpoint, or for a realtime job the best parallel one.</summary>
         public double ContractAcc(XgContract c) => c.realtime ? ParallelAcc(c.dataset) : BestAcc(c.dataset);
@@ -1048,7 +1049,7 @@ namespace LingGuangV05.XingGuang
 
         public double ContractIncome(XgContract c)
         {
-            if (!Signed(c.id)) return 0;
+            if (!DesktopAppInstalled(CrowdApp) || !Signed(c.id)) return 0;
             double acc = ContractAcc(c);
             if (acc < c.threshold) return 0;
             return c.income * (1 + (acc - c.threshold) / Math.Max(.01, 1 - c.threshold)) * DriftPay(c) * WireSpeed("contract:" + c.id);
@@ -1514,7 +1515,7 @@ namespace LingGuangV05.XingGuang
             }
             NewCard(desk);
             CheckDesks();
-            ObserveGhost(hadGhost, ghost, yes, timeout);
+            if (!automatic) ObserveGhost(hadGhost, ghost, yes, timeout);
             PublishAnswerTrace(traceReceiver, traceCardId, traceDataset, yes, traceSource, predictionTrace, result, correctionPulls, automatic);
             return result;
         }

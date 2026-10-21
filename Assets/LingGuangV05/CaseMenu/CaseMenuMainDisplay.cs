@@ -164,7 +164,9 @@ namespace LingGuangV05.CaseMenu
                     lampOnEmission = lampProperties.GetColor("_EmissionColor");
                 }
                 screenStateCaptured = true;
-                ApplyVisualPower(0);
+                // The title composition previews the paused desktop on the physical LCD.
+                // Input and gameplay hosts remain suspended until the actual power-on flow.
+                ApplyVisualPower(1);
                 bootScreen = gameObject.AddComponent<CaseMenuBootScreen>();
                 var owner = GetComponent<CaseMenuController>();
                 bootScreen.Build(lcd.display.rectTransform, owner != null ? owner.font : TMPro.TMP_Settings.defaultFontAsset);
@@ -282,6 +284,8 @@ namespace LingGuangV05.CaseMenu
             if (!IsReady || IsScreenPowered || !isActiveAndEnabled) return;
             IsScreenPowered = true;
             IsBootComplete = false; BootProgress = 0;
+            // Leave the title preview and begin the existing firmware/backlight sequence.
+            ApplyVisualPower(0);
             if (bootScreen != null) bootScreen.Show();
             powerRoutine = StartCoroutine(WarmScreen());
         }

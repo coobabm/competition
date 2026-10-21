@@ -116,6 +116,12 @@ namespace LingGuangV05.XingGuang
             if (step == null || S.stage != 1 || OpeningFocus) return null;
             switch (step.id)
             {
+                // Progress explanations retain the recommended action's destination, but replace its step id.
+                case XgGuide.ParameterLessonId: case XgGuide.SampleLessonId:
+                    if (step.target != null && step.target.StartsWith("node:")) return TutorLesson(NodeLesson(step.target));
+                    if (step.tab == "teach") return TutorLesson("label");
+                    if (step.target == "label:训练一轮|Train 1 epoch") return TutorLesson("grade");
+                    return TutorLesson(step.id == XgGuide.SampleLessonId ? "more" : "capacity");
                 case "ability.study": case "ability.buy": return TutorLesson(NodeLesson(step.target));
                 case "ability.params": case "ability.card": return TutorLesson("capacity");
                 case "ability.train": return TutorLesson("grade");

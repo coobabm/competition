@@ -1,25 +1,142 @@
 {
   "note": "桌面软件怎么一个个来到桌面上（《第七轮设计》第一节）。how: preinstalled = 开局就在；install = 跟着某个流程自动出现；group_link = 群友在群里发下载链接（剧本见 group_intro_scripts.json），玩家点链接 → 浏览器下载页 → 安装 → 图标弹到桌面；search = 只能从摆渡搜索找到。没到手的软件，桌面、任务栏、开始菜单都找不到。sizeMB 按 ADSL 2.5 MB/s 算下载时间。bubble = 装好后托盘气泡（软件名 · 一句话）。",
   "apps": [
-    { "id": "computer", "name": "计算机", "how": "preinstalled" },
-    { "id": "recycle", "name": "回收站", "how": "preinstalled" },
-    { "id": "browser", "name": "浏览器", "how": "preinstalled" },
-    { "id": "notepad", "name": "记事本", "how": "preinstalled" },
-    { "id": "mail", "name": "邮件", "how": "preinstalled" },
-    { "id": "video", "name": "视频", "how": "preinstalled" },
-    { "id": "music", "name": "音乐播放器", "how": "preinstalled" },
-    { "id": "settings", "name": "设置", "how": "preinstalled" },
-    { "id": "yy", "name": "YY", "how": "preinstalled" },
-    { "id": "search", "name": "摆渡", "how": "preinstalled" },
-    { "id": "tieba", "name": "摆渡贴吧", "how": "preinstalled" },
-    { "id": "exe", "name": "{name}.exe", "how": "install", "when": "装好灵光.exe（开局流程）", "stage": 1 },
-    { "id": "home", "name": "家", "how": "install", "when": "装好 .exe 后", "stage": 1, "bubble": "家 · 显卡一转，电表就跟着转" },
-    { "id": "folder", "name": "{name} 的资料", "how": "install", "when": "装好 .exe 后（.exe 自动建的文件夹）", "stage": 1, "bubble": "{name} 的资料 · 数据包、日志和存档都放这儿" },
-    { "id": "taohuo", "name": "淘货", "how": "group_link", "script": "taohuo_intro", "stage": 2, "sizeMB": 9.8, "bubble": "淘货 · 显卡、数据包，今天下单明天到" },
-    { "id": "zhongbao", "name": "摆渡众包", "how": "group_link", "script": "zhongbao_intro", "stage": 3, "sizeMB": 12.6, "bubble": "摆渡众包 · 给图片打标签，一单几毛" },
-    { "id": "miaoyu", "name": "喵鱼", "how": "group_link", "script": "miaoyu_intro", "stage": 3, "sizeMB": 8.1, "bubble": "喵鱼 · 旧卡在这儿卖，也能淘到便宜货" },
-    { "id": "gamecenter", "name": "游戏中心", "how": "group_link", "script": "gamecenter_intro", "stage": 3, "sizeMB": 21.3, "bubble": "游戏中心 · 累了就下盘棋，它也会下" },
-    { "id": "casino888", "name": "888", "how": "search", "stage": 5, "when": "只能从摆渡搜索进入；托盘广告同时开始", "bubble": "888 · 注册就送 ¥88" },
-    { "id": "serverroom", "name": "机房", "how": "install", "stage": 6, "when": ".exe 里的服务器页，不上桌面" }
+    {
+      "id": "computer",
+      "name": "计算机",
+      "how": "preinstalled"
+    },
+    {
+      "id": "recycle",
+      "name": "回收站",
+      "how": "preinstalled"
+    },
+    {
+      "id": "browser",
+      "name": "浏览器",
+      "how": "preinstalled"
+    },
+    {
+      "id": "notepad",
+      "name": "记事本",
+      "how": "preinstalled"
+    },
+    {
+      "id": "mail",
+      "name": "邮件",
+      "how": "preinstalled"
+    },
+    {
+      "id": "video",
+      "name": "视频",
+      "how": "preinstalled"
+    },
+    {
+      "id": "music",
+      "name": "音乐播放器",
+      "how": "preinstalled"
+    },
+    {
+      "id": "settings",
+      "name": "设置",
+      "how": "preinstalled"
+    },
+    {
+      "id": "yy",
+      "name": "YY",
+      "how": "preinstalled"
+    },
+    {
+      "id": "search",
+      "name": "摆渡",
+      "how": "preinstalled"
+    },
+    {
+      "id": "tieba",
+      "name": "摆渡贴吧",
+      "how": "preinstalled"
+    },
+    {
+      "id": "exe",
+      "name": "{name}.exe",
+      "how": "install",
+      "when": "装好灵光.exe（开局流程）",
+      "stage": 1
+    },
+    {
+      "id": "home",
+      "name": "家",
+      "how": "install",
+      "when": "装好 .exe 后",
+      "stage": 1,
+      "bubble": "家 · 显卡一转，电表就跟着转"
+    },
+    {
+      "id": "folder",
+      "name": "{name} 的资料",
+      "how": "install",
+      "when": "装好 .exe 后（.exe 自动建的文件夹）",
+      "stage": 1,
+      "bubble": "{name} 的资料 · 数据包、日志和存档都放这儿"
+    },
+    {
+      "id": "taohuo",
+      "name": "淘货",
+      "how": "group_link",
+      "script": "taohuo_intro",
+      "stage": 2,
+      "sizeMB": 9.8,
+      "bubble": "淘货 · 显卡、数据包，今天下单明天到",
+      "nameEn": "Taohuo",
+      "bubbleEn": "Graphics cards and data packs. Compare prices before ordering."
+    },
+    {
+      "id": "zhongbao",
+      "name": "摆渡众包",
+      "how": "group_link",
+      "script": "zhongbao_intro",
+      "stage": 2,
+      "sizeMB": 12.6,
+      "bubble": "摆渡众包 · 看清验收要求，签下能完成的委托",
+      "nameEn": "Bodu Crowd",
+      "bubbleEn": "Read contract requirements and sign what you can deliver."
+    },
+    {
+      "id": "miaoyu",
+      "name": "喵鱼",
+      "how": "group_link",
+      "script": "miaoyu_intro",
+      "stage": 3,
+      "sizeMB": 8.1,
+      "bubble": "喵鱼 · 旧卡在这儿卖，也能淘到便宜货",
+      "nameEn": "Miaoyu",
+      "bubbleEn": "Sell an old card or look for a used bargain."
+    },
+    {
+      "id": "gamecenter",
+      "name": "游戏中心",
+      "how": "preinstalled",
+      "script": "gamecenter_intro",
+      "stage": 1,
+      "sizeMB": 21.3,
+      "bubble": "游戏中心 · 累了就下盘棋，它也会下",
+      "nameEn": "Game Hub",
+      "bubbleEn": "Take a break and play a game."
+    },
+    {
+      "id": "casino888",
+      "name": "888",
+      "how": "search",
+      "stage": 5,
+      "when": "只能从摆渡搜索进入；托盘广告同时开始",
+      "bubble": "888 · 注册就送 ¥88"
+    },
+    {
+      "id": "serverroom",
+      "name": "机房",
+      "how": "install",
+      "stage": 6,
+      "when": ".exe 里的服务器页，不上桌面"
+    }
   ]
 }

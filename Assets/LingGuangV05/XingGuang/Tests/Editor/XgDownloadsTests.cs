@@ -299,8 +299,14 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
             Assert.AreEqual(0, sim.IncomePerSecond);
             sim.S.abilitiesEmerged.Add(2);
+            sim.Tick(10, host);
+            Assert.AreEqual(0, host.money, 1e-9, "no tier and no welcome before 摆渡众包 is installed");
+            Assert.AreEqual(0, sim.IncomePerSecond);
+            Assert.AreEqual(1, sim.S.fundedAbility, "the welcome waits for the install");
+            sim.AppReceipt(XgSim.CrowdApp).installed = true;
             sim.Tick(.01, host);
             int welcome = XgSim.AbilityResearchGrant[2];
+            Assert.AreEqual(welcome + .01 * XgSim.CrowdTierIncome[2], host.money, 1e-6, "paid once, on install");
             Assert.AreEqual(System.Math.Round(XgSim.CrowdTierIncome[2] * XgSim.WelcomeSeconds), welcome, "about two minutes of the new income");
             Assert.That(welcome, Is.LessThan(2000), "a welcome, not a chapter's budget");
             Assert.AreEqual(2, sim.S.crowdTier);
@@ -315,6 +321,86 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(3, sim.S.crowdTier);
             Assert.Greater(XgSim.CrowdTierIncome[3], XgSim.CrowdTierIncome[2]);
             for (int i = 3; i <= XgSim.AbilityCount; i++) Assert.Greater(XgSim.CrowdTierIncome[i], XgSim.CrowdTierIncome[i - 1], "each ability raises the tier");
+        }
+
+        [Test] public void CrowdEconomyUsesTheApprovedSmallSupplementAndKeepsPaidLedgers()
+        {
+            CollectionAssert.AreEqual(new double[]{0,0,.1,.3,.6,1,1.5},XgSim.CrowdTierIncome);
+            CollectionAssert.AreEqual(new int[]{0,0,12,36,72,120,180},XgSim.AbilityResearchGrant);
+            var sim=new XgSim{GoldChance=0};var host=new Host{money=15120};
+            sim.S.abilitiesEmerged.Add(2);sim.S.abilitiesEmerged.Add(3);sim.S.abilitiesEmerged.Add(4);
+            sim.AppReceipt(XgSim.CrowdApp).installed=true;
+            sim.S.fundedAbility=3;sim.S.crowdTier=3;sim.S.totalIncome=15120;
+            sim.Tick(.25,host);
+            Assert.AreEqual(15120+72+.25*.6,host.money,1e-6,"old paid gifts are retained; only the unpaid fourth ability gets its new gift");
+            Assert.AreEqual(4,sim.S.fundedAbility);
+            StringAssert.Contains("0.6",sim.S.log.Last(l=>l.StartsWith("摆渡众包升级")),"fractional rates remain visible");
+        }
+
+        [TestCase(3, 60)]
+        [TestCase(6, 600)]
+        public void DelayedInstallationPaysEachReachedTierOnceAcrossSerializedReloads(int reached, double waitingSeconds)
+        {
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
+            for (int i = 2; i <= reached; i++) sim.S.abilitiesEmerged.Add(i);
+            sim.Tick(waitingSeconds, host);
+            Assert.AreEqual(0, host.money, 1e-9, "waiting before installation earns nothing");
+            Assert.AreEqual(1, sim.S.fundedAbility);
+            Assert.AreEqual(0, sim.CrowdOrderIncome);
+
+            sim = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S))) { GoldChance = 0 };
+            Assert.IsFalse(sim.DesktopAppInstalled(XgSim.CrowdApp), "loading an uninstalled current save must not grant installation");
+            var receipt = sim.AppReceipt(XgSim.CrowdApp);
+            receipt.offered = receipt.downloaded = true;
+            Assert.IsTrue(sim.AdvanceDesktopInstall(XgSim.CrowdApp));
+            Assert.IsTrue(sim.AdvanceDesktopInstall(XgSim.CrowdApp));
+            Assert.IsFalse(sim.DesktopAppInstalled(XgSim.CrowdApp));
+            sim.Tick(1, host);
+            Assert.AreEqual(0, host.money, 1e-9, "partial installation is not enough");
+            Assert.IsTrue(sim.AdvanceDesktopInstall(XgSim.CrowdApp));
+            Assert.IsFalse(sim.AdvanceDesktopInstall(XgSim.CrowdApp), "repeated completion is a no-op");
+
+            double welcome = 0;
+            for (int i = 2; i <= reached; i++) welcome += XgSim.AbilityResearchGrant[i];
+            double rate = XgSim.CrowdTierIncome[reached];
+            sim.Tick(.25, host);
+            Assert.AreEqual(welcome + .25 * rate, host.money, 1e-6, "only tier gifts and the current tick; no pay for waiting before install");
+            Assert.AreEqual(reached, sim.S.fundedAbility);
+            Assert.AreEqual(reached, sim.S.crowdTier);
+            Assert.AreEqual(reached - 1, sim.S.log.Count(l => l.StartsWith("摆渡众包升级")));
+
+            for (int reload = 0; reload < 2; reload++)
+            {
+                sim = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S))) { GoldChance = 0 };
+                double before = host.money;
+                Assert.IsTrue(sim.DesktopAppInstalled(XgSim.CrowdApp));
+                sim.Tick(2, host);
+                Assert.AreEqual(before + 2 * rate, host.money, 1e-6, "serialized paid ledger prevents replaying all reached gifts");
+                Assert.AreEqual(reached, sim.S.fundedAbility);
+                Assert.AreEqual(reached - 1, sim.S.log.Count(l => l.StartsWith("摆渡众包升级")));
+            }
+        }
+
+        [Test]
+        public void UninstalledSignedContractsWaitForInstallationWithoutAnotherSigningBonus()
+        {
+            var sim = new XgSim { GoldChance = 0 }; var host = new Host { money = 0 };
+            var contract = XgCatalog.Contract("cheque");
+            sim.S.stage = 3;
+            sim.S.best.Add(new XgBest { dataset = contract.dataset, acc = 1 });
+            Assert.IsFalse(sim.CanSign(contract));
+            Assert.IsFalse(sim.Sign(contract.id, host));
+            Assert.AreEqual(0, host.money);
+            sim.S.contracts.Add(contract.id); // A persisted contract with an uninstalled receipt.
+            Assert.AreEqual(0, sim.ContractIncome(contract));
+            Assert.AreEqual(0, sim.IncomePerSecond);
+            sim.AppReceipt(XgSim.CrowdApp).installed = true;
+            Assert.Greater(sim.ContractIncome(contract), 0);
+            Assert.Greater(sim.IncomePerSecond, 0);
+            Assert.IsFalse(sim.Sign(contract.id, host), "installation must not pay the signing bonus again");
+            Assert.AreEqual(0, host.money);
+            sim.AppReceipt(XgSim.CrowdApp).installed = false;
+            Assert.AreEqual(0, sim.IncomePerSecond, "income rechecks the live installation state");
         }
 
         [Test]
@@ -332,7 +418,10 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.BuyNode("spam.pack", host));
             sim.S.stage = 4;
             Assert.IsTrue(sim.BuyNode("imagenet.pack", host));
-            Assume.That(sim.NextAbility, Is.EqualTo(5));
+            // Lab starts at stage five; explicitly model a stage-four learner waiting for ability five.
+            sim.S.abilitiesEmerged.RemoveAll(i => i >= 5);
+            sim.S.stage = sim.S.stageVision = sim.S.stageSequence = 4;
+            Assert.That(sim.NextAbility, Is.EqualTo(5));
             double need = sim.SamplesThreshold(5) - sim.TrainedSamples - sim.QueuedDataSamples(out _);
             Assert.That(need, Is.LessThanOrEqualTo(0), "the two full files cover the data gap");
             var steps = XgGuide.Current(sim, host.money);

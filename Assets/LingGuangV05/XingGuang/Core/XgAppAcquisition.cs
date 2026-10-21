@@ -59,12 +59,16 @@ namespace LingGuangV05.XingGuang
             S.appAcquisition=new XgAppAcquisitionState();
             AppReceipt("gamecenter").installed=true;
             if(fresh)return;
-            foreach(var pair in new[]{new KeyValuePair<string,int>("taohuo",2),new KeyValuePair<string,int>("miaoyu",3),new KeyValuePair<string,int>("zhongbao",4)})
+            foreach(var pair in new[]{new KeyValuePair<string,int>("taohuo",2),new KeyValuePair<string,int>("miaoyu",3)})
                 if(!S.gradualSystems||S.stage>=pair.Value)
                 {var app=AppReceipt(pair.Key);app.installed=app.legacyGranted=true;IntroProgress(pair.Key+"_intro").legacySkipped=true;}
+            // Only the paid milestone ledger or historical crowd tier proves prior crowd use.
+            // totalIncome and chapter alone include unrelated work and are not installation evidence.
+            if(S.fundedAbility>=2||S.crowdTier>=2)
+            {var crowd=AppReceipt("zhongbao");crowd.installed=crowd.legacyGranted=true;IntroProgress("zhongbao_intro").legacySkipped=true;}
             IntroProgress("gamecenter_intro").legacySkipped=true;
             if(!S.gradualSystems||S.stage>=2)IntroProgress("datapack_intro").legacySkipped=true;
-            if(!S.gradualSystems||S.stage>=4)IntroProgress("enterprise_intro").legacySkipped=true;
+            if(!S.gradualSystems||S.stage>=3)IntroProgress("enterprise_intro").legacySkipped=true;
         }
         public XgAppReceipt AppReceipt(string id)
         {

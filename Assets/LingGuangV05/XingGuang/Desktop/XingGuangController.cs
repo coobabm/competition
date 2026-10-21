@@ -140,6 +140,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
             }
             Sim = new XgSim(state) { English = GameText.IsEnglish };
+            if (unreadableLab == null) runtime.PersistNarration(Sim);
             XgPublicDiscourseNotifier.InitializeSave(Sim, state == null);
             Sim.LearningClock = () =>
             {
@@ -179,6 +180,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 BindSave(runtime.Sim);
             }
             // An unreadable lab stays exactly as it was on disk.
+            if (unreadableLab == null) runtime.PersistNarration(Sim);
             runtime.Sim.S.labState = unreadableLab ?? JsonUtility.ToJson(Sim.S);
         }
 

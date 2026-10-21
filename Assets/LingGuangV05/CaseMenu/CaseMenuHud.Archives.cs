@@ -48,10 +48,11 @@ namespace LingGuangV05.CaseMenu
             var endings=ActionButton(root,"EndingArchives",T("结局","Endings"),new Vector2(-550,130),OpenEndingArchives);
             int i=0;
             foreach(var b in new[]{read,endings,quit}) {
-                Place((RectTransform)b.transform,Vector2.zero,new Vector2(128+i++*150,96),new Vector2(130,48));
+                Place((RectTransform)b.transform,Vector2.zero,new Vector2(128+i++*112,104),new Vector2(96,48));
                 b.GetComponent<UnityEngine.UI.Image>().color=Color.clear;
-                b.GetComponentInChildren<TMP_Text>().fontSize=28;
-                var line=Panel("HoverUnderline",b.transform,Teal);Place(line.rectTransform,Vector2.zero,new Vector2(18,0),new Vector2(94,3));
+                var caption=b.GetComponentInChildren<TMP_Text>();caption.fontSize=28;caption.alignment=TextAlignmentOptions.MidlineLeft;caption.color=new Color32(128,126,119,255);
+                b.transition=Selectable.Transition.None;
+                var line=Panel("HoverUnderline",b.transform,Teal);Place(line.rectTransform,Vector2.zero,Vector2.zero,new Vector2(64,2));
                 var feedback=b.gameObject.AddComponent<CaseMenuHoverMark>();feedback.mark=line.gameObject;line.gameObject.SetActive(false);
             }
             Link(read,quit,endings);Link(endings,read,quit);Link(quit,endings,read);

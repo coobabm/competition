@@ -320,12 +320,15 @@ namespace LingGuangV05.Desktop.Zhongbao
             RefreshDebt(house);
 
             // ── income per second ──
-            double contracts = Sim.IncomePerSecond, auto = 0, wages = Sim.WagesPerMinute;
+            // The ability tier is its own row: it pays with no contract signed, so it must not read as business orders.
+            double tier = Sim.CrowdTierPay, contracts = Sim.IncomePerSecond - tier, auto = 0, wages = Sim.WagesPerMinute;
             foreach (var l in s.autoLevels) auto += Sim.AutoIncome(l.dataset, Host);
             int signedCount = 0; foreach (var c in XgCatalog.Contracts) if (Sim.Signed(c.id)) signedCount++;
-            double net = contracts + auto - wages / XgSim.WageSeconds;
+            double net = tier + contracts + auto - wages / XgSim.WageSeconds;
             double dayLength = house != null ? house.Config.rentDaySeconds : 60;
             items.Clear();
+            int tierNo = Math.Max(0, Math.Min(XgSim.AbilityCount, s.crowdTier)) - 1;
+            items.Add(Row.Row(tierNo >= 1 ? T("众包订单 · 第 " + tierNo + " 档", "Crowd orders · tier " + tierNo) : T("众包订单 · 还没开档", "Crowd orders · no tier yet"), tier > 0 ? "+" + ZhongbaoUi.Yuan(tier) + T("/秒", "/s") : "—", tier > 0 ? ZhongbaoSkin.Green : ZhongbaoSkin.Mute));
             items.Add(Row.Row(T("企业订单 · " + signedCount + " 单", "Business orders · " + signedCount + " signed"), "+" + ZhongbaoUi.Yuan(contracts) + T("/秒", "/s"), ZhongbaoSkin.Green));
             items.Add(Row.Row(T("自动答题", "Auto-answer") + (Sim.QualityFrozen ? ZhongbaoUi.Muted(T("（账号冻结中，暂停）", " (account frozen, paused)")) : Sim.AutoPaused && Sim.GlobalAutoLevel > 0 ? ZhongbaoUi.Muted(T("（你暂停了）", " (paused by you)")) : ""), "+" + ZhongbaoUi.Yuan(auto) + T("/秒", "/s"), ZhongbaoSkin.Green));
             items.Add(Row.Row(T("分包工资", "Subcontract wages"), wages > 0 ? "−" + ZhongbaoUi.Yuan(wages) + T("/分钟", "/min") : "—", wages > 0 ? ZhongbaoSkin.Red : ZhongbaoSkin.Mute));

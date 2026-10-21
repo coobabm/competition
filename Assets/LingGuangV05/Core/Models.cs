@@ -12,6 +12,8 @@ namespace LingGuangV05.Core
     [Serializable] public sealed class RentInvoice { public int month; public double amount, total, gameSeconds; }
     [Serializable] public sealed class GameState
     {
+        /// <summary>Stable playthrough identity for non-rollback narration receipts; new games get a new id.</summary>
+        public string narrationRunId = "";
         public bool fundsStarted;
         public double fundsBalance, fundsIncome, fundsExpense;
         public List<FundsEntry> funds = new List<FundsEntry>();

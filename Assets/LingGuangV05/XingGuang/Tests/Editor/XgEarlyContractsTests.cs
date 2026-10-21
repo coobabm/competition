@@ -10,6 +10,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void StageThreeStillRequiresTheRealQualityThreshold(string id)
         {
             var sim=new XgSim();var contract=XgCatalog.Contract(id);
+            sim.AppReceipt(XgSim.CrowdApp).installed=true;
             sim.S.stage=2;sim.S.best.Add(new XgBest{dataset=contract.dataset,acc=1});
             Assert.False(sim.CanSign(contract));
             sim.S.stage=3;Assert.True(sim.CanSign(contract));
@@ -20,7 +21,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void AdvancedContractsKeepStageFourAndTheirQualityGates()
         {
-            var sim=new XgSim();sim.S.stage=3;
+            var sim=new XgSim();sim.S.stage=3;sim.AppReceipt(XgSim.CrowdApp).installed=true;
             foreach(var contract in XgCatalog.Contracts)
             {
                 if(XgSim.ContractRequiredStage(contract)==3)continue;

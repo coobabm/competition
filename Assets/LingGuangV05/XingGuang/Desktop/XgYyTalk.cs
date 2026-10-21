@@ -215,6 +215,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (sim.S.loveAwaitingConsent && Consent(sim, text, out bool read)) { Echo(() => sim.AnswerLoveConsent(read)); return true; }
             if (sim.S.originAwaitingAnswer && OriginAnswer(sim, text, out bool understood)) { Echo(() => sim.AnswerOrigin(understood)); return true; }
             if (!replayQueued) Echo(() => sim.AddLine("me", text));
+            // Consume on acceptance, even while another reply is queued. Persist together with the history.
+            if (XgSim.IsLoveQuestion(text) && sim.ConsumeLoveQuestion()) controller?.SaveNow();
             // Several quick lines get one answer: the reply on its way answers them too.
             if (waiting) { queuedQuestion = message; return true; }
             waiting = true; askedAt = Time.unscaledTime;

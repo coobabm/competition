@@ -35,13 +35,20 @@ namespace LingGuangV05.Desktop.XingGuang
             if (!ReferenceEquals(bound, controller.Sim)) Rebind(controller.Sim);
             // InnerVoice.Clear (a skipped cutscene) drops queued lines unseen: free their keys so the next event retries.
             if (queued.Count > 0 && !InnerVoice.Busy) queued.Clear();
+            if (bound.S.pendingAfterthoughts.Count > 0 && !InnerVoice.Busy && !StoryFocus.Active && !bound.OfflineSimulation && controller.runtime.PersistNarration(bound))
+                foreach (var pending in new System.Collections.Generic.List<XgSim.XgAfterthought>(bound.S.pendingAfterthoughts)) QueueVoice(pending);
             sincePoll += Time.unscaledDeltaTime;
             if (sincePoll < ReflectionPoll || bound.OfflineSimulation) return;
             sincePoll = 0;
             // In YY the line arrives as a YY message with its own notification; without YY it waits on 概览.
-            if (bound.TakeReflectionLine() != null && !XgYyTalk.InYY)
-                PrologueDirector.Desk?.Popup(AiDesktopIdentity.Name(controller.runtime), GameText.T("它说了一句话，在「概览」上。", "It said something; see the Overview."), 5f,
-                    () => { controller.Open(); controller.View?.Open("home"); });
+            if (!controller.runtime.PersistNarration(bound)) return;
+            if (bound.TakeReflectionLine(()=>controller.runtime.PersistNarration(bound)) != null)
+            {
+                controller.runtime?.MarkDirty(); controller.SaveNow();
+                if (!XgYyTalk.InYY)
+                    PrologueDirector.Desk?.Popup(AiDesktopIdentity.Name(controller.runtime), GameText.T("它说了一句话，在「概览」上。", "It said something; see the Overview."), 5f,
+                        () => { controller.Open(); controller.View?.Open("home"); });
+            }
         }
 
         void Rebind(XgSim sim)
@@ -49,6 +56,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Unsubscribe();
             queued.Clear();
             bound = sim;
+            controller.runtime.PersistNarration(bound);
             bound.AutoRouted += OnRouted;
             bound.QualityFined += OnFined;
             bound.QualityWarned += OnWarned;
@@ -95,9 +103,18 @@ namespace LingGuangV05.Desktop.XingGuang
         void Think(string key, string argZh = null, string argEn = null)
         {
             // A story moment on screen: the thought is not said now (it comes back the next time the same thing happens).
-            if (bound == null || bound.OfflineSimulation || bound.AfterthoughtSaid(key) || queued.Contains(key) || LingGuangV05.Core.StoryFocus.Active) return;
-            var thought = bound.PeekAfterthought(key, argZh, argEn);
+            if (bound == null || bound.OfflineSimulation || bound.AfterthoughtSaid(key)) return;
+            var thought = bound.QueueAfterthought(key, argZh, argEn);
             if (thought == null) return;
+            controller.runtime?.MarkDirty(); controller.SaveNow();
+            if (StoryFocus.Active || !controller.runtime.PersistNarration(bound)) return;
+            QueueVoice(thought);
+        }
+
+        void QueueVoice(XgSim.XgAfterthought thought)
+        {
+            string key=thought.key;
+            if(queued.Contains(key)||bound.AfterthoughtSaid(key))return;
             queued.Add(key);
             var sim = bound;
             var zh = thought.zh.Split('|');
@@ -105,8 +122,15 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < zh.Length; i++)
             {
                 System.Action shown = null;
-                if (i == 0) shown = () => { if (ReferenceEquals(sim, bound)) { sim.MarkAfterthought(key); queued.Remove(key); } };
-                InnerVoice.Say(zh[i], i < en.Length ? en[i] : zh[i], InnerVoice.DefaultSeconds, shown);
+                if (i == 0) shown = () =>
+                {
+                    if (!ReferenceEquals(sim, bound) || controller == null || !ReferenceEquals(sim, controller.Sim)) return;
+                    sim.CommitAfterthought(key,()=>controller.runtime.PersistNarration(sim));
+                    queued.Remove(key);
+                    controller.runtime?.MarkDirty(); controller.SaveNow();
+                };
+                InnerVoice.Say(zh[i], i < en.Length ? en[i] : zh[i], InnerVoice.DefaultSeconds, shown,
+                    valid:()=>controller!=null&&ReferenceEquals(sim,controller.Sim)&&controller.BoundTo(controller.runtime.Sim));
             }
         }
 

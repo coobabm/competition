@@ -102,6 +102,56 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void MoneyThoughtReceiptsAreWrittenBeforePresentationAndDiskReloadDoesNotReplayThem()
+        {
+            string path=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"LingGuang-thought-"+System.Guid.NewGuid().ToString("N")+".json");
+            try
+            {
+                var sim=new XgSim{GoldChance=0};var host=new Host();
+                sim.SettleMiniAction("arith",true,host,automatic:true);
+                sim.SettleMiniAction("arith",false,host,automatic:true);
+                System.IO.File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(sim.S));
+                sim=new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(System.IO.File.ReadAllText(path)));
+                Assert.IsFalse(sim.S.answerPayThoughtRecorded||sim.S.answerFineThoughtRecorded,
+                    "automatic answers followed by an actual disk load must not consume manual firsts");
+                sim.SettleMiniAction("arith",true,host);
+                sim.SettleMiniAction("arith",false,host);
+                CollectionAssert.AreEqual(new[]{"pay","fine"},sim.S.pendingAnswerMoneyThoughts);
+                Assert.IsNull(sim.TakeTeachingThought(true,()=>false),"failed persistence must not hand a line to the voice player");
+                Assert.IsFalse(sim.S.answerPayThoughtConsumed);
+                CollectionAssert.AreEqual(new[]{"pay","fine"},sim.S.pendingAnswerMoneyThoughts,"failed write keeps the same ordered pending events");
+                foreach(string kind in new[]{"pay","fine"})
+                {
+                    var line=sim.TakeTeachingThought(true,()=>{System.IO.File.WriteAllText(path,UnityEngine.JsonUtility.ToJson(sim.S));return true;});
+                    Assert.IsTrue(line.HasValue);
+                    StringAssert.Contains(kind=="pay"?"赚钱":"扣钱",line.Value.zh);
+                    sim=new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(System.IO.File.ReadAllText(path)));
+                    Assert.IsTrue(kind=="pay"?sim.S.answerPayThoughtConsumed:sim.S.answerFineThoughtConsumed);
+                }
+                sim.SettleMiniAction("arith",true,host);sim.SettleMiniAction("arith",false,host);
+                Assert.IsNull(sim.TakeTeachingThought(true));
+                Assert.IsEmpty(sim.S.pendingAnswerMoneyThoughts);
+                var fresh=new XgSim();fresh.SettleMiniAction("arith",true,host);
+                Assert.IsTrue(fresh.TakeTeachingThought(true).HasValue,"a separate new game keeps its own first income line");
+            }
+            finally { if(System.IO.File.Exists(path))System.IO.File.Delete(path); }
+        }
+
+        [Test] public void ConsumedReceiptsWinOverStalePendingDuplicatesWithoutDroppingUnheardEvents()
+        {
+            var state=new XgSim().S;
+            state.answerPayThoughtConsumed=true;
+            state.pendingAnswerMoneyThoughts.AddRange(new[]{"pay","pay","fine","fine","invalid"});
+            var sim=new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(state)));
+            CollectionAssert.AreEqual(new[]{"fine"},sim.S.pendingAnswerMoneyThoughts);
+            StringAssert.Contains("扣钱",sim.TakeTeachingThought(true).Value.zh);
+            Assert.IsNull(sim.TakeTeachingThought(true));
+            var legacy=new XgSim().S;legacy.answerPayThoughtRecorded=true;
+            var loaded=new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(legacy)));
+            Assert.IsTrue(loaded.S.answerPayThoughtConsumed,"old recorded-and-drained receipts stay consumed");
+        }
+
+        [Test]
         public void EveryLessonIsWrittenInBothLanguagesAndNeverSaysTheBannedWord()
         {
             Assert.GreaterOrEqual(XgSim.TutorLessons.Length, 10);
@@ -131,6 +181,20 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsNotNull(lesson, top.id + " " + top.target + " has a lesson");
             StringAssert.StartsWith(lesson.whyZh, top.whyZh, "the hover text leads with it");
             StringAssert.StartsWith(lesson.whyEn, top.whyEn);
+        }
+
+        [Test]
+        public void ProgressExplanationKeepsTheLessonForItsRecommendedAction()
+        {
+            var sim = Learned(new Host());
+            var samples = new XgGuideStep { id = XgGuide.SampleLessonId, target = "node:spam.pack", tab = "tree" };
+            Assert.AreEqual("data", sim.TutorDue(samples).id);
+            sim.MarkTutor(sim.TutorDue(samples));
+            Assert.IsNull(sim.TutorDue(samples), "the wrapper shares the original lesson's once-only receipt");
+            Assert.AreEqual("arch", sim.TutorFor(new XgGuideStep { id = XgGuide.ParameterLessonId, target = "node:mlp", tab = "tree" }).id);
+            Assert.AreEqual("grade", sim.TutorFor(new XgGuideStep { id = XgGuide.ParameterLessonId, target = "label:训练一轮|Train 1 epoch", tab = "train" }).id);
+            Assert.AreEqual("label", sim.TutorFor(new XgGuideStep { id = XgGuide.SampleLessonId, tab = "teach" }).id);
+            Assert.AreEqual("more", sim.TutorFor(new XgGuideStep { id = XgGuide.SampleLessonId, tab = "train" }).id);
         }
 
         [Test]

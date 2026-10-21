@@ -29,7 +29,7 @@ namespace LingGuangV05.Runtime
                 { SaveStatus = GameText.T("请选择另一个存档目录。", "Choose another save folder."); return false; }
                 var loaded = source.Load(ValidArchive);
                 if (!loaded.Success) { SaveStatus = loaded.Message; return false; }
-                var restored = new ChapterOneSim(JsonUtility.FromJson<GameState>(loaded.Payload));
+                var restored = new ChapterOneSim(ReadNarrationState(loaded.Payload));
                 restored.S.lastSeenUnix = Math.Max(restored.S.lastSeenUnix,UtcNow);
                 if (!PrepareOfflineArchive(restored.S)) return false;
                 if (!store.TrySaveSnapshot(JsonUtility.ToJson(restored.S), out var message)) { SaveStatus = message; return false; }

@@ -26,7 +26,7 @@ namespace LingGuangV05.Desktop.Games
 
         public override string Id => "gomoku";
         public override string Title => GameReactions.GomokuTitle ?? Lang.T("五子棋");
-        public override string Blurb => T("15路棋盘，连成五子就赢。可选电脑或自己的AI；AI阶段2开放。","15×15, five in a row wins. Choose the computer or your AI; your AI opens at stage 2.");
+        public override string Blurb => T("15 路棋盘，连成五子获胜，不设禁手。第 2 阶段可与自己的 AI 对弈。","Five in a row, any direction, wins. 15×15, no restricted moves. From stage 2 your AI can sit down and play too.");
         public override string Glyph => "●";
         public override Color Accent => new Color32(196, 140, 70, 255);
         public override string Locked => null;

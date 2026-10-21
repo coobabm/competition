@@ -1,6 +1,6 @@
 {
   "name": "LingGuangV05.Runtime",
   "rootNamespace": "LingGuangV05.Runtime",
-  "references": ["LingGuangV05.Core", "Unity.TextMeshPro", "UnityEngine.UI"],
+  "references": ["LingGuangV05.Core", "LingGuangV05.XingGuang.Core", "Unity.TextMeshPro", "UnityEngine.UI"],
   "autoReferenced": true
 }

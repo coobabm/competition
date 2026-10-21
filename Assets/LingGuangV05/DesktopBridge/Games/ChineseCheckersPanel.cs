@@ -18,7 +18,7 @@ namespace LingGuangV05.Desktop.Games
         static readonly Color Red=new Color32(204,80,82,255),Blue=new Color32(62,130,194,255),Gold=new Color32(241,185,63,255);
         public override string Id=>"checkers_cn";
         public override string Title=>T("跳棋","Chinese checkers");
-        public override string Blurb=>T("两人各6颗，走一步或连跳。每人最多40回合，进对角最多者胜。","Six pieces each. Step or chain-jump; after 40 turns each, most pieces in the opposite camp wins.");
+        public override string Blurb=>T("走一步，或者隔子连跳。两人各 6 颗，40 回合内谁进对角多谁赢。","Step, or chain-jump over pieces. Six each; after 40 turns, most pieces in the opposite corner wins.");
         public override string Glyph=>"✦";
         public override Color Accent=>new Color32(65,150,113,255);
         public override void Build(RectTransform area)

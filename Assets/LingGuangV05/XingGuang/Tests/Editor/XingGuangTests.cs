@@ -228,6 +228,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void ContractsNeedTheThresholdAndPayIntoTheWallet()
         {
             var sim = new XgSim(); var host = new Host { money = 0 };
+            sim.AppReceipt(XgSim.CrowdApp).installed = true;
             sim.S.stage = 4; sim.S.fundedAbility = 4; // signing opens at the crowd stage; the stages' milestone payments are not counted here
             Assert.IsFalse(sim.Sign("cheque", host));
             sim.S.best.Add(new XgBest { dataset = "mnist", arch = "lenet", acc = .97 });
@@ -323,9 +324,11 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 1; i <= XgCatalog.RaiseMax; i++)
             {
                 Assert.AreEqual(2 * i, XgCatalog.RaiseMultipliers[i], 1e-9, "×2, ×4, ×6 …: every raise adds exactly ×2");
-                Assert.Greater(XgCatalog.RaiseCost(i), XgCatalog.RaiseCost(i - 1));
+                double quoted = System.Math.Round(10 * System.Math.Pow(1.7,i));
+                while(quoted<100)quoted*=10;
+                Assert.AreEqual(quoted,XgCatalog.RaiseCost(i),"each ordinary purchase quote follows the approved hundred-yuan scaling rule");
             }
-            Assert.AreEqual(10, XgCatalog.RaiseCost(0));
+            Assert.AreEqual(100, XgCatalog.RaiseCost(0));
             Assert.AreNotEqual(XgCatalog.RaiseTitle(0, false), XgCatalog.RaiseTitle(XgCatalog.RaiseMax, false));
         }
 
@@ -335,8 +338,8 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim { GoldChance = 0 };
             var host = new Host { money = 0, compute = 0, blocker = "停电" };
             Assert.AreEqual(0, sim.BuyRaise(host));
-            for (int i = 0; i < 15; i++) sim.Answer("mnist", sim.Card("mnist").truth, host);
-            Assert.GreaterOrEqual(host.money, 10);
+            for (int i = 0; i < 200 && host.money < sim.NextRaiseCost; i++) sim.Answer("mnist", sim.Card("mnist").truth, host);
+            Assert.GreaterOrEqual(host.money, 100);
             Assert.AreEqual(1, sim.BuyRaise(host));
             Assert.AreEqual(2, sim.RaiseMultiplier, 1e-9);
             Assert.AreEqual(0, sim.S.epochs);
@@ -348,7 +351,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim(); var host = new Host { money = 1e9 };
             double cost = sim.RaiseCostFor(3, out int levels);
             Assert.AreEqual(3, levels);
-            Assert.AreEqual(10 + 17 + 29, cost, 1e-9);
+            Assert.AreEqual(100 + 170 + 290, cost, 1e-9);
             Assert.AreEqual(3, sim.BuyRaise(host, 3));
             Assert.AreEqual(1e9 - cost, host.money, 1e-6);
             Assert.AreEqual(XgCatalog.RaiseMax - 3, sim.BuyRaise(host, 100));
@@ -360,7 +363,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void AffordableRaisesCountsWhatTheWalletCovers()
         {
-            var sim = new XgSim(); var host = new Host { money = 10 + 17 + 5 };
+            var sim = new XgSim(); var host = new Host { money = 100 + 170 + 5 };
             Assert.AreEqual(2, sim.AffordableRaises(host));
             Assert.AreEqual(2, sim.BuyRaise(host, 99));
             Assert.AreEqual(5, host.money, 1e-9);
@@ -401,7 +404,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void RaiseDoesNotBoostAutomaticAnswers()
         {
             // The 摆渡众包 spot checks would fine this 80% model's wrong labels; they are covered in XgQualityTests.
-            var sim = new XgSim { PlatformChecks = false }; var host = new Host { money = 100 };
+            var sim = new XgSim { PlatformChecks = false }; var host = new Host { money = 600 };
             sim.S.desksOpen.Add("mnist");
             sim.RevealAutoLabel(); // the protagonist has had the idea (XgEpiphanyTests covers the hidden state)
             sim.S.best.Add(new XgBest { dataset = "mnist", arch = "lenet", acc = .8 });

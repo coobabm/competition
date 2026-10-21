@@ -18,10 +18,9 @@ namespace LingGuangV05.CaseMenu
         // Opening title artwork (v9 clean lockup: 我的电脑 / [monitor icon 活]了). Reference pixels at 1920x1080.
         // Two lines at 500 px wide keep the same footprint the retired v5 art had, so the room framing and the
         // 8 px gap to the subheading keep working; the cleaner art simply has less transparent padding.
-        private const float TitleLogoLeft = 65f;   // the art carries ~4.8 px transparent padding at this size, ink starts at x~70
-        private const float TitleLogoTop = -98f;
+        private const float TitleLogoLeft = 123f;   // artwork padding puts visible ink at x~128
+        private const float TitleLogoTop = -110f;
         private const float TitleLogoWidth = 500f;
-        private const float TitleLogoSubheadingGap = 8f;
 
         private TMP_FontAsset font;
         private RectTransform canvasRoot;
@@ -260,13 +259,19 @@ namespace LingGuangV05.CaseMenu
             chromeGroup.blocksRaycasts = false;
             chromeGroup.interactable = false;
 
+            // First chrome child: shade the room edges underneath every title label.
+            // The center stays transparent and the parent controls the normal title fade.
+            var vignette = Rect("TitleVignette", chrome);
+            Stretch(vignette);
+            var vignetteGraphic = vignette.gameObject.AddComponent<CaseMenuVignetteGraphic>();
+            vignetteGraphic.raycastTarget = false;
+
             var eyebrow = Label("Eyebrow", chrome, "MY COMPUTER IS ALIVE / 2016", 14, Muted);
             Place(eyebrow.rectTransform, new Vector2(0, 1), new Vector2(70, -66), new Vector2(520, 26));
             eyebrow.characterSpacing = 5f; eyebrow.gameObject.SetActive(false);
             // v9 clean lockup: 我的电脑[monitor icon carrying 活]了. The icon replaces the 活 character, so the
             // artwork replaces both the old text title and the separate signal decoration.
             var logoTexture = Resources.Load<Texture2D>("LingGuangV05/Branding/TitleLogoV9");
-            float subheadingTop;
             if (logoTexture != null)
             {
                 var logoRoot = Rect("TitleLogoV9", chrome);
@@ -277,7 +282,6 @@ namespace LingGuangV05.CaseMenu
                 logo.texture = logoTexture;
                 logo.color = Color.white;
                 logo.raycastTarget = false;
-                subheadingTop = TitleLogoTop - logoHeight - TitleLogoSubheadingGap;
             }
             else
             {
@@ -288,10 +292,7 @@ namespace LingGuangV05.CaseMenu
                 title.characterSpacing = 3f;
                 var titleFace = LingGuangV05.Desktop.XingGuang.XgUiV4Fonts.SansSemibold;
                 if (titleFace != null) title.font = titleFace;
-                subheadingTop = -234f;
             }
-            var subheading = Label("Subheading", chrome, "从一次开机开始。", 21, Muted);
-            Place(subheading.rectTransform, new Vector2(0, 1), new Vector2(70, subheadingTop), new Vector2(640, 36));
             var accent = Panel("HintAccent", chrome, Amber); accent.gameObject.SetActive(false);
             Place(accent.rectTransform, Vector2.zero, new Vector2(70, 76), new Vector2(28, 2));
             hintLabel = Label("ContextHint", chrome, "", 21, Ink);
@@ -299,12 +300,12 @@ namespace LingGuangV05.CaseMenu
             var keyboard = Label("KeyboardHint", chrome, "TAB 切换 · ENTER 确认", 15, Muted);
             Place(keyboard.rectTransform, new Vector2(1, 0), new Vector2(-70, 63), new Vector2(520, 30));
             keyboard.alignment = TextAlignmentOptions.MidlineRight; keyboard.gameObject.SetActive(false);
-            // Keep the muted notice readable over the bright papers in the room scene.
-            var disclosureBacking = Panel("AiContentNoticeBacking", chrome, new Color(0, 0, 0, .62f));
+            // Match the reference footer: muted text without a full-width dark strip.
+            var disclosureBacking = Panel("AiContentNoticeBacking", chrome, Color.clear);
             Place(disclosureBacking.rectTransform, Vector2.zero, new Vector2(62, 18), new Vector2(1136, 34));
             var disclosure = Label("AiContentNoticeBody", chrome,
-                LingGuangV05.Runtime.AiContentNotice.Description(LingGuangV05.Runtime.GameText.IsEnglish), 14, Muted);
-            Place(disclosure.rectTransform, Vector2.zero, new Vector2(70, 22), new Vector2(1120, 26));
+                LingGuangV05.Runtime.AiContentNotice.Description(LingGuangV05.Runtime.GameText.IsEnglish), 18, new Color32(128, 126, 119, 255));
+            Place(disclosure.rectTransform, Vector2.zero, new Vector2(128, 40), new Vector2(1120, 26));
             disclosure.enableAutoSizing = false;
             disclosure.textWrappingMode = TextWrappingModes.NoWrap;
         }
@@ -551,6 +552,34 @@ namespace LingGuangV05.CaseMenu
 
 namespace LingGuangV05.CaseMenu
 {
+    // Original static vertex-alpha gradient; no image asset, material allocation or per-frame work.
+    [RequireComponent(typeof(CanvasRenderer))]
+    public sealed class CaseMenuVignetteGraphic : UnityEngine.UI.MaskableGraphic
+    {
+        protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper vh)
+        {
+            vh.Clear();
+            const int columns = 32, rows = 18;
+            Rect rect = rectTransform.rect;
+            for (int y = 0; y <= rows; y++)
+                for (int x = 0; x <= columns; x++)
+                {
+                    float u = x / (float)columns, v = y / (float)rows;
+                    float radius = new Vector2(u * 2 - 1, v * 2 - 1).magnitude;
+                    float fade = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.38f, 1.08f, radius));
+                    vh.AddVert(new Vector3(rect.xMin + rect.width * u, rect.yMin + rect.height * v, 0),
+                        new Color(0, 0, 0, .65f * fade), Vector2.zero);
+                }
+            for (int y = 0; y < rows; y++)
+                for (int x = 0; x < columns; x++)
+                {
+                    int i = y * (columns + 1) + x;
+                    vh.AddTriangle(i, i + columns + 1, i + 1);
+                    vh.AddTriangle(i + 1, i + columns + 1, i + columns + 2);
+                }
+        }
+    }
+
     // One static mesh. Shapes are original geometry, not text glyphs or external assets.
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class CaseMenuTitleSignalGraphic : UnityEngine.UI.MaskableGraphic

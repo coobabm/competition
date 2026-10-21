@@ -185,6 +185,7 @@ namespace LingGuangV05.Desktop.XingGuang
             sim.LoveToday = GameCalendar.CurrentDay(runtime.Sim.S);
             var s = Stats(false);
             sim.LoveDataReady = s != null && s.EnoughHistory;
+            if (sim.LoveQuestionConsumed) return; // No repeat invitation; typed questions and verdict events still work.
             if (hintQueued) { if (!InnerVoice.Busy) hintQueued = false; return; }
             if (!sim.S.loveOffered && sim.S.stage < XgSim.LoveStage) { CheckEarly(sim); return; }
             if (sim.S.loveOffered || sim.S.stage < XgSim.LoveStage || !sim.LoveDataReady) return;
@@ -364,6 +365,7 @@ namespace LingGuangV05.Desktop.XingGuang
         void PostWithoutScene()
         {
             requested = false;
+            posted = false; // This request owns a new verdict, even if an earlier scene already posted.
             reading = Read(requestFull);
             if (reading == null) { bound?.CancelLoveVerdict(); return; }
             Post(reading);

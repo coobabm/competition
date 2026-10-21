@@ -27,7 +27,7 @@ namespace LingGuangV05.Desktop.Games
 
         public override string Id => "go";
         public override string Title => Lang.T("围棋");
-        public override string Blurb => T("9路小棋盘，数气、提子，连续停两手结束。可选电脑或自己的AI，棋力取决于桌游逻辑等级。","A 9×9 board: liberties, captures and two passes to finish. Choose the computer or your AI; strength follows its board-logic level.");
+        public override string Blurb => T("9 路棋盘，围住气可提子。双方停手后数地盘与棋子。","A 9×9 board: surround a group's liberties to capture it. Both pass and the board is counted. How well it plays depends on how far you've taught it.");
 
         /// <summary>The white player: the built-in program until stage 4, then the lab's AI.</summary>
         string Opponent => AiPlays ? AiName : Lang.T("电脑");

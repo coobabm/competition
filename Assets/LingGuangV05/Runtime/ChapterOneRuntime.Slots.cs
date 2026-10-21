@@ -36,7 +36,7 @@ namespace LingGuangV05.Runtime
             if (archive == null || !File.Exists(archive.SavePath) && !File.Exists(archive.SavePath + ".bak")) return GameText.T("空", "Empty");
             var loaded = archive.Load(ValidArchive);
             if (!loaded.Success) return GameText.T("损坏，无法读取", "Unreadable save");
-            var state = JsonUtility.FromJson<GameState>(loaded.Payload);
+            var state = ReadNarrationState(loaded.Payload);
             string source = loaded.Recovered ? archive.SavePath + ".bak" : archive.SavePath;
             return state.aiName + " · ¥" + state.money.ToString("0") + " · " + File.GetLastWriteTime(source).ToString("MM-dd HH:mm")
                 + (loaded.Recovered ? GameText.T(" · 备份", " · Backup") : "");
@@ -45,7 +45,7 @@ namespace LingGuangV05.Runtime
         static bool ValidArchive(string payload)
         {
             if (string.IsNullOrWhiteSpace(payload) || !payload.Contains("\"rngState\"")) return false;
-            var state = JsonUtility.FromJson<GameState>(payload);
+            var state = ReadNarrationState(payload);
             if (state == null || state.version != 1 || state.nodes == null || state.nodes.Count < 3 || state.edges == null) return false;
             // A slot whose lab cannot be read must not replace the main save.
             return string.IsNullOrEmpty(state.labState) || LabStateReadable == null || LabStateReadable(state.labState);
@@ -78,7 +78,7 @@ namespace LingGuangV05.Runtime
             if (!loaded.Success) { SaveStatus = loaded.Message; return false; }
             // Validate and instantiate before touching the active save. Atomic replacement retains a backup.
             ChapterOneSim restored;
-            try { restored = new ChapterOneSim(JsonUtility.FromJson<GameState>(loaded.Payload)); }
+            try { restored = new ChapterOneSim(ReadNarrationState(loaded.Payload)); }
             catch (Exception error)
             {
                 SaveStatus = GameText.T("存档无法恢复，当前进度未改变。", "The save could not be restored. Current progress is unchanged.");

@@ -27,7 +27,7 @@ namespace LingGuangV05.Desktop.Story
         public const float DefaultSeconds = 2.8f;
         const float FadeIn = .25f, FadeOut = .45f, PerChar = .03f, Gap = .35f;
 
-        struct Line { public string zh, en; public float seconds; public int ticket; public Action shown; public bool voiced; }
+        struct Line { public string zh, en; public float seconds; public int ticket; public Action shown; public bool voiced; public Func<bool> valid; }
 
         static InnerVoice instance;
         static int nextTicket, lastFinished;
@@ -61,12 +61,12 @@ namespace LingGuangV05.Desktop.Story
         /// Queues a line. <paramref name="seconds"/> is how long it stays after it has been typed out.
         /// <paramref name="shown"/> runs once the whole line has been on screen, i.e. the player could read it.
         /// </summary>
-        public static int Say(string zh, string en, float seconds = DefaultSeconds, Action shown = null, bool voiced = true)
+        public static int Say(string zh, string en, float seconds = DefaultSeconds, Action shown = null, bool voiced = true, Func<bool> valid = null)
         {
             if (shutdownMuted) return lastFinished;
             if (string.IsNullOrEmpty(zh) && string.IsNullOrEmpty(en)) return lastFinished;
             var v = Instance();
-            var line = new Line { zh = zh ?? en, en = string.IsNullOrEmpty(en) ? zh : en, seconds = Mathf.Max(.5f, seconds), ticket = ++nextTicket, shown = shown, voiced = voiced };
+            var line = new Line { zh = zh ?? en, en = string.IsNullOrEmpty(en) ? zh : en, seconds = Mathf.Max(.5f, seconds), ticket = ++nextTicket, shown = shown, voiced = voiced, valid = valid };
             v.queue.Enqueue(line);
             if (v.routine == null) v.routine = v.StartCoroutine(v.Run());
             return line.ticket;
@@ -179,6 +179,7 @@ namespace LingGuangV05.Desktop.Story
                 while (Held) yield return null;
                 current = resume ?? queue.Dequeue();
                 resume = null;
+                if (current.valid != null && !current.valid()) { lastFinished = Mathf.Max(lastFinished,current.ticket); continue; }
                 speaking = true;
                 english = GameText.IsEnglish;
                 SetText(english ? current.en : current.zh, 0);
@@ -186,13 +187,13 @@ namespace LingGuangV05.Desktop.Story
                 // A recorded line keeps its subtitle up for as long as it is spoken.
                 float spoken = current.voiced ? VoiceLines.Play(current.zh, english ? current.en : current.zh) : 0, started = Time.unscaledTime;
                 bool cut = false;
-                for (float t = 0; t < FadeIn && !(cut = Held); t += Time.unscaledDeltaTime) { group.alpha = t / FadeIn; yield return null; }
+                for (float t = 0; t < FadeIn && !(cut = Held || current.valid != null && !current.valid()); t += Time.unscaledDeltaTime) { group.alpha = t / FadeIn; yield return null; }
                 if (!cut) group.alpha = 1;
                 int length = text.GetParsedText().Length;
                 float typed = 0;
                 while (!cut && text.maxVisibleCharacters < length)
                 {
-                    if (cut = Held) break;
+                    if (cut = Held || current.valid != null && !current.valid()) break;
                     typed += Time.unscaledDeltaTime / PerChar;
                     // A spoken line is typed as it is said; otherwise at the typewriter's own speed.
                     int said = current.voiced ? VoiceLines.Revealed(Time.unscaledTime - started) : -1;
@@ -203,7 +204,7 @@ namespace LingGuangV05.Desktop.Story
                 }
                 if (!cut) text.maxVisibleCharacters = shadow.maxVisibleCharacters = 99999;
                 float hold = Mathf.Max(current.seconds, spoken - (Time.unscaledTime - started) + .3f);
-                for (float t = 0; !cut && t < hold; t += Time.unscaledDeltaTime) { if (cut = Held) break; yield return null; }
+                for (float t = 0; !cut && t < hold; t += Time.unscaledDeltaTime) { if (cut = Held || current.valid != null && !current.valid()) break; yield return null; }
                 if (cut)
                 {
                     if (spoken > 0) VoiceLines.Stop();
@@ -212,7 +213,8 @@ namespace LingGuangV05.Desktop.Story
                     for (float t = 0; t < .15f; t += Time.unscaledDeltaTime) { group.alpha = from * (1 - t / .15f); yield return null; }
                     group.alpha = 0;
                     speaking = false;
-                    resume = current;
+                    if (current.valid == null || current.valid()) resume = current;
+                    else lastFinished = Mathf.Max(lastFinished,current.ticket);
                     continue;
                 }
                 var seen = current.shown;

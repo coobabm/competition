@@ -453,11 +453,15 @@ namespace LingGuangV05.Desktop.YY
             bool focusMarkup = mine && !string.IsNullOrEmpty(m.attentionWord);
             if (focusMarkup) body = LingGuangV05.XingGuang.XgSpeechPolicy.Underline(body, m.attentionWord);
             var probe = Text(Rect("Text", scrollContent, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, Vector2.zero), BubbleText(body, focusMarkup), 15, mine ? Color.white : C.Ink, TextAlignmentOptions.TopLeft);
+            // Messages grow to fit their text. Ellipsis can erase the entire first line when
+            // cumulative history coordinates round its measured height down by a fraction.
+            // The conversation viewport still clips messages outside the visible history.
+            probe.overflowMode = TextOverflowModes.Overflow;
             YYFaceRenderer.Prepare(probe);
             YYFaceRenderer.AddHoverNames(probe, body);
             Vector2 pref = probe.GetPreferredValues(BubbleText(body, focusMarkup), maxBubble - padX * 2, 0);
             float tw = Mathf.Min(maxBubble - padX * 2, Mathf.Max(18, pref.x + 2));
-            float th = probe.GetPreferredValues(BubbleText(body, focusMarkup), tw, 0).y;
+            float th = Mathf.Ceil(probe.GetPreferredValues(BubbleText(body, focusMarkup), tw, 0).y) + 2;
             float bw = tw + padX * 2, bh = th + padY * 2;
             bool group = who != null && who.group;
             float nameH = group ? 18 : 0;
@@ -467,12 +471,13 @@ namespace LingGuangV05.Desktop.YY
             if (group && !mine && HasSenderLabel(body))
             {
                 int end = body.IndexOf(']');
-                Text(Rect("Sender", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(left, -y - 16), new Vector2(left + 200, -y)), body.Substring(1, end - 1), 12, C.Muted, TextAlignmentOptions.MidlineLeft);
+                var sender = Text(Rect("Sender", scrollContent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(left, -y - 16), new Vector2(left + 200, -y)), body.Substring(1, end - 1), 12, C.Muted, TextAlignmentOptions.MidlineLeft);
+                sender.overflowMode = TextOverflowModes.Overflow;
                 body = body.Substring(end + 1).TrimStart();
                 probe.text = BubbleText(body, focusMarkup);
                 pref = probe.GetPreferredValues(BubbleText(body, focusMarkup), maxBubble - padX * 2, 0);
                 tw = Mathf.Min(maxBubble - padX * 2, Mathf.Max(18, pref.x + 2));
-                th = probe.GetPreferredValues(BubbleText(body, focusMarkup), tw, 0).y;
+                th = Mathf.Ceil(probe.GetPreferredValues(BubbleText(body, focusMarkup), tw, 0).y) + 2;
                 bw = tw + padX * 2; bh = th + padY * 2;
             }
             else nameH = 0;
@@ -483,7 +488,9 @@ namespace LingGuangV05.Desktop.YY
             YYGirlfriend.StyleBubble(m, shape, probe);
             bubble.SetSiblingIndex(probe.transform.GetSiblingIndex());
             var rt = probe.rectTransform;
-            rt.offsetMin = new Vector2(left + padX, -y - nameH - padY - th); rt.offsetMax = new Vector2(left + padX + tw, -y - nameH - padY);
+            rt.SetParent(bubble, false);
+            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+            rt.offsetMin = new Vector2(padX, padY); rt.offsetMax = new Vector2(-padX, -padY);
             if (!mine && m.from == YYChatHub.LingGuangId) Rating(m, left + bw + 8, -y - nameH - bh);
             float bubbleHeight = Mathf.Max(avatar, bh + nameH);
             return bubbleHeight + LearningBubble(m, y + bubbleHeight + 4, width);
@@ -868,12 +875,19 @@ namespace LingGuangV05.Desktop.YY
                 string text = choice;
                 bool endingPrivateChoice = target == YYChatHub.LaoZhou
                     && Array.IndexOf(hub.EndingPrivateChoices() ?? Array.Empty<string>(), text) >= 0;
-                var b = FlatButton(choiceStrip, text, () => {
+                Button b = null;
+                b = FlatButton(choiceStrip, text, () => {
                     if (!ReferenceEquals(hub.S, renderedState) || !ReferenceEquals(hub.runtime.Sim, renderedSimulation)
                         || target == YYChatHub.LaoZhou && !ReferenceEquals(LingGuangV05.Desktop.Tieba.TiebaHub.Instance?.S, renderedForum)) return;
                     // A stale preview action must never fall through into sending its UI label as a chat message.
                     if (endingPrivateChoice) { TryPreviewEndingPrivate(text); return; }
+                    var sentConversation = hub.Conversation(target);
+                    int beforeSend = sentConversation?.messages.Count ?? 0;
                     hub.Send(target, text); stickBottom = true; dirty = true;
+                    // Close the repeat-click window before the deferred choices rebuild, only after acceptance.
+                    if (target == YYChatHub.LingGuangId && LingGuangV05.XingGuang.XgSim.IsLoveQuestion(text)
+                        && sentConversation != null && sentConversation.messages.Count > beforeSend)
+                        b.interactable = false;
                 }, 14, Color.white, C.Mine);
                 var rt = (RectTransform)b.transform;
                 float width = target == YYChatHub.EraGroup ? Mathf.Max(70, (choiceStrip.rect.width - 40) / 3) : 28 + text.Length * (GameText.IsEnglish ? 7.5f : 15f);

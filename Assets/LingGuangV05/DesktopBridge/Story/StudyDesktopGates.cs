@@ -66,7 +66,7 @@ namespace LingGuangV05.Desktop.Story
                 case "shop": return new[] { T(LingGuangV05.Core.AppNames.ShopZh, LingGuangV05.Core.AppNames.ShopEn), T("显卡、数据包，今天下单明天到。", "Graphics cards and data packs. Order today, here tomorrow.") };
                 case "data": return new[] { T(LingGuangV05.Core.AppNames.UsedZh, LingGuangV05.Core.AppNames.UsedEn), T("旧卡在这儿卖，也能淘到便宜货。", "Sell old cards here, or find a bargain.") };
                 case "games": return new[] { T("游戏中心", "Game Hub"), T("累了就下盘棋，它也会下。", "Tired? Play a game of chess. It plays too.") };
-                case "crowd": return new[] { T("摆渡众包", "Bodu Crowd"), T("先看验收要求，再签约接单。", "Read acceptance requirements before signing a contract.") };
+                case "crowd": return new[] { T("摆渡众包", "Bodu Crowd"), T("档位单按秒进账；企业单先看验收要求再签。", "Tier orders pay by the second; read the requirements before signing business orders.") };
                 default: return null;
             }
         }

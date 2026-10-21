@@ -21,7 +21,15 @@ namespace LingGuangV05.CaseMenu
         MaterialPropertyBlock properties;
         static readonly int Emission = Shader.PropertyToID("_EmissionColor");
 
-        void Awake() { CaptureRest(); }
+        void Awake()
+        {
+            CaptureRest();
+            // These are legacy model labels, separate from the interactive switch hierarchy.
+            string prefix = isStart ? "Start engraved " : "Settings engraved ";
+            foreach (var root in gameObject.scene.GetRootGameObjects())
+                foreach (var text in root.GetComponentsInChildren<TMPro.TMP_Text>(true))
+                    if (text.name.StartsWith(prefix, System.StringComparison.Ordinal)) text.gameObject.SetActive(false);
+        }
         void CaptureRest()
         {
             if (keycap != null && !hasRest) { rest = keycap.localPosition; hasRest = true; }
@@ -60,14 +68,16 @@ namespace LingGuangV05.CaseMenu
             if (feedbackLight != null) feedbackLight.intensity = .03f + glow * .055f;
             if (pulse != null)
             {
-                pulse.enabled = pulseAge < .5f && !ReducedMotion;
+                pulse.enabled = IsHovered || (pulseAge < .5f && !ReducedMotion);
                 if (pulse.enabled)
                 {
-                    float t = pulseAge / .5f;
+                    bool confirming = pulseAge < .5f && !ReducedMotion;
+                    float t = confirming ? pulseAge / .5f : 0;
                     pulse.transform.localScale = Vector3.one * (1 + t * .65f);
-                    Color c = accent; c.a = (1 - t) * .5f;
+                    Color c = isStart ? new Color32(83,184,255,255) : new Color32(230,169,86,255);
+                    c.a = confirming ? (1 - t) * .5f : 1f;
                     pulse.startColor = pulse.endColor = c;
-                    pulse.widthMultiplier = Mathf.Lerp(.005f, .0005f, t);
+                    pulse.widthMultiplier = confirming ? Mathf.Lerp(.005f, .0005f, t) : .004f;
                 }
             }
         }

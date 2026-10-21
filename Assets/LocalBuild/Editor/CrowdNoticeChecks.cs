@@ -32,22 +32,22 @@ public static class CrowdNoticeChecks
                 tray.EnqueueNotification("Bodu Crowdsourcing", "early notification", 3, null, () => true, null);
                 Need(queue.Count == 0, "Stage " + stage + " must not enqueue either kind of popup");
             }
-            sim.S.stage = 3;
+            sim.S.stage = 2; sim.AppReceipt("zhongbao").installed = true;
             tray.Enqueue("摆渡众包", "eligible story", 3, story: true);
             bool callerValid = true;
             tray.EnqueueNotification("Bodu Crowd", "eligible notification", 3, null, () => callerValid, null);
-            Need(queue.Count == 2, "Stage three must enqueue both paths");
+            Need(queue.Count == 2, "Installed stage two must enqueue both paths");
             foreach (var notice in queue)
             {
                 var valid = (Func<bool>)notice.GetType().GetField("valid").GetValue(notice);
                 Need(valid != null && valid(), "Queued popup needs a live guard");
-                sim.S.stage = 2; Need(!valid(), "Queued popup bypassed stage gate"); sim.S.stage = 3;
+                sim.AppReceipt("zhongbao").installed = false; Need(!valid(), "Queued popup bypassed installation gate"); sim.AppReceipt("zhongbao").installed = true;
                 var other = new XgSim(); other.S.stage = 3; simProperty.SetValue(controller, other);
                 Need(!valid(), "Queued popup crossed saves"); simProperty.SetValue(controller, sim);
                 if ((string)notice.GetType().GetField("text").GetValue(notice) == "eligible notification")
                 { callerValid = false; Need(!valid(), "Existing validity callback must be retained"); callerValid = true; }
             }
-            Debug.Log("CROWD_NOTICE_PASS: real inactive tray queue, both entry paths, stages 1/2/3, queued stage/save recheck and existing validity.");
+            Debug.Log("CROWD_NOTICE_PASS: real inactive tray queue, both entry paths, uninstalled stages 1/2 and installed stage 2, queued installation/save recheck and existing validity.");
         }
         finally { UnityEngine.Object.DestroyImmediate(fixture); instance.SetValue(null, previous); }
     }

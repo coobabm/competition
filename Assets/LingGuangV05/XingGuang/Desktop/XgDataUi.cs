@@ -154,12 +154,14 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (sim == null) return "";
             int reached = Math.Max(0, Math.Min(XgSim.AbilityCount, sim.S.crowdTier));
+            if (sim.AbilitiesCount >= 2 && !sim.DesktopAppInstalled(XgSim.CrowdApp))
+                return T("众包订单 · 等你装好摆渡众包（群里有链接）就开第 1 档", "Crowd orders · install Bodu Crowd (link in the group) to open tier 1");
             if (reached < 2 || sim.CrowdOrderIncome <= 0)
-                return T("众包订单 · 还没开档（学会「" + XgSim.AbilityName(2, false) + "」开第 1 档 +¥" + N(XgSim.CrowdTierIncome[2], "0") + "/秒）",
-                         "Crowd orders · no tier yet (learning '" + XgSim.AbilityName(2, true) + "' opens tier 1, +¥" + N(XgSim.CrowdTierIncome[2], "0") + "/s)");
-            string line = T("众包订单 · 第 " + (reached - 1) + " 档 +¥", "Crowd orders · tier " + (reached - 1) + " +¥") + N(sim.CrowdOrderIncome, "0") + T("/秒", "/s");
+                return T("众包订单 · 还没开档（学会「" + XgSim.AbilityName(2, false) + "」开第 1 档 +¥" + N(XgSim.CrowdTierIncome[2], "0.##") + "/秒）",
+                         "Crowd orders · no tier yet (learning '" + XgSim.AbilityName(2, true) + "' opens tier 1, +¥" + N(XgSim.CrowdTierIncome[2], "0.##") + "/s)");
+            string line = T("众包订单 · 第 " + (reached - 1) + " 档 +¥", "Crowd orders · tier " + (reached - 1) + " +¥") + N(sim.CrowdOrderIncome, "0.##") + T("/秒", "/s");
             if (reached < XgSim.AbilityCount && reached + 1 < XgSim.CrowdTierIncome.Length)
-                line += T("（下一档 +¥" + N(XgSim.CrowdTierIncome[reached + 1], "0") + "/秒）", " (next +¥" + N(XgSim.CrowdTierIncome[reached + 1], "0") + "/s)");
+                line += T("（下一档 +¥" + N(XgSim.CrowdTierIncome[reached + 1], "0.##") + "/秒）", " (next +¥" + N(XgSim.CrowdTierIncome[reached + 1], "0.##") + "/s)");
             return line;
         }
 

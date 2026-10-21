@@ -30,7 +30,7 @@ namespace LingGuangV05.XingGuang
     /// </summary>
     public sealed partial class XgSim
     {
-        public const int EpiphanyStreak = 8, EpiphanyFallbackLabels = 150;
+        public const int EpiphanyStreak = 3, EpiphanyFallbackLabels = 12;
         /// <summary>The flash card the realisation leaves (shown through the self-insight card overlay).</summary>
         public const string EpiphanyCardId = "autolabel";
 
@@ -106,6 +106,7 @@ namespace LingGuangV05.XingGuang
         void ObserveGhost(bool hadGhost, bool ghost, bool answer, bool timeout)
         {
             if (EpiphanyDone || OpeningFocus) return;
+            if (timeout) { S.ghostStreak = 0; return; }
             if (hadGhost)
             {
                 S.ghostSeen = true;
@@ -113,6 +114,18 @@ namespace LingGuangV05.XingGuang
             }
             if (S.ghostSeen) S.ghostLabels++;
             if (S.ghostStreak >= EpiphanyStreak || S.ghostSeen && S.ghostLabels >= EpiphanyFallbackLabels) RaiseEpiphany();
+        }
+
+        // Mini-games settle through MiniPay, not Answer. Their successful manual items must also
+        // lead to the idea; never pretend an item agreed with a prediction we did not display.
+        // Wrong/expired mini items share a result code, so only correct items count here.
+        void ObserveMiniEpiphany(string desk, bool correct, bool automatic)
+        {
+            if (!correct || automatic || EpiphanyDone || OpeningFocus || !DeskOpen(desk)) return;
+            if (!S.ghostSeen && !(TeachMode && TeachingAiReady) && BestAcc(desk) + 1e-9 < XgCatalog.AutoMinAccuracy) return;
+            S.ghostSeen = true;
+            S.ghostStreak = 0;
+            ObserveGhost(false, false, false, false);
         }
 
         void RaiseEpiphany()

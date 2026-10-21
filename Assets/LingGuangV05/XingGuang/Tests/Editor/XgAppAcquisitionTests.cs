@@ -11,7 +11,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test] public void FreshGameDoesNotPretendAppsOrIntrosWereUsed()
         {var s=Fresh();Assert.IsTrue(s.DesktopAppInstalled("gamecenter"));Assert.IsFalse(s.DesktopAppInstalled("taohuo"));Assert.IsFalse(s.AppReceipt("zhongbao").offered);Assert.IsFalse(s.IntroProgress("zhongbao_intro").completed);}
         [Test] public void LegacyEntitlementIsSeparateFromAPlayerInstallOrRead()
-        {var s=new XgSim(new XgState{gradualSystems=false});var a=s.AppReceipt("zhongbao");Assert.IsTrue(a.installed&&a.legacyGranted);Assert.IsFalse(a.offered||a.downloaded);Assert.AreEqual(0,a.installStep);var p=s.IntroProgress("zhongbao_intro");Assert.IsTrue(p.legacySkipped);Assert.IsFalse(p.completed||p.skipped);}
+        {var s=new XgSim(new XgState{gradualSystems=false,fundedAbility=2});var a=s.AppReceipt("zhongbao");Assert.IsTrue(a.installed&&a.legacyGranted);Assert.IsFalse(a.offered||a.downloaded);Assert.AreEqual(0,a.installStep);var p=s.IntroProgress("zhongbao_intro");Assert.IsTrue(p.legacySkipped);Assert.IsFalse(p.completed||p.skipped);}
         [Test] public void DownloadRequiresAnOfferedLinkAndCorrectStage()
         {var s=Fresh();Assert.IsFalse(s.StartDesktopDownload("zhongbao",Apps()));s.AppReceipt("zhongbao").offered=true;s.S.stage=2;Assert.IsFalse(s.StartDesktopDownload("zhongbao",Apps()));s.S.stage=3;Assert.IsTrue(s.StartDesktopDownload("zhongbao",Apps()));}
         [Test] public void PauseAndDisconnectedTimeCannotDownloadBytes()
@@ -37,8 +37,27 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var s=new XgSim(JsonUtility.FromJson<XgState>(json));
             var roundtrip=new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(s.S)));
-            foreach(var id in new[]{"taohuo","miaoyu","zhongbao"})
+            foreach(var id in new[]{"taohuo","miaoyu"})
             {var a=roundtrip.AppReceipt(id);Assert.IsTrue(a.installed&&a.legacyGranted,id);Assert.IsFalse(a.offered||a.downloaded,id);Assert.AreEqual(0,a.installStep,id);Assert.IsFalse(roundtrip.IntroProgress(id+"_intro").completed,id);}
+            var crowd=roundtrip.AppReceipt("zhongbao");
+            Assert.IsFalse(crowd.installed||crowd.legacyGranted||crowd.offered||crowd.downloaded,"chapter alone is not a paid crowd ledger");
+            Assert.IsFalse(roundtrip.IntroProgress("zhongbao_intro").legacySkipped);
+        }
+        [TestCase(2,0)] [TestCase(1,2)]
+        public void UnityLegacyJsonGrantsCrowdOnlyWithPaidLedgerEvidence(int funded,int tier)
+        {
+            string json="{\"stage\":4,\"fundedAbility\":"+funded+",\"crowdTier\":"+tier+",\"appAcquisition\":{}}";
+            var s=new XgSim(JsonUtility.FromJson<XgState>(json));
+            var copy=new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(s.S)));
+            Assert.IsTrue(copy.AppReceipt("zhongbao").installed&&copy.AppReceipt("zhongbao").legacyGranted);
+            Assert.IsTrue(copy.IntroProgress("zhongbao_intro").legacySkipped);
+            Assert.IsFalse(copy.IntroProgress("zhongbao_intro").completed);
+        }
+        [Test] public void NongradualLegacySaveWithoutLedgerStillNeedsCrowdInstallation()
+        {
+            var s=new XgSim(new XgState{gradualSystems=false,stage=6,totalIncome=100000});
+            Assert.IsFalse(s.DesktopAppInstalled("zhongbao"));
+            Assert.IsFalse(s.IntroProgress("zhongbao_intro").legacySkipped);
         }
         [Test] public void UnityFreshStateRoundtripIsNotMistakenForLegacyPlaceholder()
         {

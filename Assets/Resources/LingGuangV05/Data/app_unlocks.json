@@ -95,7 +95,7 @@
       "name": "摆渡众包",
       "how": "group_link",
       "script": "zhongbao_intro",
-      "stage": 3,
+      "stage": 2,
       "sizeMB": 12.6,
       "bubble": "摆渡众包 · 看清验收要求，签下能完成的委托",
       "nameEn": "Bodu Crowd",

@@ -15,7 +15,7 @@ namespace LingGuangV05.Desktop.Games
         static readonly Color Red=new Color32(204,80,82,255),Blue=new Color32(62,130,194,255);
         public override string Id=>"monopoly";
         public override string Title=>T("大富翁","Monopoly-style");
-        public override string Blurb=>T("20格小地图，8轮比现金加地产。¥1,500游戏币开局，和真钱无关。","20 squares, 8 rounds. Start with ¥1,500 in play money; most cash plus property wins.");
+        public override string Blurb=>T("买地、收租、抽卡。20 格打 8 轮，比现金加地产。仅使用游戏币。","Buy land, collect rent, draw chance cards. 8 rounds on 20 squares; most cash plus property wins. ¥1,500 in play money, nothing to do with real money.");
         public override string Glyph=>"¥";
         public override Color Accent=>new Color32(174,126,49,255);
         public override void Build(RectTransform area)

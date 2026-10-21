@@ -11,9 +11,10 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim();
             Assert.IsNotNull(sim.TakeAfterthought("first.fine"));
             Assert.IsNull(sim.TakeAfterthought("first.fine"));
-            var again = new XgSim(sim.S);
+            var again = new XgSim(UnityEngine.JsonUtility.FromJson<XgState>(UnityEngine.JsonUtility.ToJson(sim.S)));
             Assert.IsNull(again.TakeAfterthought("first.fine"));
             Assert.IsNotNull(again.TakeAfterthought("first.report"));
+            Assert.IsNotNull(new XgSim().TakeAfterthought("first.fine"),"another game has independent firsts");
         }
 
         [Test]

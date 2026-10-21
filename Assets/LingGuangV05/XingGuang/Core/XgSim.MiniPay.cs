@@ -94,6 +94,7 @@ namespace LingGuangV05.XingGuang
             if (!automatic) RecordAnswerMoneyThought(new XgAnswer { correct = result.correct, pay = result.Total, fine = result.fine });
             result.samples += RelicOnMiniAction(desk, correct);
             CheckDesks();
+            ObserveMiniEpiphany(desk, correct, automatic);
             return result;
         }
     }

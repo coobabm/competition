@@ -6,6 +6,8 @@ namespace LingGuangV05.XingGuang
         public bool teachingFlow;
         public int teachingThoughtVersion;
         public bool answerPayThoughtRecorded, answerFineThoughtRecorded;
+        // Separate settled/queued receipts from consumed narration; both belong to this save, never a static session.
+        public bool answerPayThoughtConsumed, answerFineThoughtConsumed;
         public System.Collections.Generic.List<string> pendingAnswerMoneyThoughts = new System.Collections.Generic.List<string>();
         public bool teachIntroSaid, teachThirdSaid, teachTreeSaid, teachTrainSaid;
     }
@@ -32,16 +34,59 @@ namespace LingGuangV05.XingGuang
             }
         }
 
+        void RepairTeachingThoughts()
+        {
+            if (S.pendingAnswerMoneyThoughts == null) S.pendingAnswerMoneyThoughts = new System.Collections.Generic.List<string>();
+            var unique = new System.Collections.Generic.HashSet<string>();
+            S.pendingAnswerMoneyThoughts.RemoveAll(k => (k != "pay" && k != "fine") || !unique.Add(k)
+                || k == "pay" && S.answerPayThoughtConsumed || k == "fine" && S.answerFineThoughtConsumed);
+            // In older saves a recorded event with no pending line was already consumed. Do not backfill it.
+            S.answerPayThoughtConsumed |= S.answerPayThoughtRecorded && !S.pendingAnswerMoneyThoughts.Contains("pay");
+            S.answerFineThoughtConsumed |= S.answerFineThoughtRecorded && !S.pendingAnswerMoneyThoughts.Contains("fine");
+            S.answerPayThoughtRecorded |= S.answerPayThoughtConsumed || S.pendingAnswerMoneyThoughts.Contains("pay");
+            S.answerFineThoughtRecorded |= S.answerFineThoughtConsumed || S.pendingAnswerMoneyThoughts.Contains("fine");
+        }
+
+        /// <summary>Durably claim a thought before presenting it. A failed save leaves it pending and unheard.</summary>
+        public XgVoiceLine? TakeTeachingThought(bool visible, System.Func<bool> persist)
+        {
+            if (persist == null) return null;
+            int version = S.teachingThoughtVersion;
+            bool pay = S.answerPayThoughtConsumed, fine = S.answerFineThoughtConsumed;
+            bool payRecorded = S.answerPayThoughtRecorded, fineRecorded = S.answerFineThoughtRecorded;
+            bool intro = S.teachIntroSaid, third = S.teachThirdSaid, tree = S.teachTreeSaid, train = S.teachTrainSaid;
+            var pending = S.pendingAnswerMoneyThoughts == null ? null : new System.Collections.Generic.List<string>(S.pendingAnswerMoneyThoughts);
+            var thought = TakeTeachingThought(visible);
+            if (!thought.HasValue) return null;
+            bool saved = false;
+            try { saved = persist(); }
+            finally
+            {
+                if (!saved)
+                {
+                    S.teachingThoughtVersion = version;
+                    S.answerPayThoughtConsumed = pay; S.answerFineThoughtConsumed = fine;
+                    S.answerPayThoughtRecorded = payRecorded; S.answerFineThoughtRecorded = fineRecorded;
+                    S.teachIntroSaid = intro; S.teachThirdSaid = third; S.teachTreeSaid = tree; S.teachTrainSaid = train;
+                    S.pendingAnswerMoneyThoughts = pending;
+                }
+            }
+            return saved ? thought : null;
+        }
+
         /// <summary>Consume one thought only when the player can see the exe. Progress, not elapsed time, selects it.</summary>
         public XgVoiceLine? TakeTeachingThought(bool visible)
         {
             if (!visible) return null;
+            RepairTeachingThoughts();
             // Preserve the first-open introduction, then drain real settlement reactions before the third-answer line.
             if ((S.teachIntroSaid || !S.teachingFlow || TeachingAnswers >= 3 || S.stage != 1)
                 && S.pendingAnswerMoneyThoughts != null && S.pendingAnswerMoneyThoughts.Count > 0)
             {
                 string kind = S.pendingAnswerMoneyThoughts[0];
                 S.pendingAnswerMoneyThoughts.RemoveAt(0);
+                if (kind == "pay") S.answerPayThoughtConsumed = true;
+                else S.answerFineThoughtConsumed = true;
                 return kind == "pay"
                     ? new XgVoiceLine("我去，答题还能赚钱？", "Whoa, answering questions earns money?", 2.8f)
                     : new XgVoiceLine("我去，答错还会扣钱？", "Whoa, wrong answers cost money too?", 2.8f);

@@ -164,11 +164,10 @@
       "id": "zhongbao_intro",
       "app": "zhongbao",
       "trigger": {
-        "stageEnter": 3,
+        "stageEnter": 2,
         "afterStageCutscene": true,
         "delaySec": 10,
-        "minStage": 3,
-        "minDate": 20160617
+        "minStage": 2
       },
       "steps": [
         {
@@ -348,11 +347,11 @@
     {
       "id": "enterprise_intro",
       "trigger": {
-        "stageEnter": 4,
+        "stageEnter": 3,
         "requires": "appInstalled:zhongbao",
         "afterStageCutscene": true,
         "delaySec": 15,
-        "minStage": 4
+        "minStage": 3
       },
       "steps": [
         {

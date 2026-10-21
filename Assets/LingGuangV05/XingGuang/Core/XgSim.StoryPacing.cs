@@ -16,7 +16,7 @@ namespace LingGuangV05.XingGuang
         /// ¥ per second the 摆渡众包 orders pay once ability i has been learned (节奏重做 §2.4): the abilities raise a steady
         /// income instead of handing over one big sum, so each chapter's purchases take time to save up for.
         /// </summary>
-        public static readonly double[] CrowdTierIncome = { 0, 0, 16, 110, 125, 250, 280 };
+        public static readonly double[] CrowdTierIncome = { 0, 0, .1, .3, .6, 1, 1.5 };
         /// <summary>The one-off welcome payment of a new tier is this many seconds of the tier's income.</summary>
         public const double WelcomeSeconds = 120;
         /// <summary>The welcome payment of each ability (index = ability). Declared after <see cref="CrowdTierIncome"/> on purpose.</summary>
@@ -29,8 +29,13 @@ namespace LingGuangV05.XingGuang
             return g;
         }
 
-        /// <summary>¥ per second of the crowd-order tier reached (before relics; part of <see cref="IncomePerSecond"/>).</summary>
-        public double CrowdOrderIncome => CrowdTierIncome[Math.Max(0, Math.Min(AbilityCount, S.crowdTier))];
+        /// <summary>¥ per second of the crowd-order tier reached (before relics; part of <see cref="IncomePerSecond"/>). Nothing until 摆渡众包 is installed.</summary>
+        public double CrowdOrderIncome => DesktopAppInstalled(CrowdApp) ? CrowdTierIncome[Math.Max(0, Math.Min(AbilityCount, S.crowdTier))] : 0;
+
+        /// <summary>The 摆渡众包 client: its group link arrives once ability 2 is learned (zhongbao_intro); the tiers only pay once it is installed.</summary>
+        public const string CrowdApp = "zhongbao";
+        /// <summary>The crowd tier's share of <see cref="IncomePerSecond"/> (relics included), for the ledger's own row.</summary>
+        public double CrowdTierPay => CrowdOrderIncome * RelicIncomeFactor;
 
         // One clear route for a new player; every other architecture remains available in the tree.
         public XgNode NextStudyNode()
@@ -70,7 +75,8 @@ namespace LingGuangV05.XingGuang
 
         void PayAbilityResearch(IXgHost host)
         {
-            if (host == null) return;
+            // Tiers reached before the client is installed wait in fundedAbility and are paid, once each, on install.
+            if (host == null || !DesktopAppInstalled(CrowdApp)) return;
             int reached = AbilitiesCount;
             for (int i = Math.Max(2, S.fundedAbility + 1); i <= reached; i++)
             {
@@ -80,8 +86,8 @@ namespace LingGuangV05.XingGuang
                 host.Earn(amount);
                 S.totalIncome += amount;
                 S.fundedAbility = i;
-                Say(T("摆渡众包升级：它学会了「" + AbilityName(i, false) + "」，平台给你开了第 " + (i - 1) + " 档订单，每秒 ¥" + F(CrowdOrderIncome, "0") + "（原来 ¥" + F(before, "0") + "）。见面礼 +¥" + amount + "。钱按秒进账，攒够了再去科技升级。",
-                      "Bodu Crowd upgrade: it learned '" + AbilityName(i, true) + "', so the platform opened order tier " + (i - 1) + " for you: ¥" + F(CrowdOrderIncome, "0") + "/s (was ¥" + F(before, "0") + "/s). Welcome bonus +¥" + amount + ". The money comes in by the second; save up, then upgrade the model."));
+                Say(T("摆渡众包升级：它学会了「" + AbilityName(i, false) + "」，平台给你开了第 " + (i - 1) + " 档订单，每秒 ¥" + F(CrowdOrderIncome, "0.##") + "（原来 ¥" + F(before, "0.##") + "）。见面礼 +¥" + amount + "。钱按秒进账，攒够了再去科技升级。",
+                      "Bodu Crowd upgrade: it learned '" + AbilityName(i, true) + "', so the platform opened order tier " + (i - 1) + " for you: ¥" + F(CrowdOrderIncome, "0.##") + "/s (was ¥" + F(before, "0.##") + "/s). Welcome bonus +¥" + amount + ". The money comes in by the second; save up, then upgrade the model."));
             }
         }
     }

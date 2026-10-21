@@ -107,8 +107,9 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         public void OnPointerDown(PointerEventData e)
         {
-            if (e.button != PointerEventData.InputButton.Left) return;
+            if (e.button != PointerEventData.InputButton.Left && e.button != PointerEventData.InputButton.Right) return;
             dragged = false;
+            if (e.button != PointerEventData.InputButton.Left) return;
             if (!MotionAllowed) return;
             StopSquareMotion(); pressedPointer = e.pointerId;
             page.NoteNodeMotion();
@@ -124,7 +125,12 @@ namespace LingGuangV05.Desktop.XingGuang
             page.NoteNodeMotion();
         }
         public void OnCancel(BaseEventData e) { dragged = true; StopSquareMotion(); }
-        public void OnPointerClick(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left && !dragged && !e.dragging) page.Click(this); }
+        public void OnPointerClick(PointerEventData e)
+        {
+            if (e.button == PointerEventData.InputButton.Left && !dragged && !e.dragging) page.Click(this);
+            // Right click opens the node's 科普 topic directly, so a square that still levels up keeps both.
+            else if (e.button == PointerEventData.InputButton.Right && !dragged && !e.dragging) page.OpenTopic(this);
+        }
         public void OnBeginDrag(PointerEventData e) { dragged = true; signal?.Show(false); StopSquareMotion(); page.Pan.OnBeginDrag(e); }
         public void OnDrag(PointerEventData e) => page.Pan.OnDrag(e);
         public void OnEndDrag(PointerEventData e) => page.Pan.OnEndDrag(e);
@@ -139,10 +145,11 @@ namespace LingGuangV05.Desktop.XingGuang
     {
         public XgTechNodeView node;
         bool dragged;
-        public void OnPointerDown(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left) dragged = false; }
+        public void OnPointerDown(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left || e.button == PointerEventData.InputButton.Right) dragged = false; }
         public void OnPointerClick(PointerEventData e)
         {
             if (e.button == PointerEventData.InputButton.Left && !dragged && !e.dragging) node.page.Click(node, true);
+            else if (e.button == PointerEventData.InputButton.Right && !dragged && !e.dragging) node.page.OpenTopic(node);
         }
         public void OnBeginDrag(PointerEventData e) { dragged = true; node.OnBeginDrag(e); }
         public void OnDrag(PointerEventData e) => node.OnDrag(e);
@@ -233,7 +240,7 @@ namespace LingGuangV05.Desktop.XingGuang
         XgBtn tipClose;
 
         RectTransform viewport, content, bandLayer, linkLayer, nodeLayer, miniMap, frontierWall, eraCard, tooltip;
-        TMP_Text header, tipName, tipLevel, tipBody, tipCost, tipGlyph, eraTitle, eraBody;
+        TMP_Text header, tipName, tipLevel, tipBody, tipCost, tipGlyph, tipTopicHint, eraTitle, eraBody;
         XgBtn eraDismiss;
         Image tipCostBar;
         XgTechIcon tipIcon;
@@ -645,6 +652,8 @@ namespace LingGuangV05.Desktop.XingGuang
             tipCostLayout.preferredHeight = 28;
             tipCost = ui.Text(Rect("Cost", bar, Vector2.zero, Vector2.one, new Vector2(8, 0), new Vector2(-8, 0)), "", 16, Color.white, TextAlignmentOptions.Center);
             tipCost.fontStyle = FontStyles.Bold; tipCost.textWrappingMode = TextWrappingModes.Normal;
+            tipTopicHint = ui.Text(Rect("TopicHint", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero), "", 12, XgDark.Muted, TextAlignmentOptions.Center);
+            tipTopicHint.raycastTarget = false;
             var closeRow = Rect("CloseExplanation", tipContent, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
             closeRow.gameObject.AddComponent<LayoutElement>().preferredHeight = 28;
             tipClose = ui.Button(closeRow, T("关闭", "Close"), HideTooltip, 12);
@@ -900,8 +909,8 @@ namespace LingGuangV05.Desktop.XingGuang
 
         public void PositionOwnedHint(XgTechNodeView node, PointerEventData pointer)
         {
-            bool show = node != null && hovered == node && !Pan.Moving && XgTechTree.Level(node.entry, Sim) > 0;
-            if (!show) { SetOwnedHintVisible(false); return; }
+            string hint = node != null && hovered == node && !Pan.Moving ? OwnedHint(node) : null;
+            if (hint == null) { SetOwnedHintVisible(false); return; }
             if (ownedPointerHint == null)
             {
                 ownedPointerHintFrame = Rect("Owned knowledge pointer hint", root, root.pivot, root.pivot, Vector2.zero, Vector2.zero);
@@ -916,7 +925,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 ownedPointerHint.textWrappingMode = TextWrappingModes.NoWrap;
                 ownedPointerHint.enableAutoSizing = true; ownedPointerHint.fontSizeMin = 9; ownedPointerHint.fontSizeMax = 12;
             }
-            ownedPointerHint.text = T("再点击一次进入对应科普界面", "Click again to open this topic");
+            ownedPointerHint.text = hint;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(root, pointer.position, pointer.enterEventCamera, out var point))
             {
                 var bounds = root.rect;
@@ -981,9 +990,11 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (v == null || !built || Pan.Moving || !v.gameObject.activeInHierarchy) return;
             var e = v.entry;
-            if (XgTechTree.Level(e, Sim) > 0 && (!purchaseUpgrade || XgTechTree.Next(e, Sim) == null))
+            // An owned square that still levels up buys its next level; only a maxed square opens its 科普 topic
+            // (right click opens the topic at any level, see OpenTopic).
+            if (XgTechTree.Level(e, Sim) > 0 && XgTechTree.Next(e, Sim) == null)
             {
-                OpenNodeKnowledge(e.First);
+                if (HasTopic(v)) OpenNodeKnowledge(e.First);
                 Fx.Play(XgJuice.Sfx.Id.Click);
                 return;
             }
@@ -1002,6 +1013,26 @@ namespace LingGuangV05.Desktop.XingGuang
             // Not for sale now: a sideways shake and a thud (a click on a maxed square only clicks).
             if (status != XgSim.NodeStatus.Owned) v.RejectMotion();
             Fx.Play(status == XgSim.NodeStatus.Owned ? XgJuice.Sfx.Id.Click : XgJuice.Sfx.Id.Thud, 1.2f, .6f);
+        }
+
+        bool HasTopic(XgTechNodeView v) => v?.entry?.First != null && XgTechTreeCopy.KnowledgeFor(v.entry.First, Sim) != null;
+
+        /// <summary>Right click on a square: its 科普 topic, if it has one (a thud otherwise).</summary>
+        public void OpenTopic(XgTechNodeView v)
+        {
+            if (v == null || !built || Pan.Moving || !v.gameObject.activeInHierarchy) return;
+            if (!HasTopic(v)) { Fx.Play(XgJuice.Sfx.Id.Thud, 1.2f, .6f); return; }
+            OpenNodeKnowledge(v.entry.First);
+            Fx.Play(XgJuice.Sfx.Id.Click);
+        }
+
+        /// <summary>The pointer note on an owned square, or null: what a click does now, and where its topic is.</summary>
+        string OwnedHint(XgTechNodeView v)
+        {
+            if (XgTechTree.Level(v.entry, Sim) <= 0) return null;
+            bool topic = HasTopic(v);
+            if (XgTechTree.Next(v.entry, Sim) != null) return topic ? T("点击升级 · 右键看科普", "Click to upgrade · right-click for the topic") : null;
+            return topic ? T("再点击一次进入对应科普界面", "Click again to open this topic") : null;
         }
 
         public void ToggleExplanation(XgTechNodeView v)
@@ -1219,6 +1250,9 @@ namespace LingGuangV05.Desktop.XingGuang
         void FillTooltip(XgTechNodeView v)
         {
             tipLayoutDirty = true;
+            bool hasTopic = HasTopic(v);
+            tipTopicHint.gameObject.SetActive(hasTopic);
+            tipTopicHint.text = hasTopic ? T("右键看科普", "Right-click for this topic") : "";
             tipClose.Set(T("关闭", "Close"), true);
             var e = v.entry; var node = e.First;
             var status = XgTechTree.Status(e, Sim, Host);
@@ -1297,7 +1331,7 @@ namespace LingGuangV05.Desktop.XingGuang
             tipBody.text = body.ToString();
             if (lit) SetCost(Maxed, max > 1 ? T("已满级 · MAX", "MAX") : "✓ " + T("已拥有", "Owned"));
             else if (double.IsInfinity(cost)) SetCost(LockedGrey, T("未解锁", "Locked"));
-            else if (status == XgSim.NodeStatus.Buyable) SetCost(Color.Lerp(Affordable, Color.black, .35f), "¥ " + Money(cost) + "  ·  " + (level > 0 ? T("点击价格升级", "click price to upgrade") : T("点击节点购买", "click node to buy")));
+            else if (status == XgSim.NodeStatus.Buyable) SetCost(Color.Lerp(Affordable, Color.black, .35f), "¥ " + Money(cost) + "  ·  " + (level > 0 ? T("点击节点升级", "click node to upgrade") : T("点击节点购买", "click node to buy")));
             else if (status == XgSim.NodeStatus.TooExpensive) SetCost(Color.Lerp(Unaffordable, Color.black, .3f), "¥ " + Money(cost) + "  ·  " + T("还差 ¥", "short ¥") + Money(cost - Host.Money));
             else SetCost(Color.Lerp(LockedGrey, Color.black, .3f), "¥ " + Money(cost) + "  ·  " + T("未解锁", "locked"));
         }

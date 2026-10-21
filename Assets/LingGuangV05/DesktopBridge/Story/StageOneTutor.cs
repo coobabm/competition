@@ -27,6 +27,7 @@ namespace LingGuangV05.Desktop.Story
         string watching;
         float since, nextCheck;
         XgTutorLesson replyPending;
+        XgSim replyOwner;
         float replyAt;
 
         /// <summary>Adds the tutor next to the story presenter (once). Call from its Start().</summary>
@@ -46,13 +47,16 @@ namespace LingGuangV05.Desktop.Story
 
         void Update()
         {
+            var currentLab=LingGuangV05.Desktop.XingGuang.XingGuangController.Instance;
+            if(replyPending!=null&&(currentLab==null||!ReferenceEquals(currentLab.Sim,replyOwner))) { replyPending=null;replyOwner=null; }
             if (replyPending != null && Time.unscaledTime >= replyAt && !Busy())
             {
-                var lesson = replyPending; replyPending = null;
+                var lesson = replyPending; var owner = replyOwner; replyPending = null;
                 // 老周 now teaches in YY, with answers to pick (LaoZhouYY); the forum DM is the fallback.
                 if (!LaoZhouYY.Lesson(lesson))
                 {
-                    InnerVoice.Say(lesson.zhouZh, lesson.zhouEn, 4f);
+                    InnerVoice.Say(lesson.zhouZh, lesson.zhouEn, 4f,
+                        valid: () => currentLab != null && ReferenceEquals(currentLab.Sim,owner) && currentLab.BoundTo(currentLab.runtime.Sim));
                 }
             }
             if (Time.unscaledTime < nextCheck) return;
@@ -63,14 +67,20 @@ namespace LingGuangV05.Desktop.Story
             var lab = LingGuangV05.Desktop.XingGuang.XingGuangController.Instance;
             if (sim != null && lab != null && ReferenceEquals(lab.Sim, sim) && !Busy())
             {
+                if (!lab.BoundTo(runtime.Sim) || !runtime.PersistNarration(sim)) return;
                 int thoughtVersion = sim.S.teachingThoughtVersion;
-                var thought = sim.TakeTeachingThought(lab.View != null && lab.View.Visible);
+                var thought = sim.TakeTeachingThought(lab.View != null && lab.View.Visible, () =>
+                {
+                    runtime.MarkDirty();
+                    if (!ReferenceEquals(lab.Sim, sim) || !lab.BoundTo(runtime.Sim) || !runtime.PersistNarration(sim)) return false;
+                    lab.SaveNow(); // The independent receipt already survives an older snapshot or a main-save failure.
+                    return true;
+                });
                 if (thoughtVersion != sim.S.teachingThoughtVersion) runtime.MarkDirty();
                 if (thought.HasValue)
                 {
                     var line = thought.Value;
-                    InnerVoice.Say(line.zh, line.en, line.seconds);
-                    runtime.MarkDirty();
+                    InnerVoice.Say(line.zh, line.en, line.seconds, valid: () => ReferenceEquals(lab.Sim,sim) && lab.BoundTo(runtime.Sim));
                     return;
                 }
             }
@@ -78,12 +88,16 @@ namespace LingGuangV05.Desktop.Story
             string id = step == null ? null : step.id + "|" + step.target;
             if (id != watching) { watching = id; since = Time.unscaledTime; }
             // The relic pick that follows a learned ability covers the screen: the lesson waits for it.
-            if (sim == null || step == null || replyPending != null || Time.unscaledTime - since < SettleSeconds || Busy() || sim.RelicPickPending) return;
+            if (sim == null || lab == null || !ReferenceEquals(lab.Sim,sim) || !lab.BoundTo(runtime.Sim) || step == null || replyPending != null || Time.unscaledTime - since < SettleSeconds || Busy() || sim.RelicPickPending) return;
             var due = sim.TutorDue(step);
             if (due == null) return;
             sim.MarkTutor(due);
-            InnerVoice.Say(due.innerZh, due.innerEn);
+            if (!runtime.PersistNarration(sim)) { sim.S.tutorSeen.Remove(due.id); return; }
+            runtime.MarkDirty();
+            lab.SaveNow();
+            InnerVoice.Say(due.innerZh, due.innerEn, valid: () => ReferenceEquals(lab.Sim,sim) && lab.BoundTo(runtime.Sim));
             replyPending = due;
+            replyOwner = sim;
             replyAt = Time.unscaledTime + ReplySeconds;
         }
     }

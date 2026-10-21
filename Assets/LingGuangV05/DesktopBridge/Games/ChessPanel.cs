@@ -40,8 +40,8 @@ namespace LingGuangV05.Desktop.Games
         public override string Id => "chess";
         public override string Title => Lang.T("国际象棋");
         public override string Blurb => AiPlays
-            ? T("和" + AiName + "下国际象棋。它一边下一边解说；角落里还留着深蓝那行字。", "Chess against " + AiName + ". It comments as it plays; Deep Blue's line is still in the corner.")
-            : Lang.T("和电脑下国际象棋。它是 1997 年「深蓝」那一套：不学习，只往后硬算几步。");
+            ? T("和" + AiName + "下国际象棋。将死对方的王就赢。第 6 阶段起，它偶尔会聊聊棋局。", "Chess against " + AiName + ". Checkmate to win. From stage 6 it occasionally comments on the game.")
+            : T("电脑会向后推算几步，不会学习。将死对方的王就赢。", "Across the board is Deep Blue's 1997 recipe: no learning, it just searches a few moves ahead. Checkmate the king to win.");
         string Opponent => AiPlays ? AiName : Lang.T("电脑");
         int Depth => AiPlays ? (Lab.BoardLogicLevel>=3?3:1) : 3;
         public override string Glyph => "王";
