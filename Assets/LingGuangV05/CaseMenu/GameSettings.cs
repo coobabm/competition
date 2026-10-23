@@ -1,4 +1,5 @@
 using LingGuangV05.Desktop.XingGuang;
+using LingGuangV05.XingGuang;
 using LingGuangV05.Runtime;
 using UnityEngine;
 
@@ -47,6 +48,23 @@ namespace LingGuangV05.CaseMenu
             if (owner == null) return;
             if (!owner.SetLifeEventIntervalMode(mode))
                 hud.ShowSettingsError(GameText.T("事件设置已修改，但存档未保存。", "Event setting changed, but the save could not be written."));
+        }
+
+        /// <summary>-1 no game loaded, 0 locked (automatic answering not unlocked), 1 off, 2 on.</summary>
+        public static int CurrentOfflineIncome(ChapterOneRuntime runtime)
+        {
+            var owner = LifeSettingsOwner(runtime);
+            if (owner == null || owner.runtime == null || owner.runtime.Sim == null || owner.runtime.Sim.InPrologue) return -1;
+            if (!XgIdleRules.Unlocked(owner.Sim)) return 0;
+            return XgOfflineIncome.Enabled(owner) ? 2 : 1;
+        }
+
+        public static void SetOfflineIncome(ChapterOneRuntime runtime, bool enabled, CaseMenuHud hud)
+        {
+            var owner = LifeSettingsOwner(runtime);
+            if (owner == null) return;
+            if (!XgOfflineIncome.SetEnabled(owner, enabled))
+                hud.ShowSettingsError(GameText.T("离线收益设置未能保存，已保持原设置。", "Offline income setting could not be saved; the previous setting is kept."));
         }
     }
 }

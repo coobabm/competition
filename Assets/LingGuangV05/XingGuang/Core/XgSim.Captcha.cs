@@ -35,7 +35,9 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public const int SpeedWindow = 60, CaptchaLength = 4, CaptchaFailsToReport = 3;
-        public const double SpeedLimit = 1.5, SuspicionFillSeconds = 150, SuspicionDrainSeconds = 120;
+        public const double SpeedLimitBase = 1.5, SpeedLimitPerAutoLevel = .3, SuspicionFillSeconds = 150, SuspicionDrainSeconds = 120;
+        /// <summary>Labels a second the platform tolerates: 1.5, +0.3 per 自动答题 level so buying speed is not self-defeating.</summary>
+        public double SpeedLimit => SpeedLimitBase + SpeedLimitPerAutoLevel * GlobalAutoLevel;
         public const double CaptchaGap = 360, CaptchaTimeout = 30, CaptchaPause = 120;
         public const double CaptchaCreditPass = 1, CaptchaCreditFail = 3;
         public const double AutofillMinDelay = 3, AutofillMaxDelay = 6, AutofillFlagChance = .08, AutofillFlagCredit = 10;

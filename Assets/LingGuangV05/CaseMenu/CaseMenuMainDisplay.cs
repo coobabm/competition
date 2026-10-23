@@ -22,7 +22,7 @@ namespace LingGuangV05.CaseMenu
     [DisallowMultipleComponent]
     public sealed class CaseMenuMainDisplay : MonoBehaviour
     {
-        public const float BootDuration = 4.2f;
+        public const float BootDuration = 3f; // 4.2 s before the 2026-10-22 opening pace (玩家反馈 F1); the boot test needs ≥ 3 s
         public bool IsReady { get; private set; }
         public string Error { get; private set; }
         public bool HasEnteredDesktop { get; private set; }
@@ -50,6 +50,8 @@ namespace LingGuangV05.CaseMenu
         Coroutine powerRoutine;
         CaseMenuBootScreen bootScreen;
         EnvironmentSnapshot environment;
+        EventSystem menuEvents;
+        AsyncOperation activationGate;
 
         public IEnumerator Preload(Camera menuCamera, Transform displayRig, GameObject previewMonitor)
         {
@@ -78,8 +80,22 @@ namespace LingGuangV05.CaseMenu
             catch (Exception exception) { Error = "提前载入桌面失败：" + exception.Message; }
             if (operation == null)
             { Unsubscribe(); loading = false; yield break; }
+            // Main's own EventSystem enables while the scene activates; with the menu's still enabled that logs
+            // "There can be only one active Event System". Stand the menu's aside for the activation only:
+            // Configure (sceneLoaded, same frame) switches Main's off, then the menu's comes back.
+            // The gate is held only until the data is loaded and is released by DisposeSession/OnDisable too.
+            activationGate = operation; operation.allowSceneActivation = false;
+            while (operation.progress < .9f && activationGate != null) yield return null;
+            if (activationGate != null)
+            {
+                menuEvents = EventSystem.current;
+                if (menuEvents != null && menuEvents.gameObject.scene == gameObject.scene) menuEvents.enabled = false;
+                else menuEvents = null;
+                ReleaseActivationGate();
+            }
             while (!operation.isDone) yield return null;
             Unsubscribe();
+            RestoreMenuEvents();
             if (!IsReady && string.IsNullOrEmpty(Error))
             {
                 main = SceneManager.GetSceneByPath(MainSceneEntry.ScenePath);
@@ -91,7 +107,21 @@ namespace LingGuangV05.CaseMenu
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.path == MainSceneEntry.ScenePath) Configure(scene);
+            if (scene.path != MainSceneEntry.ScenePath) return;
+            Configure(scene);
+            RestoreMenuEvents();
+        }
+
+        void ReleaseActivationGate()
+        {
+            if (activationGate != null) activationGate.allowSceneActivation = true;
+            activationGate = null;
+        }
+
+        void RestoreMenuEvents()
+        {
+            if (menuEvents != null) menuEvents.enabled = true;
+            menuEvents = null;
         }
 
         void Configure(Scene scene)
@@ -164,9 +194,8 @@ namespace LingGuangV05.CaseMenu
                     lampOnEmission = lampProperties.GetColor("_EmissionColor");
                 }
                 screenStateCaptured = true;
-                // The title composition previews the paused desktop on the physical LCD.
-                // Input and gameplay hosts remain suspended until the actual power-on flow.
-                ApplyVisualPower(1);
+                // The preloaded desktop stays physically dark until the player presses power (CaseMenuPlayQa).
+                ApplyVisualPower(0);
                 bootScreen = gameObject.AddComponent<CaseMenuBootScreen>();
                 var owner = GetComponent<CaseMenuController>();
                 bootScreen.Build(lcd.display.rectTransform, owner != null ? owner.font : TMPro.TMP_Settings.defaultFontAsset);
@@ -284,8 +313,6 @@ namespace LingGuangV05.CaseMenu
             if (!IsReady || IsScreenPowered || !isActiveAndEnabled) return;
             IsScreenPowered = true;
             IsBootComplete = false; BootProgress = 0;
-            // Leave the title preview and begin the existing firmware/backlight sequence.
-            ApplyVisualPower(0);
             if (bootScreen != null) bootScreen.Show();
             powerRoutine = StartCoroutine(WarmScreen());
         }
@@ -324,10 +351,12 @@ namespace LingGuangV05.CaseMenu
         public void DisposeSession()
         {
             Unsubscribe();
-            // Native scene loading is not cancellable. No activation gate is held by this bridge.
+            // Native scene loading is not cancellable. Never leave the EventSystem hand-off gate held.
+            ReleaseActivationGate();
             if (IsReady && !HasEnteredDesktop) EnterDesktop();
         }
-        void OnDestroy() { Unsubscribe(); }
+        void OnDisable() { ReleaseActivationGate(); RestoreMenuEvents(); }
+        void OnDestroy() { Unsubscribe(); ReleaseActivationGate(); RestoreMenuEvents(); }
         void Unsubscribe()
         {
             if (!subscribed) return;

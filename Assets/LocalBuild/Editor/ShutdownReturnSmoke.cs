@@ -384,18 +384,25 @@ public static class ShutdownReturnSmoke
         using(GameText.Bind(()=>cycle==0?"zh-CN":GameText.English))
         {
             yield return ClickTitle(find("ReadArchives"));Check(hud.IsArchiveOpen,"actual title pointer opens archive modal");
-            Canvas.ForceUpdateCanvases();var card=(RectTransform)find("Archive2").transform.parent;
-            for(int slot=2;slot<=6;slot++)
+            // One list of the saves that exist: the system save (slot 1) first, then the manual saves on disk; no empty slots.
+            Canvas.ForceUpdateCanvases();
+            var rows=hud.GetComponentsInChildren<Button>(true).Where(b=>b.gameObject.activeInHierarchy&&b.name.StartsWith("Archive",StringComparison.Ordinal)&&int.TryParse(b.name.Substring(7),out _)).ToList();
+            Check(rows.Count>0&&rows[0].name=="Archive1","system save is the first archive row");
+            for(int slot=1;slot<=ChapterOneRuntime.ManualArchiveLimit+1;slot++)
+            {var info=rt.DescribeArchiveCard(slot);Check(rows.Any(b=>b.name=="Archive"+slot)==(info.exists||info.pendingNewGame),"archive slot "+slot+" is listed only when it exists");}
+            // Rows sit flush in a scrolling list, so containment is checked against the modal card, edges inclusive.
+            Func<Button,RectTransform> modal=b=>b.GetComponentsInParent<RectTransform>(true).First(t=>t.name=="ArchiveCard");
+            Func<RectTransform,Vector3,bool> inside=(c,world)=>{var l=c.InverseTransformPoint(world);var r=c.rect;return l.x>=r.xMin-.5f&&l.x<=r.xMax+.5f&&l.y>=r.yMin-.5f&&l.y<=r.yMax+.5f;};
+            foreach(var button in rows)
             {
-                var button=find("Archive"+slot);var bounds=new Vector3[4];((RectTransform)button.transform).GetWorldCorners(bounds);
-                foreach(var world in bounds){var local=card.InverseTransformPoint(world);Check(card.rect.Contains(local),"archive row "+slot+" stays inside modal");}
-                Check(button.navigation.mode==Navigation.Mode.Explicit&&button.navigation.selectOnDown!=null,"archive row "+slot+" has keyboard navigation");
+                var card=modal(button);var bounds=new Vector3[4];((RectTransform)button.transform).GetWorldCorners(bounds);
+                foreach(var world in bounds)Check(inside(card,world),"archive row "+button.name+" stays inside modal");
+                Check(button.navigation.mode==Navigation.Mode.Explicit&&button.navigation.selectOnDown!=null,"archive row "+button.name+" has keyboard navigation");
             }
             Check(menu.HitButton(PowerPoint(menu))==null,"archive modal blocks physical controls");
-            yield return ClickTitle(find("ArchivePage"));
             var autoBounds=new Vector3[4];((RectTransform)find("Archive1").transform).GetWorldCorners(autoBounds);
-            card=(RectTransform)find("Archive1").transform.parent;
-            foreach(var world in autoBounds)Check(card.rect.Contains(card.InverseTransformPoint(world)),"autosave row stays inside last page modal");
+            var autoCard=modal(find("Archive1"));
+            foreach(var world in autoBounds)Check(inside(autoCard,world),"autosave row stays inside the archive modal");
             yield return ClickTitle(find("Archive1"));Check(!menu.IsTransitioning&&find("LoadSelected").interactable,"real slot selection waits for confirm");
             yield return Shot(cycle+"-01b-archives-"+(cycle==0?"zh":"en"));
             yield return ClickTitle(find("CloseArchives"));Check(!hud.IsArchiveOpen&&!menu.IsTransitioning,"actual back closes without starting");
@@ -427,6 +434,16 @@ public static class ShutdownReturnSmoke
             + ", added=" + mouse.added + ", enabled=" + mouse.enabled + ", pressed=" + mouse.leftButton.isPressed
             + ", focus=" + Application.isFocused + ")");
         InputSystem.QueueStateEvent(mouse, new MouseState { position = point }); yield return null;
+        // With a save on disk the power key first shows the save list: the player picks the system save, loads it, powers on.
+        var hud = menu.GetComponent<CaseMenuHud>();
+        if (!menu.IsTransitioning && hud != null && hud.IsArchiveOpen)
+        {
+            Func<string, Button> find = name => hud.GetComponentsInChildren<Button>(true).Single(b => b.name == name && b.gameObject.activeInHierarchy);
+            Check(menu.TransitionCount == 0, "power key with a save opens the save list before any entry");
+            yield return new WaitForSecondsRealtime(.6f); // the list fades in; its rows take pointer input once rendered
+            yield return ClickTitle(find("Archive1")); yield return ClickTitle(find("LoadSelected")); yield return ClickTitle(find("CloseArchives"));
+            yield return null;
+        }
         Require(menu.IsTransitioning, "Real input release starts entry");
     }
 

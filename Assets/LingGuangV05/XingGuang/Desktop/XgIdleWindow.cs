@@ -20,16 +20,18 @@ namespace LingGuangV05.Desktop.XingGuang
     public sealed class XgIdleWindow : MonoBehaviour
     {
         public static bool IsCompact { get; private set; }
+        // Notification-sized title monitor (design v3, second visual revision): one size, no Standard/Mini switch.
+        public static readonly Vector2 WindowSize = new Vector2(256,148);
         XingGuangController owner;
         CaseMenuController menu;
         XgSim bound;
         XgUi ui;
-        XgBtn entry, miniEntry, pause, review, offline, sizeToggle, more, optionsBack, optionsRestore, reviewTasks;
-        RectTransform surface, monitor, options, face, wallet, entryMenu, entryHost;
-        TMP_Text heading, state, metricLabel, details, explanation;
-        bool mini;
-        public bool Mini => mini;
-        public static Vector2 WindowSize(bool small) => small ? new Vector2(360,280) : new Vector2(560,430);
+        XgBtn entry, pause, review, restore, more, pin, quit;
+        RectTransform surface, monitor, options, face, wallet, entryHost;
+        TMP_Text heading, rate;
+        Image dot;
+        bool topmost;
+        float quitArmed=-10;
         TMP_Text[] oldDigits, newDigits;
         XgJuice fx, entryFx;
         double displayed, incomeStart, lastIncome;
@@ -40,7 +42,8 @@ namespace LingGuangV05.Desktop.XingGuang
         bool compact;
         int previousFrameRate, previousVsync;
         string digits = "";
-        readonly Color green = new Color32(59,243,138,255);
+        readonly Color green = new Color32(59,243,138,255), stoppedInk = new Color32(146,182,164,255);
+        readonly Color runningDot = new Color32(137,216,184,255), pausedDot = new Color32(140,155,171,255), amberDot = new Color32(230,199,136,255);
         public static XgIdleWindow Install(XingGuangController controller)
         {
             var result=controller.GetComponent<XgIdleWindow>()??controller.gameObject.AddComponent<XgIdleWindow>();
@@ -63,9 +66,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     else BindEntryLayer(PrologueDirector.Desk.layer);
                 }
                 if(entryHost!=null)entryHost.gameObject.SetActive(Ready&&!compact);
-                if(entryMenu!=null&&(!Ready||compact))entryMenu.gameObject.SetActive(false);
                 if(!Ready || bound!=owner.Sim){Restore();bound=owner.Sim;}
-                if(miniEntry?.rt!=null)miniEntry.label.text=T("迷你","Mini");
             }
             if(!compact)return;
             if(!Ready){Restore();return;}
@@ -74,18 +75,25 @@ namespace LingGuangV05.Desktop.XingGuang
             if(Time.unscaledTime>=nextStatus)
             {
             nextStatus=Time.unscaledTime+.25f;
-            bool paused=owner.Sim.AutoPaused;
-            double rate=XgIdleRules.IncomeRate(owner.Sim,owner.Host);
-            heading.text=owner.Sim.AiDisplayName+" · "+(paused?T("已暂停","Paused"):rate>0?T("努力赚钱中","Earning money"):T("等待处理","Needs attention"));
+            var sim=owner.Sim;
+            bool paused=sim.AutoPaused, full=sim.ReviewFull;
+            // Income that still flows beside a full inbox stays "earning"; review only shows as the block when it stops income.
+            bool earning=!paused&&XgIdleRules.IncomeRate(sim,owner.Host)>0;
+            heading.text=sim.AiDisplayName+" · "+(earning?T("努力赚钱中","Earning money"):paused?T("已暂停","Paused"):BlockReason(sim,full));
+            dot.color=earning?runningDot:paused?pausedDot:amberDot;
             double recentTotal=0;foreach(double value in recentIncome)recentTotal+=value;
-            state.text=paused?T("收益已暂停 · ¥0/秒","Paused · ¥0/s"):rate>0?(recentIncome.Count<10?T("本次收入 · 速率统计中","Session income · measuring rate"):T("近10秒均值 ¥","10s average ¥")+(recentTotal/10).ToString("0.00")+T("/秒","/s")):owner.Sim.ReviewFull?T("复核已满 · 点击处理","Review full · open review"):T("暂未满足自动收益条件","Automation currently unavailable");
-            pause.label.text=paused?T("继续","Resume"):T("暂停","Pause");
-            review.label.text=T("返回游戏","Return to game");
-            metricLabel.text=T("本次挂机收入","THIS SESSION");
-            int pendingReview=0;foreach(var desk in XgCatalog.Desks)pendingReview+=owner.Sim.ReviewCount(desk.id);
-            details.text=T("基础自动答题","Automatic answering")+"  ·  "+T("待复核 ","Pending review ")+pendingReview;
-            sizeToggle.label.text=mini?T("标准","Standard"):T("迷你","Mini");
-            if(options!=null&&options.gameObject.activeSelf)offline.label.text=XgOfflineIncome.Enabled(owner)?T("离线收益：开","Offline earnings: On"):T("离线收益：关","Offline earnings: Off");
+            string perSecond=T("/秒","/s");
+            rate.text=T("近10秒平均 ","10s average ")+(!earning?"<color=#52DC94>¥0.00"+perSecond+"</color>":recentIncome.Count<10?T("统计中","measuring"):"<color=#52DC94>¥"+(recentTotal/10).ToString("0.00",CultureInfo.InvariantCulture)+perSecond+"</color>");
+            Color ink=earning?green:stoppedInk;
+            for(int i=0;i<newDigits.Length;i++)oldDigits[i].color=newDigits[i].color=ink;
+            pause.label.text=paused?T("继续挂机","Resume"):T("暂停挂机","Pause");
+            int pendingReview=0;if(full)foreach(var desk in XgCatalog.Desks)pendingReview+=sim.ReviewCount(desk.id);
+            review.label.text=full?T("处理复核 ","Review ")+pendingReview:T("返回游戏","Return to game");
+            if(options.gameObject.activeSelf)
+            {
+                pin.label.text=topmost?T("置顶：开","Always on top: On"):T("置顶：关","Always on top: Off");
+                quit.label.text=Time.unscaledTime-quitArmed<3?T("再点一次退出","Click again to quit"):T("退出游戏","Quit game");
+            }
             }
             if(Time.unscaledTime>=nextDigit)
             {
@@ -104,6 +112,20 @@ namespace LingGuangV05.Desktop.XingGuang
                 bool changed=oldDigits[i].text!=newDigits[i].text;
                 oldDigits[i].rectTransform.anchoredPosition=new Vector2(0,changed?eased*rollHeight:rollHeight);
                 newDigits[i].rectTransform.anchoredPosition=new Vector2(0,changed?(eased-1)*rollHeight:0);
+            }
+        }
+        // A short, specific reason in place of a generic "needs attention".
+        string BlockReason(XgSim sim,bool reviewFull)
+        {
+            var global=sim.AutoGlobalState(owner.Host);
+            if(reviewFull&&(global==XgAutoDeskState.InboxFull||global==XgAutoDeskState.Running))return T("等待复核","Waiting for review");
+            switch(global)
+            {
+                case XgAutoDeskState.Held: return sim.QualityFrozen?T("账号冻结中","Account frozen"):sim.CaptchaPending?T("等待验证码","Captcha needed"):T("验证暂停中","Captcha pause");
+                case XgAutoDeskState.Project: return T("研发占用显卡","Research has the GPU");
+                case XgAutoDeskState.NoPower: string blocker=owner.Host?.Blocker;return !string.IsNullOrEmpty(blocker)&&blocker.Length<=8?blocker:T("显卡没在算","GPU not running");
+                case XgAutoDeskState.Off: return T("自动答题未开","Auto-answer off");
+                default: return T("没有可自动的题桌","No eligible desk");
             }
         }
         void Build()
@@ -128,13 +150,8 @@ namespace LingGuangV05.Desktop.XingGuang
             entryFx=entryHost.gameObject.AddComponent<XgJuice>();
             XgTaskbarUtilities.Attach(taskbar,entryHost);
             SyncFeedback();
-            entry=ui.Button(entryHost,"",()=>
-            {
-                if(!Ready)return;
-                Click();
-                if(!XgIdleRules.Unlocked(owner.Sim)){Enter();return;}
-                entryMenu.gameObject.SetActive(!entryMenu.gameObject.activeSelf);
-            },12);
+            // One window size: the tray glyph enters directly (locked: Enter focuses the technology node).
+            entry=ui.Button(entryHost,"",()=>{if(!Ready)return;Click();Enter();},12);
             entry.rt.name="Idle window entry";entry.image.color=new Color32(25,48,53,190);
             entry.label.gameObject.SetActive(false);
             entry.rt.anchorMin=Vector2.zero;entry.rt.anchorMax=Vector2.one;entry.rt.offsetMin=entry.rt.offsetMax=Vector2.zero;
@@ -143,12 +160,7 @@ namespace LingGuangV05.Desktop.XingGuang
             Panel(Rect("Stand glyph",entry.visual,Vector2.zero,Vector2.zero,new Vector2(14,6),new Vector2(18,11)),new Color32(197,216,219,255)).raycastTarget=false;
             RoundSurface(Panel(Rect("Foot glyph",entry.visual,Vector2.zero,Vector2.zero,new Vector2(10,4),new Vector2(22,7)),new Color32(197,216,219,255)),2);
             RoundSurface(Panel(Rect("Power glyph",entry.visual,Vector2.zero,Vector2.zero,new Vector2(22,11),new Vector2(25,14)),green),2);
-            UiTip.Add(entry.rt,()=>XgIdleRules.Unlocked(owner?.Sim)?T("挂机小窗 · 标准 / 迷你","Idle window · Standard / Mini"):T("挂机小窗 · 点击解锁自动答题","Idle window · Unlock automatic answering"));
-            entryMenu=Rect("Idle size menu",entry.rt,new Vector2(1,1),new Vector2(1,1),new Vector2(-190,8),new Vector2(0,104));
-            RoundSurface(Panel(entryMenu,new Color32(22,35,40,255)),8);
-            var standard=ui.Button(entryMenu,T("标准挂机窗口","Standard idle window"),()=>{SetMini(false);entryMenu.gameObject.SetActive(false);Enter();},13);PlaceBottomLeft(standard,8,52,174,36);
-            miniEntry=ui.Button(entryMenu,T("迷你","Mini"),()=>{SetMini(true);entryMenu.gameObject.SetActive(false);Enter();},13);PlaceBottomLeft(miniEntry,8,8,174,36);
-            entryMenu.gameObject.SetActive(false);
+            UiTip.Add(entry.rt,()=>XgIdleRules.Unlocked(owner?.Sim)?T("挂机小窗","Idle window"):T("挂机小窗 · 点击解锁自动答题","Idle window · Unlock automatic answering"));
         }
         void BindEntryLayer(RectTransform layer)
         {
@@ -162,9 +174,10 @@ namespace LingGuangV05.Desktop.XingGuang
             var go=new GameObject("Compact earning window",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler),typeof(GraphicRaycaster));
             go.transform.SetParent(transform,false);surface=(RectTransform)go.transform;
             var canvas=go.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=30000;
-            var scaler=go.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=WindowSize(mini);scaler.screenMatchMode=CanvasScaler.ScreenMatchMode.Expand;
+            var scaler=go.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=WindowSize;scaler.screenMatchMode=CanvasScaler.ScreenMatchMode.Expand;
             Panel(Rect("Backdrop",surface,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero),new Color32(12,17,20,255));
-            monitor=Rect("Title monitor",surface,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(-260,-200),new Vector2(260,200));
+            // Exactly the native window in a player; centred and whole inside a larger editor game view.
+            monitor=Rect("Title monitor",surface,new Vector2(.5f,.5f),new Vector2(.5f,.5f),-WindowSize/2,WindowSize/2);
             var shell=Panel(monitor,new Color32(234,224,201,255));RoundSurface(shell,12);
             var titleArt=Resources.Load<Texture2D>("LingGuangV05/Branding/IdleMonitor");
             if(titleArt!=null)
@@ -173,33 +186,35 @@ namespace LingGuangV05.Desktop.XingGuang
                 var art=Rect("Original title artwork",monitor,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero).gameObject.AddComponent<RawImage>();
                 art.texture=titleArt;art.raycastTarget=false;
             }
-            face=Rect("Screen",monitor,new Vector2(.066f,.20f),new Vector2(.935f,.91f),Vector2.zero,Vector2.zero);
-            RoundSurface(Panel(face,new Color32(8,24,20,255)),8);
-            heading=Text(face,"Heading",new Vector2(8,-22),new Vector2(-8,-3),12,new Color32(204,225,214,255));
+            // Screen opening of the prototype (16px sides, 12px top), ending just above the art's orange power light.
+            face=Rect("Screen",monitor,new Vector2(.0625f,.262f),new Vector2(.9375f,.919f),Vector2.zero,Vector2.zero);
+            RoundSurface(Panel(face,new Color32(3,22,21,255)),5);
+            var body=Panel(Rect("Screen body",face,Vector2.zero,Vector2.one,Vector2.zero,new Vector2(0,-21)),new Color32(12,42,35,255));RoundSurface(body,5);body.raycastTarget=false;
+            var bar=Rect("Top bar",face,new Vector2(0,1),Vector2.one,new Vector2(0,-21),Vector2.zero);
             var native=GetComponent<XgIdleNativeWindow>()??gameObject.AddComponent<XgIdleNativeWindow>();
-            heading.raycastTarget=true;heading.gameObject.AddComponent<XgIdleDragHandle>().Window=native;
-            wallet=Rect("Rolling wallet",face,new Vector2(0,1),Vector2.one,new Vector2(12,-142),new Vector2(-12,-68));
+            Panel(bar,Color.clear).gameObject.AddComponent<XgIdleDragHandle>().Window=native;
+            dot=Panel(Rect("Status dot",bar,new Vector2(0,.5f),new Vector2(0,.5f),new Vector2(6,-2.5f),new Vector2(11,2.5f)),runningDot);RoundSurface(dot,3);dot.raycastTarget=false;
+            heading=Text(bar,"Heading",new Vector2(15,-21),new Vector2(-46,0),9,new Color32(172,201,191,255));
+            restore=TopButton(bar,"↗",()=>{Click();Restore();},44,20);
+            UiTip.Add(restore.rt,()=>T("返回游戏","Return to game"));
+            more=TopButton(bar,"···",()=>{Click();quitArmed=-10;options.gameObject.SetActive(!options.gameObject.activeSelf);nextStatus=0;},23,22);
+            wallet=Rect("Rolling wallet",face,new Vector2(0,1),Vector2.one,new Vector2(9,-54),new Vector2(-9,-23));
             oldDigits=new TMP_Text[12];newDigits=new TMP_Text[12];
             for(int i=0;i<12;i++)
             {
                 var cell=Rect("Digit "+i,wallet,new Vector2(i/12f,0),new Vector2((i+1)/12f,1),Vector2.zero,Vector2.zero);cell.gameObject.AddComponent<RectMask2D>();
                 oldDigits[i]=Digit(cell,"Old");newDigits[i]=Digit(cell,"New");
             }
-            state=Text(face,"Status",new Vector2(8,-79),new Vector2(-8,-61),10,new Color32(139,167,151,255));
-            metricLabel=Text(face,"Session income label",new Vector2(12,-62),new Vector2(-12,-42),11,new Color32(139,167,151,255));
-            details=Text(face,"Automation detail",new Vector2(12,-190),new Vector2(-12,-166),13,new Color32(139,167,151,255));
-            pause=ui.Button(face,"",()=>{Click();owner.Sim.AutoPaused=!owner.Sim.AutoPaused;owner.runtime.MarkDirty();nextStatus=0;},11);PlaceBottomLeft(pause,8,5,58,22);
-            review=ui.Button(face,T("返回游戏","Return to game"),()=>{Click();Restore();},11);PlaceBottomLeft(review,72,5,88,22);
-            more=ui.Button(face,"···",()=>{Click();options.gameObject.SetActive(true);},15);
-            sizeToggle=ui.Button(face,"",()=>{Click();SetMini(!mini);},11);
-            options=Rect("Idle options",face,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
-            RoundSurface(Panel(options,new Color32(8,24,20,255)),8);
-            explanation=Text(options,"Offline explanation",new Vector2(12,-75),new Vector2(-12,-12),13,new Color32(204,225,214,255));
-            explanation.text=T("离线只结算金钱\n50% 效率 · 最多 8 小时","Money only while away\n50% efficiency · up to 8 hours");
-            offline=ui.Button(options,"",()=>{Click();XgOfflineIncome.SetEnabled(owner,!XgOfflineIncome.Enabled(owner));},11);PlaceBottomLeft(offline,8,35,208,25);
-            optionsBack=ui.Button(options,T("返回","Back"),()=>{Click();options.gameObject.SetActive(false);},12);
-            optionsRestore=ui.Button(options,T("返回桌面","Show desktop"),()=>{Click();RestoreToDesktop();},12);
-            reviewTasks=ui.Button(options,T("打开复核","Open review"),()=>{Click();Restore();foreach(var d in XgCatalog.Desks)if(owner.Sim.ReviewCount(d.id)>0){owner.Sim.S.teachingPack="";owner.Sim.SelectDesk(d.id);break;}owner.Open();owner.View?.ShowTab("teach");},12);
+            rate=Text(face,"Recent rate",new Vector2(9,-68),new Vector2(-9,-54),9,new Color32(156,170,189,255));
+            pause=ActionButton(()=>{Click();owner.Sim.AutoPaused=!owner.Sim.AutoPaused;owner.runtime.MarkDirty();nextStatus=0;});
+            pause.rt.anchorMin=Vector2.zero;pause.rt.anchorMax=new Vector2(.5f,0);pause.rt.offsetMin=new Vector2(9,5);pause.rt.offsetMax=new Vector2(-3,25);
+            review=ActionButton(()=>{Click();if(owner.Sim.ReviewFull)OpenReview();else Restore();});
+            review.rt.anchorMin=new Vector2(.5f,0);review.rt.anchorMax=new Vector2(1,0);review.rt.offsetMin=new Vector2(3,5);review.rt.offsetMax=new Vector2(-9,25);
+            // The more menu holds only always-on-top and quit; offline earnings belong to settings.
+            options=Rect("Idle options",face,Vector2.one,Vector2.one,new Vector2(-112,-67),new Vector2(-2,-21));
+            RoundSurface(Panel(options,new Color32(20,44,36,255)),5);
+            pin=ui.Button(options,"",()=>{Click();topmost=!topmost;native.SetTopmost(topmost);nextStatus=0;},9);PlaceTopLeft(pin,3,3,104,19);
+            quit=ui.Button(options,"",()=>{Click();if(Time.unscaledTime-quitArmed<3)QuitGame();else{quitArmed=Time.unscaledTime;nextStatus=0;}},9);PlaceTopLeft(quit,3,24,104,19);
             options.gameObject.SetActive(false);
             if(titleArt==null)
             {
@@ -208,45 +223,29 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             fx=go.AddComponent<XgJuice>();fx.Init(surface,monitor,owner.Font,owner.gameObject);
             SyncFeedback();
-            ApplyLayout();
             surface.gameObject.SetActive(false);
         }
-        public void SetMini(bool value)
+        XgBtn TopButton(RectTransform bar,string glyph,UnityEngine.Events.UnityAction onClick,float fromRight,float width)
         {
-            mini=value;ApplyLayout();nextStatus=0;
-            if(compact)GetComponent<XgIdleNativeWindow>()?.SetMini(value);
+            var button=ui.Button(bar,glyph,onClick,11);PlaceTopRight(button,fromRight,1,width,19);
+            button.image.color=Color.clear;button.label.color=new Color32(138,175,163,255);
+            button.label.rectTransform.offsetMin=button.label.rectTransform.offsetMax=Vector2.zero;
+            return button;
         }
-        void ApplyLayout()
+        XgBtn ActionButton(UnityEngine.Events.UnityAction onClick)
         {
-            if(surface==null||face==null)return;
-            surface.GetComponent<CanvasScaler>().referenceResolution=WindowSize(mini);
-            Vector2 size=mini?new Vector2(332,255):new Vector2(520,400);
-            monitor.sizeDelta=size;
-            float width=size.x*.869f;
-            heading.rectTransform.offsetMin=new Vector2(12,-32);heading.rectTransform.offsetMax=new Vector2(-106,-7);heading.fontSize=mini?12:16;
-            PlaceTopRight(more,38,7,28,24);PlaceTopRight(sizeToggle,102,7,60,24);
-            metricLabel.rectTransform.offsetMin=new Vector2(12,mini?-51:-64);metricLabel.rectTransform.offsetMax=new Vector2(-12,mini?-33:-42);
-            wallet.offsetMin=new Vector2(12,mini?-105:-144);wallet.offsetMax=new Vector2(-12,mini?-52:-68);
-            foreach(var text in oldDigits)text.fontSize=mini?29:46;
-            foreach(var text in newDigits)text.fontSize=mini?29:46;
-            state.rectTransform.offsetMin=new Vector2(12,mini?-130:-176);state.rectTransform.offsetMax=new Vector2(-12,mini?-107:-148);state.fontSize=mini?10:14;
-            details.gameObject.SetActive(!mini);details.rectTransform.offsetMin=new Vector2(12,-209);details.rectTransform.offsetMax=new Vector2(-12,-181);
-            float buttonHeight=mini?28:34;float gap=8;float half=(width-24-gap)/2;
-            PlaceBottomLeft(pause,12,10,half,buttonHeight);PlaceBottomLeft(review,12+half+gap,10,half,buttonHeight);
-            pause.label.fontSize=review.label.fontSize=mini?12:15;
-            explanation.fontSize=mini?11:13;explanation.rectTransform.offsetMin=new Vector2(12,-60);explanation.rectTransform.offsetMax=new Vector2(-12,-8);
-            PlaceBottomLeft(offline,12,mini?82:110,width-24,28);
-            PlaceBottomLeft(reviewTasks,12,mini?46:72,width-24,28);
-            PlaceBottomLeft(optionsBack,12,10,half,30);PlaceBottomLeft(optionsRestore,12+half+gap,10,half,30);
-            sizeToggle.label.text=mini?T("标准","Standard"):T("迷你","Mini");
+            var button=ui.Button(face,"",onClick,9);
+            button.image.color=new Color32(22,53,43,255);button.label.color=new Color32(173,219,194,255);
+            button.label.rectTransform.offsetMin=new Vector2(2,0);button.label.rectTransform.offsetMax=new Vector2(-2,0);
+            return button;
         }
         TMP_Text Digit(RectTransform parent,string name)
         {
             var rt=Rect(name,parent,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
-            var text=ui.Text(rt," ",25,green,TextAlignmentOptions.Center);text.raycastTarget=false;return text;
+            var text=ui.Text(rt," ",26,green,TextAlignmentOptions.Center);text.raycastTarget=false;return text;
         }
         TMP_Text Text(RectTransform parent,string name,Vector2 min,Vector2 max,float size,Color color)
-        {var text=ui.Text(Rect(name,parent,new Vector2(0,1),Vector2.one,min,max),"",size,color,TextAlignmentOptions.MidlineLeft);text.raycastTarget=false;text.overflowMode=TextOverflowModes.Ellipsis;return text;}
+        {var text=ui.Text(Rect(name,parent,new Vector2(0,1),Vector2.one,min,max),"",size,color,TextAlignmentOptions.MidlineLeft);text.raycastTarget=false;text.textWrappingMode=TextWrappingModes.NoWrap;text.overflowMode=TextOverflowModes.Ellipsis;return text;}
         void SetDigits(double amount)
         {
             string next=("¥"+amount.ToString("0.00",CultureInfo.InvariantCulture)).PadLeft(12);
@@ -254,12 +253,13 @@ namespace LingGuangV05.Desktop.XingGuang
             if(next==digits)return;
             for(int i=0;i<12;i++){oldDigits[i].text=digits.Length==12?digits[i].ToString():next[i].ToString();newDigits[i].text=next[i].ToString();}
             int visible=next.TrimStart().Length,first=12-visible;
-            float cell=Mathf.Min(.8f/Mathf.Max(1,visible),.095f),left=.5f-visible*cell*.5f;
+            // Left-aligned under the status, like the prototype's money row.
+            float cell=Mathf.Min(1f/Mathf.Max(1,visible),.075f);
             for(int i=0;i<12;i++)
             {
                 var slot=(RectTransform)newDigits[i].rectTransform.parent;
-                slot.anchorMin=new Vector2(left+(i-first)*cell,0);
-                slot.anchorMax=new Vector2(left+(i-first+1)*cell,1);
+                slot.anchorMin=new Vector2((i-first)*cell,0);
+                slot.anchorMax=new Vector2((i-first+1)*cell,1);
                 slot.offsetMin=slot.offsetMax=Vector2.zero;
             }
             digits=next;rollStart=Time.unscaledTime;
@@ -282,23 +282,34 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             if(surface==null){Build();if(surface==null)return;}
             compact=true;IsCompact=true;previousFrameRate=Application.targetFrameRate;previousVsync=QualitySettings.vSyncCount;QualitySettings.vSyncCount=0;Application.targetFrameRate=30;
-            bound=owner.Sim;incomeStart=owner.Sim.S.idleAutomaticIncome;displayed=lastIncome=0;recentIncome.Clear();digits="";SetDigits(displayed);nextDigit=Time.unscaledTime+1;
-            surface.gameObject.SetActive(true);options.gameObject.SetActive(false);entryHost.gameObject.SetActive(false);entryMenu.gameObject.SetActive(false);Click();
+            bound=owner.Sim;incomeStart=owner.Sim.S.idleAutomaticIncome;displayed=lastIncome=0;recentIncome.Clear();digits="";SetDigits(displayed);nextDigit=Time.unscaledTime+1;nextStatus=0;
+            surface.gameObject.SetActive(true);options.gameObject.SetActive(false);entryHost.gameObject.SetActive(false);Click();
             foreach(var canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None))if(canvas.enabled&&canvas.transform!=surface&&!canvas.transform.IsChildOf(surface)){hiddenCanvases.Add(canvas);canvas.enabled=false;}
             foreach(var camera in FindObjectsByType<Camera>(FindObjectsSortMode.None))if(camera.enabled){hiddenCameras.Add(camera);camera.enabled=false;}
-            GetComponent<XgIdleNativeWindow>()?.SetMini(mini);GetComponent<XgIdleNativeWindow>()?.Enter();
-            var native=GetComponent<XgIdleNativeWindow>();if(native==null){native=gameObject.AddComponent<XgIdleNativeWindow>();native.Enter();}
+            var native=GetComponent<XgIdleNativeWindow>()??gameObject.AddComponent<XgIdleNativeWindow>();
+            native.SetTopmost(topmost);native.Enter();
         }
         public void Restore(){if(!compact)return;compact=false;IsCompact=false;Application.targetFrameRate=previousFrameRate;QualitySettings.vSyncCount=previousVsync;foreach(var canvas in hiddenCanvases)if(canvas!=null)canvas.enabled=true;hiddenCanvases.Clear();foreach(var camera in hiddenCameras)if(camera!=null)camera.enabled=true;hiddenCameras.Clear();if(surface!=null)surface.gameObject.SetActive(false);GetComponent<XgIdleNativeWindow>()?.Restore();}
-        public void RestoreToDesktop()
+        // Review full: back in the game on the first desk with pending review.
+        void OpenReview()
         {
             Restore();
-            // Returning to the game restores the untouched window context. Only this explicit action minimizes apps.
-            foreach(var window in FindObjectsByType<WindowManager>(FindObjectsSortMode.None))
-            {
-                var group=window.GetComponent<CanvasGroup>();
-                if(window.isOn&&window.gameObject.activeInHierarchy&&(group==null||group.alpha>.5f))window.MinimizeWindow();
-            }
+            foreach(var d in XgCatalog.Desks)if(owner.Sim.ReviewCount(d.id)>0){owner.Sim.S.teachingPack="";owner.Sim.SelectDesk(d.id);break;}
+            owner.Open();owner.View?.ShowTab("teach");
+        }
+        // Same rule as the title's quit: a failed save never quits silently.
+        void QuitGame()
+        {
+            var rt=owner.runtime;
+            if(rt!=null&&rt.useDiskSave&&!rt.TestMode&&rt.Sim!=null&&!rt.Sim.InPrologue&&!rt.SaveNow())
+            {heading.text=T("未退出：","Cannot quit: ")+rt.SaveStatus;nextStatus=Time.unscaledTime+4;quitArmed=-10;return;}
+            // Leave the compact OS window first so the saved player resolution is the normal one.
+            Restore();PlayerPrefs.Save();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying=false;
+#else
+            Application.Quit();
+#endif
         }
         void OnDestroy(){Restore();if(surface!=null)Destroy(surface.gameObject);if(entryHost!=null)Destroy(entryHost.gameObject);}
     }

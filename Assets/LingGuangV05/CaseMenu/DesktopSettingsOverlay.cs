@@ -1,3 +1,4 @@
+using LingGuangV05.Desktop;
 using LingGuangV05.Runtime;
 using TMPro;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.InputSystem;
 namespace LingGuangV05.CaseMenu
 {
     /// <summary>Direct-Main fallback. Normal title entry reuses the already-built title HUD.</summary>
-    [DisallowMultipleComponent]
+    [DisallowMultipleComponent, DefaultExecutionOrder(EscapeKey.SettingsOrder)]
     public sealed class DesktopSettingsOverlay : MonoBehaviour
     {
         CaseMenuHud hud;
@@ -37,6 +38,8 @@ namespace LingGuangV05.CaseMenu
                 hud.SetChromeAlpha(0);
                 hud.ConfigureLifeEvents(() => GameSettings.CurrentLifeEventMode(Runtime),
                     mode => GameSettings.SetLifeEventMode(Runtime, mode, hud));
+                hud.ConfigureOfflineIncome(() => GameSettings.CurrentOfflineIncome(Runtime),
+                    enabled => GameSettings.SetOfflineIncome(Runtime, enabled, hud));
             }
             hud.ShowSettings(AudioListener.volume, GameSettings.ReducedMotion, Screen.fullScreen);
         }
@@ -49,7 +52,7 @@ namespace LingGuangV05.CaseMenu
 
         void Update()
         {
-            if (hud == null || !hud.IsSettingsOpen || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
+            if (hud == null || !hud.IsSettingsOpen || !EscapeKey.TryConsume()) return;
             if (hud.IsPlayerHelpOpen) hud.ClosePlayerHelp(); else Close();
         }
 

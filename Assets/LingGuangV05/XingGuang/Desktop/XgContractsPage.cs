@@ -19,6 +19,8 @@ namespace LingGuangV05.Desktop.XingGuang
         RectTransform rt;
         Vector2 start, last;
         CanvasGroup group;
+        /// <summary>A left-button drag of this chip is in progress (other buttons never sign).</summary>
+        public bool Dragging { get; private set; }
         bool Local(PointerEventData e, out Vector2 p)
         {
             var cam = e.pressEventCamera != null ? e.pressEventCamera : e.enterEventCamera;
@@ -26,6 +28,8 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         public void OnBeginDrag(PointerEventData e)
         {
+            if (e.button != PointerEventData.InputButton.Left) return;
+            Dragging = true;
             rt = (RectTransform)transform; start = rt.anchoredPosition;
             Local(e, out last);
             group = group ?? gameObject.AddComponent<CanvasGroup>();
@@ -36,14 +40,25 @@ namespace LingGuangV05.Desktop.XingGuang
         public void OnDrag(PointerEventData e)
         {
             // The desktop canvas renders through a camera at scale 0.01: convert positions, never raw pixel deltas.
-            if (!Local(e, out var p)) return;
+            if (!Dragging || e.button != PointerEventData.InputButton.Left || !Local(e, out var p)) return;
             rt.anchoredPosition += p - last; last = p;
         }
         public void OnEndDrag(PointerEventData e)
         {
+            if (!Dragging || e.button != PointerEventData.InputButton.Left) return;
+            Dragging = false;
             group.blocksRaycasts = true; group.alpha = 1;
             rt.anchoredPosition = start;
             page.EndDrag(this);
+        }
+        // Hidden or destroyed mid-drag: no OnEndDrag will arrive, so put the chip back and release the page's drag state.
+        void OnDisable()
+        {
+            if (!Dragging) return;
+            Dragging = false;
+            if (group != null) { group.blocksRaycasts = true; group.alpha = 1; }
+            if (rt != null) rt.anchoredPosition = start;
+            page?.DragAborted(this);
         }
     }
 
@@ -55,7 +70,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void OnDrop(PointerEventData e)
         {
             var chip = e.pointerDrag != null ? e.pointerDrag.GetComponent<XgChipDrag>() : null;
-            if (chip != null) page.Dropped(chip, this);
+            if (chip != null && chip.Dragging && e.button == PointerEventData.InputButton.Left) page.Dropped(chip, this);
         }
     }
 
@@ -154,6 +169,8 @@ namespace LingGuangV05.Desktop.XingGuang
         }
 
         public void EndDrag(XgChipDrag chip) { dragging = null; Refresh(); }
+        /// <summary>The dragged chip went away mid-drag; the next refresh repaints the cards (never rebuild during teardown).</summary>
+        public void DragAborted(XgChipDrag chip) { if (dragging == chip.dataset) dragging = null; }
 
         public void Dropped(XgChipDrag chip, XgContractDrop drop)
         {
@@ -274,7 +291,8 @@ namespace LingGuangV05.Desktop.XingGuang
             float width = root.rect.width > 1 ? root.rect.width : 1110;
             int perRow = Mathf.Max(1, Mathf.FloorToInt((width - 108 - 8 + 6) / 206f));
             string key = string.Join(",", ready.ConvertAll(b => b.dataset)) + "/" + perRow;
-            if (key != chipKey)
+            // A chip being dragged is never destroyed under the pointer; the strip rebuilds after the drop.
+            if (key != chipKey && dragging == null)
             {
                 chipKey = key;
                 foreach (var x in chips) UnityEngine.Object.Destroy(x.chip.rt.gameObject);

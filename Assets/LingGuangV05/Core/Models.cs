@@ -128,7 +128,7 @@ namespace LingGuangV05.Core
         /// </summary>
         /// <summary>Seconds of play one day of rent stands for (rent follows play time, not the calendar).</summary>
         public double rentDaySeconds = 60;
-        public double rentPerDay = 300, rentPerDayFromOctober = 350, broadbandPerMonth = 100, summerAirconPerDay = 40, breakerRepairFee = 50, weekendTicket = 120;
+        public double rentPerDay = 300, rentPerDayFromOctober = 350, broadbandPerMonth = 100, summerAirconPerDay = 10, breakerRepairFee = 50, weekendTicket = 120;
         /// <summary>
         /// Training electricity: the cards run at <see cref="trainingLoad"/> of their rated watts, and one second of a
         /// training round stands for this many hours of GPU time (a 0.6-second round is a day of work).

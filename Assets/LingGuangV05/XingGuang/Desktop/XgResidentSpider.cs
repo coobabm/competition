@@ -39,7 +39,7 @@ namespace LingGuangV05.Desktop.XingGuang
     /// Light by design: one spider, a few glitches a second, words gathered one window at a time, pooled ghosts.
     /// The idea of a spider walking on text comes from @rybinfx's web crawler; this is an independent implementation.
     /// </summary>
-    public sealed class XgResidentSpider : MonoBehaviour
+    public sealed partial class XgResidentSpider : MonoBehaviour
     {
         const int MaxGlitches = 3, MaxWordsPerText = 90, MaxWords = 1600, GhostPool = 6;
         const float ScanEvery = .12f, FindEvery = 1.5f;
@@ -291,6 +291,8 @@ namespace LingGuangV05.Desktop.XingGuang
             var pointer = UnityEngine.InputSystem.Mouse.current;
             if (pointer != null && (pointer.leftButton.isPressed || pointer.rightButton.isPressed)) lastPress = Time.unscaledTime;
             TickIntro(dt);
+            // The first 「打开灵光」 beat (XgResidentSpider.Beckon.cs) brings it out early, before the usual rules allow it.
+            if (TickBeckon(dt)) return;
             bool present = Sim != null && rt != null && rt.Sim != null && Sim.SpiderAround && !IntroPlaying && !StoryFocus.Exclusive
                 && XgResident.Present(rt.Sim.AppInstalled, rt.Sim.InPrologue, CutscenePlaying || InsideCrawler, FullscreenVideo);
             bool labelVisible = TeachingVisible;
@@ -1326,6 +1328,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 }
             }
             float alpha = 1; // parked fades through layerGroup.alpha
+            DrawBeckonThread(vh);
             if (pulseT >= 0 && !Reduced)
             {
                 float k = pulseT / .6f;

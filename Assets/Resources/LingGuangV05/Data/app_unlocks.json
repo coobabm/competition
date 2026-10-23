@@ -73,11 +73,13 @@
     },
     {
       "id": "folder",
-      "name": "{name} 的资料",
+      "name": "资料文件夹",
       "how": "install",
       "when": "装好 .exe 后（.exe 自动建的文件夹）",
       "stage": 1,
-      "bubble": "{name} 的资料 · 数据包、日志和存档都放这儿"
+      "bubble": "资料文件夹 · 数据包、日志和存档都放这儿",
+      "nameEn": "Training files",
+      "bubbleEn": "Data packs, logs and saves all go here."
     },
     {
       "id": "taohuo",
@@ -97,9 +99,9 @@
       "script": "zhongbao_intro",
       "stage": 2,
       "sizeMB": 12.6,
-      "bubble": "摆渡众包 · 看清验收要求，签下能完成的委托",
+      "bubble": "摆渡众包 · 档位单按秒进账；企业单先看验收要求再签。",
       "nameEn": "Bodu Crowd",
-      "bubbleEn": "Read contract requirements and sign what you can deliver."
+      "bubbleEn": "Tier orders pay by the second; read the requirements before signing business orders."
     },
     {
       "id": "miaoyu",

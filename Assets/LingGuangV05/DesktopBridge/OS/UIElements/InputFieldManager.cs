@@ -55,7 +55,7 @@ namespace LingGuangV05.Desktop.OS
         void Update()
         {
             if (!processSubmit || string.IsNullOrEmpty(inputText.text) || EventSystem.current.currentSelectedGameObject != inputText.gameObject) { return; }
-            if (Keyboard.current.enterKey.wasPressedThisFrame) { onSubmit.Invoke(); }
+            if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame) { onSubmit.Invoke(); }
         }
 
         public void AnimateIn()

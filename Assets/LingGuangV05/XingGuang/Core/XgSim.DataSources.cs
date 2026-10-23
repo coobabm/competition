@@ -368,7 +368,7 @@ namespace LingGuangV05.XingGuang
             if (!PackSwitchable(o)) { en = "Only packs can be switched"; return "只有数据包能开关"; }
             if (!OfferOwned(offerId)) { en = "Not owned"; return "还没买"; }
             if (Downloading(DownloadKey(o))) { en = "Still downloading"; return "还在下载"; }
-            if (!DataOfferInstalled(o.id)) { en = "Install it from your Files folder first"; return "先从资料文件夹安装"; }
+            if (!DataOfferInstalled(o.id)) { en = "Install it from Training files first"; return "先从资料文件夹安装"; }
             var d = XgCatalog.Dataset(o.datasetId);
             if (d != null && Run(d.track).epochActive && Run(d.track).dataset == o.datasetId) { en = "Finish the active epoch first"; return "先完成当前训练轮次"; }
             return null;

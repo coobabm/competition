@@ -29,8 +29,8 @@ namespace LingGuangV05.XingGuang
                 "不要循环，也不要卷积，只留注意力：每个字直接和句子里所有字比一比，看谁跟自己有关。\n\n不用一个字等一个字，整句同时算，显卡能吃满。它本身不知道字的先后，所以要配位置编号。后来几乎所有大模型都长这样。",
                 "No recurrence, no convolution, only attention: every word compares itself with every other word to see what matters.\n\nNo waiting word by word, so the whole sentence runs at once and the GPU stays busy. It doesn't know word order by itself, so it needs position tags. Nearly every large model later looks like this." } },
             { "lenet", new[] {
-                "杨立昆（Yann LeCun）1998 年的卷积网络。用一个 5×5 的小窗口扫过整张图，同一套权重到处用，所以数字挪了位置也认得。\n\n美国的银行用它读支票上的手写数字，一读就是十几年。",
-                "Yann LeCun's convolutional net from 1998. A small 5×5 window sweeps the picture with the same weights everywhere, so a shifted digit is still recognised.\n\nAmerican banks used it to read handwritten cheques for over a decade." } },
+                "杨立昆（Yann LeCun）1998 年的卷积网络。用一个 5×5 的小窗口扫过整张图，同一套权重到处用，再配上池化，数字稍微挪一挪位置也能认出来。\n\n美国的银行用它读支票上的手写数字，一读就是十几年。",
+                "Yann LeCun's convolutional net from 1998. A small 5×5 window sweeps the picture with the same weights everywhere, and pooling on top lets a slightly shifted digit still be recognised.\n\nAmerican banks used it to read handwritten cheques for over a decade." } },
             { "alexnet", new[] {
                 "2012 年 ImageNet 比赛，它把错误率一下砍掉十个百分点，深度学习从此出圈。\n\n秘诀：更深更宽、用 ReLU、用 Dropout 防背答案，再加两块 GTX 580 一起算。",
                 "At ImageNet 2012 it cut the error rate by ten points in one go, and deep learning went mainstream.\n\nThe recipe: deeper and wider, ReLU, Dropout against memorising, and two GTX 580s working together." } },
@@ -76,8 +76,8 @@ namespace LingGuangV05.XingGuang
                 "2016 年的办法。生僻词、新词拆成常见的小块，比如 unhappiness 拆成 un + happi + ness。词表不用太大，没见过的词也能拼出来。",
                 "A 2016 idea. Rare and new words are split into common pieces, like un + happi + ness. The vocabulary stays small and unseen words can still be built." } },
             { "sft", new[] {
-                "预训练只教会它往下续写。指令微调再拿一批「问题 + 好回答」喂它，让它学会按要求办事。\n\n「指令微调」这个说法要到 2021 年前后才流行。",
-                "Pre-training only teaches it to continue text. Instruction tuning then feeds it question-and-good-answer pairs so it learns to do what it's asked.\n\nThe term only caught on around 2021." } },
+                "预训练只教会它往下续写。示范跟答再拿一批「问题 + 好回答」喂它，让它学会按要求办事。\n\n拿示范答案来训练是老办法；专门用它教模型听吩咐，要再过好几年才成套路。",
+                "Pre-training only teaches it to continue text. Learning from demonstrations then feeds it question-and-good-answer pairs so it learns to do what it's asked.\n\nTraining on example answers is an old idea; using it to teach models to follow requests only became standard years later." } },
             { "cot", new[] {
                 "让模型先把中间步骤写出来，再给答案，算术题和推理题会准很多。\n\n这个叫法 2022 年才出现。",
                 "Have the model write out its steps before the answer, and arithmetic and reasoning get much more accurate.\n\nThe name only appears in 2022." } },
@@ -127,8 +127,8 @@ namespace LingGuangV05.XingGuang
                 "循环网络里误差会越乘越大，一步改太猛，模型直接炸成 NaN。梯度裁剪给每一步设个上限，超了就按比例缩回来。",
                 "In recurrent nets the error can multiply up until one huge step turns the model into NaN. Gradient clipping caps each step and scales it back when it's too big." } },
             { "dropout", new[] {
-                "2014 年 Hinton 组的办法。训练时每次随机关掉一部分神经元，逼模型不能只靠某几个巧合答题。\n\n就像考前不让你只背那几道题，得真懂才行。正式考试时全部打开。",
-                "From Hinton's group, 2014. During training, randomly switch off some neurons each time so the model can't lean on a few coincidences.\n\nLike not letting you cram a handful of questions before an exam. At test time, everything is on." } },
+                "Hinton 组 2012 年提出的办法（2014 年正式发表）。训练时每次随机关掉一部分神经元，逼模型不能只靠某几个巧合答题。\n\n就像考前不让你只背那几道题，得真懂才行。正式考试时全部打开。",
+                "From Hinton's group, proposed in 2012 (formally published in 2014). During training, randomly switch off some neurons each time so the model can't lean on a few coincidences.\n\nLike not letting you cram a handful of questions before an exam. At test time, everything is on." } },
             { "augment", new[] {
                 "数据不够，就把手上的数据变一变：图片平移、裁剪、改亮度；围棋棋盘转 90 度、照镜子还是同一个局面，一盘变八盘。\n\n别变坏了：数字 6 倒过来就成了 9。",
                 "Not enough data? Vary what you have: shift, crop or brighten pictures; a Go board rotated or mirrored is the same position, so one game becomes eight.\n\nCareful: turn a 6 upside down and it's a 9." } },
@@ -151,8 +151,8 @@ namespace LingGuangV05.XingGuang
                 "NVIDIA 2014 年发布的深度学习加速库，把卷积、循环这些常用运算写成显卡上最快的版本。TensorFlow、Caffe 都靠它跑。",
                 "NVIDIA's deep-learning library from 2014: convolutions, loops and other common operations written as fast as the GPU allows. TensorFlow and Caffe both run on it." } },
             { "cooler", new[] {
-                "九州风神的塔式散热器，2016 年装机的常见选择。显卡、CPU 一直满载会很烫，温度高了会降频、也伤寿命。散热好，烧卡的概率就小。",
-                "A DeepCool tower cooler, a common pick for 2016 builds. Cards and CPUs at full load run hot, which throttles them and shortens their life. Better cooling, fewer burnt cards." } },
+                "机箱前进风、后出风，配合显卡自己的散热器，把热风排出机箱，是 2016 年装机的讲究。显卡一直满载会很烫：温度高了先降频变慢，长期高温还会加快老化。风道好，高温损耗就少。",
+                "Front-in, back-out case airflow working with the card's own cooler to push hot air out of the case, a 2016 build staple. Cards at full load run hot: first they throttle, and long-term heat ages them faster. Better airflow, less heat wear." } },
             { "transfer", new[] {
                 "底层学到的东西大多通用：笔画、边角、常用词。换结构时把这些带过去接着用，只重新学上层的组合，比从头练快得多。\n\n2016 年大家常拿 ImageNet 上练好的网络当起点。",
                 "What the bottom layers learn is mostly general: strokes, corners, common words. Carry them into the new structure and only relearn the combinations on top, far faster than starting over.\n\nIn 2016 people often start from a net pre-trained on ImageNet." } },

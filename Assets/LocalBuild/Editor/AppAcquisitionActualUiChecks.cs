@@ -327,7 +327,7 @@ public static class AppAcquisitionActualUiChecks
         foreach(var f in OpenGroup(ctl))yield return f;
         foreach(var f in Until(()=>Get<RectTransform>(YYChatHub.Instance.View,"introInput")?.gameObject.activeInHierarchy==true,"actual Skip control"))yield return f;
         int before=Group.messages.Count(m=>m.from==YYChatHub.Me);
-        foreach(var f in Tap(LabelButton(Get<RectTransform>(YYChatHub.Instance.View,"introInput"),english?"Skip introduction":"跳过介绍"),click))yield return f;
+        foreach(var f in Tap(LabelButton(Get<RectTransform>(YYChatHub.Instance.View,"introInput"),english?"Skip":"跳过"),click))yield return f;
         var p=ctl.Sim.IntroProgress(script.id);
         Need(p.completed&&p.skipped&&p.todoOffered&&ctl.Sim.AppReceipt("taohuo").offered,"actual Skip delivers link and todo with explicit skipped flag");
         Need(!ctl.Sim.DesktopAppInstalled("taohuo")&&Group.messages.Count(m=>m.from==YYChatHub.Me)==before,"Skip cannot fake installation or a chosen player line");

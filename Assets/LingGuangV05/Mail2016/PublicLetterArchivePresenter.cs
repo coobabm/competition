@@ -165,7 +165,7 @@ namespace LingGuangV05.Desktop.Mail
         {
             if(!Visible)return;
             if(!Available){Hide();return;}
-            if(Keyboard.current?.escapeKey.wasPressedThisFrame==true)Back();
+            if(EscapeKey.TryConsume())Back();
         }
         void OnDestroy(){if(window!=null){window.onClose.RemoveListener(Hide);window.onMinimize.RemoveListener(Hide);}if(root!=null)Destroy(root.gameObject);}
         Button Button(string name,RectTransform parent,Action action)

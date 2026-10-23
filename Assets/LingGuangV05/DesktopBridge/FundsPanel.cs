@@ -12,6 +12,7 @@ using static LingGuangV05.Desktop.XingGuang.XgUi;
 
 namespace LingGuangV05.Desktop
 {
+    [DefaultExecutionOrder(EscapeKey.FundsOrder)]
     public sealed class FundsPanel : MonoBehaviour
     {
         ChapterOneRuntime runtime;
@@ -28,7 +29,7 @@ namespace LingGuangV05.Desktop
         void Update()
         {
             if (panel == null || !panel.activeSelf) return;
-            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) panel.SetActive(false);
+            if (EscapeKey.TryConsume()) panel.SetActive(false);
             if (Time.unscaledTime >= nextRefresh) { nextRefresh = Time.unscaledTime + .5f; Refresh(); }
         }
         void Build()

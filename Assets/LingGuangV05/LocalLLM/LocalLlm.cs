@@ -309,6 +309,8 @@ namespace LingGuangV05.Desktop.LLM
             NativeService service = null;
             try
             {
+                NativePathGuard.PrepareLibraries();
+                model = NativePathGuard.Model(model);
                 library = new LlamaNative(mode != LlmLaunchMode.Cpu);
                 var pointer = library.LLMService_From_Command(LlmScheduling.ServiceArgs(mode, model, slots));
                 service = new NativeService(library, pointer);

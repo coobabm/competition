@@ -48,31 +48,35 @@ namespace LingGuangV05.XingGuang.Tests
         static XgSim Reload(XgSim sim) => new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(sim.S)));
 
         [Test]
-        public void RealPurchaseCosts3000AndImmediatelyUnblocksCard21ThenStopsAt60()
+        public void RealPurchaseCosts3000AndImmediatelyMakesRoomForCard41ThenSkipsPast120()
         {
             var sim = Eligible(); var host = new Host();
-            Assert.AreEqual(20, sim.ReviewLimit);
-            Fill(sim, host, 20);
+            Assert.AreEqual(40, sim.ReviewLimit);
+            Fill(sim, host, 40);
             Assert.IsTrue(sim.ReviewFull);
-            var blocked = Waiting(sim);
-            Assert.IsFalse(sim.Route(blocked.id, host));
-            CollectionAssert.Contains(sim.S.prefetch, blocked, "blocked work must not disappear");
+            double unpaid = host.money;
+            var skipped = Waiting(sim);
+            Assert.IsTrue(sim.Route(skipped.id, host), "a full inbox skips the unsure card instead of stopping the line");
+            CollectionAssert.DoesNotContain(sim.S.prefetch, skipped, "the skipped card is consumed");
+            CollectionAssert.DoesNotContain(sim.S.queue, skipped, "and never squeezed into the full inbox");
+            Assert.AreEqual(unpaid, host.money, 1e-9, "a skipped card pays and fines nothing");
             double before = host.money;
             Assert.IsTrue(sim.BuyNode("label.parallel", host), "real node purchase, not injected entitlement");
             Assert.AreEqual(3000, before - host.money, 1e-9);
             Assert.AreEqual(1, host.spends);
-            Assert.AreEqual(60, sim.ReviewLimit);
+            Assert.AreEqual(120, sim.ReviewLimit);
             Assert.IsFalse(sim.ReviewFull);
-            Assert.IsTrue(sim.Route(blocked.id, host), "the same waiting card resumes");
-            Assert.AreSame(blocked, sim.S.queue[20]);
-            Fill(sim, host, 39);
-            Assert.AreEqual(60, sim.ReviewCount());
+            var next = Waiting(sim);
+            Assert.IsTrue(sim.Route(next.id, host));
+            Assert.AreSame(next, sim.S.queue[40], "the next unsure card goes to the expanded inbox");
+            Fill(sim, host, 79);
+            Assert.AreEqual(120, sim.ReviewCount());
             Assert.IsTrue(sim.ReviewFull);
             var extra = Waiting(sim);
-            Assert.IsFalse(sim.Route(extra.id, host), "card 61 must stay outside the review inbox");
-            CollectionAssert.Contains(sim.S.prefetch, extra);
+            Assert.IsTrue(sim.Route(extra.id, host), "card 121 is skipped");
+            CollectionAssert.DoesNotContain(sim.S.prefetch, extra);
             CollectionAssert.DoesNotContain(sim.S.queue, extra);
-            Assert.AreEqual(60, sim.ReviewCount());
+            Assert.AreEqual(120, sim.ReviewCount());
             double paid = host.money;
             Assert.IsFalse(sim.BuyNode("label.parallel", host), "cannot purchase an owned node twice");
             Assert.AreEqual(paid, host.money);
@@ -80,60 +84,78 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void InsufficientFundsDoNotGrantCapacityOrMoveWaitingCards()
+        public void InsufficientFundsDoNotGrantCapacityAndFullInboxSkipsWaitingCards()
         {
             var sim = Eligible(); var host = new Host { money = 2999 };
-            Fill(sim, host, 20); var waiting = Waiting(sim);
+            Fill(sim, host, 40); var waiting = Waiting(sim);
             Assert.IsFalse(sim.BuyNode("label.parallel", host));
             Assert.AreEqual(2999, host.money);
-            Assert.AreEqual(20, sim.ReviewLimit);
+            Assert.AreEqual(40, sim.ReviewLimit);
             Assert.IsTrue(sim.ReviewFull);
-            Assert.IsFalse(sim.Route(waiting.id, host));
-            CollectionAssert.Contains(sim.S.prefetch, waiting);
+            Assert.IsTrue(sim.Route(waiting.id, host));
+            CollectionAssert.DoesNotContain(sim.S.queue, waiting);
+            Assert.AreEqual(40, sim.ReviewCount());
+            Assert.AreEqual(2999, host.money, "skipped, not paid");
         }
 
         [Test]
-        public void OwnedLegacyJsonKeepsAll60CardIdsOrderAndPayloads()
+        public void FullInboxStillPaysConfidentAutomaticAnswers()
+        {
+            var sim = Eligible(); var host = new Host();
+            sim.PlatformChecks = false;
+            Fill(sim, host, 40);
+            Assert.IsTrue(sim.ReviewFull);
+            var sure = sim.CreateLabelCard("spam");
+            sure.hasJudgment = true; sure.confidence = .99; sure.guess = sure.truth; sure.judgeSource = "checkpoint";
+            sim.S.prefetch.Add(sure);
+            double before = host.money;
+            Assert.IsTrue(sim.Route(sure.id, host));
+            Assert.AreEqual(sim.AutoPayFor("spam", sure.level), host.money - before, 1e-9, "a confident card earns while the inbox is full");
+            Assert.IsTrue(sim.ReviewFull, "ReviewFull still reports the full inbox for the UI");
+        }
+
+        [Test]
+        public void OwnedLegacyJsonKeepsAll120CardIdsOrderAndPayloads()
         {
             var sim = Eligible(); var host = new Host();
             // Existing saves already have the old node id; no new capacity field is required.
-            sim.S.unlocked.Add("label.parallel"); Fill(sim, host, 60);
+            sim.S.unlocked.Add("label.parallel"); Fill(sim, host, 120);
             var ids = sim.S.queue.Select(card => card.id).ToArray();
             var payloads = sim.S.queue.Select(card => card.question + "|" + card.truth).ToArray();
             var loaded = Reload(sim);
-            Assert.AreEqual(60, loaded.ReviewLimit);
-            Assert.AreEqual(60, loaded.ReviewCount());
+            Assert.AreEqual(120, loaded.ReviewLimit);
+            Assert.AreEqual(120, loaded.ReviewCount());
             Assert.IsTrue(loaded.ReviewFull);
             CollectionAssert.AreEqual(ids, loaded.S.queue.Select(card => card.id).ToArray());
             CollectionAssert.AreEqual(payloads, loaded.S.queue.Select(card => card.question + "|" + card.truth).ToArray());
-            Assert.AreEqual(60, loaded.S.queue.Select(card => card.id).Distinct().Count());
+            Assert.AreEqual(120, loaded.S.queue.Select(card => card.id).Distinct().Count());
         }
 
         [Test]
         public void UnownedLegacyOverflowMovesAfterExistingPrefetchWithoutLoss()
         {
             var sim = Eligible();
-            for (int i = 0; i < 30; i++) sim.S.queue.Add(sim.CreateLabelCard("spam"));
+            for (int i = 0; i < 50; i++) sim.S.queue.Add(sim.CreateLabelCard("spam"));
             for (int i = 0; i < 3; i++) Waiting(sim);
             var queued = sim.S.queue.Select(card => card.id).ToArray();
             var prefetched = sim.S.prefetch.Select(card => card.id).ToArray();
             var all = queued.Concat(prefetched).OrderBy(id => id).ToArray();
             var loaded = Reload(sim);
-            Assert.AreEqual(20, loaded.ReviewLimit);
-            CollectionAssert.AreEqual(queued.Take(20).ToArray(), loaded.S.queue.Select(card => card.id).ToArray());
-            CollectionAssert.AreEqual(prefetched.Concat(queued.Skip(20)).ToArray(), loaded.S.prefetch.Select(card => card.id).ToArray());
+            Assert.AreEqual(40, loaded.ReviewLimit);
+            CollectionAssert.AreEqual(queued.Take(40).ToArray(), loaded.S.queue.Select(card => card.id).ToArray());
+            CollectionAssert.AreEqual(prefetched.Concat(queued.Skip(40)).ToArray(), loaded.S.prefetch.Select(card => card.id).ToArray());
             CollectionAssert.AreEqual(all, loaded.S.queue.Concat(loaded.S.prefetch).Select(card => card.id).OrderBy(id => id).ToArray());
-            Assert.AreEqual(33, loaded.S.queue.Concat(loaded.S.prefetch).Select(card => card.id).Distinct().Count());
+            Assert.AreEqual(53, loaded.S.queue.Concat(loaded.S.prefetch).Select(card => card.id).Distinct().Count());
         }
 
         [Test]
         public void NoiseRecheckUsesOnlyTheFiveFreeExpandedSlots()
         {
             var sim = Eligible(); var host = new Host();
-            Assert.IsTrue(sim.BuyNode("label.parallel", host)); Fill(sim, host, 55);
+            Assert.IsTrue(sim.BuyNode("label.parallel", host)); Fill(sim, host, 115);
             sim.S.noise.Add(new XgLabelCount { dataset = "spam", count = 10 });
             Assert.AreEqual(5, sim.RecheckNoise("spam"));
-            Assert.AreEqual(60, sim.ReviewCount());
+            Assert.AreEqual(120, sim.ReviewCount());
             Assert.IsTrue(sim.ReviewFull);
             Assert.AreEqual(0, sim.RecheckNoise("spam"));
         }

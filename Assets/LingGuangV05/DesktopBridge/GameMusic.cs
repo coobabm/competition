@@ -9,7 +9,11 @@ using UnityEngine.UI;
 
 namespace LingGuangV05.Desktop
 {
-    /// <summary>Player-opened desktop music with smooth cutscene ducking and shutdown fades.</summary>
+    /// <summary>
+    /// Desktop background music with smooth cutscene ducking and shutdown fades. Since 2026-10-22 (玩家反馈 F2) it starts on
+    /// its own as soon as the desktop is on screen (after the prologue's title card on a new game), not when the player
+    /// opens the music app; opening the app later only shows what is playing.
+    /// </summary>
     public sealed class GameMusic : MonoBehaviour
     {
         public const float DefaultVolume = .5f;
@@ -78,7 +82,7 @@ namespace LingGuangV05.Desktop
             }
         }
 
-        /// <summary>The player has opened the music app and started music this boot.</summary>
+        /// <summary>The background music has started this boot (on its own when the desktop showed, or from the app).</summary>
         public static bool Started => instance != null && instance.started;
 
         void OnEnable()
@@ -137,7 +141,7 @@ namespace LingGuangV05.Desktop
         {
             if (!ready || manager == null || source == null) return;
             if (exited) return; // the exit fade has the source
-            if (!started) return;
+            if (!started) { if (Time.unscaledTime >= nextAutoTry && DesktopShown()) { nextAutoTry = Time.unscaledTime + .5f; StartFirstSong(); } return; }
             Mix();
             // Repeat-one is the source's own loop, so it holds while the window (and its playback loop) is closed.
             source.loop = manager.repeat && !manager.shuffle;
@@ -164,7 +168,29 @@ namespace LingGuangV05.Desktop
             wasPlaying = playing;
         }
 
-        void OnMusicOpened()
+        void OnMusicOpened() => StartFirstSong();
+
+        PrologueDirector prologue;
+        ChapterOneRuntime runtime;
+        float lookAgain, nextAutoTry;
+
+        /// <summary>
+        /// The desktop is on screen: a loaded or finished game at once, a new game once the prologue's title card has gone
+        /// (the boot screen and the desktop are what it plays over). Hosts paused behind the title room never get here.
+        /// </summary>
+        bool DesktopShown()
+        {
+            if ((prologue == null || runtime == null) && Time.unscaledTime >= lookAgain)
+            {
+                lookAgain = Time.unscaledTime + 1;
+                if (prologue == null) prologue = FindAnyObjectByType<PrologueDirector>();
+                if (runtime == null) runtime = FindAnyObjectByType<ChapterOneRuntime>();
+            }
+            if (prologue != null && prologue.Running) return prologue.Step.Length > 0 && prologue.Step != "title";
+            return runtime == null || runtime.Sim == null || runtime.TestMode || !runtime.Sim.InPrologue;
+        }
+
+        void StartFirstSong()
         {
             if (!ready || started || exited || manager == null || source == null) return;
             // Each boot starts in playlist order. A manual change remains in effect while this
@@ -183,7 +209,7 @@ namespace LingGuangV05.Desktop
                 if (!source.isPlaying) return;
                 started = wasPlaying = true;
                 mix.FadeIn();
-                // The new-game prologue already owns the music thought; later player opens only start playback.
+                // The new-game prologue already owns the music thought; opening the app later never restarts the song.
                 return;
             }
         }
@@ -221,7 +247,8 @@ namespace LingGuangV05.Desktop
         bool Busy()
         {
             if (presenter == null) presenter = FindAnyObjectByType<StoryDesktopPresenter>();
-            return presenter != null && presenter.CutscenePlaying || AiJoinsYy.Playing || AutoLabelEpiphany.Playing || BankruptcyEnding.Playing
+            // The prologue's 360 alert ducks it as well (v4 §7.1): the first scare is not drowned by the song.
+            return presenter != null && presenter.CutscenePlaying || prologue != null && prologue.Running && prologue.Step == "virus" || AiJoinsYy.Playing || AutoLabelEpiphany.Playing || BankruptcyEnding.Playing
                 || LingGuangV05.Desktop.XingGuang.XgEmergenceCutscene.Playing || LingGuangV05.Desktop.XingGuang.LoveQuestionCutscene.Playing;
         }
     }

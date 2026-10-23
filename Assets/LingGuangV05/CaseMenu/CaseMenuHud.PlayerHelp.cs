@@ -28,7 +28,7 @@ namespace LingGuangV05.CaseMenu
         {
             playerHelpSettingsCard = settingsCard;
             var image = Panel("PlayerHelp", settingsCard, Control, true);
-            Place(image.rectTransform, new Vector2(0, 1), new Vector2(200, -557), new Vector2(142, 44));
+            Place(image.rectTransform, new Vector2(0, 1), new Vector2(200, -625), new Vector2(142, 44));
             playerHelpEntry = image.gameObject.AddComponent<Button>(); Style(playerHelpEntry, image);
             playerHelpEntryLabel = Label("Label", image.transform, "", 18, Ink);
             Stretch(playerHelpEntryLabel.rectTransform); playerHelpEntryLabel.alignment = TextAlignmentOptions.Midline;

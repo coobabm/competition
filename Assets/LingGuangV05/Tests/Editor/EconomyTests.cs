@@ -64,7 +64,7 @@ namespace LingGuangV05.Tests
             Assert.That(sim.S.bills.broadband, Is.EqualTo(100), "July's broadband when the month begins");
             Assert.That(sim.S.bills.aircon, Is.Zero, "the air conditioner runs with play time");
             PlayDay(sim);
-            Assert.That(sim.S.bills.aircon, Is.EqualTo(40 * DaysPerSettlement(sim)).Within(1e-6));
+            Assert.That(sim.S.bills.aircon, Is.EqualTo(10 * DaysPerSettlement(sim)).Within(1e-6));
             MoveTo(sim, Day(9, 2));
             Assert.That(sim.S.bills.broadband, Is.EqualTo(300), "July, August and September, once each");
             double summer = sim.S.bills.aircon;

@@ -108,12 +108,12 @@ namespace LingGuangV05.XingGuang.Tests
         public void ThresholdHasSafeDefaultsAndRejectsNonFiniteValues()
         {
             var sim = new XgSim();
-            Assert.AreEqual(.8, sim.S.coopThreshold);
+            Assert.AreEqual(.7, sim.S.coopThreshold);
             sim.SetCoopThreshold(.1); Assert.AreEqual(.5, sim.S.coopThreshold);
             sim.SetCoopThreshold(2); Assert.AreEqual(.99, sim.S.coopThreshold);
             sim.SetCoopThreshold(double.NaN); Assert.AreEqual(.99, sim.S.coopThreshold);
             sim.S.coopThreshold = double.PositiveInfinity;
-            Assert.AreEqual(.8, new XgSim(sim.S).S.coopThreshold);
+            Assert.AreEqual(.7, new XgSim(sim.S).S.coopThreshold);
         }
         [Test]
         public void LabelNodesShareTheExistingRaiseAndGlobalAutoPurchase()
@@ -186,18 +186,28 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(0, sim.NoiseTotal);
         }
         [Test]
-        public void ReviewQueueAtTwentyPausesAllAutomationAndResumeDoesNotBurst()
+        public void AFullReviewQueueOnlySkipsUnsureCardsAndConfidentOnesKeepEarning()
         {
             var sim = Ready(); var host = new Host();
-            for (int i = 0; i < 20; i++) { var c = Judged(sim, true, .5); Assert.IsTrue(sim.Route(c.id, host)); }
-            var waiting = Judged(sim, true, .99, "mnist");
-            long next = sim.S.nextCardId; double labels = sim.TotalLabels;
-            Assert.IsFalse(sim.Route(waiting.id, host));
+            sim.PlatformChecks = false;
+            for (int i = 0; i < XgSim.ReviewCapacity; i++) { var c = Judged(sim, true, .5); Assert.IsTrue(sim.Route(c.id, host)); }
+            Assert.AreEqual(40, sim.ReviewLimit); Assert.IsTrue(sim.ReviewFull);
+            double money = host.money, labels = sim.TotalLabels;
+            var unsure = Judged(sim, true, .5);
+            Assert.IsTrue(sim.Route(unsure.id, host), "a full inbox no longer stops the line");
+            Assert.AreEqual(40, sim.ReviewCount()); Assert.AreEqual(money, host.money); Assert.AreEqual(labels, sim.TotalLabels, "skipped: no pay, no sample");
+            var sure = Judged(sim, true, .99, "mnist");
+            Assert.IsTrue(sim.Route(sure.id, host));
+            Assert.Greater(host.money, money, "a confident card is paid while the inbox is full");
+            Assert.AreEqual(labels + 1, sim.TotalLabels);
+            Assert.AreEqual(XgAutoDeskState.InboxFull, sim.AutoGlobalState(host), "the state still tells the UI the inbox is full");
+            Assert.IsTrue(sim.AutoDeskPlans(host).Exists(p => p.desk.id == "mnist" && p.Earning && p.income > 0));
+            money = host.money;
             for (int i = 0; i < 100; i++) sim.TickCollaboration(1, host);
-            Assert.AreEqual(20, sim.ReviewCount()); Assert.AreEqual(next, sim.S.nextCardId); Assert.AreEqual(labels, sim.TotalLabels);
+            Assert.AreEqual(40, sim.ReviewCount(), "never overfilled");
+            Assert.Greater(host.money, money, "ticking keeps earning with a full inbox");
             var review = sim.ReviewCard("spam"); Assert.IsTrue(sim.AnswerQueued(review.id, review.truth, host).accepted);
-            sim.TickCollaboration(.01, host);
-            Assert.AreEqual(19, sim.ReviewCount()); Assert.AreEqual(labels + 1, sim.TotalLabels);
+            Assert.AreEqual(39, sim.ReviewCount());
         }
         [Test]
         public void NoisePenalizesEffectiveSamplesAndCurrentEvaluation()

@@ -98,6 +98,11 @@ public static class TechTreeUiPlayQa
     static readonly Queue<Action> steps=new Queue<Action>();static readonly List<string> passed=new List<string>(),failed=new List<string>();
     static XingGuangController ctl;static XgTechTreePage page;static string output;static double next,deadline;static bool running;
     static UnityEngine.EventSystems.PointerEventData pointer;static Vector2 anchorBefore;static int paintBefore,meshBefore;
+    /// <summary>The tech page's single zoom ceiling: wheel, + button and Fit all stop here.</summary>
+    const float MaxZoom=1.5f;static XgTechNodeView topicView;static float zoomBefore;
+    static Func<bool> until;static double untilDeadline;
+    /// <summary>Zoom animates (XgPan.AdvanceMotion); the next step samples only once it has settled.</summary>
+    static void Settle(){until=()=>!page.Pan.Moving;untilDeadline=EditorApplication.timeSinceStartup+8;}
     [Serializable] sealed class Report{public string status,detail;public List<string> passed,failed,editorInfrastructureErrors;public List<TextResult> labels;}
     [Serializable] sealed class TextResult{public string id,language,text;public int lines,characters;public bool truncated,overflow;public float width,height,preferredWidth,preferredHeight;}
     static readonly List<TextResult> labels=new List<TextResult>();
@@ -106,20 +111,28 @@ public static class TechTreeUiPlayQa
     static void Check(bool ok,string message){(ok?passed:failed).Add(message);}
     static void BeginChecks()
     {
-        language="zh-CN";locale=GameText.Bind(()=>language);GameText.PublishChanged();page=ctl.View.Tree;ctl.Open();ctl.View.Open("tree");passed.Clear();failed.Clear();labels.Clear();steps.Clear();
+        language="zh-CN";locale=GameText.Bind(()=>language);GameText.PublishChanged();page=ctl.View.Tree;ctl.Open();ctl.View.Open("tree");passed.Clear();failed.Clear();labels.Clear();steps.Clear();until=null;
         steps.Enqueue(()=>{page.Pan.SetView(1,new Vector2(-200,200));page.Refresh();Canvas.ForceUpdateCanvases();});
         steps.Enqueue(()=>{CheckMeshes(false);language=GameText.English;GameText.PublishChanged();ctl.Sim.English=true;page.Refresh();});
-        steps.Enqueue(()=>{CheckMeshes(true);language="zh-CN";GameText.PublishChanged();ctl.Sim.English=false;page.Refresh();var views=Field<List<XgTechNodeView>>(page,"views");var v=views.Find(x=>x.gameObject.activeInHierarchy&&x.label.text.Contains("\n"));if(v==null)throw new Exception("No real three-line node found");
+        steps.Enqueue(()=>{CheckMeshes(true);language="zh-CN";GameText.PublishChanged();ctl.Sim.English=false;page.Refresh();var views=Field<List<XgTechNodeView>>(page,"views");var hasTopic=page.GetType().GetMethod("HasTopic",Flags);
+            var v=views.Find(x=>x.gameObject.activeInHierarchy&&x.label.text.Contains("\n")&&(bool)hasTopic.Invoke(page,new object[]{x}));if(v==null)throw new Exception("No real card with a science topic found");topicView=v;
             foreach(var b in v.GetComponentsInChildren<Button>(true)){var l=b.GetComponentInChildren<TMPro.TMP_Text>();Check(l==null||(!l.text.Contains("详情")&&!l.text.Contains("Details")),"No separate Details text action");}
-            var iconPointer=Pointer();v.OnPointerDown(iconPointer);v.OnPointerUp(iconPointer);v.OnPointerClick(iconPointer);});
-        steps.Enqueue(()=>{var tip=Field<RectTransform>(page,"tooltip");var body=Field<TMPro.TMP_Text>(page,"tipBody");body.ForceMeshUpdate(true,true);Check(tip.gameObject.activeInHierarchy&&body.textInfo.characterCount>0,"Icon click opens rendered science text");CaptureLcd("explanation.png");
-            page.Pan.SetView(1,new Vector2(-400,400));pointer=Pointer();anchorBefore=ContentPoint();pointer.scrollDelta=Vector2.up;page.Pan.OnScroll(pointer);});
-        steps.Enqueue(()=>{Check(Vector2.Distance(anchorBefore,ContentPoint())<1,"Wheel zoom preserves content under pointer");Check(Mathf.Abs(page.Pan.content.localScale.x-1.1f)<.003f,"Wheel increases by ten percent");for(int i=0;i<20;i++)page.Pan.OnScroll(pointer);});
-        steps.Enqueue(()=>{Check(Mathf.Abs(page.Pan.content.localScale.x-1.5f)<.003f,"Wheel maximum 150 percent");pointer.scrollDelta=Vector2.down;for(int i=0;i<30;i++)page.Pan.OnScroll(pointer);});
+            // Left click buys or upgrades; the science topic is on the right button.
+            var iconPointer=Pointer();iconPointer.button=UnityEngine.EventSystems.PointerEventData.InputButton.Right;v.OnPointerDown(iconPointer);v.OnPointerUp(iconPointer);v.OnPointerClick(iconPointer);});
+        steps.Enqueue(()=>{var knowledge=Field<RectTransform>(page,"knowledgeRoot");var detail=Field<RectTransform>(page,"knowledgeDetail");var article=XgTechTreeCopy.KnowledgeFor(topicView.entry.First,ctl.Sim);bool rendered=false;
+            if(article!=null)foreach(var t in detail.GetComponentsInChildren<TMPro.TMP_Text>()){if(t.text!=article.Body(false)&&t.text!=article.Body(true))continue;t.ForceMeshUpdate(true,true);rendered|=t.textInfo.characterCount>0;}
+            Check(knowledge.gameObject.activeInHierarchy&&rendered,"Icon right-click opens rendered science text");CaptureLcd("explanation.png");
+            page.GetType().GetMethod("CloseKnowledge",Flags).Invoke(page,null);Check(!knowledge.gameObject.activeSelf&&page.Pan.viewport.gameObject.activeInHierarchy,"Closing the science page returns to the tree");
+            Check(Mathf.Abs(page.Pan.minZoom-.5f)<.001f&&Mathf.Abs(page.Pan.maxZoom-MaxZoom)<.001f,"Wheel range is the toolbar's 50-150 percent");
+            page.Pan.SetView(1,new Vector2(-400,400));pointer=Pointer();anchorBefore=ContentPoint();pointer.scrollDelta=Vector2.up;page.Pan.OnScroll(pointer);Settle();});
+        steps.Enqueue(()=>{Check(Vector2.Distance(anchorBefore,ContentPoint())<1,"Wheel zoom preserves content under pointer");Check(Mathf.Abs(page.Pan.content.localScale.x-1.1f)<.003f,"Wheel increases by ten percent");for(int i=0;i<20;i++)page.Pan.OnScroll(pointer);Settle();});
+        steps.Enqueue(()=>{Check(Mathf.Abs(page.Pan.content.localScale.x-MaxZoom)<.003f,"Wheel maximum 150 percent");pointer.scrollDelta=Vector2.down;for(int i=0;i<30;i++)page.Pan.OnScroll(pointer);Settle();});
         steps.Enqueue(()=>{Check(Mathf.Abs(page.Pan.content.localScale.x-.5f)<.003f,"Wheel minimum 50 percent");pointer.clickCount=2;page.Pan.OnPointerClick(pointer);Check(Mathf.Abs(page.Pan.content.localScale.x-1)<.001f,"Double click returns 100 percent");ClickToolbar(5);});
-        steps.Enqueue(()=>{float fit=Mathf.Clamp(Mathf.Min(page.Pan.viewport.rect.width/page.Pan.content.sizeDelta.x,page.Pan.viewport.rect.height/page.Pan.content.sizeDelta.y),.5f,1.5f);Check(Mathf.Abs(page.Pan.content.localScale.x-fit)<.001f,"Fit button calculates bounded viewport fit");ClickToolbar(4);});
-        steps.Enqueue(()=>{Check(page.Pan.content.localScale.x>.5f,"Plus button zooms in");ClickToolbar(3);});
-        steps.Enqueue(()=>{Check(Mathf.Abs(page.Pan.content.localScale.x-.5f)<.003f,"Minus button zooms out");page.Pan.SetView(1,new Vector2(-300,300));pointer=Pointer();page.Pan.OnBeginDrag(pointer);Check(page.Pan.Dragging,"Pointer begin drag entered dragging");Canvas.ForceUpdateCanvases();paintBefore=Counter(page,"PaintPasses");meshBefore=Counter(Field<XgTechLinksGraphic>(page,"batchedLinks"),"MeshBuilds");});
+        steps.Enqueue(()=>{float fit=Mathf.Clamp(Mathf.Min(page.Pan.viewport.rect.width/page.Pan.content.sizeDelta.x,page.Pan.viewport.rect.height/page.Pan.content.sizeDelta.y),.5f,MaxZoom);Check(Mathf.Abs(page.Pan.content.localScale.x-fit)<.001f,"Fit button calculates bounded viewport fit");zoomBefore=page.Pan.content.localScale.x;ClickToolbar(4);Settle();});
+        steps.Enqueue(()=>{Check(Mathf.Abs(page.Pan.content.localScale.x-Mathf.Min(MaxZoom,zoomBefore+.1f))<.003f,"Plus button zooms in by ten percent");zoomBefore=page.Pan.content.localScale.x;ClickToolbar(3);Settle();});
+        steps.Enqueue(()=>{Check(Mathf.Abs(page.Pan.content.localScale.x-Mathf.Max(.5f,zoomBefore-.1f))<.003f,"Minus button zooms out by ten percent");page.Pan.SetView(MaxZoom-.05f,new Vector2(-300,300));ClickToolbar(4);Settle();});
+        steps.Enqueue(()=>{Check(Mathf.Abs(page.Pan.content.localScale.x-MaxZoom)<.003f,"Plus button reaches the wheel's 150 percent maximum");ClickToolbar(4);Settle();});
+        steps.Enqueue(()=>{Check(Mathf.Abs(page.Pan.content.localScale.x-MaxZoom)<.003f,"Plus button stops at 150 percent");page.Pan.SetView(1,new Vector2(-300,300));pointer=Pointer();page.Pan.OnBeginDrag(pointer);Check(page.Pan.Dragging,"Pointer begin drag entered dragging");Canvas.ForceUpdateCanvases();paintBefore=Counter(page,"PaintPasses");meshBefore=Counter(Field<XgTechLinksGraphic>(page,"batchedLinks"),"MeshBuilds");});
         steps.Enqueue(()=>{pointer.position+=new Vector2(30,-20);page.Pan.OnDrag(pointer);page.Refresh();Canvas.ForceUpdateCanvases();Check(Counter(page,"PaintPasses")==paintBefore,"Requested refresh deferred while dragging");Check(Counter(Field<XgTechLinksGraphic>(page,"batchedLinks"),"MeshBuilds")==meshBefore,"Dragging does not rebuild connection mesh");Check(!Field<RectTransform>(page,"tooltip").gameObject.activeSelf,"Dragging closes hover/details");page.Pan.OnEndDrag(pointer);});
         steps.Enqueue(()=>{CaptureLcd("tree.png");});
         running=true;next=EditorApplication.timeSinceStartup+1.5;deadline=next+90;EditorApplication.update+=Tick;
@@ -155,16 +168,18 @@ public static class TechTreeUiPlayQa
         {
             if(!v.gameObject.activeInHierarchy||!v.label.text.Contains("\n"))continue;
             var text=v.label;text.ForceMeshUpdate(true,true);var info=text.textInfo;var row=new TextResult{id=v.entry.members[0].id,language=en?"en":"zh",text=text.text,lines=info.lineCount,characters=info.characterCount,truncated=text.isTextTruncated,overflow=text.isTextOverflowing,width=text.rectTransform.rect.width,height=text.rectTransform.rect.height,preferredWidth=text.preferredWidth,preferredHeight=text.preferredHeight};labels.Add(row);count++;
-            Check(info.lineCount==3&&!row.truncated&&!row.overflow,"Three rendered unclipped lines "+row.language+" "+row.id);
-            bool secondaryStyle=true;
-            for(int i=0;i<info.characterCount;i++){var c=info.characterInfo[i];if(!c.isVisible||c.lineNumber==0)continue;Color32 muted=XgDark.Muted;if(Mathf.Abs(c.pointSize-12)>.1f||c.color.r!=muted.r||c.color.g!=muted.g||c.color.b!=muted.b)secondaryStyle=false;}
-            Check(secondaryStyle,"Second and third lines use 12px muted text "+row.language+" "+row.id);
+            // Name, an optional metadata tag, then the effect: two or three source lines (a long English effect may wrap once).
+            string source=text.text;int firstBreak=source.IndexOf('\n'),secondBreak=source.IndexOf('\n',firstBreak+1);int sourceLines=secondBreak>=0?3:2;
+            Check(info.lineCount>=sourceLines&&info.lineCount<=3&&!row.truncated&&!row.overflow,"Two or three rendered unclipped lines "+row.language+" "+row.id);
+            bool secondaryStyle=true;float baseSize=text.fontSize;
+            for(int i=0;i<info.characterCount;i++){var c=info.characterInfo[i];if(!c.isVisible||c.index<firstBreak)continue;Color32 muted=XgDark.Muted;float want=baseSize*(secondBreak>=0&&c.index<secondBreak?.72f:.85f);if(Mathf.Abs(c.pointSize-want)>.15f||c.color.r!=muted.r||c.color.g!=muted.g||c.color.b!=muted.b)secondaryStyle=false;}
+            Check(secondaryStyle,"Metadata line 72% and effect line 85% muted text "+row.language+" "+row.id);
             var rect=text.rectTransform.rect;bool contained=true;for(int i=0;i<info.characterCount;i++){var c=info.characterInfo[i];if(!c.isVisible)continue;if(c.bottomLeft.x<rect.xMin-.5f||c.topRight.x>rect.xMax+.5f||c.bottomLeft.y<rect.yMin-.5f||c.topRight.y>rect.yMax+.5f)contained=false;}
             Check(contained,"Glyph vertices within card bounds "+row.language+" "+row.id);
         }
         Check(count>20,"Checked more than 20 actual node meshes "+(en?"en":"zh"));
     }
-    static void Tick(){if(!running)return;try{if(errors.Count>0)throw new Exception(errors[0]);if(!EditorApplication.isPlaying)throw new Exception("Play ended");double now=EditorApplication.timeSinceStartup;if(now>deadline)throw new TimeoutException();if(now<next)return;next=now+1.2;if(steps.Count==0){Finish(failed.Count==0?"passed":"failed","Actual TMP meshes, Unity Button handlers and PointerEventData handlers tested; pointer injection is not physical mouse automation.");return;}steps.Dequeue()();}catch(Exception e){Finish("failed",e.ToString());}}
+    static void Tick(){if(!running)return;try{if(errors.Count>0)throw new Exception(errors[0]);if(!EditorApplication.isPlaying)throw new Exception("Play ended");double now=EditorApplication.timeSinceStartup;if(now>deadline)throw new TimeoutException();if(until!=null){if(!until()&&now<untilDeadline)return;until=null;}if(now<next)return;next=now+1.2;if(steps.Count==0){Finish(failed.Count==0?"passed":"failed","Actual TMP meshes, Unity Button handlers and PointerEventData handlers tested; pointer injection is not physical mouse automation.");return;}steps.Dequeue()();}catch(Exception e){Finish("failed",e.ToString());}}
     static void Finish(string status,string detail){running=false;locale?.Dispose();locale=null;EditorApplication.update-=Tick;File.WriteAllText(Path.Combine(output,"result.json"),JsonUtility.ToJson(new Report{status=status,detail=detail,passed=passed,failed=failed,labels=labels,editorInfrastructureErrors=editorInfrastructureErrors},true));if(status=="passed")File.WriteAllText(Path.Combine(output,"passed.txt"),detail);Application.logMessageReceived-=Log;EditorApplication.ExitPlaymode();}
 }
 #endif

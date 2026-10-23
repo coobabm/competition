@@ -33,7 +33,7 @@ namespace LingGuangV05.XingGuang
                 // Do not invent labels such as BRAIN, GOLD, GUIDE or PAY for ordinary game tools.
                 switch(abbreviation)
                 {
-                    case "LRS":case "CKPT":case "AUG":case "MB":case "TL":case "LLM":case "OCR":case "QA":case "IDC":
+                    case "LRS":case "CKPT":case "AUG":case "TL":case "LM":case "OCR":case "QA":case "IDC":
                         tag=tagEn=abbreviation;break;
                 }
                 return;
@@ -64,13 +64,13 @@ namespace LingGuangV05.XingGuang
             {"textcnn",new[]{"从局部词组寻找判断线索。","Find decision clues in local word groups."}},
             {"resnet",new[]{"前层信息直接传到后层，帮助深层学习。","Pass earlier signals directly to later layers to support deep learning."}},
             {"seq2seq",new[]{"先读入句子，再组织输出。","Read a sentence before composing the output."}},
-            {"attention",new[]{"生成译文时参考原句的相关内容。","Consult relevant source content while translating."}},
+            {"attention",new[]{"生成译文时参考原句的相关内容。2014 年以预印本提出，2015 年在会议上发表。","Consult relevant source content while translating. Proposed in a 2014 preprint and published at a 2015 conference."}},
             {"caption",new[]{"为图片生成简短描述。","Generate brief descriptions of images."}},
             {"transformer",new[]{"同时参考句中多处线索。","Consider clues from several parts of a sentence."}},
             {"multihead",new[]{"同时参考不同类型的词语关系。","Consider several types of word relationships together."}},
             {"position",new[]{"将词语的位置用于判断。","Use word positions as clues."}},
             {"sft",new[]{"用指令和示范答案练习回答。","Practise responses using instructions and examples."}},
-            {"cot",new[]{"先写中间推理，再组织答案。","Work through intermediate reasoning before answering."}},
+            {"cot",new[]{"先写中间步骤，再组织答案。","Work through intermediate reasoning before answering."}},
             {"transfer",new[]{"更换模型结构时继承部分已学成果。","Retain some learned progress when changing model structure."}},
             {"shared.lr",new[]{"选择每次学习调整的幅度。","Choose the size of each learning adjustment."}},
             {"warmup",new[]{"调整设置后逐步增加学习幅度。","Increase learning steps gradually after a settings change."}},
@@ -78,7 +78,7 @@ namespace LingGuangV05.XingGuang
             {"batchnorm",new[]{"调整内部信号范围，支持更深的训练。","Align internal signal ranges to support deeper training."}},
             {"layernorm",new[]{"调整同一层内部信号的范围。","Align the signal ranges within a layer."}},
             {"residual",new[]{"增加前层到后层的直接通道。","Add a direct path from earlier to later layers."}},
-            {"label.parallel",new[]{"保留更多待复核题，容量满时暂停。","Keep more review cards; automation pauses when capacity is full."}},
+            {"label.parallel",new[]{"保留更多待复核题；满了只跳过拿不准的题。","Keep more review cards; when full, only the unsure cards are skipped."}},
             {"label.coop",new[]{"按把握门槛将题目分给模型或玩家。","Assign cards to the model or player using the confidence threshold."}},
             {"label.audit",new[]{"抽查自动答案，将发现的错题交回复核。","Sample automatic answers and return detected errors for review."}},
             {"label.captcha",new[]{"满足识别条件后代填数字验证码。","Fill numeric captchas when recognition requirements are met."}},

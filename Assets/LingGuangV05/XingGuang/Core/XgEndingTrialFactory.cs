@@ -446,7 +446,7 @@ namespace LingGuangV05.XingGuang
             var rest = new List<int> { 0, 3, 4, 5 }; TrialShuffle(rest, rng);
             pick.Add(rest[0]);
             TrialShuffle(pick, rng);
-            // 阶段 6 没买「指令微调」时它 30% 会编一个答案；提高一档时不编。
+            // 阶段 6 没买「示范跟答」时它 30% 会编一个答案；提高一档时不编。
             double lie = Has("sft") || sheet.boosted ? 0 : .3;
             var bank = English ? ReadItemsEn : ReadItems;
             foreach (int i in pick)

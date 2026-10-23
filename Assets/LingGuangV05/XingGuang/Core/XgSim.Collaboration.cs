@@ -7,7 +7,7 @@ namespace LingGuangV05.XingGuang
     /// <summary>Bounded, saveable collaboration. Transport only supplies predictions; this owns all settlement.</summary>
     public sealed partial class XgSim
     {
-        public const int ReviewCapacity = 20, PrefetchPerDesk = 3, RouteWindow = 100, BrainWindow = 50, FeedWindow = 6;
+        public const int ReviewCapacity = 40, PrefetchPerDesk = 3, RouteWindow = 100, BrainWindow = 50, FeedWindow = 6;
         public const double NoisePenalty = 2, AuditProbability = .4, BrainGpuSeconds = .05;
         public const int NoiseCleanBatchLimit = 10;
         public static double NoiseCleanMoneyPerItem => LingGuangV05.Core.PurchasePricing.AtLeastHundred(2);
@@ -19,9 +19,11 @@ namespace LingGuangV05.XingGuang
         public string BrainStatus = "";
         public bool OfflineSimulation;
         public bool CollaborationEnabled => Has("label.coop");
-        /// <summary>0 cards, 1 experiment, 2 final question, 3 chapter-two entry preview.</summary>
+        /// <summary>0 cards, 1 experiment, 2 final question, 3 finished save (ending-archive summary).</summary>
         public int LabelPresentationMode(bool endingQuestionReady) => S.chapterComplete ? 3 : EndingAvailable && endingQuestionReady ? 2 : ProjectAwaitingAnswer ? 1 : 0;
-        public int ReviewLimit => Has("label.parallel") ? 60 : ReviewCapacity;
+        public const int ExpandedReviewCapacity = 120;
+        public int ReviewLimit => Has("label.parallel") ? ExpandedReviewCapacity : ReviewCapacity;
+        /// <summary>The inbox is full: low-confidence cards are skipped (unpaid, unrecorded as data) until it has room; confident ones keep earning.</summary>
         public bool ReviewFull => S.queue.Count >= ReviewLimit;
         public int GlobalAutoLevel => S.autoLevel;
         /// <summary>The player's own pause of 自动答题 (the platform's captcha holds are separate, see AutomationHeld).</summary>
@@ -32,12 +34,12 @@ namespace LingGuangV05.XingGuang
         public static readonly XgNode[] LabelNodes =
         {
             LabelNode("label.raise", null, "加薪", "Pay raise", "人工标注报酬：×2、×4、×6 … ×34，每买一次 +2 倍；与标注台商店共用。", "Hand pay: ×2, ×4, ×6 … ×34, +2× per raise; shared with the labelling shop.", 10, 17, 0),
-            LabelNode("label.auto", "label.raise", "自动答题", "Auto labelling", "全局每级每桌 +0.15 题/秒；需任一 60% 检查点。", "Each global level adds 0.15 cards/s per eligible desk; needs any 60% checkpoint.", 60, 10, 130),
-            LabelNode("label.coop", "label.auto", "拿不准才问我", "Ask when unsure", "用把握阈值分流；待复核总量 20，满时自动暂停。", "Route by confidence; automation pauses when the 20-card review inbox is full.", 300, 1, 260),
+            LabelNode("label.auto", "label.raise", "自动答题", "Auto labelling", "全局每级每桌 +0.2 题/秒；需任一 60% 检查点。", "Each global level adds 0.2 cards/s per eligible desk; needs any 60% checkpoint.", 60, 10, 130),
+            LabelNode("label.coop", "label.auto", "拿不准才问我", "Ask when unsure", "用把握阈值分流；待复核总量 40，满时只跳过拿不准的题，有把握的照常赚钱。", "Route by confidence; when the 40-card review inbox is full, only the unsure cards are skipped and the sure ones keep earning.", 300, 1, 260),
             LabelNode("label.brain", "label.coop", LingGuangV05.Core.AppNames.AiZh + "的大脑", "Local brain", "第四阶段：它会说短句了，文字题让它用自己的话判断，不再只靠最好的检查点打分。", "Stage 4: it speaks in short sentences now, so text cards are judged in its own words, not only by the best checkpoint's score.", 1200, 1, 390),
             LabelNode("label.hard", "label.coop", "难例加价", "Hard-case bonus", "人工复核答对：报酬 ×1.5，样本 ×2。", "Correct human reviews: pay ×1.5, samples ×2.", 800, 1, 520),
             LabelNode("label.audit", "label.coop", "自查", "Self-check", "拦下 40% 自动错题，退回复核，不污染训练数据。", "Return 40% of wrong automatic labels for review before they contaminate training data.", 1500, 1, 650),
-            LabelNode("label.parallel", "label.brain", "复核扩容", "Review inbox expansion", "待复核容量 20 → 60 题。", "Review inbox capacity increases from 20 to 60 cards.", 3000, 1, 780),
+            LabelNode("label.parallel", "label.brain", "复核扩容", "Review inbox expansion", "待复核容量 40 → 120 题。", "Review inbox capacity increases from 40 to 120 cards.", 3000, 1, 780),
             LabelNode(TrapMemoryNode, "label.coop", "题库比对", "Trap memory", "记住平台抽过的金标题；再遇到时交给你人工复核，不自动提交。", "Remember the platform's known-answer trap items; when one comes back it goes to your review inbox instead of being auto-submitted.", 800, 1, 910),
             LabelNode(CaptchaAutofillNode, "label.coop", "验证码代填", "Captcha autofill", "需要第四阶段、手写数字检查点 ≥ 95%。它替你填验证码，3–6 秒后提交；太规律会被平台盯上。", "Needs stage 4 and a digits checkpoint of 95% or more. It fills in captchas for you after 3–6 s; being too regular gets noticed.", 2000, 1, 1040),
         };
@@ -67,7 +69,7 @@ namespace LingGuangV05.XingGuang
                 S.coopVersion = 1;
             }
             S.autoLevel = Math.Max(0, Math.Min(XgCatalog.AutoMaxLevel, S.autoLevel));
-            S.coopThreshold = !FiniteCollaboration(S.coopThreshold) || S.coopThreshold < .5 ? .8 : Math.Min(.99, S.coopThreshold);
+            S.coopThreshold = !FiniteCollaboration(S.coopThreshold) || S.coopThreshold < .5 ? .7 : Math.Min(.99, S.coopThreshold);
             if (S.nextCardId < 1) S.nextCardId = 1;
             PrepareQuality();
         }
@@ -220,16 +222,21 @@ namespace LingGuangV05.XingGuang
         /// (the same 60% that unlocks 自动答题). A 5% poem model never answers for the player on the platform.
         /// </summary>
         public bool EligibleDesk(string desk) => DeskOpen(desk) && BestAcc(desk) >= XgCatalog.AutoMinAccuracy && XgCatalog.Desk(desk) != null;
-        public double CollaborationRate(string desk, IXgHost host)
+        public double CollaborationRate(string desk, IXgHost host) => CollaborationRateAt(desk, host, GlobalAutoLevel);
+        /// <summary>Cards per second this desk would get at 自动答题 level <paramref name="level"/> (the shop's next-level preview).</summary>
+        public double CollaborationRateAt(string desk, IXgHost host, int level)
         {
-            if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || ReviewFull || AutomationHeld || S.autoPaused || !EligibleDesk(desk)) return 0;
-            return GlobalAutoLevel * XgCatalog.AutoRatePerLevel * Math.Min(1, host.Compute) * WireSpeed("label:" + desk);
+            if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || AutomationHeld || S.autoPaused || !EligibleDesk(desk)) return 0;
+            // A full review inbox no longer stops the line (see Route); a second card still adds speed, up to ×2.
+            return Math.Max(0, level) * XgCatalog.AutoRatePerLevel * Math.Min(2, host.Compute) * WireSpeed("label:" + desk);
         }
-        public double CollaborationIncome(string desk, IXgHost host)
+        public double CollaborationIncome(string desk, IXgHost host) => CollaborationIncomeAt(desk, host, GlobalAutoLevel);
+        /// <summary>¥ per second this desk would earn at 自动答题 level <paramref name="level"/>.</summary>
+        public double CollaborationIncomeAt(string desk, IXgHost host, int level)
         {
             var recent = CollaborationStats(desk);
             double correctFraction = recent.total > 0 ? (double)recent.correct / recent.total : BestAcc(desk);
-            return CollaborationRate(desk, host) * correctFraction * PayFor(desk, LevelOf(desk)) * QualityPayMultiplier;
+            return CollaborationRateAt(desk, host, level) * correctFraction * AutoPayFor(desk, LevelOf(desk)) * QualityPayMultiplier;
         }
         public static bool IsBrainDesk(string desk)
         { return desk == "logic" || desk == "arith" || desk == "sense" || desk == "danmu" || desk == "spam" || desk == "headline" || desk == "review" || desk == "translate" || desk == "longtext" || desk == "crosssentence" || desk == "poems"; }
@@ -237,7 +244,7 @@ namespace LingGuangV05.XingGuang
 
         public void FillJudgmentBuffer()
         {
-            if (GlobalAutoLevel <= 0 || ReviewFull || ProjectActive) return;
+            if (GlobalAutoLevel <= 0 || ProjectActive) return;
             foreach (var desk in XgCatalog.Desks)
             {
                 if (!EligibleDesk(desk.id)) continue;
@@ -280,7 +287,7 @@ namespace LingGuangV05.XingGuang
         public bool TryTakeBrainTicket(out XgJudgeTicket ticket)
         {
             ticket = null;
-            if (ReviewFull || GlobalAutoLevel <= 0 || ProjectActive) return false;
+            if (GlobalAutoLevel <= 0 || ProjectActive) return false;
             foreach (var c in S.prefetch)
             {
                 if (!UsesBrain(c.dataset) || !EligibleDesk(c.dataset) || c.hasJudgment || c.awaitingBrain) continue;
@@ -302,7 +309,7 @@ namespace LingGuangV05.XingGuang
         public bool DispatchBrainTicket(XgJudgeTicket ticket, IXgHost host)
         {
             var card = TicketCard(ticket);
-            if (card == null || card.brainDispatched || ProjectActive || ReviewFull || !UsesBrain(card.dataset) || host == null || host.Blocker != null || host.Compute <= 0) return false;
+            if (card == null || card.brainDispatched || ProjectActive || !UsesBrain(card.dataset) || host == null || host.Blocker != null || host.Compute <= 0) return false;
             card.brainDispatched = true;
             host.Train(BrainGpuSeconds);
             return true;
@@ -378,20 +385,22 @@ namespace LingGuangV05.XingGuang
         }
         public bool Route(long cardId, IXgHost host)
         {
-            if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || ReviewFull || AutomationHeld) return false;
+            if (host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || AutomationHeld) return false;
             var card = S.prefetch.Find(c => c.id == cardId);
             if (card == null || XgCatalog.CrowdDesk(card.dataset) == null || !card.hasJudgment || card.awaitingBrain) return false;
             S.prefetch.Remove(card); // Claim once before any reward or event callback.
             // 题库比对: a trap item the platform already checked once goes to a human instead.
             if (CollaborationEnabled && (card.confidence < S.coopThreshold || TrapRecognized(card)))
             {
-                EnqueueReview(card); AddRoute(card, false, false, false); return true;
+                // A full inbox skips the card: no pay, no fine, no sample; the confident cards keep earning.
+                if (!ReviewFull) EnqueueReview(card);
+                AddRoute(card, false, false, false); return true;
             }
             bool correct = card.guess == card.truth;
             bool audited = CollaborationEnabled && !correct && Has("label.audit") && Roll() < AuditProbability;
-            double pay = 0, fine = 0, unitPay = PayFor(card.dataset, card.level) * QualityPayMultiplier * RelicIncomeFactor;
+            double pay = 0, fine = 0, unitPay = AutoPayFor(card.dataset, card.level) * QualityPayMultiplier * RelicIncomeFactor;
             bool spotChecked = false;
-            if (audited) EnqueueReview(card);
+            if (audited) { if (!ReviewFull) EnqueueReview(card); } // Caught and withheld either way; a full inbox just drops it.
             else
             {
                 // The label leaves the lab: the 摆渡众包 platform may spot-check it (see XgSim.Quality.cs).
@@ -452,7 +461,7 @@ namespace LingGuangV05.XingGuang
         public void TickCollaboration(double dt, IXgHost host)
         {
             TickQuality(dt);
-            if (dt <= 0 || !FiniteCollaboration(dt) || host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || GlobalAutoLevel <= 0 || ReviewFull) return;
+            if (dt <= 0 || !FiniteCollaboration(dt) || host == null || host.Blocker != null || host.Compute <= 0 || ProjectActive || GlobalAutoLevel <= 0) return;
             FillJudgmentBuffer();
             foreach (var desk in XgCatalog.Desks)
             {
@@ -460,7 +469,7 @@ namespace LingGuangV05.XingGuang
                 if (rate <= 0) continue;
                 double timer = Math.Min(1, Math.Max(0, Count(S.autoTimers, desk.id))) + rate * Math.Min(1, dt);
                 int guard = PrefetchPerDesk;
-                while (timer >= 1 && guard-- > 0 && !ReviewFull)
+                while (timer >= 1 && guard-- > 0)
                 {
                     var card = S.prefetch.Find(c => c.dataset == desk.id && c.hasJudgment && !c.awaitingBrain);
                     if (card == null || !Route(card.id, host)) break;
@@ -468,7 +477,6 @@ namespace LingGuangV05.XingGuang
                 }
                 // Backpressure never accrues an unbounded burst while a model or the player is busy.
                 SetCount(S.autoTimers, desk.id, Math.Min(timer, .999999));
-                if (ReviewFull) break;
             }
         }
     }

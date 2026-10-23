@@ -564,10 +564,9 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (OpeningLocked(id)) return Sim.OpeningReason;
             switch (id)
             {
-                case "label": return T("标注兼职：为企业核对数据，合格提交按题结算报酬。", "Annotation work: verify company data and earn pay for each accepted submission.");
                 case "auto": return T("自动提交：自动答题替你交了哪些题、每类题用的是哪个模型、为什么有的桌它不碰。", "Auto-submit: which cards auto-answer hands in for you, which model answers each kind, and why it leaves some desks alone.");
                 case "contracts": return PageOpen("contracts") ? T("企业订单：通过质量验收即可签约，持续交付获得报酬。", "Business orders: pass quality acceptance and earn pay for ongoing deliveries.")
-                    : T("企业订单：尚未取得交付资质，先在标注台积累经验。", "Business orders: delivery qualification is not yet available. Start with annotation work.");
+                    : T("企业订单：尚未取得交付资质，先在" + LingGuangV05.Core.AppNames.ExeZh + "的「教」里手动标注积累经验。", "Business orders: delivery qualification is not yet available. Start by labelling by hand in Teach in " + LingGuangV05.Core.AppNames.ExeEn + ".");
                 case "subcontract": return T("分包：平台协作员代处理订单，按分钟结算报酬，质量由你负责。", "Subcontract: platform collaborators process work for pay by the minute; you remain responsible for its quality.");
                 case "ledger": return T("结算：现在每秒进出多少钱，以及平台记下的罚款、尾款和工资。", "Ledger: money in and out per second now, and the fines, balances and wages the platform has recorded.");
                 default: return T("信用：信用分、抽检和罚款规则，以及什么会让它涨跌。", "Credit: the credit score, the spot-check and fine rules, and what moves it.");

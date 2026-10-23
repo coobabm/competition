@@ -148,6 +148,8 @@ namespace LingGuangV05.Desktop.LLM
             NativeService created = null;
             try
             {
+                NativePathGuard.PrepareLibraries();
+                model = NativePathGuard.Model(model);
                 library = new LlamaNative(gpu);
                 // One slot; the whole text in one batch (embeddings need it); pooling comes from the GGUF (last token).
                 string args = "-m \"" + model + "\" -c 2048 -np 1 -b 2048 -ub 2048 --embedding" + (gpu ? "" : " --n-gpu-layers 0 --device none");

@@ -418,7 +418,7 @@ namespace LingGuangV05.Desktop.Story
             }
             bool visible = posted && DesktopNotifications.IsWindowVisible(chatAdapter.Window) && chatManager.selectedLayout == laoZhouLayout;
             DesktopNotifications.Notify(director != null ? director.runtime : null, "YY", Lang.T("老周"),
-                GameText.Source(text), visible, () => OpenApp("yy", null));
+                GameText.Source(text), visible, () => OpenApp("yy", null), aiReply: true);
             NoteChatDelivered(pendingChat);
         }
 
@@ -572,7 +572,8 @@ namespace LingGuangV05.Desktop.Story
                 SetText(toastText, item.Key);
                 Action click = item.Value;bool toastClosed=false;
                 toastButton.onClick.RemoveAllListeners();
-                toastButton.onClick.AddListener(() => { toastClosed=true;if (click != null) click(); toastGroup.alpha = 0; });
+                // A clicked toast stops catching clicks at once, not after its fade-out.
+                toastButton.onClick.AddListener(() => { toastClosed=true;toastGroup.blocksRaycasts=false;if (click != null) click(); toastGroup.alpha = 0; });
                 toastGroup.blocksRaycasts = true;
                 yield return Fade(toastGroup, 1, .3f);
                 float hold = 4f;

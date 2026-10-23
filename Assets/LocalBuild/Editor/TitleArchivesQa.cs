@@ -41,29 +41,31 @@ public static class TitleArchivesQa
             button("ReadArchives").onClick.Invoke();check(hud.IsArchiveOpen,"title load entry opens modal");
             check(!Array.Exists(canvas.GetComponentsInChildren<Button>(true),b=>b.name=="Archive6"&&b.gameObject.activeInHierarchy),"empty manual slots are omitted; new-save card replaces empty slots");check(!button("LoadSelected").interactable,"load needs an explicit slot choice");
             button("Archive2").onClick.Invoke();check(starts==0&&rt.Sim.S.money==34567,"selection alone does not replace current save");
-            button("ArchivePage").onClick.Invoke();check(!button("LoadSelected").interactable,"changing pages clears an unread hidden selection");
-            button("ArchivePage").onClick.Invoke();button("Archive2").onClick.Invoke();
+            check(button("ArchivePage")==null&&button("Archive1")!=null&&((RectTransform)button("Archive1").transform).anchoredPosition==Vector2.zero,"system autosave is the first card of the single archive page");
+            check(rt.DescribeArchiveCard(1).name==GameText.T("系统存档（自动）","System autosave")&&rt.DescribeArchiveCard(1).autosave,"slot 1 is labelled as the system autosave");
+            button("Archive2").onClick.Invoke();
             var blocked=typeof(ChapterOneRuntime).GetField("persistenceBlocked",Flags);blocked.SetValue(rt,true);
             string statusBefore=rt.SaveStatus;
             button("LoadSelected").onClick.Invoke();check(starts==0&&hud.IsArchiveOpen&&rt.Sim.S.money==34567,"failed load keeps panel and current progress");
             check(!string.IsNullOrWhiteSpace(rt.SaveStatus)&&rt.SaveStatus!=statusBefore,"blocked load replaces stale success with an explicit failure");blocked.SetValue(rt,false);
             button("LoadSelected").onClick.Invoke();check(starts==0&&hud.IsArchiveOpen&&rt.Sim.S.money==23456,"successful load waits for explicit close before boot");
-            button("ArchivePage").onClick.Invoke();check(hud.IsArchiveOpen&&button("Archive1")!=null&&!button("LoadSelected").interactable&&starts==0,"last page contains autosave and preserves loaded selection");
+            check(hud.IsArchiveOpen&&button("Archive1")!=null&&!button("LoadSelected").interactable&&starts==0,"autosave shares the page and the loaded selection is kept");
             button("CloseArchives").onClick.Invoke();check(starts==1&&!hud.IsArchiveOpen,"closing loaded panel starts exactly once");
             hud.CloseArchiveByPlayer();check(starts==1,"repeated close cannot start twice");
             check(rt.ReloadSave()&&rt.Sim.S.money==23456,"selected slot persisted as current primary");
             hud.OpenArchives();int empty=rt.FirstEmptyManualArchive();string unchanged=Hash(rt.SavePath);
+            var confirming=typeof(CaseMenuHud).GetField("newGameConfirmation",Flags);
+            check(button("StartNewGame").GetComponent<UnityEngine.EventSystems.EventTrigger>()==null,"leaving the new-game button with the pointer no longer cancels it");
             button("CreateSave").onClick.Invoke();
-            check(!rt.ArchiveExists(empty)&&Hash(rt.SavePath)==unchanged&&starts==1,"new manual card only enters name edit; no disk write or new game");
-            var name=Array.Find(canvas.GetComponentsInChildren<TMPro.TMP_InputField>(true),f=>f.gameObject.activeInHierarchy);
-            check(name!=null,"new manual card exposes name input");name.text="我的训练记录";
-            button("CommitNewSave").onClick.Invoke();
-            check(rt.ArchiveExists(empty)&&rt.DescribeArchiveCard(empty).name=="我的训练记录"&&Hash(rt.SavePath)==unchanged&&starts==1,"save new card copies current progress and name without resetting primary or booting");
+            check(!rt.ArchiveExists(empty)&&Hash(rt.SavePath)==unchanged&&starts==1&&hud.IsArchiveOpen&&(bool)confirming.GetValue(hud),"title new-save card asks to confirm a new game; no disk write yet");
+            check(button("CreateSave").GetComponentInChildren<TMPro.TMP_Text>().text==button("StartNewGame").GetComponentInChildren<TMPro.TMP_Text>().text,"new-save card and start-new-game share one confirmation");
+            button("Archive2").onClick.Invoke();check(!(bool)confirming.GetValue(hud)&&Hash(rt.SavePath)==unchanged,"choosing a card cancels the new-game question");
             hud.CloseArchiveByPlayer();
 
             hud.RequestPowerOn();check(hud.IsArchiveOpen&&starts==1,"power with saves opens chooser without boot");
             hud.RequestPowerOn();check(hud.IsArchiveOpen&&starts==1,"repeat power is blocked by chooser");hud.CloseArchiveByPlayer();check(starts==1,"cancel power chooser stays on title");
-            for(int row=0;row<6;row++)check(ChapterOneRuntime.ArchiveDisplaySlot(row)==(row==5?1:row+2),"UI row maps to preserved disk slot "+row);
+            for(int row=0;row<=ChapterOneRuntime.ManualArchiveLimit;row++)check(ChapterOneRuntime.ArchiveDisplaySlot(row)==(row==0?1:row+1),"UI row maps to preserved disk slot "+row);
+            check(ChapterOneRuntime.ArchiveDisplaySlot(ChapterOneRuntime.ManualArchiveLimit+1)==0,"rows past the manual slots map to no slot");
             check(ChapterOneRuntime.AutosaveSeconds==300,"system autosave stays at five minutes");
             for(int slot=2;slot<=6;slot++) { rt.Sim.S.money=20000+slot;check(rt.SaveSlot(slot),"manual slot "+slot+" saves"); }
             for(int slot=2;slot<=6;slot++) check(rt.LoadArchive(slot)&&rt.Sim.S.money==20000+slot,"manual slot "+slot+" restores independent progress");
@@ -107,6 +109,12 @@ public static class TitleArchivesQa
             foreach(string archived in Directory.GetFiles(saveRoot,"chapter-one.sav.reset-*"))if(Hash(archived)==primaryHash)primaryArchived=true;
             check(primaryArchived,"old primary retained byte-for-byte in reset archive");
             hud.CloseArchiveByPlayer();check(starts==2,"closing new-game modal again cannot start twice");
+            check(rt.SaveStatus==GameText.T("新游戏已开始 · 开场结束后自动存档","New game started · It autosaves once the opening ends"),"new game says it is running and when it will be saved");
+            check(!rt.ArchiveExists(1)&&rt.DescribeArchiveCard(1).pendingNewGame,"new game in its opening has a placeholder autosave");
+            hud.OpenArchives();
+            check(button("Archive1")!=null&&!button("Archive1").interactable&&((RectTransform)button("Archive1").transform).anchoredPosition==Vector2.zero,"placeholder autosave card is first and cannot be loaded");
+            string opening=rt.SaveStatus;check(!rt.SaveSlot(3)&&!string.IsNullOrWhiteSpace(rt.SaveStatus)&&rt.SaveStatus!=opening,"saving to a slot during the opening explains the refusal");
+            hud.CloseArchiveByPlayer();check(starts==2,"closing the placeholder page does not boot");
         }
         catch(Exception e){report.status="failed";report.error=e.ToString();}
         finally{if(canvas!=null)UnityEngine.Object.DestroyImmediate(canvas);if(host!=null)UnityEngine.Object.DestroyImmediate(host);ChapterOneRuntime.VerificationSaveDirectory=before;File.WriteAllText(Path.Combine(dir,"report.json"),JsonUtility.ToJson(report,true));}

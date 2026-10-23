@@ -121,8 +121,8 @@ namespace LingGuangV05.XingGuang
             { "backprop", new[] { "不是做一道题对一次答案，是做完一页再对。", "Check answers after a whole page, not after every question." } },
             { "chainrule", new[] { "高数作业让机器代写，终于不用熬夜。", "The machine does the calculus homework, so no more all-nighters." } },
             { "cudnn", new[] { "显卡厂商自带的秘籍，同样的活更快更省电。", "The GPU maker's own cheat sheet: same work, faster and cheaper to power." } },
-            { "cooler", new[] { "给显卡装个大风扇，别让它夏天中暑。", "A big fan for the graphics card, so it doesn't get heatstroke in summer." } },
-            { "lenet", new[] { "拿个小放大镜扫全图，字挪到哪都认得。", "Scans the picture with a small magnifier, so it spots things wherever they sit." } },
+            { "cooler", new[] { "理顺机箱风道，把热风排出去，别让显卡夏天中暑。", "Sort out the case airflow so the hot air leaves and the card doesn't get heatstroke in summer." } },
+            { "lenet", new[] { "拿个小放大镜扫全图，字稍微挪一挪也认得。", "Scans the picture with a small magnifier, so a slightly shifted letter is still spotted." } },
             { "rnn", new[] { "金鱼脑：读到后面就忘了前面。", "Goldfish brain: by the end it has forgotten the start." } },
             // 阶段 3
             { "alexnet", new[] { "LeNet 的豪华加大版，还插了两块显卡。", "LeNet super-sized, with two graphics cards plugged in." } },

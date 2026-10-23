@@ -104,7 +104,8 @@ namespace LingGuangV05.Desktop.XingGuang
         }
         void Update()
         {
-            if (Keyboard.current!=null&&Keyboard.current.escapeKey.wasPressedThisFrame) CancelDrag();
+            // Only a drag in progress takes Esc; otherwise it is left for the layer it belongs to.
+            if ((ActivePayload!=null||ghost!=null)&&EscapeKey.TryConsume()) CancelDrag();
             if (Time.unscaledTime < nextObserve) return;
             nextObserve = Time.unscaledTime + .25f;
             var owner = XingGuangController.Instance;
@@ -168,7 +169,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var viewport = Rect("Viewport",list,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
             viewport.gameObject.AddComponent<Image>().color=Color.white; viewport.gameObject.AddComponent<RectMask2D>();
             rows=Rect("Rows",viewport,new Vector2(0,1),Vector2.one,Vector2.zero,Vector2.zero);rows.pivot=new Vector2(.5f,1);
-            var scroll=list.gameObject.AddComponent<ScrollRect>();scroll.viewport=viewport;scroll.content=rows;scroll.horizontal=false;scroll.movementType=ScrollRect.MovementType.Clamped;
+            var scroll=list.gameObject.AddComponent<ScrollRect>();scroll.viewport=viewport;scroll.content=rows;scroll.horizontal=false;scroll.movementType=ScrollRect.MovementType.Clamped;scroll.scrollSensitivity=30;
             var side=Rect("File details",body,new Vector2(.64f,0),Vector2.one,new Vector2(8,0),Vector2.zero);
             var detail=Rect("Preview",side,Vector2.zero,Vector2.one,new Vector2(0,124),Vector2.zero);
             var installHelp=Rect("Installation guidance",side,Vector2.zero,Vector2.right,Vector2.zero,new Vector2(0,116));
@@ -187,7 +188,7 @@ namespace LingGuangV05.Desktop.XingGuang
             preview=Text(previewContent,"",16);preview.richText=false;
             preview.alignment=TextAlignmentOptions.TopLeft;preview.textWrappingMode=TextWrappingModes.Normal;preview.overflowMode=TextOverflowModes.Overflow;
             previewContent.gameObject.AddComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
-            previewScroll=previewViewport.gameObject.AddComponent<ScrollRect>();previewScroll.viewport=previewViewport;previewScroll.content=previewContent;previewScroll.horizontal=false;previewScroll.movementType=ScrollRect.MovementType.Clamped;
+            previewScroll=previewViewport.gameObject.AddComponent<ScrollRect>();previewScroll.viewport=previewViewport;previewScroll.content=previewContent;previewScroll.horizontal=false;previewScroll.movementType=ScrollRect.MovementType.Clamped;previewScroll.scrollSensitivity=30;
             BuildRecordPreviewPager(detail);
             footer=Text(Rect("Status",client,Vector2.zero,Vector2.right,new Vector2(12,4),new Vector2(-12,36)),"",14);
         }
@@ -312,8 +313,14 @@ namespace LingGuangV05.Desktop.XingGuang
         public XgFilesWindow owner;public string fileId,detail;public bool ready,folder;public Func<Texture2D> picture;
         public XgFilesPayload Payload=>owner!=null?owner.ActivePayload:null;
         public void OnPointerClick(PointerEventData e)=>owner.Pick(this,e);
-        public void OnBeginDrag(PointerEventData e){if(e.button==PointerEventData.InputButton.Left)owner.BeginFileDrag(this,e);}
-        public void OnDrag(PointerEventData e)=>owner.MoveDrag(e);
-        public void OnEndDrag(PointerEventData e)=>owner.CancelDrag();
+        // A row that does not start a file drag (folder, not ready, other button) hands the gesture to its list's ScrollRect.
+        ScrollRect scroll;
+        public void OnBeginDrag(PointerEventData e)
+        {
+            scroll=null;if(e.button==PointerEventData.InputButton.Left)owner.BeginFileDrag(this,e);
+            if(Payload==null&&transform.parent!=null){scroll=transform.parent.GetComponentInParent<ScrollRect>();if(scroll!=null)scroll.OnBeginDrag(e);}
+        }
+        public void OnDrag(PointerEventData e){if(scroll!=null)scroll.OnDrag(e);else owner.MoveDrag(e);}
+        public void OnEndDrag(PointerEventData e){if(scroll!=null){scroll.OnEndDrag(e);scroll=null;}else owner.CancelDrag();}
     }
 }

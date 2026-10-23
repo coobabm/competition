@@ -90,8 +90,34 @@ namespace LingGuangV05.Desktop.Games
                 // Keep a receipt marker, not a sentence frozen in the completion language.
                 sampleNote="completed";
                 sampleNoteOwner=roundOwner;
+                PayWin(roundOwner,outcome,ai);
             }
             roundSession=null;
+        }
+
+        /// <summary>The last result's 赢棋奖金 line (zh, en), shown under the status like the sample receipt.</summary>
+        string rewardZh = "", rewardEn = "";
+        XgSim rewardOwner;
+
+        /// <summary>赢棋奖钱 (v4 §3.7): a win (or draw) against its own AI pays about a minute of income, three times a day.</summary>
+        void PayWin(XgSim lab,XgGameOutcome outcome,bool ai)
+        {
+            rewardZh=rewardEn="";rewardOwner=lab;
+            var host=global::LingGuangV05.Desktop.XingGuang.XingGuangController.Instance?.Host;
+            if(lab==null||host==null||!ai||outcome==XgGameOutcome.PlayerLost)return;
+            var r=lab.ClaimGameReward(outcome,true,host,XgSim.RewardDay(DateTime.Now));
+            if(r.amount>0)
+            {
+                string money=r.amount.ToString("#,0.##");
+                rewardZh=(outcome==XgGameOutcome.Draw?"和棋奖金":"赢棋奖金")+" +¥"+money+" · 今日奖励 "+r.paidToday+"/"+XgSim.GameRewardsPerDay;
+                rewardEn=(outcome==XgGameOutcome.Draw?"Draw bonus":"Win bonus")+" +¥"+money+" · today "+r.paidToday+"/"+XgSim.GameRewardsPerDay;
+                PrologueDirector.Desk?.StoryPopup(GameText.T("游戏中心","Game Hub"),T(rewardZh,rewardEn),5);
+            }
+            else if(r.capped)
+            {
+                rewardZh="今日奖励已领完（"+XgSim.GameRewardsPerDay+"/"+XgSim.GameRewardsPerDay+"），这盘只记战绩";
+                rewardEn="Today's bonuses are used up ("+XgSim.GameRewardsPerDay+"/"+XgSim.GameRewardsPerDay+"); this one only counts in the record";
+            }
         }
 
         string SampleText(XgSim lab, int n)
@@ -120,7 +146,10 @@ namespace LingGuangV05.Desktop.Games
         {
             string s = "";
             if (commentary.Length > 0) s += "\n\n<color=#7A4FA0>" + AiName + Lang.T("：「") + T(commentary, commentaryEn) + T("」", "”") + "</color>\n<size=12><color=#696E7A>" + AiContentNotice.Footer(GameText.IsEnglish) + "</color></size>";
-            if (sampleNote.Length > 0 && ReferenceEquals(sampleNoteOwner,Lab)) s += "\n\n<size=15><color=#2E8B57>" + T("对局已结束。样本需在资料夹安装对局记录包。","Game complete. Samples require installing a game-record pack from Files.") + "</color></size>";
+            bool reward = rewardZh.Length > 0 && ReferenceEquals(rewardOwner,Lab);
+            if (reward) s += "\n\n<size=15><color=#B8860B>" + T(rewardZh, rewardEn) + "</color></size>";
+            // The bonus and the sample receipt are one result block: keep them on adjacent lines.
+            if (sampleNote.Length > 0 && ReferenceEquals(sampleNoteOwner,Lab)) s += (reward ? "\n" : "\n\n") + "<size=15><color=#2E8B57>" + T("对局已结束。样本需在资料夹安装对局记录包。","Game complete. Samples require installing a game-record pack from Files.") + "</color></size>";
             return s;
         }
     }

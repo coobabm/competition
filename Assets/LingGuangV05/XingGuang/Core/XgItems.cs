@@ -39,10 +39,11 @@ namespace LingGuangV05.XingGuang
         static readonly Dictionary<string, int> TechniqueYears = new Dictionary<string, int>
         {
             { "weights", 1958 }, { "learnrule", 1958 }, { "step", 1958 }, { "bias", 1958 }, { "chainrule", 1970 },
-            { "sigmoid", 1986 }, { "momentum", 1986 }, { "augment", 1998 }, { "relu", 2010 }, { "rmsprop", 2012 },
-            { "gradclip", 2013 }, { "wordvec", 2013 }, { "dropout", 2014 }, { "adam", 2014 }, { "cudnn", 2014 },
+            { "sigmoid", 1986 }, { "backprop", 1986 }, { "momentum", 1986 }, { "augment", 1998 }, { "relu", 2010 }, { "rmsprop", 2012 },
+            { "gradclip", 2013 }, { "wordvec", 2013 }, { "dropout", 2012 }, { "adam", 2014 }, { "cudnn", 2014 },
             { "transfer", 2014 }, { "beamsearch", 2014 }, { "batchnorm", 2015 }, { "irnn", 2015 }, { "subword", 2016 },
-            { "fp16", 2016 }, { "position", 2017 }, { "warmup", 2017 }, { "sft", 2022 }, { "cot", 2022 },
+            { "fp16", 2016 }, { "position", 2017 }, { "warmup", 2017 },
+            // sft (示范跟答) and cot (分步解题) are the lab's own 2016 trials in-world: no real-world year, never "early".
         };
 
         /// <summary>Items from systems outside the tech tree (the fun items being designed). Added once, at load.</summary>

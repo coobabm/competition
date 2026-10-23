@@ -16,7 +16,7 @@ namespace LingGuangV05.XingGuang
         /// ¥ per second the 摆渡众包 orders pay once ability i has been learned (节奏重做 §2.4): the abilities raise a steady
         /// income instead of handing over one big sum, so each chapter's purchases take time to save up for.
         /// </summary>
-        public static readonly double[] CrowdTierIncome = { 0, 0, .1, .3, .6, 1, 1.5 };
+        public static readonly double[] CrowdTierIncome = { 0, 0, .2, .8, 1.5, 3, 5 };
         /// <summary>The one-off welcome payment of a new tier is this many seconds of the tier's income.</summary>
         public const double WelcomeSeconds = 120;
         /// <summary>The welcome payment of each ability (index = ability). Declared after <see cref="CrowdTierIncome"/> on purpose.</summary>

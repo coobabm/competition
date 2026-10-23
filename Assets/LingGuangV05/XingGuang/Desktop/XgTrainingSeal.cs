@@ -42,13 +42,14 @@ namespace LingGuangV05.Desktop.XingGuang
             seal.NameLabel=kit.Text(Rect("Name",glass,new Vector2(0,1),Vector2.one,new Vector2(10,-27),new Vector2(-10,-5)),"",14,XgDark.Ink,TextAlignmentOptions.MidlineLeft);
             seal.DescriptionLabel=kit.Text(Rect("Description",glass,new Vector2(0,1),Vector2.one,new Vector2(10,-52),new Vector2(-10,-28)),"",11,XgDark.Muted,TextAlignmentOptions.MidlineLeft);
             seal.PriceLabel=kit.Text(Rect("Price",glass,Vector2.zero,new Vector2(1,0),new Vector2(10,5),new Vector2(-10,27)),"",12,XgDark.Gold,TextAlignmentOptions.MidlineLeft);
-            foreach(var label in new[]{seal.NameLabel,seal.DescriptionLabel,seal.PriceLabel}){label.raycastTarget=false;label.enableAutoSizing=false;label.textWrappingMode=TextWrappingModes.NoWrap;label.overflowMode=TextOverflowModes.Ellipsis;}
+            // Wrap and shrink to fit rather than cutting names off; the ellipsis is only a last resort.
+            foreach(var label in new[]{seal.NameLabel,seal.DescriptionLabel,seal.PriceLabel}){label.raycastTarget=false;label.fontSizeMax=label.fontSize;label.fontSizeMin=9;label.enableAutoSizing=true;label.textWrappingMode=TextWrappingModes.Normal;label.overflowMode=TextOverflowModes.Ellipsis;}
             seal.RefreshState();return seal;
         }
         public static XgTrainingSeal ForModule(RectTransform parent,XgUi kit,XingGuangView view,string part,string nodeId,string explanation,string explanationEn)
         {
             return Create(parent,kit,nodeId,()=>!view.Sim.TrainPart(part),
-                ()=>{var node=XgCatalog.Node(nodeId);return GameText.T("封印 · ","Locked · ")+(node==null?nodeId:GameText.T(node.name,node.nameEn));},
+                ()=>{var node=XgCatalog.Node(nodeId);return GameText.T("封印 · ","Locked · ")+(node==null?nodeId:XgTechTreeCopy.Name(node,view.Sim));},
                 ()=>GameText.T(explanation,explanationEn),
                 ()=>{var node=XgCatalog.Node(nodeId);return node==null?GameText.T("科技未找到","Tech unavailable"):"¥"+view.Sim.NodeCost(node).ToString("0",System.Globalization.CultureInfo.InvariantCulture)+GameText.T(" · 查看科技 ›"," · View tech ›");},
                 ()=>view.Visible&&view.Tab=="train"&&!view.Juice.Reduced&&!view.Sim.S.reduceFx&&!GamePerformance.Low,

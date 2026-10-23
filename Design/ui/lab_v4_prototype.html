@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>len.exe · 深度学习工作站 — 实验室 v4 交互原型</title>
+<style>
+:root{
+  --void:#05070A;--page:#06080C;--panel:#0B0F14;--card:#111317;--card2:#151A21;
+  --hair:#FFFFFF12;--hair2:#FFFFFF1F;--grid:#0C1822;
+  --ink:#F2F4F7;--muted:#97999E;--dim:#53555A;
+  --signal:#5FE3B5;--signal-g:#5FE3B540;--money:#F2C46D;--data:#6AB8FF;--params:#A594FF;--danger:#FF7A6E;--maxed:#FFBE28;--locked:#4A5C6A;
+  --f-v:#6AB8FF;--f-t:#5FE3B5;--f-l:#F2C46D;--f-g:#CFEFE3;--f-a:#5FE3B5;--f-p:#FFB36B;
+  --mono:"Cascadia Mono","Consolas","SFMono-Regular","Menlo",monospace;
+  --sans:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Noto Sans SC","Segoe UI",sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);--pop:cubic-bezier(.16,1,.3,1);--clock:cubic-bezier(.22,.68,.23,1);
+  --flow:2.4s;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+body{font-family:var(--sans);color:var(--ink);font-size:14px;line-height:1.4;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ───────── stage & fake 2016 desktop ───────── */
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;
+  background:radial-gradient(1200px 700px at 70% 20%,#16324a 0,#0b1a2a 45%,#060c14 100%)}
+#stage::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 20% 80%,#1e4a5a33 0,transparent 40%),
+  repeating-linear-gradient(115deg,#ffffff03 0 2px,transparent 2px 9px);pointer-events:none}
+.dicons{position:absolute;left:22px;top:22px;display:grid;gap:22px}
+.dicon{width:72px;text-align:center;font-size:12px;color:#dfe8f0;text-shadow:0 1px 2px #000}
+.dicon i{display:grid;place-items:center;width:44px;height:44px;margin:0 auto 4px;border-radius:8px;font-style:normal;font-size:20px;
+  background:linear-gradient(160deg,#2c4a66,#18283a);border:1px solid #ffffff22;box-shadow:0 4px 10px #0006}
+.dicon.lg i{background:linear-gradient(160deg,#103b33,#06140f);color:var(--signal);border-color:#5FE3B566;font-family:var(--mono);font-weight:700}
+.taskbar{position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(#1b2b3cdd,#0d1722ee);border-top:1px solid #ffffff22;
+  display:flex;align-items:center;gap:6px;padding:0 8px;transition:transform .36s var(--ease)}
+.orb{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#7fd3ff,#1f6aa8 60%,#0b2c4a);box-shadow:0 0 10px #3aa0ff55}
+.tbitem{height:32px;padding:0 14px;display:flex;align-items:center;gap:6px;border-radius:4px;font-size:12px;color:#dce6ef;background:#ffffff10;border:1px solid #ffffff18}
+.tbitem.on{background:#5FE3B522;border-color:#5FE3B555}
+.clock{margin-left:auto;font-size:12px;color:#cfd9e2;text-align:right;line-height:1.2;padding-right:8px}
+
+/* ───────── the lab window ───────── */
+#win{position:absolute;left:112px;top:28px;width:1696px;height:1004px;display:flex;flex-direction:column;background:var(--page);
+  border:1px solid #5FE3B533;border-radius:9px;box-shadow:0 30px 80px #000c,0 0 0 1px #000;overflow:hidden;
+  transition:left .36s var(--ease),top .36s var(--ease),width .36s var(--ease),height .36s var(--ease),border-radius .36s var(--ease)}
+.titlebar{height:30px;flex:none;display:flex;align-items:center;gap:10px;padding:0 6px 0 12px;background:linear-gradient(#141b24,#0d1219);border-bottom:1px solid var(--hair);
+  font-size:12px;color:#b8c4cf;transition:height .36s var(--ease),opacity .2s}
+.titlebar b{font-family:var(--mono);color:var(--signal);font-weight:600;letter-spacing:.04em}
+.titlebar .sp{flex:1}
+.wbtn{height:22px;min-width:30px;border:0;background:transparent;border-radius:4px;color:#aab6c2;font-size:12px}
+.wbtn:hover{background:#ffffff12}
+.wbtn.x:hover{background:#c0392b}
+.labmode #win{left:0;top:0;width:1920px;height:1080px;border-radius:0;border-color:transparent}
+.labmode .titlebar{height:0;opacity:0;overflow:hidden;border:0}
+.labmode .taskbar{transform:translateY(44px)}
+.corner{position:absolute;width:26px;height:26px;border-color:var(--signal);border-style:solid;opacity:0;transition:opacity .4s .2s;pointer-events:none;z-index:40;filter:drop-shadow(0 0 4px var(--signal-g))}
+.labmode .corner{opacity:.75}
+.c1{left:8px;top:8px;border-width:2px 0 0 2px}.c2{right:8px;top:8px;border-width:2px 2px 0 0}
+.c3{left:8px;bottom:8px;border-width:0 0 2px 2px}.c4{right:8px;bottom:8px;border-width:0 2px 2px 0}
+#win.shake{animation:shake .18s linear}
+@keyframes shake{25%{transform:translateX(-2px)}50%{transform:translateX(2px)}75%{transform:translateX(-1px)}}
+
+.lab{position:relative;flex:1;display:grid;grid-template-rows:62px 1fr 28px;min-height:0}
+.lab::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:30;
+  background:repeating-linear-gradient(0deg,#ffffff05 0 1px,transparent 1px 3px),radial-gradient(ellipse at 50% 45%,transparent 55%,#00000070 100%)}
+.glitch{position:absolute;left:0;right:0;height:3px;background:#FF7A6E66;z-index:31;pointer-events:none;opacity:0}
+.glitch.go{animation:glitch .22s steps(2) 1 forwards}
+@keyframes glitch{0%{opacity:1;top:20%}50%{opacity:.8;top:63%}100%{opacity:0;top:41%}}
+
+/* ───────── HUD ───────── */
+.hud{display:flex;align-items:center;gap:18px;padding:0 16px;background:linear-gradient(#0B0F14,#080B10);border-bottom:1px solid var(--hair);position:relative;z-index:5}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:248px}
+.brand b{font-family:var(--mono);font-size:20px;color:var(--signal);letter-spacing:.02em;text-shadow:0 0 14px #5FE3B555}
+.brand span{font-size:12px;color:var(--muted)}
+.brand em{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.12em}
+.chip{display:flex;align-items:center;gap:8px;height:34px;padding:0 12px;border:1px solid var(--hair2);border-radius:8px;background:#0E1319}
+.era-chip .rn{font-family:var(--mono);color:var(--params);font-size:16px}
+.era-chip small{color:var(--muted);font-size:12px}
+.money{display:flex;flex-direction:column;justify-content:center;min-width:190px}
+.money .lbl,.rate .lbl,.pm .lbl{font-size:10px;letter-spacing:.14em;color:var(--dim);font-family:var(--mono)}
+.digits{display:flex;height:28px;font-family:var(--mono);font-size:26px;line-height:28px;color:var(--money);text-shadow:0 0 16px #F2C46D30;font-variant-numeric:tabular-nums}
+.digit{position:relative;display:inline-block;width:.6em;height:28px;overflow:hidden;text-align:center}
+.digit.sym{width:.75em;font-size:19px;color:#c89d4e}
+.digit span{position:absolute;left:0;right:0;top:0}
+.digit.roll .cur{animation:din .38s var(--clock) both}.digit.roll .out{animation:dout .38s var(--clock) both}
+@keyframes din{from{transform:translateY(100%);opacity:.2}to{transform:none;opacity:1}}
+@keyframes dout{to{transform:translateY(-100%);opacity:0}}
+.rate b{display:block;font-family:var(--mono);font-size:16px;color:#e9d3a3}
+.rate small{font-size:11px;color:var(--muted)}
+.pm{flex:1;min-width:300px;max-width:520px;position:relative;cursor:default}
+.pm-top{display:flex;align-items:baseline;gap:10px}
+.pm-top b{font-family:var(--mono);font-size:14px;color:var(--ink)}
+.pm-top .st{margin-left:auto;font-size:12px;color:var(--signal)}
+.pm-bar{position:relative;display:grid;grid-template-columns:repeat(40,1fr);gap:2px;height:12px;margin-top:5px}
+.pm-bar i{border-radius:1px;background:#ffffff0d;transition:background .2s}
+.pm-bar i.g{background:var(--signal);box-shadow:0 0 6px #5FE3B588}
+.pm-bar i.a{background:var(--money);box-shadow:0 0 6px #F2C46D88}
+.pm-bar i.r{background:var(--danger);box-shadow:0 0 8px #FF7A6Eaa}
+.pm-bar i.over{background:#FF7A6E1c}
+.pm-mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);box-shadow:0 0 6px #fff8;transition:left .4s var(--ease)}
+.pm.warn .st{color:var(--money)}
+.pm.over .st{color:var(--danger)}
+.pm.over .pm-top b{animation:flick 1.2s steps(1) infinite}
+.pm.over .pm-bar i.r{animation:flick 1.2s steps(1) infinite}
+@keyframes flick{0%,8%,16%{opacity:1}4%,12%{opacity:.25}20%,100%{opacity:1}}
+.pm-pop{position:absolute;top:44px;left:0;width:300px;padding:10px 12px;background:#0A0E13F5;border:1px solid var(--hair2);border-radius:8px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .12s;z-index:20}
+.pm:hover .pm-pop{opacity:1}
+.pm-pop div{display:flex;justify-content:space-between;padding:2px 0;color:var(--muted)}
+.pm-pop div b{font-family:var(--mono);color:var(--ink);font-weight:400}
+.pm-pop p{margin:6px 0 0;color:var(--dim);font-size:11px}
+.hbtns{display:flex;gap:6px;margin-left:auto}
+.hb{height:32px;padding:0 11px;border:1px solid var(--hair2);border-radius:7px;background:#0E1319;font-size:12px;color:#c9d2da;display:flex;align-items:center;gap:6px;transition:border-color .12s,background .12s}
+.hb:hover{border-color:#5FE3B588;background:#11201b}
+.hb.on{border-color:var(--signal);color:var(--signal);background:#0f241d}
+.hb kbd{font-family:var(--mono);font-size:10px;color:var(--dim);border:1px solid var(--hair2);border-radius:3px;padding:0 3px}
+select.hb{appearance:none;padding-right:11px}
+
+/* ───────── main ───────── */
+.main{display:grid;grid-template-columns:1fr 600px;min-height:0}
+.tree{position:relative;overflow:hidden;border-right:1px solid var(--hair);background:
+  radial-gradient(circle,#ffffff0d 1px,transparent 1.2px) 0 0/24px 24px,
+  linear-gradient(180deg,#070A0F,#05070A)}
+.vp{position:absolute;inset:0;cursor:grab}
+.vp.drag{cursor:grabbing}
+.world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.world.anim{transition:transform .5s var(--ease)}
+.col{position:absolute;top:0;border-left:1px dashed #ffffff10}
+.col.cur{background:linear-gradient(180deg,#5FE3B50b,transparent 30%)}
+.col.cur::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--signal);box-shadow:0 0 12px var(--signal)}
+.col.future::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,#00000038 0 10px,#00000020 10px 20px);pointer-events:none}
+.eraH{position:absolute;top:18px;left:22px;right:22px}
+.eraH .rn{font-family:var(--mono);font-size:44px;line-height:1;color:transparent;-webkit-text-stroke:1px #A594FF88;letter-spacing:.02em}
+.col.cur .eraH .rn{-webkit-text-stroke:1px var(--signal);text-shadow:0 0 18px #5FE3B544}
+.eraH .yr{position:absolute;left:70px;top:2px;font-family:var(--mono);font-size:13px;color:var(--params)}
+.eraH .nm{position:absolute;left:70px;top:20px;font-size:16px;font-weight:600;color:var(--ink)}
+.eraH .tag{position:absolute;right:0;top:4px;font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid var(--hair2);color:var(--muted)}
+.col.cur .eraH .tag{border-color:var(--signal);color:var(--signal)}
+.band{position:absolute;left:0;border-top:1px solid #ffffff08}
+.band.alt{background:#ffffff03}
+.spineband{position:absolute;left:0;background:linear-gradient(180deg,transparent,#A594FF0a 50%,transparent)}
+svg.links{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.lk{fill:none;stroke-width:1.6;stroke:#ffffff14}
+.lk.ready{stroke:#5FE3B566;stroke-dasharray:5 6}
+.lk.live{stroke:#5FE3B577}
+.fl{fill:none;stroke-width:3;stroke:var(--signal);stroke-linecap:round;stroke-dasharray:1.5 26;filter:drop-shadow(0 0 3px #5FE3B5);animation:flow var(--flow) linear infinite}
+@keyframes flow{to{stroke-dashoffset:-110}}
+.spine{fill:none;stroke-width:3}
+.over .fl{animation:flow var(--flow) linear infinite,flick 1.2s steps(1) infinite;stroke:#ffb38a}
+
+/* tiles */
+.tile{position:absolute;width:204px;height:84px;padding:9px 11px 8px 15px;border-radius:10px;cursor:pointer;user-select:none;
+  background:linear-gradient(180deg,#151A21,#0F1217);border:1px solid #ffffff16;box-shadow:inset 0 1px #ffffff08,0 6px 16px #0006;
+  transition:transform .12s var(--ease),border-color .12s,box-shadow .2s,opacity .2s,filter .2s}
+.tile::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 2px 2px 0;background:var(--fc)}
+.tile:hover{transform:translateY(-2px);border-color:var(--signal)}
+.tile .tl{display:flex;gap:8px;align-items:flex-start}
+.ico{flex:none;width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-style:normal;font-family:var(--mono);font-size:13px;color:var(--fc);border:1px solid color-mix(in srgb,var(--fc) 45%,transparent);background:color-mix(in srgb,var(--fc) 9%,transparent)}
+.tt{min-width:0;flex:1}
+.ttl{height:19px;overflow:hidden;position:relative;font-size:14px;font-weight:600;white-space:nowrap}
+.ttl span{display:block;overflow:hidden;text-overflow:ellipsis}
+.ttl.roll span{animation:din .48s var(--clock) both}
+.sub{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.lvl{font-family:var(--mono);font-size:10.5px;color:var(--muted);font-weight:400;margin:0}
+.ft{position:absolute;left:15px;right:11px;bottom:8px;display:flex;align-items:center;gap:7px}
+.pips{display:flex;gap:3px}
+.pips i{width:15px;height:4px;border-radius:2px;background:#ffffff14}
+.pips i.on{background:var(--fc);box-shadow:0 0 6px var(--fc)}
+.pips i.next{box-shadow:inset 0 0 0 1px var(--fc);background:transparent}
+.pips i.pop{animation:pip .5s var(--pop) both}
+@keyframes pip{0%{transform:scaleY(1);filter:brightness(3)}40%{transform:scaleY(2.4)}100%{transform:none}}
+.rbar{width:96px;height:4px;border-radius:2px;background:#ffffff14;overflow:hidden}
+.rbar b{display:block;height:100%;background:var(--fc);box-shadow:0 0 6px var(--fc);transition:width .4s var(--ease)}
+.price{margin-left:auto;white-space:nowrap;font-family:var(--mono);font-size:12px;color:var(--money)}
+.t-buy{border-color:#5FE3B566;animation:breathe 2.4s ease-in-out infinite}
+.t-buy .price::before{content:"▲ ";font-size:8px;color:var(--signal);vertical-align:2px}
+@keyframes breathe{50%{box-shadow:0 0 0 1px #5FE3B544,0 0 22px #5FE3B530,0 6px 16px #0006}}
+.t-poor .price{color:var(--danger)}
+.t-locked{opacity:.5;filter:saturate(.35)}
+.t-locked .price{color:#8a96a0;font-family:var(--sans);font-size:11px}
+.t-max{border-color:#FFBE2855}
+.t-max .price{color:var(--maxed);font-family:var(--sans);font-size:11px}
+.tile.no{animation:no .16s linear}
+@keyframes no{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.tile.bought{animation:buy .26s var(--pop)}
+@keyframes buy{0%{transform:scale(.96)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+.f-v{--fc:var(--f-v)}.f-t{--fc:var(--f-t)}.f-l{--fc:var(--f-l)}.f-g{--fc:var(--f-g)}.f-a{--fc:var(--f-a)}.f-p{--fc:var(--f-p)}
+
+/* milestones */
+.ms{position:absolute;width:150px;transform:translate(-75px,-34px);text-align:center;cursor:pointer;user-select:none}
+.dia{width:56px;height:56px;margin:0 auto 12px;border-radius:9px;transform:rotate(45deg);display:grid;place-items:center;border:1.5px solid var(--locked);background:#0B0D14;transition:box-shadow .2s,border-color .2s}
+.dia span{transform:rotate(-45deg);font-family:var(--mono);font-size:13px;color:#c7c0f5}
+.ms:hover .dia{border-color:var(--signal)}
+.ms .ml{font-size:12px;font-weight:600;color:var(--ink);line-height:1.3}
+.ms .mn{font-size:11px;color:var(--muted);margin-top:2px}
+.ms .mp{font-family:var(--mono);font-size:11px;color:var(--money);margin-top:2px}
+.ms.owned .dia{border-color:var(--params);background:#A594FF26;box-shadow:0 0 18px #A594FF55,inset 0 0 12px #A594FF33}
+.ms.owned .mp{color:var(--params);font-family:var(--sans)}
+.ms.buy .dia{border-color:var(--signal);animation:breathe 2.4s ease-in-out infinite}
+.ms.poor .mp{color:var(--danger)}
+.ms.locked{opacity:.55}
+.ms.locked .dia{border-style:dashed}
+.ms.locked .mp{color:#8a96a0;font-family:var(--sans)}
+.ms.no{animation:no .16s linear}
+
+/* lane labels overlay */
+.lanes{position:absolute;left:0;top:0;bottom:0;width:150px;pointer-events:none;z-index:6;background:linear-gradient(90deg,#05070Af2 70%,transparent)}
+.lane{position:absolute;left:14px;right:8px;display:flex;flex-direction:column;justify-content:center}
+.lane .no{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.14em}
+.lane .nm{font-size:17px;font-weight:600}
+.lane .d{font-size:11px;color:var(--muted)}
+.lane::before{content:"";position:absolute;left:-14px;top:22%;bottom:22%;width:2px;background:var(--fc);opacity:.7}
+.lane.spine .nm{color:var(--params)}
+
+/* tree toolbar */
+.ttb{position:absolute;top:10px;left:160px;right:12px;display:flex;gap:6px;align-items:center;z-index:8;pointer-events:none}
+.ttb>*{pointer-events:auto}
+.eb{width:34px;height:28px;border:1px solid var(--hair2);border-radius:6px;background:#0B0F14e6;font-family:var(--mono);font-size:12px;color:#c8cdf0}
+.eb:hover{border-color:var(--params)}
+.eb.cur{border-color:var(--signal);color:var(--signal)}
+.legend{margin-left:auto;display:flex;gap:12px;font-size:11px;color:var(--muted);background:#0B0F14d0;border:1px solid var(--hair);border-radius:6px;padding:5px 10px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.zoomlbl{font-family:var(--mono);font-size:11px;color:var(--dim);width:44px;text-align:center}
+
+/* hover card */
+.hcard{position:absolute;z-index:12;width:304px;padding:12px 14px 11px;border-radius:10px;background:#090D12F5;border:1px solid #5FE3B544;box-shadow:0 16px 40px #000b,0 0 0 1px #000;
+  font-size:12.5px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s var(--ease)}
+.hcard.show{opacity:1;transform:none}
+.hc-h{display:flex;align-items:baseline;gap:8px}
+.hc-h b{font-size:15px}
+.hc-h span{margin-left:auto;font-family:var(--mono);color:var(--muted)}
+.hc-d{margin:8px 0 6px;padding:7px 9px;border-radius:7px;background:#ffffff07;font-family:var(--mono);font-size:13px;display:flex;gap:8px;align-items:center}
+.hc-d .a{color:var(--muted)}.hc-d .arrow{color:var(--dim)}.hc-d .b{color:var(--signal)}
+.hc-n{color:#c4ccd4}
+.hc-c{display:flex;justify-content:space-between;margin-top:7px;font-family:var(--mono)}
+.hc-c .ok{color:var(--signal)}.hc-c .bad{color:var(--danger)}.hc-c .gold{color:var(--maxed)}
+.hc-r{margin-top:6px;padding-top:6px;border-top:1px solid var(--hair)}
+.hc-r div{color:#ffb4a8;font-size:12px}
+.hc-r div::before{content:"🔒 ";filter:grayscale(1);font-size:10px}
+.hc-s{margin-top:7px;padding-top:6px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.hc-s em{font-style:normal;color:var(--params)}
+
+/* 科普 drawer */
+.drawer{position:absolute;top:0;right:0;bottom:0;width:430px;z-index:14;background:#080B10f8;border-left:1px solid #A594FF44;box-shadow:-20px 0 50px #000a;
+  transform:translateX(102%);transition:transform .28s var(--ease);display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.dr-h{padding:18px 20px 12px;border-bottom:1px solid var(--hair)}
+.dr-h small{font-family:var(--mono);color:var(--params);font-size:11px;letter-spacing:.1em}
+.dr-h h3{margin:4px 0 0;font-size:20px}
+.dr-x{position:absolute;right:12px;top:12px;width:28px;height:28px;border:1px solid var(--hair2);border-radius:6px;background:transparent;color:var(--muted)}
+.tabs{display:flex;gap:4px;padding:10px 20px 0}
+.tab{border:0;background:transparent;padding:6px 12px;border-radius:6px 6px 0 0;color:var(--muted);border-bottom:2px solid transparent}
+.tab.on{color:var(--ink);border-bottom-color:var(--params)}
+.dr-b{padding:16px 20px;overflow:auto;font-size:14px;line-height:1.75;color:#cdd5dd}
+.dr-b p{margin:0 0 12px}
+.dr-b .last{color:var(--ink);border-left:2px solid var(--params);padding-left:10px}
+.dr-b table{width:100%;border-collapse:collapse;font-size:12.5px;font-family:var(--mono)}
+.dr-b td{padding:5px 4px;border-bottom:1px solid var(--hair)}
+.dr-b td.on{color:var(--signal)}
+.dr-b td.lock{color:var(--dim)}
+
+/* ───────── ops column ───────── */
+.ops{display:flex;flex-direction:column;gap:10px;padding:12px 14px;min-height:0;background:linear-gradient(180deg,#080B10,#06080C)}
+.sec-h{display:flex;align-items:baseline;gap:8px;font-size:12px;color:var(--muted)}
+.sec-h b{font-size:15px;color:var(--ink)}
+.sec-h .num{color:var(--signal);font-size:15px}
+.sec-h .r{margin-left:auto;font-size:11px;color:var(--dim)}
+.slots{display:grid;grid-template-columns:repeat(6,1fr) 58px;gap:6px;margin-top:7px}
+.slots.dc{grid-template-columns:repeat(8,1fr)}
+.sock{position:relative;height:58px;border-radius:8px;border:1px dashed #ffffff26;background:#0A0E13;display:flex;flex-direction:column;justify-content:center;padding:0 7px;font-size:11px;color:var(--dim);transition:border-color .15s,background .15s}
+.sock.full{border:1px solid color-mix(in srgb,var(--fc) 55%,transparent);background:color-mix(in srgb,var(--fc) 8%,#0A0E13);color:var(--ink);cursor:grab}
+.sock.full::after{content:"";position:absolute;left:6px;right:6px;bottom:5px;height:2px;border-radius:1px;background:linear-gradient(90deg,transparent,var(--fc),transparent);background-size:200% 100%;animation:scan 1.6s linear infinite}
+@keyframes scan{from{background-position:100% 0}to{background-position:-100% 0}}
+.sock .sn{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sock .si{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.sock.empty{color:#7e8a94}
+.sock.lock{border-style:solid;border-color:#ffffff0c;background:repeating-linear-gradient(135deg,#ffffff05 0 6px,transparent 6px 12px);color:#5d6872}
+.sock.drop{border-color:var(--signal);background:#5FE3B514}
+.sock.bonus{outline:1px solid #FFBE2840;outline-offset:2px}
+
+.desks{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start;padding:2px 2px 2px 0;border-radius:8px}
+.desks.drop{outline:1px dashed #ffffff40;outline-offset:2px}
+.desks::-webkit-scrollbar{width:6px}.desks::-webkit-scrollbar-thumb{background:#ffffff1a;border-radius:3px}
+.desk{position:relative;height:112px;padding:9px 10px 8px 14px;border-radius:10px;background:linear-gradient(180deg,#141920,#0F1217);border:1px solid #ffffff14;overflow:hidden;cursor:pointer;
+  transition:border-color .15s,box-shadow .2s;transform-style:preserve-3d}
+.desk::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 2px 2px 0;background:var(--fc)}
+.desk:hover{border-color:#ffffff30}
+.desk.sel{border-color:#ffffff55}
+.desk.auto{border-color:color-mix(in srgb,var(--fc) 40%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--fc) 7%,#141920),#0F1217)}
+.desk.locked{opacity:.45;cursor:default}
+.dk-1{display:flex;align-items:center;gap:7px}
+.dk-1 .ico{width:24px;height:24px;font-size:12px}
+.dk-1 b{font-size:14px}
+.diff{display:flex;gap:2px;margin-left:2px}
+.diff i{width:5px;height:5px;border-radius:50%;background:#ffffff1c}
+.diff i.on{background:var(--fc)}
+.pay{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--money)}
+.dk-2{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:11px;color:var(--muted)}
+.accbar{position:relative;flex:1;height:5px;border-radius:3px;background:#ffffff10}
+.accbar b{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--fc);transition:width .4s var(--ease)}
+.accbar u{position:absolute;top:-3px;bottom:-3px;width:1px;background:#ffffffaa}
+.accbar u::after{content:"60%";position:absolute;top:-12px;left:-8px;font-size:8.5px;color:var(--dim);text-decoration:none;font-family:var(--mono)}
+.dk-2 .num{color:var(--ink)}
+.eff.low{color:var(--money)}
+.dk-3{display:flex;align-items:center;gap:7px;margin-top:9px}
+.st{font-size:11px;padding:2px 7px;border-radius:9px;border:1px solid var(--hair2);color:var(--muted);white-space:nowrap}
+.st.auto{color:#06120d;background:var(--signal);border-color:var(--signal);font-weight:600}
+.st.over{color:#1a0705;background:var(--danger);border-color:var(--danger);font-weight:600;animation:flick 1.2s steps(1) infinite}
+.dk-io{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.tog{margin-left:auto;flex:none;height:26px;padding:0 10px;border-radius:6px;border:1px solid var(--signal);background:#0f241d;color:var(--signal);font-size:12px;font-weight:600}
+.tog:hover{background:#163a2d}
+.tog.mine{border-color:#ffffff40;background:#ffffff0a;color:#d7dde3;font-weight:400}
+.dk-prog{position:absolute;left:0;bottom:0;height:2px;background:var(--fc);box-shadow:0 0 6px var(--fc);width:0}
+.confirm{position:absolute;inset:auto 6px 6px 10px;display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;background:#1d1608f2;border:1px solid #F2C46D66;font-size:11.5px;color:#f3dfb3;z-index:3}
+.confirm button{height:22px;padding:0 8px;border-radius:5px;border:1px solid #F2C46D88;background:transparent;color:#f3dfb3;font-size:11px}
+.confirm button.y{background:#F2C46D;color:#1b1406;font-weight:600}
+.float{position:absolute;right:12px;top:30px;font-family:var(--mono);font-size:12px;color:var(--money);pointer-events:none;animation:fup .45s ease-out forwards;text-shadow:0 0 8px #F2C46D66}
+@keyframes fup{to{transform:translateY(-10px);opacity:0}}
+.desk.handoff{animation:handoff .42s var(--ease)}
+.desk.handoff::after,.desk.handback::after{content:"";position:absolute;left:0;right:0;height:40%;pointer-events:none;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--fc) 35%,transparent),transparent)}
+.desk.handoff::after{animation:sweepDown .42s var(--ease) both}
+.desk.handback::after{animation:sweepUp .3s var(--ease) both;background:linear-gradient(180deg,transparent,#ffffff22,transparent)}
+@keyframes handoff{0%{transform:perspective(600px) rotateX(0)}35%{transform:perspective(600px) rotateX(8deg)}100%{transform:none}}
+@keyframes sweepDown{from{top:-40%}to{top:100%}}
+@keyframes sweepUp{from{top:100%}to{top:-40%}}
+.lockmsg{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;color:var(--muted);background:#05070Aa0}
+
+/* bottom panel: question / god question */
+.qp{flex:none;height:236px;border-radius:10px;border:1px solid var(--hair2);background:#0A0E13;display:flex;flex-direction:column;overflow:hidden}
+.qtabs{display:flex;border-bottom:1px solid var(--hair)}
+.qtab{flex:1;height:32px;border:0;background:transparent;color:var(--muted);font-size:12.5px;border-bottom:2px solid transparent}
+.qtab.on{color:var(--ink);border-bottom-color:var(--signal)}
+.qtab.god.on{border-bottom-color:var(--maxed)}
+.qtab.god{color:#e8c56c}
+.qbody{flex:1;padding:12px 14px;position:relative;display:flex;flex-direction:column}
+.qmeta{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.qmeta .combo{margin-left:auto;font-family:var(--mono);color:var(--money)}
+.qtext{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-size:19px;line-height:1.45;padding:6px 10px}
+.qglyph{width:76px;height:76px;border-radius:6px;display:grid;place-items:center;background:#f4f1e6;color:#1d2330;font:italic 54px/1 "Segoe Script","Comic Sans MS",cursive;transform:rotate(-6deg);box-shadow:0 4px 0 #0005}
+.qbtns{display:flex;gap:8px}
+.qbtns button{flex:1;height:38px;border-radius:8px;border:1px solid var(--hair2);background:#121820;font-size:15px;transition:background .1s,border-color .1s,transform .08s}
+.qbtns button:hover{border-color:var(--signal);background:#11211b}
+.qbtns button:active{transform:scale(.97)}
+.qbtns .skip{flex:none;width:118px;font-size:12px;color:var(--money);border-color:#F2C46D44}
+.qbtns .skip small{display:block;font-size:10px;color:var(--dim);line-height:1}
+.qfb{position:absolute;right:14px;top:36px;font-size:13px;font-family:var(--mono)}
+.qfb.ok{color:var(--signal)}.qfb.bad{color:var(--danger)}
+.readonly{font-size:12px;color:var(--muted);text-align:center}
+.readonly b{color:var(--signal)}
+.god{background:radial-gradient(ellipse at 50% 0,#FFBE2812,transparent 60%)}
+.godq sub,.godq sup{font-size:.6em}
+.godq{font-family:"Cambria Math","Cambria","Times New Roman",serif;font-size:24px;text-align:center;color:#fff3d1;margin:8px 0 10px;text-shadow:0 0 14px #FFBE2833}
+.godopts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.godopts button{height:32px;border-radius:7px;border:1px solid #FFBE2840;background:#14110a;font-family:"Cambria Math","Cambria",serif;font-size:15px;color:#f0e2bd}
+.godopts button:hover{border-color:var(--maxed)}
+.godfoot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11.5px;color:var(--muted)}
+.godfoot b{color:var(--maxed);font-family:var(--mono)}
+.godfoot button{height:24px;border-radius:6px;border:1px solid var(--hair2);background:transparent;color:var(--muted);font-size:11px;padding:0 8px}
+.godres{flex:1;display:grid;place-items:center;text-align:center;font-size:14px;color:var(--muted)}
+.godres b{display:block;font-size:22px;color:var(--maxed);margin-bottom:4px}
+
+/* footer terminal */
+.term{display:flex;align-items:center;gap:14px;padding:0 14px;border-top:1px solid var(--hair);background:#05070A;font-family:var(--mono);font-size:11.5px;color:#7fae9c;white-space:nowrap;overflow:hidden}
+.term .pr{color:var(--signal)}
+.term .log{flex:1;overflow:hidden;text-overflow:ellipsis}
+.term .log .caret{display:inline-block;width:7px;height:12px;background:var(--signal);vertical-align:-1px;animation:flick 1s steps(1) infinite}
+.term .hint{color:var(--dim)}
+.term button{height:20px;border:1px solid var(--hair2);border-radius:4px;background:transparent;color:#9fb3aa;font-size:11px;font-family:var(--mono);padding:0 7px}
+.term button:hover{border-color:var(--signal);color:var(--signal)}
+
+/* toasts / fx */
+.toasts{position:absolute;bottom:40px;right:614px;display:flex;flex-direction:column;gap:8px;z-index:25;pointer-events:none;align-items:flex-end}
+.toast{min-width:240px;max-width:360px;padding:9px 13px;border-radius:9px;background:#0B1210f2;border:1px solid #5FE3B555;box-shadow:0 10px 30px #000a;font-size:12.5px;animation:tin .24s var(--ease)}
+.toast b{color:var(--signal)}
+.toast.gold{border-color:#FFBE2877}.toast.gold b{color:var(--maxed)}
+.toast.bad{border-color:#FF7A6E77}.toast.bad b{color:var(--danger)}
+.toast.out{animation:tout .3s ease forwards}
+@keyframes tin{from{opacity:0;transform:translateX(24px)}}
+@keyframes tout{to{opacity:0;transform:translateX(24px)}}
+#fx{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none;z-index:60}
+.ring{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:2px solid var(--signal);pointer-events:none;z-index:59;
+  box-shadow:0 0 18px var(--signal),inset 0 0 12px #5FE3B566;animation:ring .52s var(--pop) forwards}
+.ring.r2{border-color:var(--money);box-shadow:0 0 14px var(--money);animation-delay:.06s;opacity:0;animation-fill-mode:both}
+@keyframes ring{0%{transform:scale(.3);opacity:1}100%{transform:scale(3.2);opacity:0}}
+.sweep{position:absolute;top:0;bottom:0;width:120px;pointer-events:none;background:linear-gradient(90deg,transparent,#5FE3B540,transparent);animation:sweepX .9s var(--ease) forwards}
+@keyframes sweepX{from{transform:translateX(-120px)}to{transform:translateX(440px)}}
+
+/* reduced effects: colours and states stay, motion goes */
+.reduced *,.reduced *::before,.reduced *::after{animation:none!important;transition:none!important}
+.reduced .fl{display:none}
+.reduced .lk.live{stroke:#5FE3B5aa}
+.reduced .lab::after{background:radial-gradient(ellipse at 50% 45%,transparent 55%,#00000070 100%)}
+.reduced .pm.over .pm-bar{outline:1px solid var(--danger);outline-offset:3px}
+.reduced .pm.over .pm-bar i.r{background:repeating-linear-gradient(135deg,#FF7A6E 0 3px,#7a2a22 3px 6px)}
+.reduced .tile:active{transform:scale(.96)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="dicons">
+    <div class="dicon"><i>▣</i>计算机</div>
+    <div class="dicon"><i>♻</i>回收站</div>
+    <div class="dicon lg"><i>len</i>灵光</div>
+    <div class="dicon"><i>✉</i>YY</div>
+    <div class="dicon"><i>⇄</i>摆渡众包</div>
+  </div>
+
+  <div id="win">
+    <div class="titlebar"><b>len.exe</b><span>灵光 · 深度学习工作站</span><span class="sp"></span>
+      <button class="wbtn" data-act="lab" title="实验室全屏（F11 / F）">⛶ 实验室</button><button class="wbtn">—</button><button class="wbtn x">✕</button></div>
+    <div class="lab" id="lab">
+      <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+      <div class="glitch" id="glitch"></div>
+      <header class="hud">
+        <div class="brand"><b>len.exe</b><span>深度学习工作站</span><em>XINGGUANG LAB · 2016</em></div>
+        <div class="chip era-chip"><span class="rn" id="eraRn">Ⅲ</span><span id="eraNm">走向专长</span><small id="eraYr">1989–2014</small></div>
+        <div class="money"><span class="lbl">经费</span><div class="digits" id="money"></div></div>
+        <div class="rate"><span class="lbl">每秒收入</span><b id="rate">¥0.0/秒</b><small id="rateSub">自动 0 · 手动 —</small></div>
+        <div class="pm" id="pm">
+          <div class="pm-top"><span class="lbl">整机功率</span><b id="pmText">0 / 0 W</b><span class="st" id="pmState">正常</span></div>
+          <div class="pm-bar" id="pmBar"><span class="pm-mark" id="pmMark"></span></div>
+          <div class="pm-pop" id="pmPop"></div>
+        </div>
+        <div class="hbtns">
+          <button class="hb on" id="bTrain" title="训练会占用显卡功率">◉ 训练中</button>
+          <select class="hb" id="bSpeed" title="原型演示倍速"><option value="1">演示 ×1</option><option value="10" selected>演示 ×10</option><option value="30">演示 ×30</option></select>
+          <button class="hb" id="bReduce" title="减少特效（R）">减少特效 <kbd>R</kbd></button>
+          <button class="hb" data-act="lab" id="bLab" title="实验室全屏（F11 / F）">⛶ 实验室 <kbd>F11</kbd></button>
+        </div>
+      </header>
+
+      <div class="main">
+        <section class="tree" id="tree">
+          <div class="vp" id="vp"><div class="world" id="world"></div></div>
+          <div class="lanes" id="lanes"></div>
+          <div class="ttb">
+            <span id="eraBtns" style="display:flex;gap:4px"></span>
+            <button class="eb" id="zOut" title="缩小">−</button><span class="zoomlbl" id="zLbl">72%</span><button class="eb" id="zIn" title="放大">+</button>
+            <button class="eb" id="zReset" title="复位（0）" style="width:auto;padding:0 8px;font-family:var(--sans)">复位</button>
+            <div class="legend"><span><i style="background:var(--signal)"></i>可买</span><span><i style="background:var(--danger)"></i>差钱</span><span><i style="background:var(--locked)"></i>未解锁</span><span><i style="background:var(--maxed)"></i>满级</span><span><i style="background:var(--params)"></i>里程碑</span><span style="color:var(--dim)">左键买 · 右键科普 · 拖动平移 · 滚轮缩放</span></div>
+          </div>
+          <div class="hcard" id="hcard"></div>
+          <aside class="drawer" id="drawer">
+            <button class="dr-x" id="drX">✕</button>
+            <div class="dr-h"><small id="drTag">科普</small><h3 id="drTitle"></h3></div>
+            <div class="tabs"><button class="tab" data-tab="eff">效果</button><button class="tab on" data-tab="sci">科普</button></div>
+            <div class="dr-b" id="drBody"></div>
+          </aside>
+        </section>
+
+        <aside class="ops">
+          <div>
+            <div class="sec-h"><b>自动槽位</b><span class="num" id="slotCount">2/6</span><span>拖进槽位，或在题桌上点「交给它」</span><span class="r" id="slotHint"></span></div>
+            <div class="slots" id="slots"></div>
+          </div>
+          <div class="sec-h" style="margin-top:2px"><b>题桌</b><span>一种卡 · 手动和自动都在这里</span><span class="r">按难度定价：逻辑 / 高数 &gt; 识图 &gt; 常识</span></div>
+          <div class="desks" id="desks"></div>
+          <div class="qp">
+            <div class="qtabs"><button class="qtab on" data-q="cur">当前题 · <span id="qDeskName">常识判断</span></button><button class="qtab god" data-q="god">今日神题 ★</button></div>
+            <div class="qbody" id="qbody"></div>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="term">
+        <span class="pr">len@lab:~$</span><span class="log" id="log">实验室已就绪<span class="caret"></span></span>
+        <button id="bChess">模拟：赢了一盘棋</button><button id="bEra">模拟：学会新能力</button><button id="bOut">外包标注 100 条</button>
+        <span class="hint">1–6 跳时代 · 0 复位 · Esc 关闭</span>
+      </footer>
+      <div class="toasts" id="toasts"></div>
+    </div>
+  </div>
+
+  <div class="taskbar"><span class="orb"></span><span class="tbitem on">◈ 灵光 · 实验室</span><span class="tbitem">YY</span><span class="tbitem">摆渡众包</span>
+    <span class="clock">21:04<br>2016/10/22</span></div>
+  <canvas id="fx" width="1920" height="1080"></canvas>
+</div>
+
+<script>
+"use strict";
+/* Design prototype only. Numbers follow the v4 spec formulas but run at a demo speed; nothing here reads or writes a save. */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const fmt=v=>Math.round(v).toLocaleString('zh-CN');
+const fmt1=v=>v>=100?fmt(v):v.toFixed(1);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ─── data ─── */
+const ERAS=[null,
+  {rn:'Ⅰ',nm:'学会简单判断',yr:'1958'},{rn:'Ⅱ',nm:'学会组合特征',yr:'1986'},{rn:'Ⅲ',nm:'走向专长',yr:'1989–2014'},
+  {rn:'Ⅳ',nm:'学会保留信息',yr:'1997–2015'},{rn:'Ⅴ',nm:'学会寻找重点',yr:'2014–2015'},{rn:'Ⅵ',nm:'重构学习方式',yr:'自研'}];
+const LANES=[
+  {no:'01',nm:'自动槽位',d:'同时自动几种题',fc:'var(--f-a)'},
+  {no:'02',nm:'准确率',d:'通用 + 各家族',fc:'var(--f-t)'},
+  {no:'03',nm:'边做边学',d:'它自己慢慢变准',fc:'var(--f-g)'},
+  {no:'04',nm:'速度',d:'通用 + 各家族',fc:'var(--f-v)'},
+  {no:'05',nm:'单价',d:'每题更值钱',fc:'var(--f-l)'},
+  {no:'06',nm:'电力',d:'额定功率与省电',fc:'var(--f-p)'}];
+const B=[0,200,1200,4000,12000,30000,80000];
+const PSU=[450,550,650,750,850,1000,1200];
+const CAP=[0,3,5,8,11,14,18], KDIV=[Infinity,20,16,12,9,7,5];
+const RM=[1,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34];
+const RT=['实习标注员','标注员','熟练标注员','资深标注员','标注组长','质检主管','项目经理','标注总监','合伙人','首席标注官'];
+const raiseTitle=L=>RT[L>=17?9:Math.min(8,Math.floor((L+1)/2))];
+const FAMN={v:'识图',t:'文字',l:'逻辑数学'}, FAMK={v:'vision',t:'text',l:'logic'}, WF={v:120,t:60,l:90};
+function nice(v){v=Math.max(100,v);const e=Math.pow(10,Math.floor(Math.log10(v)));let best=e;for(const s of[1,1.2,1.5,2,2.5,3,4,5,6,8,10]){if(Math.abs(s*e-v)<Math.abs(best-v))best=s*e}return Math.round(best)}
+
+/* geometry (world px) */
+const COLW=450,X0=170,HEAD=100,SPINEH=156,LH=[130,214,130,214,214,214];
+const colX=c=>X0+(c-1)*COLW;
+const laneTop=i=>HEAD+LH.slice(0,i).reduce((a,b)=>a+b,0)+(i>=3?SPINEH:0);
+const spineTop=HEAD+LH[0]+LH[1]+LH[2], spineY=spineTop+SPINEH/2-8;
+const WORLD_W=X0+6*COLW+60, WORLD_H=laneTop(5)+LH[5]+30;
+
+const A=(id,o)=>Object.assign({id,type:'axis',max:6},o);
+const NODES=[
+  A('label.auto',{lane:0,col:1,r:0,k:0,fam:'a',g:'⇉',w:1.6,short:'自动槽位',t:L=>`同时自动 ${Math.max(1,L)} 种题`,d:L=>[`${L} 种`,`${L+1} 种`],
+    subs:['开启自动答题','并行预取','多实例','任务调度','批处理队列','双卡分工'],topic:'slots',needs:['perceptron']}),
+  {id:'label.coop',type:'single',lane:0,col:1,r:0,k:1,fam:'a',g:'?',short:'拿不准才问我',t:()=>'拿不准的题交给我',sub:'人机协作 · 把握阈值',era:1,cost:300,eff:'用把握阈值分流：低把握的题进待复核，有把握的照常赚钱。',needs:['label.auto']},
+  {id:'label.audit',type:'single',lane:0,col:2,r:0,k:0,fam:'a',g:'✓',short:'自查',t:()=>'自动错题拦下 40%',sub:'自查 · 抽检',era:2,cost:1500,eff:'拦下 40% 自动错题退回复核，不污染训练数据。',needs:['label.coop']},
+  {id:'label.parallel',type:'single',lane:0,col:4,r:0,k:0,fam:'a',g:'▥',short:'复核扩容',t:()=>'待复核容量 40 → 120',sub:'复核扩容',era:4,cost:3000,eff:'容纳更多待处理题目，满时仍会跳过拿不准的题。',needs:['label.coop']},
+  {id:'label.brain',type:'single',lane:0,col:4,r:0,k:1,fam:'a',g:'◍',short:'灵光的大脑',t:()=>'文字题由它的大脑判断',sub:'灵光的大脑 · 本地模型',era:4,cost:8000,eff:'第四阶段：它会说短句了，文字题让它用自己的话判断。',needs:['label.coop']},
+
+  A('acc.all',{lane:1,col:1,r:0,k:0,fam:'g',g:'◎',w:1.3,short:'通用准确率',t:L=>`全部题准确率 +${2*Math.max(1,L)}%`,d:L=>[`+${2*L}%`,`+${2*(L+1)}%`],
+    subs:['偏置 + 阶跃 · 1958','Sigmoid · 1986','Dropout · 2012','BatchNorm · 2015','学习率衰减','标签平滑 · 2015'],topic:'accall',needs:['perceptron']}),
+  A('acc.text',{lane:1,col:1,r:0,k:1,fam:'t',g:'文',w:1,short:'文字准确率',t:L=>`文字题准确率 +${3*Math.max(1,L)}%`,d:L=>[`+${3*L}%`,`+${3*(L+1)}%`],
+    subs:['练页上限 2 层 · 宽 32','3 层 · 宽 64','宽 128','4 层 · 宽 256','6 层 · 宽 512','8 层 · 宽 1024'],topic:'acctext',needs:['acc.all']}),
+  A('acc.logic',{lane:1,col:1,r:1,k:1,fam:'l',g:'∴',w:1,short:'逻辑数学准确率',t:L=>`逻辑数学准确率 +${3*Math.max(1,L)}%`,d:L=>[`+${3*L}%`,`+${3*(L+1)}%`],
+    subs:['特征工程（解除逻辑 55% 上限）','规则模板','草稿纸 · 分步核对','符号求导','题型识别','自检回代'],topic:'acclogic',needs:['acc.all']}),
+  A('acc.vision',{lane:1,col:2,r:0,k:1,fam:'v',g:'◫',w:1,short:'识图准确率',t:L=>`识图题准确率 +${3*Math.max(1,L)}%`,d:L=>[`+${3*L}%`,`+${3*(L+1)}%`],
+    subs:['练页上限 3 层 · 宽 32','4 层 · 宽 64','6 层 · 宽 128','8 层 · 宽 256','16 层 · 宽 512','32 层 · 宽 1024'],topic:'accvision',needs:['lenet']}),
+
+  A('auto.learn',{lane:2,col:1,r:0,k:1,fam:'g',g:'↻',w:1.2,short:'边做边学',t:L=>`边做边学 · 上限 +${CAP[Math.max(1,L)]}%`,d:L=>[`每 ${KDIV[L]===Infinity?'—':KDIV[L]} 题学 1 条 · 上限 +${CAP[L]}%`,`每 ${KDIV[L+1]} 题 · +${CAP[L+1]}%`],
+    subs:['在线学习','主动学习','课程学习 · 2009','伪标签 · 2013','难例挖掘','自训练'],topic:'learn',needs:['label.auto']}),
+
+  A('speed.all',{lane:3,col:1,r:0,k:0,fam:'g',g:'»',w:1.3,short:'通用速度',t:L=>`全部题速度 +${25*Math.max(1,L)}%`,d:L=>[`+${25*L}%`,`+${25*(L+1)}%`],
+    subs:['批量作答','多线程预取','CUDA 推理','模型压缩 · 2015','知识蒸馏 · 2015','剪枝量化 · 2016'],topic:'speed',needs:['label.auto']}),
+  A('speed.text',{lane:3,col:1,r:0,k:1,fam:'t',g:'文',w:1,short:'文字速度',t:L=>`文字题速度 +${35*Math.max(1,L)}%`,d:L=>[`+${35*L}%`,`+${35*(L+1)}%`],
+    subs:['分词缓存','短句合并','字典索引','批量编码','句长截断','预计算词向量'],needs:['speed.all']}),
+  A('speed.logic',{lane:3,col:1,r:1,k:1,fam:'l',g:'∴',w:1,short:'逻辑数学速度',t:L=>`逻辑数学速度 +${35*Math.max(1,L)}%`,d:L=>[`+${35*L}%`,`+${35*(L+1)}%`],
+    subs:['常见题型缓存','口算表','约分捷径','并行验算','模板匹配','跳步推理'],needs:['speed.all']}),
+  A('speed.vision',{lane:3,col:2,r:0,k:1,fam:'v',g:'◫',w:1,short:'识图速度',t:L=>`识图题速度 +${35*Math.max(1,L)}%`,d:L=>[`+${35*L}%`,`+${35*(L+1)}%`],
+    subs:['缩小输入尺寸','灰度化','批量解码','显存常驻','卷积融合','低精度权重'],needs:['speed.all','lenet']}),
+
+  {id:'label.raise',type:'raise',max:17,lane:4,col:1,r:0,k:0,fam:'l',g:'¥',short:'加薪',t:L=>`手动单价 ×${RM[L]}`,d:L=>[`×${RM[L]}`,`×${RM[Math.min(17,L+1)]}`],topic:'raise',needs:[]},
+  A('pay.text',{lane:4,col:1,r:0,k:1,fam:'t',g:'文',w:1,short:'文字单价',t:L=>`文字题单价 +${30*Math.max(1,L)}%`,d:L=>[`+${30*L}%`,`+${30*(L+1)}%`],
+    subs:['淘宝外包店','众包平台认证','长期客户','企业直签','行业报价单','独家渠道'],needs:['label.raise']}),
+  A('pay.logic',{lane:4,col:1,r:1,k:1,fam:'l',g:'∴',w:1,short:'逻辑数学单价',t:L=>`逻辑数学单价 +${30*Math.max(1,L)}%`,d:L=>[`+${30*L}%`,`+${30*(L+1)}%`],
+    subs:['家教网站','题库公司','考公培训班','出版社审校','竞赛出题组','独家渠道'],needs:['label.raise']}),
+  A('pay.vision',{lane:4,col:2,r:0,k:1,fam:'v',g:'◫',w:1,short:'识图单价',t:L=>`识图题单价 +${30*Math.max(1,L)}%`,d:L=>[`+${30*L}%`,`+${30*(L+1)}%`],
+    subs:['图片标注店','众包认证 · 图像','安防客户','电商主图客户','地图街景单','独家渠道'],needs:['label.raise','lenet']}),
+  {id:'label.hard',type:'single',lane:4,col:2,r:1,k:1,fam:'l',g:'✦',short:'难例加价',t:()=>'人工复核报酬 ×1.5',sub:'难例加价 · 样本 ×2',era:1,cost:800,eff:'人工复核答对：报酬 ×1.5，样本 ×2。',needs:['label.coop']},
+
+  A('power.psu',{lane:5,col:1,r:0,k:0,fam:'p',g:'⌁',w:.9,short:'额定功率',t:L=>`额定功率 ${PSU[L]} W`,d:L=>[`${PSU[L]} W`,`${PSU[L+1]} W`],
+    subs:['550 W · 铜牌','650 W · 金牌','750 W · 金牌全模组','850 W · 金牌全模组','1000 W · 白金','1200 W · 白金'],topic:'psu',needs:[]}),
+  A('power.save',{lane:5,col:1,r:0,k:1,fam:'p',g:'↯',w:.8,short:'通用省电',t:L=>`全部题耗电 −${8*Math.max(1,L)}%`,d:L=>[`−${8*L}%`,`−${8*(L+1)}%`],
+    subs:['关掉 LED 灯效','cuDNN · 2014（训练耗电 −30%）','动态降频','显存复用','半精度推理','整机调校'],topic:'save',needs:['power.psu']}),
+  A('save.text',{lane:5,col:1,r:1,k:1,fam:'t',g:'文',w:.8,short:'文字省电',t:L=>`文字题耗电 −${10*Math.max(1,L)}%`,d:L=>[`−${10*L}%`,`−${10*(L+1)}%`],
+    subs:['分时休眠','小模型值守','空闲降频','批量唤醒','冷热分区','按需加载'],needs:['power.save']}),
+  A('save.vision',{lane:5,col:2,r:0,k:1,fam:'v',g:'◫',w:.8,short:'识图省电',t:L=>`识图题耗电 −${10*Math.max(1,L)}%`,d:L=>[`−${10*L}%`,`−${10*(L+1)}%`],
+    subs:['分时休眠','小模型值守','空闲降频','批量唤醒','冷热分区','按需加载'],needs:['power.save','lenet']}),
+  {id:'cooler',type:'single',lane:5,col:2,r:1,k:1,fam:'p',g:'❄',short:'九州风神',t:()=>'训练烧卡概率 −50%',sub:'九州风神 · 塔式散热',era:2,cost:1250,eff:'塔式散热器，训练烧卡概率减半。',needs:['power.psu']},
+  {id:'datacenter',type:'single',lane:5,col:6,r:0,k:0,fam:'p',g:'▤',short:'租机房',t:()=>'额定 20 kW · 槽位 +2',sub:'租机房（IDC 机柜）',era:6,cost:60000,eff:'在 IDC 租机柜，八张卡接专线：额定功率变成 20 kW，自动槽位 +2。',needs:['power.psu']},
+
+  /* milestones on the spine (column = node.stage in XgCatalog) */
+  {id:'perceptron',type:'ms',col:1,mx:120,yr:'1958',nm:'感知机',t:()=>'是/否题可以交给它',era:1,cost:0,topic:'perceptron',needs:[]},
+  {id:'mlp',type:'ms',col:1,mx:330,yr:'1986',nm:'多层感知机',t:()=>'学会「多选一」更快',era:1,cost:150,topic:'mlp',needs:['perceptron'],eff:'学会「多选一」所需规模 ×0.6（示例值，游戏读取实际折扣）'},
+  {id:'lenet',type:'ms',col:2,mx:120,yr:'1998',nm:'LeNet-5',t:()=>'识图准确率线开放',era:2,cost:4800,topic:'lenet',needs:['mlp'],eff:'开放识图家族的准确率/速度/单价/省电，「看图说词」门槛降低。'},
+  {id:'rnn',type:'ms',col:2,mx:330,yr:'1990',nm:'朴素 RNN',t:()=>'文字题能读前文 · 8 字',era:2,cost:4800,topic:'rnn',needs:['mlp'],eff:'读字时接回上一刻的自己，能记住最近 8 个字。'},
+  {id:'alexnet',type:'ms',col:3,mx:120,yr:'2012',nm:'AlexNet',t:()=>'识图模型更深更宽',era:3,cost:4200,topic:'alexnet',needs:['lenet'],eff:'识图模型可配 8 层；训练 ×1.3。'},
+  {id:'lstm',type:'ms',col:3,mx:330,yr:'1997',nm:'LSTM',t:()=>'开「验证码」「长句」桌',era:3,cost:5600,topic:'lstm',needs:['rnn'],eff:'记忆 80 字；开「长句」「刷单评论」「验证码」题桌。',unlockDesk:'cifar'},
+  {id:'resnet',type:'ms',col:4,mx:90,yr:'2015',nm:'ResNet',t:()=>'识图模型不再受层数限制',era:4,cost:10500,topic:'resnet',needs:['alexnet']},
+  {id:'seq2seq',type:'ms',col:4,mx:225,yr:'2014',nm:'Seq2Seq',t:()=>'能接翻译订单',era:4,cost:10500,topic:'seq2seq',needs:['lstm']},
+  {id:'attention',type:'ms',col:4,mx:360,yr:'2015',nm:'注意力',t:()=>'翻译不再受句长瓶颈',era:4,cost:10500,topic:'attention',needs:['seq2seq']},
+  {id:'transformer',type:'ms',col:5,mx:225,yr:'自研',nm:'Transformer',t:()=>'整句同时计算',era:5,cost:30000,topic:'transformer',needs:['attention'],hint:'它会自己问出一个问题（第 5 时代）'},
+];
+const NODE=Object.fromEntries(NODES.map(n=>[n.id,n]));
+const LINKS=[['perceptron','mlp'],['mlp','lenet'],['mlp','rnn'],['lenet','alexnet'],['rnn','lstm'],['alexnet','resnet'],['lstm','seq2seq'],['seq2seq','attention'],['attention','transformer'],
+  ['perceptron','label.auto'],['label.auto','label.coop'],['label.coop','label.audit'],['label.audit','label.parallel'],['label.coop','label.brain'],
+  ['perceptron','acc.all'],['acc.all','acc.text'],['acc.all','acc.logic'],['lenet','acc.vision'],['acc.text','acc.vision'],
+  ['label.auto','auto.learn'],
+  ['speed.all','speed.text'],['speed.all','speed.logic'],['speed.text','speed.vision'],['lenet','speed.vision'],
+  ['label.raise','pay.text'],['label.raise','pay.logic'],['pay.text','pay.vision'],['pay.logic','label.hard'],
+  ['power.psu','power.save'],['power.save','save.text'],['power.save','save.vision'],['save.text','cooler'],['power.psu','datacenter']];
+
+const DESKS=[
+  {id:'sense',nm:'常识判断',fam:'t',g:'常',base:1.0,acc:.91,diff:1,opts:['是','否'],q:[['鱼会爬树。','否'],['太阳从东边升起。','是'],['冰化了会变成水。','是'],['人一天要睡二十个小时。','否'],['夏天一般比冬天热。','是']]},
+  {id:'spam',nm:'垃圾短信',fam:'t',g:'信',base:1.2,acc:.88,diff:1,opts:['垃圾','正常'],q:[['【建设银行】您的积分即将清零，速登 jh-ccb.cc 兑换现金。','垃圾'],['今晚加班，饭别等我了。','正常'],['恭喜您被《奔跑吧兄弟》节目组抽中二等奖！','垃圾'],['明天下午三点开会，别迟到。——老周','正常']]},
+  {id:'danmu',nm:'弹幕情绪',fam:'t',g:'弹',base:1.2,acc:.71,diff:1,opts:['夸','骂'],q:[['前方高能！！！','夸'],['辣眼睛，取关了','骂'],['UP 主良心，投币了','夸'],['就这？','骂']]},
+  {id:'mnist',nm:'手写数字',fam:'v',g:'7',base:1.6,acc:.83,diff:2,opts:['是','不是'],q:[['这是「4」吗？','是','4'],['这是「7」吗？','不是','1'],['这是「3」吗？','是','3'],['这是「9」吗？','不是','8']]},
+  {id:'meme',nm:'表情包',fam:'v',g:'☺',base:1.6,acc:.55,diff:2,opts:['开心','生气'],q:[['（金馆长捂嘴大笑）','开心'],['（暴走脸拍桌子）','生气'],['（熊猫人竖大拇指）','开心']]},
+  {id:'logic',nm:'逻辑题',fam:'l',g:'∴',base:3.2,acc:.64,diff:4,opts:['成立','不成立'],q:[['所有的猫都怕水；咪咪是猫。所以咪咪怕水。','成立'],['有些鸟不会飞；麻雀是鸟。所以麻雀不会飞。','不成立'],['如果下雨，地就湿。地湿了，所以下过雨。','不成立'],['小王比小李高，小李比小张高。所以小王比小张高。','成立']]},
+  {id:'arith',nm:'算术 · 高数',fam:'l',g:'±',base:2.6,acc:.58,diff:4,opts:['对','错'],q:[['17 × 6 = 102','对'],['2⁵ = 25','错'],['d/dx (x³) = 3x²','对',null,true],['√144 = 14','错'],['∫₀¹ 2x dx = 2','错',null,true]]},
+  {id:'cifar',nm:'验证码',fam:'v',g:'▦',base:2.0,acc:.62,diff:3,opts:['对','错'],q:[['图里写的是「K7Q2」吗？','对']],lock:'需要 LSTM · 开桌'},
+];
+const DESK=Object.fromEntries(DESKS.map(d=>[d.id,d]));
+const GOD=[
+  {q:'∫<sub>0</sub><sup>1</sup> ln x · ln(1 − x) dx = ?',o:['2 − π²/6','π²/6 − 1','1 − π²/12','ln 2 − ½']},
+  {q:'∫<sub>0</sub><sup>∞</sup> x³ ⁄ (e<sup>x</sup> − 1) dx = ?',o:['π⁴/15','π⁴/90','6ζ(3)','π²/6']},
+  {q:'∫<sub>0</sub><sup>π/2</sup> ln(sin x) dx = ?',o:['−(π/2)·ln 2','−π·ln 2','−ln 2','(π/4)·ln 2']},
+  {q:'lim<sub>n→∞</sub> (n!)<sup>1/n</sup> ⁄ n = ?',o:['1/e','e','1','0']},
+];
+
+/* ─── state ─── */
+const S={money:3800,era:3,speed:10,training:true,reduced:false,lab:false,combo:0,overload:false,god:null,godDone:false,chessToday:0,sel:'sense',qi:0,
+  lv:{'label.auto':2,'label.coop':1,'label.audit':0,'label.parallel':0,'label.brain':0,'acc.all':2,'acc.text':3,'acc.logic':1,'acc.vision':1,'auto.learn':1,
+      'speed.all':1,'speed.text':2,'speed.logic':0,'speed.vision':0,'label.raise':3,'pay.text':1,'pay.logic':2,'pay.vision':0,'label.hard':0,
+      'power.psu':1,'power.save':1,'save.text':0,'save.vision':0,cooler:1,datacenter:0,
+      perceptron:1,mlp:1,lenet:1,rnn:1,alexnet:0,lstm:0,resnet:0,seq2seq:0,attention:0,transformer:0},
+  slots:['mnist','spam'],live:{},prog:{},pend:{},lastFloat:{}};
+DESKS.forEach(d=>{S.live[d.id]=0;S.prog[d.id]=0;S.pend[d.id]=0;S.lastFloat[d.id]=0});
+const lv=id=>S.lv[id]||0;
+const slotCap=()=>lv('label.auto')+(lv('datacenter')?2:0);
+
+/* ─── economy (spec §1.4–1.5, §1.3 ⑥) ─── */
+const eff=a=>a<=.5?.15:clamp(Math.pow((a-.5)/(.6-.5),1.5),.15,1);
+function deskAcc(d){return Math.min(.995,d.acc+.02*lv('acc.all')+.03*lv('acc.'+FAMK[d.fam])+S.live[d.id])}
+function deskPay(d,hand){const raise=RM[lv('label.raise')];const lvl=2; // desk level 3 in this demo save
+  const base=.5*d.base*lvl*(1+.3*lv('pay.'+FAMK[d.fam]));return hand?base*raise*1.5:base*(1+.5*(raise-1))}
+function deskWatts(d){return WF[d.fam]*(1-.08*lv('power.save'))*(1-.10*lv('save.'+FAMK[d.fam]))*(1+.06*(lv('speed.all')+lv('speed.'+FAMK[d.fam])))}
+function trainWatts(){return S.training?250*(lv('power.save')>=2?.7:1):0}
+function power(){const parts=[['待机（机箱 + CPU）',95]];if(S.training)parts.push(['训练 · GTX 980 Ti',trainWatts()]);
+  S.slots.forEach(id=>parts.push([DESK[id].nm+' · 自动',deskWatts(DESK[id])]));
+  const load=parts.reduce((s,p)=>s+p[1],0), rated=lv('datacenter')?20000:PSU[lv('power.psu')];
+  return {parts,load,rated,ratio:load/rated,pf:load>rated?Math.pow(rated/load,1.5):1}}
+function deskRate(d,pf){return .5*(1+.25*lv('speed.all'))*(1+.35*lv('speed.'+FAMK[d.fam]))*eff(deskAcc(d))*pf}
+function deskIncome(d,pf){const a=deskAcc(d);return deskRate(d,pf)*a*deskPay(d,false)}
+function totalAuto(){const p=power();return S.slots.reduce((s,id)=>s+deskIncome(DESK[id],p.pf),0)}
+
+/* ─── node status ─── */
+function nextCost(n){const L=lv(n.id);if(n.type==='axis')return nice(B[L+1]*n.w);if(n.type==='raise')return Math.max(100,Math.round(100*Math.pow(1.45,L)));return n.cost}
+function maxOf(n){return n.type==='axis'?6:n.type==='raise'?17:1}
+function status(n){const L=lv(n.id),reasons=[];
+  if(L>=maxOf(n))return{st:'max',reasons};
+  if(n.type==='axis'){const need=L+1;if(S.era<need)reasons.push(`需要第 ${need} 时代（${ERAS[need].nm} · ${ERAS[need].yr}）`)}
+  else if(n.type!=='raise'&&S.era<n.era)reasons.push(n.hint?n.hint:`需要第 ${n.era} 时代（${ERAS[n.era].nm}）`);
+  (n.needs||[]).forEach(id=>{if(lv(id)<1)reasons.push(`先买：${NODE[id].type==='ms'?NODE[id].nm:NODE[id].short}`)});
+  if(reasons.length)return{st:'locked',reasons};
+  return{st:S.money+1e-9>=nextCost(n)?'buy':'poor',reasons}}
+function subOf(n){if(n.type==='axis'){const L=lv(n.id);return n.subs[Math.min(5,L>=6?5:L)]}if(n.type==='raise')return '头衔：'+raiseTitle(lv(n.id));return n.sub||n.nm}
+
+/* ─── build the tree ─── */
+const world=$('#world'),vp=$('#vp'),treeEl=$('#tree');
+const view={tx:160,ty:44,sc:.86};
+const els={};
+function boxOf(n){if(n.type==='ms'){const x=colX(n.col)+n.mx;return{x:x-30,y:spineY-30,w:60,h:60,cx:x,cy:spineY}}
+  const x=colX(n.col)+22+n.k*214,y=laneTop(n.lane)+(LH[n.lane]<150?24:26)+n.r*98;return{x,y,w:204,h:84,cx:x+102,cy:y+42}}
+function buildWorld(){
+  world.style.width=WORLD_W+'px';world.style.height=WORLD_H+'px';
+  for(let i=0;i<6;i++){const b=document.createElement('div');b.className='band'+(i%2?' alt':'');b.style.cssText=`top:${laneTop(i)}px;height:${LH[i]}px;width:${WORLD_W}px`;world.append(b)}
+  const sb=document.createElement('div');sb.className='spineband';sb.style.cssText=`top:${spineTop}px;height:${SPINEH}px;width:${WORLD_W}px`;world.append(sb);
+  for(let c=1;c<=6;c++){const col=document.createElement('div');col.className='col';col.dataset.c=c;col.style.cssText=`left:${colX(c)}px;width:${COLW}px;height:${WORLD_H}px`;
+    col.innerHTML=`<div class="eraH"><div class="rn">${ERAS[c].rn}</div><div class="yr">${ERAS[c].yr}</div><div class="nm">${ERAS[c].nm}</div><div class="tag"></div></div>`;world.append(col)}
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','links');svg.setAttribute('width',WORLD_W);svg.setAttribute('height',WORLD_H);
+  svg.innerHTML=`<defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#A594FF"/><stop id="sgStop" offset=".5" stop-color="#5FE3B5"/><stop id="sgStop2" offset=".5" stop-color="#ffffff14"/><stop offset="1" stop-color="#ffffff08"/></linearGradient></defs>`;
+  const spine=document.createElementNS(svg.namespaceURI,'path');spine.setAttribute('class','spine');spine.setAttribute('d',`M${X0} ${spineY} H${WORLD_W-40}`);spine.setAttribute('stroke','url(#sg)');svg.append(spine);
+  LINKS.forEach(([a,b])=>{const A=boxOf(NODE[a]),Bx=boxOf(NODE[b]);let d;
+    if(Bx.x>=A.x+A.w+16){const p1=[A.x+A.w,A.cy],p2=[Bx.x,Bx.cy],dx=Math.max(40,(p2[0]-p1[0])/2);d=`M${p1} C${p1[0]+dx},${p1[1]} ${p2[0]-dx},${p2[1]} ${p2}`}
+    else{const down=Bx.cy>A.cy;const p1=[A.cx,down?A.y+A.h:A.y],p2=[Bx.cx,down?Bx.y:Bx.y+Bx.h],dy=(p2[1]-p1[1])/2;d=`M${p1} C${p1[0]},${p1[1]+dy} ${p2[0]},${p2[1]-dy} ${p2}`}
+    const base=document.createElementNS(svg.namespaceURI,'path');base.setAttribute('d',d);base.setAttribute('class','lk');
+    const fl=document.createElementNS(svg.namespaceURI,'path');fl.setAttribute('d',d);fl.setAttribute('class','fl');fl.style.display='none';fl.style.animationDelay=(-Math.random()*3).toFixed(2)+'s';
+    svg.append(base,fl);(els.links=els.links||[]).push({a,b,base,fl})});
+  world.append(svg);
+  NODES.forEach(n=>{const el=document.createElement('div');el.dataset.id=n.id;const bx=boxOf(n);
+    if(n.type==='ms'){el.className='ms';el.style.left=bx.cx+'px';el.style.top=bx.cy+'px';el.innerHTML=`<div class="dia"><span>${n.yr}</span></div><div class="ml"></div><div class="mn">${n.nm}</div><div class="mp"></div>`}
+    else{el.className='tile f-'+n.fam;el.style.left=bx.x+'px';el.style.top=bx.y+'px';
+      const pips=n.type==='raise'?`<div class="rbar"><b></b></div>`:n.type==='axis'?`<div class="pips">${'<i></i>'.repeat(6)}</div>`:`<div class="pips"><i style="width:28px"></i></div>`;
+      el.innerHTML=`<div class="tl"><i class="ico">${n.g}</i><div class="tt"><div class="ttl"><span></span></div><div class="sub"></div></div></div><div class="ft">${pips}<b class="lvl"></b><span class="price"></span></div>`}
+    world.append(el);els[n.id]=el;
+    el.addEventListener('pointerenter',()=>showCard(n));el.addEventListener('pointerleave',hideCard);
+    el.addEventListener('click',e=>{e.stopPropagation();buy(n)});
+    el.addEventListener('contextmenu',e=>{e.preventDefault();openDrawer(n,'sci')})});
+  // lanes overlay
+  const lanes=$('#lanes');LANES.forEach((l,i)=>{const d=document.createElement('div');d.className='lane';d.style.setProperty('--fc',l.fc);d.innerHTML=`<span class="no">${l.no}</span><span class="nm">${l.nm}</span><span class="d">${l.d}</span>`;lanes.append(d);(els.lanes=els.lanes||[]).push([d,laneTop(i),LH[i]])});
+  const sp=document.createElement('div');sp.className='lane spine';sp.style.setProperty('--fc','var(--params)');sp.innerHTML=`<span class="no">ML</span><span class="nm">时代主干</span><span class="d">真实模型 = 里程碑</span>`;lanes.append(sp);els.lanes.push([sp,spineTop,SPINEH]);
+  const eb=$('#eraBtns');for(let c=1;c<=6;c++){const b=document.createElement('button');b.className='eb';b.textContent=ERAS[c].rn;b.title=ERAS[c].nm+' · '+ERAS[c].yr+'（'+c+'）';b.onclick=()=>jumpEra(c);eb.append(b)}
+}
+function renderNodes(){
+  NODES.forEach(n=>{const el=els[n.id],L=lv(n.id),{st}=status(n);
+    if(n.type==='ms'){el.className='ms '+(L?'owned':st);el.querySelector('.ml').textContent=n.t();
+      el.querySelector('.mp').textContent=L?'已拥有':st==='locked'?(S.era<n.era?`需第 ${n.era} 时代`:'先买前置'):(n.cost?'¥'+fmt(n.cost):'免费');return}
+    el.className='tile f-'+n.fam+' t-'+st;
+    const t=n.t(L),span=el.querySelector('.ttl span');if(span.textContent!==t){const was=span.textContent;span.textContent=t;if(was&&!S.reduced){const tt=el.querySelector('.ttl');tt.classList.remove('roll');void tt.offsetWidth;tt.classList.add('roll')}}
+    el.querySelector('.sub').textContent=subOf(n);
+    el.querySelector('.lvl').textContent=n.type==='single'?(L?'已有':''):`${L}/${maxOf(n)}`;
+    if(n.type==='axis')el.querySelectorAll('.pips i').forEach((p,i)=>{p.className=i<L?'on':(i===L&&st!=='max'?'next':'')});
+    else if(n.type==='raise')el.querySelector('.rbar b').style.width=(L/17*100)+'%';
+    else el.querySelector('.pips i').className=L?'on':'';
+    const pr=el.querySelector('.price');
+    pr.textContent=st==='max'?(n.type==='single'?'已拥有':'满级'):st==='locked'?(status(n).reasons[0].startsWith('需要第')?'需第 '+(n.type==='axis'?L+1:n.era)+' 时代':status(n).reasons[0].startsWith('先买')?'先买前置':'未解锁'):'¥'+fmt(nextCost(n))});
+  // links
+  els.links.forEach(l=>{const a=lv(l.a)>0,b=lv(l.b)>0,stb=status(NODE[l.b]).st;l.base.setAttribute('class','lk'+(a&&b?' live':a&&stb==='buy'?' ready':''));l.fl.style.display=a&&b&&!S.reduced?'':'none'});
+  // eras
+  $$('.col').forEach(c=>{const i=+c.dataset.c;c.classList.toggle('cur',i===S.era);c.classList.toggle('future',i>S.era);c.querySelector('.tag').textContent=i===S.era?'当前时代':i<S.era?'已经过':'未到'});
+  $$('#eraBtns .eb').forEach((b,i)=>b.classList.toggle('cur',i+1===S.era));
+  const lit=(colX(S.era+1)-X0)/(WORLD_W-40-X0);$('#sgStop').setAttribute('offset',clamp(lit,0,1));$('#sgStop2').setAttribute('offset',clamp(lit,0,1));
+  $('#eraRn').textContent=ERAS[S.era].rn;$('#eraNm').textContent=ERAS[S.era].nm;$('#eraYr').textContent=ERAS[S.era].yr;
+  if(hovered)showCard(hovered,true);
+}
+
+/* ─── pan & zoom ─── */
+let appScale=1;
+function applyView(anim){world.classList.toggle('anim',!!anim);world.style.transform=`translate(${view.tx}px,${view.ty}px) scale(${view.sc})`;
+  $('#zLbl').textContent=Math.round(view.sc*100)+'%';
+  els.lanes.forEach(([d,top,h])=>{d.style.top=(view.ty+top*view.sc)+'px';d.style.height=(h*view.sc)+'px';d.style.opacity=view.sc<.5?.6:1});
+  if(anim)setTimeout(()=>world.classList.remove('anim'),520)}
+function toLocal(e){const r=vp.getBoundingClientRect();return[(e.clientX-r.left)/appScale,(e.clientY-r.top)/appScale]}
+function zoomAt(px,py,ns){ns=clamp(ns,.45,1.6);const wx=(px-view.tx)/view.sc,wy=(py-view.ty)/view.sc;view.sc=ns;view.tx=px-wx*ns;view.ty=py-wy*ns;applyView()}
+let drag=null;
+vp.addEventListener('pointerdown',e=>{if(e.button!==0||e.target.closest('.tile,.ms'))return;drag={x:e.clientX,y:e.clientY,tx:view.tx,ty:view.ty};vp.setPointerCapture(e.pointerId);vp.classList.add('drag');hideCard()});
+vp.addEventListener('pointermove',e=>{if(!drag)return;view.tx=drag.tx+(e.clientX-drag.x)/appScale;view.ty=drag.ty+(e.clientY-drag.y)/appScale;applyView()});
+const endDrag=()=>{drag=null;vp.classList.remove('drag')};vp.addEventListener('pointerup',endDrag);vp.addEventListener('pointercancel',endDrag);
+vp.addEventListener('wheel',e=>{e.preventDefault();const[px,py]=toLocal(e);zoomAt(px,py,view.sc*Math.exp(-e.deltaY*.0012))},{passive:false});
+function vpSize(){const r=vp.getBoundingClientRect();return[r.width/appScale,r.height/appScale]}
+function jumpEra(c){const[w]=vpSize();view.tx=clamp(w/2+75-(colX(c)+COLW/2)*view.sc,w-(WORLD_W+20)*view.sc,160-(X0-8)*view.sc);applyView(true)}
+function resetView(){const[w,h]=vpSize();view.sc=clamp((h-44)/WORLD_H,.8,.95);view.ty=44;const c0=Math.max(1,S.era-2);view.tx=160-(colX(c0)-8)*view.sc;applyView(true)}
+$('#zIn').onclick=()=>{const[w,h]=vpSize();zoomAt(w/2,h/2,view.sc*1.15)};$('#zOut').onclick=()=>{const[w,h]=vpSize();zoomAt(w/2,h/2,view.sc/1.15)};$('#zReset').onclick=resetView;
+
+/* ─── hover card ─── */
+let hovered=null;const hc=$('#hcard');
+function showCard(n,refresh){hovered=n;const L=lv(n.id),s=status(n),max=maxOf(n);
+  let head=n.type==='ms'?n.nm:n.t(L);
+  let delta='';
+  if(n.type==='axis'||n.type==='raise'){if(s.st==='max')delta=`<span class="b">${n.d(L-1)[1]}</span><span class="a">· 已满级</span>`;else{const[a,b]=n.d(L);delta=`<span class="a">现在 ${a}</span><span class="arrow">→</span><span class="b">升级后 ${b}</span>`}}
+  else delta=L?`<span class="b">已拥有</span>`:`<span class="a">未拥有</span><span class="arrow">→</span><span class="b">${n.type==='ms'?n.t():n.t()}</span>`;
+  const note=n.type==='axis'?`下一级：<b style="color:var(--ink)">${s.st==='max'?'—':n.subs[L]}</b>`:n.type==='raise'?`头衔：${raiseTitle(L)} → ${raiseTitle(Math.min(17,L+1))}。自动答题拿一半加成。`:(n.eff||'');
+  const cost=s.st==='max'?`<span class="gold">${n.type==='single'||n.type==='ms'?'已拥有':'满级'}</span>`:`<span class="${s.st==='buy'?'ok':'bad'}">¥${fmt(nextCost(n))}</span>`;
+  const stTxt=s.st==='buy'?'<span class="ok">左键购买</span>':s.st==='poor'?`<span class="bad">还差 ¥${fmt(nextCost(n)-S.money)}</span>`:s.st==='locked'?'<span style="color:var(--dim)">未解锁</span>':'';
+  const reasons=s.reasons.length?`<div class="hc-r">${s.reasons.map(r=>`<div>${r}</div>`).join('')}</div>`:'';
+  const lvl=n.type==='ms'?(n.yr==='自研'?'自研':n.yr):n.type==='single'?'':`${L}/${max}`;
+  hc.innerHTML=`<div class="hc-h"><b>${head}</b><span>${lvl}</span></div><div class="hc-d">${delta}</div><div class="hc-n">${note}</div>
+    <div class="hc-c">${cost}${stTxt}</div>${reasons}<div class="hc-s"><span>${n.type==='ms'?n.nm+(n.yr!=='自研'?' · '+n.yr:''):subOf(n)}</span><em>右键 · 科普</em></div>`;
+  const tr=treeEl.getBoundingClientRect(),er=els[n.id].getBoundingClientRect();
+  let x=(er.right-tr.left)/appScale+12,y=(er.top-tr.top)/appScale-6;const W=treeEl.clientWidth;
+  if(x+310>W)x=(er.left-tr.left)/appScale-316;x=clamp(x,8,W-312);y=clamp(y,48,treeEl.clientHeight-hc.offsetHeight-8);
+  hc.style.left=x+'px';hc.style.top=y+'px';if(!refresh)hc.classList.add('show')}
+function hideCard(){hovered=null;hc.classList.remove('show')}
+
+/* ─── 科普 drawer ─── */
+const SCI={
+  slots:['自动槽位','「槽位」就是它同时能盯住几张题桌。槽位越多，你越能把讨厌的题交出去，自己专心做想做的。','2016 年的一台工作站，一块显卡同时跑几个小模型并不稀奇：瓶颈常常不在算力，而在调度——哪张桌先拿到显卡、谁排队。','槽位多了不等于更准，它只是让更多桌同时开工。'],
+  accall:['通用准确率','这条线上的每一级都是一项真实的训练技巧：1958 年感知机的偏置与阶跃，1986 年的 Sigmoid，2012 年 Hinton 等人的 Dropout（随机关掉一部分神经元，防止死记硬背），2015 年的 BatchNorm。','在游戏里，它们提高的是「部署出去答题」时的表现，不改你练页里检查点的成绩；Dropout、BatchNorm 原有的训练效果照旧生效。','一句话：同一个模型，用对了技巧，答题时少犯错。'],
+  acctext:['文字准确率','每一级都会把练页里文字模型的层数和宽度上限往上推，模型更大，能记住的规律就更多。','同时，自动答题的文字题准确率按级 +3%。','更大的模型要更多数据才喂得饱——别忘了数据包。'],
+  accvision:['识图准确率','LeNet-5（1998）让「小窗口扫全图」成为识图的标准做法。买下它，识图家族的四条线才开放。','每一级把识图模型的层数和宽度上限推高，并让自动识图题准确率 +3%。','图片题耗电更多（每桌约 120 W），记得看电表。'],
+  acclogic:['逻辑数学准确率','第一级是「特征工程」：人先替它把线索整理好，感知机也能做逻辑题，并解除逻辑题 55% 的上限。','之后几级是游戏里自研的做题手段：规则模板、分步核对、符号求导……没有通用缩写，所以不造缩写。','逻辑和高数题最值钱，也最难自动。'],
+  learn:['边做边学','自动答对的题，每隔几题算作一条有效样本，进同一个数据集；同时这张桌的部署准确率会慢慢往上爬，直到这一级的上限。','课程学习（Bengio 等，2009）先易后难；伪标签（Lee，2013）用模型自己有把握的答案当标签。它们都有风险：错的答案也会被学进去，所以设了上限。','换模型时增益清零，已经攒下的样本保留。'],
+  speed:['通用速度','批量作答、多线程预取、CUDA 推理……都是让同一块显卡在同样时间里多答几道题。','速度越快，每桌耗电越多（每级约 +6%）。这条线和电力线互相牵制。','知识蒸馏（Hinton 等，2015）：让小模型学大模型的答案，答得几乎一样准、快得多。'],
+  raise:['加薪','人工标注报酬：×2、×4、×6 … ×34，每升一级 +2 倍，每两级换一个头衔。','自动答题只拿加薪加成的一半——平台付给「账号」的钱，和付给你的手工钱，不是一回事。','从实习标注员到首席标注官，一共 17 级。'],
+  psu:['额定功率','电源上贴的那个瓦数。所有自动题桌、训练中的显卡、机箱本身都在分它。','负载超过额定，所有东西一起变慢（超出越多，慢得越狠）。实验室里不会跳闸——真正跳闸的是预训练那天的 3500 W 房屋线路。','2016 年装机常识：GTX 980 Ti 一块就要 250 W，450 W 电源「带不动」。'],
+  save:['通用省电','第二级是 NVIDIA 的 cuDNN（2014）：同样的计算换一套更适合显卡的写法，训练耗电 −30%。','其余几级是降频、显存复用、半精度推理这些「抠电」手段。','省下来的瓦数，可以多开一张桌。'],
+  perceptron:['感知机 · 1958','Rosenblatt 的感知机只有一层：输入直接连到「是 / 否」，决策边界只能是一条直线。','它学不会异或——但足够回答「鱼会爬树吗」。','这是一切的起点：第一张能交给它的题桌，是是非题。'],
+  mlp:['多层感知机 · 1986','中间加几层，再用反向传播把误差一层层传回去（Rumelhart、Hinton、Williams，1986）。','层层组合之后，它能学「多选一」了；但每个位置各占一组连线，数字挪一格就不认得。','它让模型第一次能「组合」线索。'],
+  lenet:['LeNet-5 · 1998','LeCun 等人让看图区只连相邻的笔画，同一组权重扫过整张图：平移以后照样认得。','美国的银行曾用它读支票上的手写数字。','买下它，识图家族的升级线全部开放。'],
+  rnn:['朴素 RNN · 1990','读字区接回上一时刻的自己，逐字递推（Elman，1990）。','记忆每过一步衰减一截，只记得最近几个字；练得太猛还会「炸」。','它让文字题第一次能读前文。'],
+  alexnet:['AlexNet · 2012','同样只连邻居，但层数和通道数都翻上去，配 ReLU 和两块显卡并行。','2012 年 ImageNet 比赛，它把错误率一下子拉低了一大截，深度学习从此出圈。','识图模型可以更深更宽了。'],
+  lstm:['LSTM · 1997','Hochreiter 和 Schmidhuber 给回环装了门：输入门、遗忘门、输出门决定什么写入、什么保留。','整句都记得住，长句、刷单评论、验证码这些桌也就能开了。','给记忆装上门。'],
+  resnet:['ResNet · 2015','每隔几层留一条恒等旁路，信号原样穿过，152 层也练得动。','2015 年 ImageNet 冠军。','识图模型不再受层数限制。'],
+  seq2seq:['Seq2Seq · 2014','一段回路把整句压成一个定长向量，另一段从这个向量逐词说出来。','能翻译了——但句子越长，那个「定长瓶颈」越吃力。','能接翻译订单。'],
+  attention:['注意力 · 2015','说出每个词的时候，都能回头看原句的任意位置，按相关度分配权重。','定长瓶颈解除，长句翻译不再越译越乱。','翻每个词都回头看原文。'],
+  transformer:['Transformer · 自研','如果只用注意力呢？每个字和所有字直接相连，整句一起算，不再逐字等待。','这一步要等它自己问出那个问题——第 5 时代会发生。','这是你们自己的研究，年份不显示。'],
+};
+function openDrawer(n,tab){const key=n.topic||null,sc=key&&SCI[key];
+  $('#drTag').textContent=n.type==='ms'?'里程碑 · '+n.yr:'科技 · '+(LANES[n.lane]?LANES[n.lane].nm:'');
+  $('#drTitle').textContent=n.type==='ms'?n.nm:n.short;
+  const L=lv(n.id);
+  const effHtml=n.type==='axis'?`<table>${n.subs.map((s,i)=>`<tr><td class="${i<L?'on':S.era<i+1?'lock':''}">${i+1}/6</td><td>${n.t(i+1)}</td><td>${s}</td><td style="text-align:right;color:${S.era<i+1?'var(--dim)':'var(--money)'}">${i<L?'已有':S.era<i+1?'第 '+(i+1)+' 时代':'¥'+fmt(nice(B[i+1]*n.w))}</td></tr>`).join('')}</table>`
+    :`<p>${n.type==='ms'?n.t()+'。':n.t(L)+'。'}</p><p>${n.eff||''}</p>`;
+  const sciHtml=sc?`${sc.slice(1,-1).map(p=>`<p>${p}</p>`).join('')}<p class="last">${sc[sc.length-1]}</p>`:`<p>这一项是工程手段，没有对应的单篇论文，科普从略。</p><p class="last">效果见「效果」页签。</p>`;
+  $('#drBody').dataset.eff=effHtml;$('#drBody').dataset.sci=sciHtml;setTab(tab);$('#drawer').classList.add('open');hideCard()}
+function setTab(t){$$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));$('#drBody').innerHTML=$('#drBody').dataset[t]||''}
+$$('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));$('#drX').onclick=()=>$('#drawer').classList.remove('open');
+
+/* ─── buying + effects ─── */
+function stageXY(el){const r=el.getBoundingClientRect(),s=$('#stage').getBoundingClientRect();return[(r.left+r.width/2-s.left)/appScale,(r.top+r.height/2-s.top)/appScale]}
+function buy(n){const s=status(n),el=els[n.id];
+  if(s.st!=='buy'){el.classList.remove('no');void el.offsetWidth;el.classList.add('no');
+    if(s.st==='poor'){const p=el.querySelector('.price,.mp');p.style.color='#FF7A6E';setTimeout(()=>p.style.color='',600)}
+    sfx('no');return}
+  const cost=nextCost(n);S.money-=cost;const before=lv(n.id);S.lv[n.id]=before+1;
+  el.classList.remove('bought');void el.offsetWidth;el.classList.add('bought');
+  const[x,y]=stageXY(el);burst(x,y,n.type==='ms'?['#A594FF','#5FE3B5','#ffffff']:['#5FE3B5','#F2C46D','#CFEFE3']);
+  if(n.type==='axis'&&!S.reduced){setTimeout(()=>{const p=el.querySelectorAll('.pips i')[before];if(p){p.classList.add('pop')}},60)}
+  const label=n.type==='ms'?`${n.nm}：${n.t()}`:`${n.t(lv(n.id))}${n.type==='single'?'':'（'+lv(n.id)+'/'+maxOf(n)+'）'}`;
+  toast(`<b>已${n.type==='axis'||n.type==='raise'?'升级':'购买'}</b>　${label}`);log(`buy ${n.id} → Lv${lv(n.id)} · −¥${fmt(cost)}`);sfx('buy');
+  if(n.unlockDesk){DESK[n.unlockDesk].lock=null;buildDesks();toast(`<b>开桌</b>　${DESK[n.unlockDesk].nm}：现在可以手动做，也能交给它`)}
+  if(n.id==='label.auto'||n.id==='datacenter')renderSlots();
+  renderNodes();renderDesks()}
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[],raf=0;
+function burst(x,y,cols){if(S.reduced)return;
+  for(const cls of['','r2']){const r=document.createElement('div');r.className='ring '+cls;r.style.left=x+'px';r.style.top=y+'px';$('#stage').append(r);setTimeout(()=>r.remove(),700)}
+  const live=$$('.ring').length;if(parts.length>90||live>6)return;
+  for(let i=0;i<28;i++){const a=Math.random()*Math.PI*2,v=2+Math.random()*5.5;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1,life:1,dec:.016+Math.random()*.018,c:cols[i%cols.length],s:1.5+Math.random()*2.2})}
+  if(!raf)raf=requestAnimationFrame(step)}
+function step(){cx.clearRect(0,0,1920,1080);parts=parts.filter(p=>p.life>0);
+  for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vx*=.95;p.vy=p.vy*.95+.06;p.life-=p.dec;cx.globalAlpha=Math.max(0,p.life);cx.fillStyle=p.c;cx.shadowColor=p.c;cx.shadowBlur=8;cx.fillRect(p.x,p.y,p.s,p.s)}
+  cx.globalAlpha=1;raf=parts.length?requestAnimationFrame(step):0;if(!raf)cx.clearRect(0,0,1920,1080)}
+
+/* ─── slots ─── */
+function renderSlots(){const cap=slotCap(),el=$('#slots');el.innerHTML='';
+  $('#slotCount').textContent=`${S.slots.length}/${cap}`;
+  const nextLock=lv('label.auto')<6?(S.era<lv('label.auto')+1?`第 ${lv('label.auto')+1} 槽需第 ${lv('label.auto')+1} 时代`:`第 ${lv('label.auto')+1} 槽 ¥${fmt(nextCost(NODE['label.auto']))}`):'';
+  $('#slotHint').textContent=nextLock;
+  const dc=!!lv('datacenter');el.classList.toggle('dc',dc);
+  for(let i=0;i<(dc?8:7);i++){const s=document.createElement('div');s.dataset.i=i;
+    if(i<cap){const id=S.slots[i];
+      if(id){const d=DESK[id];s.className='sock full f-'+d.fam+(i>=lv('label.auto')?' bonus':'');s.draggable=true;s.innerHTML=`<span class="sn">${d.nm}</span><span class="si">槽 ${i+1} · ${FAMN[d.fam]}</span>`;s.title='拖回题桌区 = 我来做';
+        s.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move';$('#desks').classList.add('drop')});
+        s.addEventListener('dragend',()=>$('#desks').classList.remove('drop'))}
+      else{s.className='sock empty';s.innerHTML=`<span class="sn">空槽</span><span class="si">拖题桌进来</span>`}
+      s.addEventListener('dragover',e=>{e.preventDefault();s.classList.add('drop')});s.addEventListener('dragleave',()=>s.classList.remove('drop'));
+      s.addEventListener('drop',e=>{e.preventDefault();s.classList.remove('drop');const id=e.dataTransfer.getData('text/plain');if(id)assign(id,i)})}
+    else{s.className='sock lock';s.innerHTML=i<6?`<span class="sn">🔒 ${i+1}/6</span><span class="si">${S.era<i+1?'第 '+(i+1)+' 时代':'¥'+fmt(nice(B[i+1]*1.6))}</span>`:`<span class="sn">🔒 +2</span><span class="si">机房</span>`;s.title=i<6?'在科技树「自动槽位」升级':'租机房后 +2'}
+    el.append(s)}}
+function assign(id,i){const d=DESK[id];if(!d||d.lock)return;const cap=slotCap();
+  const cur=S.slots.indexOf(id);if(cur>=0)S.slots.splice(cur,1);
+  if(i==null||i>=cap){if(S.slots.length>=cap)return false;S.slots.push(id)}
+  else{if(i<S.slots.length){const old=S.slots[i];S.slots.splice(i,0,id);if(S.slots.length>cap){const out=S.slots.splice(S.slots.indexOf(old),1)[0];handback(out)}}else S.slots.push(id)}
+  handoff(id);renderSlots();renderDesks();renderNodes();return true}
+function unassign(id){const i=S.slots.indexOf(id);if(i<0)return;S.slots.splice(i,1);handback(id);renderSlots();renderDesks();renderNodes()}
+function handoff(id){const c=deskEls[id]&&deskEls[id].root;if(c&&!S.reduced){c.classList.remove('handoff','handback');void c.offsetWidth;c.classList.add('handoff')}
+  log(`assign ${id} → auto`);const a=deskAcc(DESK[id]);if(a<.6)toast(`<b>${DESK[id].nm}</b> 交给它了。准确率 ${(a*100).toFixed(0)}%，效率 ${(eff(a)*100).toFixed(0)}%：会答得慢一些，答错也不会让你亏钱。`);sfx('on')}
+function handback(id){const c=deskEls[id]&&deskEls[id].root;if(c&&!S.reduced){c.classList.remove('handoff','handback');void c.offsetWidth;c.classList.add('handback')}log(`assign ${id} → manual`);sfx('off')}
+
+/* ─── desk cards ─── */
+const deskEls={};
+function buildDesks(){const box=$('#desks');box.innerHTML='';
+  DESKS.forEach(d=>{const c=document.createElement('div');c.className='desk f-'+d.fam;c.draggable=!d.lock;
+    c.innerHTML=`<div class="dk-1"><i class="ico">${d.g}</i><b>${d.nm}</b><span class="diff">${[1,2,3,4].map(i=>`<i class="${i<=d.diff?'on':''}"></i>`).join('')}</span><span class="pay"></span></div>
+      <div class="dk-2"><span>准确率</span><span class="accbar"><b></b><u style="left:60%"></u></span><span class="num acc"></span><span class="eff"></span></div>
+      <div class="dk-3"><span class="st"></span><span class="dk-io"></span><button class="tog"></button></div><i class="dk-prog"></i>${d.lock?`<div class="lockmsg">🔒 ${d.lock}</div>`:''}`;
+    const r={root:c,pay:c.querySelector('.pay'),bar:c.querySelector('.accbar b'),acc:c.querySelector('.acc'),eff:c.querySelector('.eff'),st:c.querySelector('.st'),io:c.querySelector('.dk-io'),tog:c.querySelector('.tog'),prog:c.querySelector('.dk-prog')};
+    deskEls[d.id]=r;
+    r.tog.addEventListener('click',e=>{e.stopPropagation();toggle(d.id)});
+    c.addEventListener('click',()=>{if(d.lock)return;S.sel=d.id;S.qi=Math.floor(Math.random()*d.q.length);setQTab('cur');renderDesks()});
+    c.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',d.id);e.dataTransfer.effectAllowed='move'});
+    box.append(c)});
+  box.ondragover=e=>{e.preventDefault()};box.ondrop=e=>{e.preventDefault();box.classList.remove('drop');const id=e.dataTransfer.getData('text/plain');if(id&&S.slots.includes(id))unassign(id)}}
+function toggle(id){const d=DESK[id];if(d.lock)return;
+  if(S.slots.includes(id)){unassign(id);return}
+  if(S.slots.length<slotCap()){assign(id);return}
+  // slots full: offer to replace the lowest-earning desk
+  const pf=power().pf;const low=S.slots.slice().sort((a,b)=>deskIncome(DESK[a],pf)-deskIncome(DESK[b],pf))[0];
+  const r=deskEls[id].root;r.querySelector('.confirm')?.remove();
+  const cf=document.createElement('div');cf.className='confirm';cf.innerHTML=`槽位已满，替换「${DESK[low].nm}」？<button class="y">替换</button><button>取消</button>`;
+  cf.querySelector('.y').onclick=e=>{e.stopPropagation();cf.remove();const i=S.slots.indexOf(low);S.slots.splice(i,1);handback(low);S.slots.splice(i,0,id);handoff(id);renderSlots();renderDesks();renderNodes()};
+  cf.querySelectorAll('button')[1].onclick=e=>{e.stopPropagation();cf.remove()};cf.onclick=e=>e.stopPropagation();r.append(cf);setTimeout(()=>cf.isConnected&&cf.remove(),6000)}
+function renderDesks(){const P=power();
+  DESKS.forEach(d=>{const r=deskEls[d.id];if(!r)return;const auto=S.slots.includes(d.id),a=deskAcc(d),e=eff(a);
+    r.root.classList.toggle('auto',auto);r.root.classList.toggle('sel',S.sel===d.id);r.root.classList.toggle('locked',!!d.lock);
+    const calc=d.id==='arith'?'<small style="color:var(--dim)"> 高数 ×1.6</small>':'';
+    r.pay.innerHTML=`¥${deskPay(d,!auto).toFixed(1)}/题${calc}`;
+    r.bar.style.width=(a*100).toFixed(1)+'%';r.acc.textContent=(a*100).toFixed(1)+'%';
+    r.eff.textContent='效率 '+Math.round(e*100)+'%';r.eff.className='eff'+(e<1?' low':'');
+    if(auto){const over=P.pf<1;r.st.className='st '+(over?'over':'auto');r.st.textContent=over?'超载降速':'自动中 · 槽 '+(S.slots.indexOf(d.id)+1);
+      const rate=deskRate(d,P.pf),inc=deskIncome(d,P.pf),learn=lv('auto.learn')?rate*a/KDIV[lv('auto.learn')]*.0004*(1-S.live[d.id]/(CAP[lv('auto.learn')]/100))*60*100:0;
+      r.io.textContent=`${rate.toFixed(2)} 题/秒 · +¥${inc.toFixed(1)}/秒 · ${Math.round(deskWatts(d))} W${learn>0.0005?` · 学 +${learn.toFixed(2)}%/分`:''}`;
+      r.tog.textContent='我来做';r.tog.className='tog mine'}
+    else{r.st.className='st';r.st.textContent='手动';r.io.textContent=`交给它：约 +¥${(deskRate(d,1)*a*deskPay(d,false)).toFixed(1)}/秒 · ${Math.round(deskWatts(d))} W`;r.tog.textContent='交给它';r.tog.className='tog'}
+    if(!auto)r.prog.style.width='0'});
+  $('#qDeskName').textContent=DESK[S.sel].nm;renderQ()}
+
+/* ─── question panel ─── */
+let qTab='cur';
+function setQTab(t){qTab=t;$$('.qtab').forEach(b=>b.classList.toggle('on',b.dataset.q===t));renderQ(true)}
+$$('.qtab').forEach(b=>b.onclick=()=>setQTab(b.dataset.q));
+const comboMul=c=>c>=9?5:c>=7?4:c>=5?3:c>=3?2:1;
+let qKey='';
+function renderQ(force){const body=$('#qbody');
+  if(qTab==='god'){const key='god'+S.godDone+S.god;if(!force&&qKey===key)return;qKey=key;
+    const day=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5),g=GOD[day%GOD.length];
+    const reward=Math.max(2000,totalAuto()*600);
+    if(S.godDone){body.className='qbody god';body.innerHTML=`<div class="godres">${S.god==='ok'?`<div><b>神人！+¥${fmt(S.godReward)}</b>成就卡「神人」已收进图鉴。明天还有一道。</div>`:S.god==='skip'?`<div><b style="color:var(--muted)">已跳过</b>花了 ¥1。明天还有一道。</div>`:`<div><b style="color:var(--danger)">没做出来</b>今天的神题就到这儿，不扣钱。明天换一道。</div>`}</div>`;return}
+    const order=[0,1,2,3].sort((a,b)=>((a*7+day)%5)-((b*7+day)%5));
+    body.className='qbody god';body.innerHTML=`<div class="qmeta">★ 今日神题 · ${new Date().getMonth()+1} 月 ${new Date().getDate()} 日 · 一天一次 · 它不会替你做</div><div class="godq">${g.q}</div>
+      <div class="godopts">${order.map(i=>`<button data-i="${i}">${g.o[i]}</button>`).join('')}</div>
+      <div class="godfoot"><span>做对：<b>+¥${fmt(reward)}</b> + 成就卡「神人」</span><button id="godSkip">跳过 ¥1</button></div>`;
+    body.querySelectorAll('.godopts button').forEach(b=>b.onclick=()=>{S.godDone=true;if(+b.dataset.i===0){S.god='ok';S.godReward=reward;S.money+=reward;const[x,y]=stageXY(b);burst(x,y,['#FFBE28','#F2C46D','#fff']);toast(`<b>神人！</b>　今日神题做对了 · +¥${fmt(reward)}`,'gold');sfx('buy')}else{S.god='bad';toast('<b>今天的神题没做出来</b>　不扣钱，明天还有','bad')}renderQ(true)});
+    $('#godSkip').onclick=()=>{S.godDone=true;S.god='skip';S.money-=1;renderQ(true)};return}
+  const d=DESK[S.sel],auto=S.slots.includes(d.id),q=d.q[S.qi%d.q.length];
+  const key=[d.id,S.qi,auto,S.combo,lv('label.raise'),lv('pay.'+FAMK[d.fam])].join('|');if(!force&&key===qKey)return;qKey=key;
+  body.className='qbody';
+  const hand=deskPay(d,true)*(q[3]?1.6:1),skip=Math.max(1,Math.ceil(.3*hand));
+  const visual=q[2]?`<div class="qglyph">${q[2]}</div>`:'';
+  if(auto){const a=deskAcc(d),guess=Math.random()<a?q[1]:d.opts.find(o=>o!==q[1]);
+    body.innerHTML=`<div class="qmeta"><span class="st auto">自动中</span><span>${d.nm} · 它正在答这一题</span></div>
+      <div class="qtext" style="gap:16px">${visual}<span>${q[0]}</span></div>
+      <div class="readonly">它的答案：<b>${guess}</b>（把握 ${(0.6+Math.random()*.35).toFixed(2)}）　·　想自己做？点题桌上的「我来做」</div>`;return}
+  body.innerHTML=`<div class="qmeta"><span class="st">手动</span><span>${d.nm} · 手动 ¥${hand.toFixed(1)}/题${q[3]?' · 高数题 ×1.6':''}</span><span class="combo">${S.combo>=3?'连击 ×'+comboMul(S.combo)+' · ':''}${S.combo} 连对</span></div>
+    <div class="qtext" style="gap:16px">${visual}<span>${q[0]}</span></div>
+    <div class="qbtns">${d.opts.map(o=>`<button data-o="${o}">${o}</button>`).join('')}<button class="skip" title="不出样本、不罚钱、连击保留">跳过 ¥${skip}<small>不出样本 · 连击保留</small></button></div>`;
+  body.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>answer(b.dataset.o===q[1],hand,b));
+  body.querySelector('.skip').onclick=()=>{S.money-=skip;log(`skip ${d.id} · −¥${skip} · combo kept`);nextQ()}}
+function answer(ok,hand,btn){const d=DESK[S.sel];
+  if(ok){S.combo++;const pay=hand*comboMul(S.combo);S.money+=pay;floatAt(btn,'+¥'+pay.toFixed(1));log(`hand ${d.id} ✓ +¥${pay.toFixed(1)}`);sfx('ok')}
+  else{const fine=hand/(lv('label.raise')?RM[lv('label.raise')]*1.5:1)*.5;S.money-=fine;S.combo=0;floatAt(btn,'−¥'+fine.toFixed(1),true);log(`hand ${d.id} ✗ −¥${fine.toFixed(1)}`);sfx('no')}
+  setTimeout(nextQ,240)}
+function nextQ(){const d=DESK[S.sel];S.qi=(S.qi+1+Math.floor(Math.random()*2))%d.q.length;renderQ(true)}
+function floatAt(el,txt,bad){const f=document.createElement('span');f.className='float';f.textContent=txt;if(bad)f.style.color='var(--danger)';f.style.right='auto';f.style.left=(el.offsetLeft+el.offsetWidth/2-14)+'px';f.style.top=(el.offsetTop-14)+'px';el.parentElement.style.position='relative';el.parentElement.append(f);setTimeout(()=>f.remove(),500)}
+
+/* ─── HUD ─── */
+const moneyEl=$('#money');
+function renderMoney(){const v='¥'+fmt(Math.max(0,S.money));while(moneyEl.children.length>v.length)moneyEl.lastChild.remove();
+  [...v].forEach((ch,i)=>{let d=moneyEl.children[i];if(!d){d=document.createElement('span');d.className='digit';moneyEl.append(d)}
+    if(d.dataset.c===ch)return;const old=d.dataset.c;d.dataset.c=ch;d.className='digit'+(ch==='¥'?' sym':'');d.innerHTML=`<span class="cur">${ch}</span>`;
+    if(old&&!S.reduced&&/\d/.test(ch)&&/\d/.test(old)){const o=document.createElement('span');o.className='out';o.textContent=old;d.append(o);void d.offsetWidth;d.classList.add('roll');setTimeout(()=>o.remove(),400)}})}
+const pmBar=$('#pmBar');for(let i=0;i<40;i++)pmBar.insertBefore(document.createElement('i'),$('#pmMark'));
+function renderPower(P){const max=Math.max(P.rated*1.3,P.load*1.06),segs=pmBar.querySelectorAll('i');
+  segs.forEach((s,i)=>{const v=(i+.5)/40*max;s.className=v<=P.load?(v>P.rated?'r':v>P.rated*.9?'a':'g'):(v>P.rated?'over':'')});
+  $('#pmMark').style.left=(P.rated/max*100)+'%';
+  $('#pmText').textContent=`${Math.round(P.load)} / ${fmt(P.rated)} W`;
+  const pm=$('#pm');pm.classList.toggle('warn',P.ratio>.9&&P.ratio<=1);pm.classList.toggle('over',P.ratio>1);
+  $('#pmState').textContent=P.ratio>1?`超载 ${Math.round(P.ratio*100)}% · 全部降到 ${Math.round(P.pf*100)}%`:P.ratio>.9?`吃紧 ${Math.round(P.ratio*100)}%`:`正常 ${Math.round(P.ratio*100)}%`;
+  $('#pmPop').innerHTML=P.parts.map(p=>`<div><span>${p[0]}</span><b>${Math.round(p[1])} W</b></div>`).join('')+`<div style="border-top:1px solid var(--hair);margin-top:4px;padding-top:4px"><span>合计 / 额定</span><b>${Math.round(P.load)} / ${fmt(P.rated)} W</b></div><p>超过额定：所有自动桌和训练按 (额定/负载)^1.5 一起变慢。不会跳闸。</p>`;
+  document.body.classList.toggle('over',P.ratio>1);
+  if(P.ratio>1&&!S.overload){S.overload=true;if(!S.reduced){const w=$('#win');w.classList.remove('shake');void w.offsetWidth;w.classList.add('shake');const g=$('#glitch');g.classList.remove('go');void g.offsetWidth;g.classList.add('go')}
+    toast(`<b>超载</b>　负载 ${Math.round(P.load)} W 超过额定 ${P.rated} W：全部降到 ${Math.round(P.pf*100)}%。升级「额定功率」或「省电」，或少开一桌。`,'bad');log('power overload');sfx('warn')}
+  if(P.ratio<=1&&S.overload){S.overload=false;toast('<b>电力恢复</b>　负载回到额定以内')}
+  document.documentElement.style.setProperty('--flow',(clamp(5/(1+totalAuto()/6),.9,5)/Math.max(.35,P.pf)).toFixed(2)+'s')}
+
+/* ─── loop ─── */
+let lastT=performance.now(),acc250=0,acc600=0,incWin=[];
+function tick(){const now=performance.now(),dtReal=Math.min(.25,(now-lastT)/1000);lastT=now;const dt=dtReal*S.speed;const P=power();let inc=0;
+  S.slots.forEach(id=>{const d=DESK[id],r=deskRate(d,P.pf),a=deskAcc(d),p=deskPay(d,false),i=r*a*p;inc+=i;S.money+=i*dt;
+    S.prog[id]+=r*dt;S.pend[id]+=i*dt;
+    const L=lv('auto.learn');if(L){const cap=CAP[L]/100;S.live[id]=Math.min(cap,S.live[id]+r*a/KDIV[L]*.0004*(1-S.live[id]/cap)*dt)}
+    while(S.prog[id]>=1)S.prog[id]-=1;
+    const el=deskEls[id];if(el){el.prog.style.width=(S.prog[id]*100)+'%';
+      if(now-S.lastFloat[id]>900&&S.pend[id]>=.5&&!S.reduced){S.lastFloat[id]=now;const f=document.createElement('span');f.className='float';f.textContent='+¥'+fmt1(S.pend[id]);el.root.append(f);setTimeout(()=>f.remove(),480);S.pend[id]=0}}});
+  incWin.push([now,inc]);incWin=incWin.filter(x=>now-x[0]<3000);
+  acc250+=dtReal;acc600+=dtReal;
+  if(acc250>=.25||S.reduced){acc250=0;renderMoney();renderPower(P);
+    $('#rate').textContent=`¥${fmt1(inc*S.speed)}/秒`;$('#rateSub').textContent=`自动 ${S.slots.length} 桌 · 游戏内 ¥${inc.toFixed(1)}/秒 × 演示 ${S.speed}`}
+  if(acc600>=.6){acc600=0;renderNodes();renderDesks()}
+  requestAnimationFrame(tick)}
+
+/* ─── misc UI ─── */
+function toast(html,kind){const t=document.createElement('div');t.className='toast'+(kind?' '+kind:'');t.innerHTML=html;$('#toasts').append(t);while($('#toasts').children.length>4)$('#toasts').firstChild.remove();setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),320)},3600)}
+function log(s){const d=new Date(),ts=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');$('#log').innerHTML=`[${ts}] ${s}<span class="caret"></span>`}
+let actx=null;
+function sfx(k){if(!actx)return;try{const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();const f={buy:[520,1040,.09],no:[180,120,.08],on:[440,660,.06],off:[500,330,.05],ok:[660,880,.04],warn:[220,180,.12]}[k]||[500,500,.04];
+  o.type=k==='warn'?'sawtooth':'triangle';o.frequency.setValueAtTime(f[0],t);o.frequency.exponentialRampToValueAtTime(f[1],t+f[2]);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(k==='warn'?.02:.035,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+f[2]+.04);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+f[2]+.05)}catch(e){}}
+document.addEventListener('pointerdown',()=>{if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}},{once:true});
+
+function setLab(on){S.lab=on;document.body.classList.toggle('labmode',on);$('#bLab').classList.toggle('on',on);
+  if(on&&document.documentElement.requestFullscreen&&!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});
+  if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+  setTimeout(()=>{resetView()},380);log(on?'lab mode: fullscreen':'lab mode: window')}
+$$('[data-act=lab]').forEach(b=>b.onclick=()=>setLab(!S.lab));
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&S.lab)setLab(false)});
+function setReduced(on){S.reduced=on;document.body.classList.toggle('reduced',on);$('#bReduce').classList.toggle('on',on);if(on){parts=[];cx.clearRect(0,0,1920,1080)}renderNodes();log(on?'reduced effects: on':'reduced effects: off')}
+$('#bReduce').onclick=()=>setReduced(!S.reduced);
+$('#bTrain').onclick=()=>{S.training=!S.training;$('#bTrain').classList.toggle('on',S.training);$('#bTrain').textContent=S.training?'◉ 训练中':'○ 训练暂停';log(S.training?'training: on (+250 W)':'training: paused')};
+$('#bSpeed').onchange=e=>{S.speed=+e.target.value};
+$('#bChess').onclick=()=>{if(S.chessToday>=3){toast('<b>又赢了一盘</b>　今天的 3 次奖励已领完，只记战绩');return}S.chessToday++;const diff=1+Math.floor(Math.random()*3),r=Math.max(200,totalAuto()*60)*[1,1.5,2.5][diff-1];S.money+=r;toast(`<b>你赢了它一盘</b>　象棋 · 难度 ${diff} · +¥${fmt(r)} · 今日奖励 ${S.chessToday}/3`,'gold');sfx('buy')};
+$('#bEra').onclick=()=>{if(S.era>=6)return;S.era++;renderNodes();renderSlots();jumpEra(S.era);
+  if(!S.reduced)setTimeout(()=>{const col=$(`.col[data-c="${S.era}"]`),sw=document.createElement('div');sw.className='sweep';col.append(sw);setTimeout(()=>sw.remove(),950)},500);
+  toast(`<b>新时代</b>　${ERAS[S.era].rn} ${ERAS[S.era].nm} · ${ERAS[S.era].yr}：各条线第 ${S.era} 级可以买了`,'gold')};
+$('#bOut').onclick=()=>{const d=DESK[S.sel],cost=Math.round(100*1.2*deskPay(d,true)/RM[lv('label.raise')]/1.5*2);if(S.money<cost){toast(`<b>经费不足</b>　外包 100 条要 ¥${fmt(cost)}`,'bad');return}S.money-=cost;
+  toast(`<b>外包已下单</b>　${d.nm} 100 条 · ¥${fmt(cost)} · 60 秒内到货（约 5% 错标）`);log(`outsource ${d.id} ×100 −¥${fmt(cost)}`);setTimeout(()=>{d.acc=Math.min(.99,d.acc+.006);toast(`<b>外包到货</b>　${d.nm} +100 条样本 · 下次训练可用`)},6000)};
+
+document.addEventListener('keydown',e=>{if(e.target.tagName==='SELECT')return;
+  if(e.key==='F11'||e.key==='f'||e.key==='F'){e.preventDefault();setLab(!S.lab)}
+  else if(e.key==='r'||e.key==='R')setReduced(!S.reduced);
+  else if(e.key>='1'&&e.key<='6')jumpEra(+e.key);
+  else if(e.key==='0')resetView();
+  else if(e.key==='Escape'){$('#drawer').classList.remove('open');hideCard();if(S.lab&&!document.fullscreenElement)setLab(false)}
+  else if(e.key==='+'||e.key==='='){const[w,h]=vpSize();zoomAt(w/2,h/2,view.sc*1.15)}
+  else if(e.key==='-'){const[w,h]=vpSize();zoomAt(w/2,h/2,view.sc/1.15)}});
+
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);appScale=s;const st=$('#stage');st.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`}
+addEventListener('resize',fit);
+
+/* boot */
+fit();buildWorld();buildDesks();renderSlots();renderNodes();renderDesks();renderMoney();
+requestAnimationFrame(()=>{resetView();});
+setTimeout(()=>toast('<b>实验室 v4 原型</b>　悬浮看效果，左键买，右键看科普；把题桌拖进槽位或点「交给它」。数字为演示倍速。'),500);
+requestAnimationFrame(tick);
+/* Review hooks for static screenshots: lab_v4_prototype.html#over,hover,drawer,god,lab,reduced */
+setTimeout(()=>{const h=location.hash.slice(1).split(',');
+  if(h.includes('lab'))setLab(true);
+  if(h.includes('reduced'))setReduced(true);
+  if(h.includes('over')){S.lv['label.auto']=3;assign('logic');}
+  if(h.includes('god'))setQTab('god');
+  setTimeout(()=>{if(h.includes('hover'))showCard(NODE['acc.vision']);if(h.includes('lock'))showCard(NODE['resnet']);if(h.includes('drawer'))openDrawer(NODE['lenet'],'sci');if(h.includes('eff'))openDrawer(NODE['acc.all'],'eff')},1200)},300);
+</script>
+</body>
+</html>

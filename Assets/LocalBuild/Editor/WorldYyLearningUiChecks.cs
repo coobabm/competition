@@ -22,7 +22,7 @@ public static class WorldYyLearningUiChecks
  static List<Button> Rows(Transform p)=>p.GetComponentsInChildren<Button>(true).Where(x=>x.gameObject.activeSelf&&x.transform.parent==p).ToList();
  static string Label(Button b)=>b.GetComponentInChildren<TMP_Text>(true).text;
  [MenuItem("LingGuang/Checks/YY learning UI")]
- public static void Run(){CheckLocale(false);CheckLocale(true);Debug.Log("WorldYyLearningUiChecks PASS: real notebook/persona toolbar, 260px layout, 200 stored/50 shown, newest/search, send/delivery, tags and eight pack ownership in both languages.");}
+ public static void Run(){CheckLocale(false);CheckLocale(true);Debug.Log("WorldYyLearningUiChecks PASS: real notebook/persona toolbar, 260px layout, all 205 stored/50 shown, newest/search, send/delivery, tags and eight pack ownership in both languages.");}
  static void CheckLocale(bool english)
  {
   using(var locale=GameText.Bind(()=>english?GameText.English:GameText.Chinese)){
@@ -38,14 +38,22 @@ public static class WorldYyLearningUiChecks
    var root=Rect(go.transform,"Root");root.sizeDelta=new Vector2(1020,700);Set(view,"root",root);
    var main=Rect(root,"Conversation");main.anchorMin=Vector2.zero;main.anchorMax=Vector2.one;main.offsetMin=new Vector2(244,0);main.offsetMax=Vector2.zero;Rect(main,"Tools");
    var area=Rect(main,"Messages");area.anchorMin=Vector2.zero;area.anchorMax=Vector2.one;area.offsetMin=new Vector2(0,174);area.offsetMax=new Vector2(0,-58);Set(view,"messageArea",area);Set(view,"scrollContent",Rect(area,"MessagesContent"));
-   for(int i=0;i<205;i++)sim.RecordAsked("sense","Probe "+i.ToString("000"),"yes","no",i);
-   Check(sim.S.askedLog.Count==200&&sim.S.askedLog[0].question=="Probe 005","per-bank 200 newest retention");
+   // The real view keeps the AI-content notice bar just above the input; opening a drawer moves it with the message area.
+   var notice=Rect(main,"AiContentNotice");Set(view,"aiContentNotice",Rect(notice,"Label").gameObject.AddComponent<TextMeshProUGUI>());
+   // Real teaching answers (player provenance): only those get a "matches what you taught" comparison on retest.
+   for(int i=0;i<205;i++){string probe="Probe "+i.ToString("000");sim.RecordTeachingQuestion(probe,probe,true,true,"","","sense");}
+   Check(sim.S.askedLog.Count==205&&sim.S.askedLog[0].question=="Probe 000"&&sim.S.askedLog[204].question=="Probe 204","notebook keeps every question past the former 200 limit");
    Call(view,"RefreshLearningTools");((Button)Get(view,"notebookTool")).onClick.Invoke();
    var drawer=(RectTransform)Get(view,"learningDrawer");var content=(RectTransform)Get(view,"learningContent");root.ForceUpdateRectTransforms();
    Check(drawer.gameObject.activeSelf&&Mathf.Abs(drawer.rect.height-260)<.1f,"real notebook button opens 260px drawer");Check(area.rect.height>=72,"default chat preserves at least three 24px text lines");
-   var rows=Rows(content);Check(rows.Count==51,"one bank heading plus newest 50 questions");Check(Label(rows[1]).StartsWith("Probe 204")&&Label(rows[50]).StartsWith("Probe 155"),"newest first, correct 50 boundary");
-   var search=(TMP_InputField)Get(view,"learningSearch");search.text="Probe 010";rows=Rows(content);Check(rows.Count==2&&Label(rows[1]).StartsWith("Probe 010"),"search reaches older retained entry");
-   rows[1].onClick.Invoke();Check(talk.Thinking&&!drawer.gameObject.activeSelf,"actual notebook row sends and closes drawer");Call(talk,"Deliver",hub);var conv=hub.Conversation(YYChatHub.LingGuangId);Check(conv.messages.Last().learningComparison!=0,"real notebook reply comparison");
+   // The notebook is one paged list across banks (50 per page, newest first); each row is "time · bank / question / answer".
+   var rows=Rows(content);Check(rows.Count==50,"first notebook page shows the newest 50 questions; actual="+rows.Count);Check(Label(rows[0]).Contains("Probe 204")&&Label(rows[49]).Contains("Probe 155"),"newest first, correct 50 boundary");
+   Check(((TMP_Text)Get(view,"learningPageLabel")).text.Contains("205"),"page label counts every retained question");
+   for(int page=0;page<4;page++)((Button)Get(view,"learningNext")).onClick.Invoke();
+   rows=Rows(content);Check(rows.Count==5&&Label(rows[4]).Contains("Probe 000")&&!((Button)Get(view,"learningNext")).interactable,"last page ends at the oldest retained question; actual="+rows.Count);
+   var search=(TMP_InputField)Get(view,"learningSearch");search.text="Probe 000";rows=Rows(content);Check(rows.Count==1&&Label(rows[0]).Contains("Probe 000"),"search reaches the oldest retained entry");
+   search.text="Probe 010";rows=Rows(content);Check(rows.Count==1&&Label(rows[0]).Contains("Probe 010"),"search reaches older retained entry");
+   rows[0].onClick.Invoke();Check(talk.Thinking&&!drawer.gameObject.activeSelf,"actual notebook row sends and closes drawer");Call(talk,"Deliver",hub);var conv=hub.Conversation(YYChatHub.LingGuangId);Check(conv.messages.Last().learningComparison!=0,"real notebook reply comparison");
    ((Button)Get(view,"personaTool")).onClick.Invoke();rows=Rows(content);Check(XgSim.PersonaPacks.Count==8,"eight authored packs loaded");
    var question=rows.First(x=>x.interactable&&XgSim.PersonaPacks[0].questions.Any(q=>Label(x)==GameText.T(q.q,q.qEn)));question.onClick.Invoke();Check(talk.Thinking&&!drawer.gameObject.activeSelf,"actual personality question sends");Call(talk,"Deliver",hub);var reply=conv.messages.Last();Check(reply.learningPersona,"delivered reply is taggable");
    var messages=(RectTransform)Get(view,"scrollContent");Call(view,"LearningBubble",reply,0f,760f);var tags=Rows(messages);Check(tags.Count==9,"nine real tag buttons");

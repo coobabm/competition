@@ -57,7 +57,7 @@ namespace LingGuangV05.XingGuang
     }
 
     /// <summary>
-    /// 转包: once the player owns 自动答题 (they already outsource to the model) and has reached stage 2, 阿杰 (the 网管
+    /// 转包: once the player owns 自动答题 (they already outsource to the model), has 摆渡众包 installed and has reached stage 4 (10/22 design), 阿杰 (the 网管
     /// at 星空网吧) offers in the YY 下班屁股群 to label for them, which opens the 转包 panel. Three people can be hired,
     /// each on one open desk: 阿杰 (cheap, fast, sloppy), 小刚 (talks big, works carefully: slow and exact) and the
     /// 网吧 boss (阿杰's 表舅, not in the group; his night shift only, 22:00–06:00). They label under the
@@ -73,7 +73,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public const long SubcontractSeed = 0x0BADC0DEL;
-        public const int SubcontractStage = 2, OutboxLimit = 20;
+        public const int SubcontractStage = 4, OutboxLimit = 20;
         public const double WageSeconds = 60;
         /// <summary>How many recent right/wrong results a worker remembers (the squares on the 分包 page).</summary>
         public const int WorkerRecentKept = 13;
@@ -105,7 +105,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>A worker was hired and paid the first minute (argument: worker id).</summary>
         public event Action<string> WorkerHired;
 
-        public bool SubcontractReady => GlobalAutoLevel >= 1 && S.stage >= SubcontractStage;
+        public bool SubcontractReady => GlobalAutoLevel >= 1 && S.stage >= SubcontractStage && DesktopAppInstalled(CrowdApp);
         public bool SubcontractUnlocked => S.scUnlocked;
         public XgWorkerState Worker(string id) { foreach (var w in S.scWorkers) if (w.id == id) return w; return null; }
         public bool Hired(string id) { var w = Worker(id); return w != null && w.hired; }

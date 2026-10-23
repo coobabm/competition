@@ -27,6 +27,8 @@ namespace LingGuangV05.XingGuang.Tests
             sim.SettleMiniAction("sense", false, host, 10);
             Assert.IsTrue(sim.FeatureVisible("tree"), "All submitted answers count, including errors");
             Assert.IsFalse(sim.TeachingTrainOpen);
+            // Under the ≥¥100 price ladder the curve costs more than the opening answers pay; fund it here.
+            host.Earn(sim.NodeCost(XgCatalog.Node("train.curve")));
             Assert.IsTrue(sim.BuyNode("train.curve", host));
             Assert.IsTrue(sim.FeatureVisible("train"));
             Assert.IsTrue(sim.TrainingUnlocked(XgTrack.Sequence));
@@ -53,6 +55,8 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = new XgSim(); var host = new Host(); sim.BeginOpening();
             for (int i = 0; i < 24; i++) sim.SettleMiniAction("sense", true, host, 1);
+            // Fund both purchases so the label.ai refusal below is about the training round, not the wallet.
+            host.Earn(sim.NodeCost(XgCatalog.Node("train.curve")) + sim.NodeCost(XgCatalog.Node("label.ai")));
             Assert.IsTrue(sim.BuyNode("train.curve", host));
             Assert.IsFalse(sim.BuyNode("label.ai", host));
             sim.S.epochs = 1;

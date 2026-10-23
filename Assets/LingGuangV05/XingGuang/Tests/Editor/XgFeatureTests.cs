@@ -22,7 +22,8 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.That(sim.FeatureVisible("contracts"), Is.False, "the order page requires stage three");
             sim.S.best.Add(new XgBest { dataset = "mnist", acc = .8 }); Assert.That(sim.FeatureVisible("repo"), Is.True);
             Assert.That(sim.FeatureVisible("contracts"), Is.False, "orders belong to the crowd stage, whatever the checkpoint");
-            sim.S.stage = XgSim.FeatureUnlock["crowd"];
+            // 摆渡众包 now arrives at stage two, but its order page still waits for stage three.
+            sim.S.stage = System.Math.Max(3, XgSim.FeatureUnlock["crowd"]);
             Assert.That(XgSim.Grade(sim.BestScore("mnist")), Is.GreaterThanOrEqualTo(1));
             Assert.That(sim.FeatureVisible("contracts"), Is.True, "stage three opens the order requirements");
             sim.S.best[0].acc = .1;

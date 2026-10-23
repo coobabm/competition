@@ -303,8 +303,9 @@ namespace LingGuangV05.Desktop.XingGuang
             var desk = LingGuangV05.Desktop.Story.PrologueDirector.Desk;
             if (desk == null) return;
             unreadableTold = true;
-            desk.StoryPopup(GameText.T("存档", "Save"), GameText.T("灵光的进度没读出来。原来的进度原样留着，不会被覆盖，存档文件夹里也有一份副本。这一局里的灵光进度不会存下来。",
-                "Lingguang's progress could not be read. The old progress is kept untouched and a copy is in the save folder. Lab progress in this session will not be saved."), 12);
+            string ai = AppNames.PersonalName(runtime != null && runtime.Sim != null ? runtime.Sim.S.aiName : null, GameText.IsEnglish);
+            desk.StoryPopup(GameText.T("存档", "Save"), GameText.T(ai + "的进度没读出来。原来的进度原样留着，不会被覆盖，存档文件夹里也有一份副本。这一局里的" + ai + "进度不会存下来。",
+                ai + "'s progress could not be read. The old progress is kept untouched and a copy is in the save folder. Lab progress in this session will not be saved."), 12);
         }
 
         string profileName,profileSelf,profileCall,profilePersonality;

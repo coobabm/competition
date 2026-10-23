@@ -68,7 +68,7 @@ public static partial class BoardGamesUiPlayQa
         Require(view.IsOpen && intro.Playing && !intro.Held, "Actual YY window shows active unheld group introduction");
         var choices = Field<RectTransform>(view, "introInput");
         Require(choices != null && choices.gameObject.activeInHierarchy, "Real group introduction choices panel visible");
-        foreach (string expected in new[] { "喵鱼是什么？", "二手卡靠谱吗？", "跳过介绍" })
+        foreach (string expected in new[] { "喵鱼是什么？", "二手卡靠谱吗？", "跳过" })
         {
             var label = choices.GetComponentsInChildren<TMP_Text>().Single(t => t.text == expected);
             InspectYyRendered(label, "YY intro " + expected);

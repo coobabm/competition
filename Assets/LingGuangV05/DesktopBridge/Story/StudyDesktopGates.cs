@@ -66,9 +66,25 @@ namespace LingGuangV05.Desktop.Story
                 case "shop": return new[] { T(LingGuangV05.Core.AppNames.ShopZh, LingGuangV05.Core.AppNames.ShopEn), T("显卡、数据包，今天下单明天到。", "Graphics cards and data packs. Order today, here tomorrow.") };
                 case "data": return new[] { T(LingGuangV05.Core.AppNames.UsedZh, LingGuangV05.Core.AppNames.UsedEn), T("旧卡在这儿卖，也能淘到便宜货。", "Sell old cards here, or find a bargain.") };
                 case "games": return new[] { T("游戏中心", "Game Hub"), T("累了就下盘棋，它也会下。", "Tired? Play a game of chess. It plays too.") };
-                case "crowd": return new[] { T("摆渡众包", "Bodu Crowd"), T("档位单按秒进账；企业单先看验收要求再签。", "Tier orders pay by the second; read the requirements before signing business orders.") };
+                case "crowd": return CatalogBalloon("zhongbao") ?? new[] { T("摆渡众包", "Bodu Crowd"), T("档位单按秒进账；企业单先看验收要求再签。", "Tier orders pay by the second; read the requirements before signing business orders.") };
                 default: return null;
             }
+        }
+
+        static LingGuangV05.XingGuang.XgAppCatalog appCatalog;
+        /// <summary>Sender and line from Resources/LingGuangV05/Data/app_unlocks.json (bubble = 「软件名 · 一句话」, bubbleEn = the line), the single source for that app's first-open balloon.</summary>
+        static string[] CatalogBalloon(string appId)
+        {
+            if (appCatalog == null)
+            {
+                var t = Resources.Load<TextAsset>("LingGuangV05/Data/app_unlocks");
+                if (t != null) appCatalog = JsonUtility.FromJson<LingGuangV05.XingGuang.XgAppCatalog>(t.text);
+            }
+            var app = appCatalog?.apps?.Find(a => a.id == appId);
+            if (app == null || string.IsNullOrEmpty(app.bubble)) return null;
+            int dot = app.bubble.IndexOf(" · ", System.StringComparison.Ordinal);
+            string line = dot >= 0 ? app.bubble.Substring(dot + 3) : app.bubble;
+            return new[] { T(app.name, string.IsNullOrEmpty(app.nameEn) ? app.name : app.nameEn), T(line, string.IsNullOrEmpty(app.bubbleEn) ? line : app.bubbleEn) };
         }
 
         public static bool Allows(string app)
@@ -99,7 +115,8 @@ namespace LingGuangV05.Desktop.Story
         void LateUpdate()
         {
             if(XgStageCurtain.Busy&&XgStageCurtain.Step<3)return;
-            if (lab == null || lab.Sim == null || lab.runtime == null || lab.runtime.Sim.InPrologue || !lab.runtime.Sim.AppInstalled) return;
+            if (lab == null || lab.Sim == null || lab.runtime == null) return;
+            if (lab.runtime.Sim.InPrologue || !lab.runtime.Sim.AppInstalled) { GateBeforeSetup(); return; }
             if (!ReferenceEquals(bound, lab.Sim)) { bound = lab.Sim; seen.Clear(); announced.Clear(); scanAt = 0; }
             if (Time.unscaledTime >= scanAt)
             {
@@ -132,6 +149,35 @@ namespace LingGuangV05.Desktop.Story
                 pair.Key.CloseWindow();
                 lab.View?.ShowToast(T("从群友的链接下载并安装后开放。", "Download and install it from the link in the group."), 3);
             }
+        }
+
+        /// <summary>
+        /// Before 灵光 is set up nothing pops in or is announced, but an app that arrives through a group link has a desktop
+        /// icon only once it is installed: until then it would refuse to open (<see cref="Allows"/>), and the Start menu
+        /// hides its row the same way.
+        /// </summary>
+        void GateBeforeSetup()
+        {
+            if (Time.unscaledTime < scanAt) return;
+            scanAt = Time.unscaledTime + 1;
+            foreach (var binding in DesktopWindowIndex.GetBindings(lab.runtime))
+                if (binding.DesktopShortcut != null) ShowIfInstalled(binding.ApplicationId, binding.DesktopShortcut.transform);
+            if(cachedDesktopList==null){var list=GameObject.Find("Desktop List");cachedDesktopList=list!=null?list.transform:null;}
+            if (cachedDesktopList == null) return;
+            foreach (var window in DesktopWindowIndex.Get(lab.runtime))
+            {
+                string route = window.name == "Calculator" ? "zhongbao" : window.name == "Commander" ? "miaoyu" : "";
+                var icon = route.Length > 0 ? cachedDesktopList.Find(window.name) : null;
+                if (icon != null) ShowIfInstalled(route, icon);
+            }
+        }
+
+        void ShowIfInstalled(string route, Transform icon)
+        {
+            string id = LingGuangV05.XingGuang.XgSim.DesktopAppId(route);
+            if (id.Length == 0 || id == "gamecenter") return;
+            bool installed = lab.Sim.DesktopAppInstalled(id);
+            if (icon.gameObject.activeSelf != installed) icon.gameObject.SetActive(installed);
         }
 
         /// <summary>Shows or hides one icon. A feature that turns open while this save is bound pops in and is announced once.</summary>

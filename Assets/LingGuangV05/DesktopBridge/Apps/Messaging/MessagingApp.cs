@@ -135,7 +135,7 @@ namespace LingGuangV05.Desktop.Apps
             if (string.IsNullOrEmpty(messageInput.text) || EventSystem.current.currentSelectedGameObject != messageInput.gameObject) return;
             if (!messageInput.isFocused) messageInput.ActivateInputField();
 
-            if (allowInputSubmit && Keyboard.current.enterKey.wasPressedThisFrame) SubmitInput(null, true);
+            if (allowInputSubmit && Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame) SubmitInput(null, true);
         }
 
         /// <summary>Builds every contact row and conversation from <see cref="chatList"/>; the first chat is selected.</summary>

@@ -162,15 +162,17 @@ namespace LingGuangV05.Desktop.YY
         public Func<bool> canDrag;
         public Action<PointerEventData> drop;
         public Action<string> feedback;
-        bool held;Graphic graphic;Color oldColor;
+        bool held;Graphic graphic;Color oldColor;ScrollRect scroll;
         public void OnBeginDrag(PointerEventData e)
         {
-            held=e.button==PointerEventData.InputButton.Left&&canDrag!=null&&canDrag();if(!held)return;
+            held=e.button==PointerEventData.InputButton.Left&&canDrag!=null&&canDrag();
+            // A row that is not dragged to the chat must still let its list scroll by dragging.
+            if(!held){scroll=transform.parent!=null?transform.parent.GetComponentInParent<ScrollRect>():null;if(scroll!=null)scroll.OnBeginDrag(e);return;}
             graphic=GetComponent<Graphic>();if(graphic!=null){oldColor=graphic.color;graphic.color=new Color32(214,234,251,255);}
             feedback?.Invoke(GameText.T("松到左侧聊天区，重新考它。","Release over the chat to ask again."));
         }
-        public void OnDrag(PointerEventData e){}
-        public void OnEndDrag(PointerEventData e){bool send=held;Restore();if(send&&canDrag!=null&&canDrag())drop?.Invoke(e);}
+        public void OnDrag(PointerEventData e){if(scroll!=null)scroll.OnDrag(e);}
+        public void OnEndDrag(PointerEventData e){if(scroll!=null){scroll.OnEndDrag(e);scroll=null;return;}bool send=held;Restore();if(send&&canDrag!=null&&canDrag())drop?.Invoke(e);}
         void OnDisable()=>Restore();
         void Restore(){if(held&&graphic!=null)graphic.color=oldColor;held=false;}
     }

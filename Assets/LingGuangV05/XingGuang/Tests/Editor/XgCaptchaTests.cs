@@ -59,11 +59,12 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = Ready(); var host = new Host();
             int asked = 0; sim.CaptchaRequired += () => asked++;
-            for (int t = 0; t < 30; t++) Second(sim, host, 3);
+            Assert.AreEqual(XgSim.SpeedLimitBase + XgSim.SpeedLimitPerAutoLevel, sim.SpeedLimit, 1e-9, "each 自动答题 level raises the tolerated speed");
+            for (int t = 0; t < 30; t++) Second(sim, host, 4);
             Assert.IsFalse(sim.CaptchaPending, "half a minute is not enough");
-            Assert.Greater(sim.LabelRate, XgSim.SpeedLimit);
+            Assert.Greater(sim.LabelRate, sim.SpeedLimit);
             Assert.Greater(sim.Suspicion, 0);
-            for (int t = 0; t < 240 && !sim.CaptchaPending; t++) Second(sim, host, 3);
+            for (int t = 0; t < 240 && !sim.CaptchaPending; t++) Second(sim, host, 4);
             Assert.IsTrue(sim.CaptchaPending); Assert.AreEqual(1, asked);
             Assert.AreEqual(4, sim.CaptchaCode.Length); Assert.AreEqual(XgSim.CaptchaTimeout, sim.CaptchaSecondsLeft, 1e-9);
             foreach (char c in sim.CaptchaCode) Assert.IsTrue(char.IsDigit(c));

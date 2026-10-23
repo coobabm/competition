@@ -113,7 +113,7 @@ namespace LingGuangV05.Desktop.Zhongbao
                     return Sim.QualityFrozen ? T("账号冻结中", "Account frozen")
                         : Sim.CaptchaPending ? T("等你在标注台输验证码", "Waiting for the captcha on the label desk")
                         : T("验证没过，暂停 " + XgSim.FreezeClock(Sim.CaptchaPauseLeft), "Captcha failed, paused " + XgSim.FreezeClock(Sim.CaptchaPauseLeft));
-                case XgAutoDeskState.InboxFull: return T("待复核满 " + Sim.ReviewLimit + " 题，先去复核", "Review inbox full (" + Sim.ReviewLimit + "), review first");
+                case XgAutoDeskState.InboxFull: return T("待复核满 " + Sim.ReviewLimit + " 题，拿不准的先跳过", "Review inbox full (" + Sim.ReviewLimit + "), unsure cards skipped");
                 case XgAutoDeskState.Project: return T("研发占着 GPU", "Research has the GPU");
                 case XgAutoDeskState.NoPower: return Host != null && !string.IsNullOrEmpty(Host.Blocker) ? Host.Blocker : T("显卡没在算", "The GPU is not running");
                 default: return "";
@@ -158,7 +158,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             var global = Sim.AutoGlobalState(Host);
             var plans = Sim.AutoDeskPlans(Host);
             double rate = 0, income = 0; int running = 0;
-            foreach (var p in plans) if (p.Running) { running++; rate += p.rate; income += p.income; }
+            foreach (var p in plans) if (p.Earning) { running++; rate += p.rate; income += p.income; }
 
             // ── summary ──
             if (Sim.AutoLabelHidden)
@@ -214,10 +214,10 @@ namespace LingGuangV05.Desktop.Zhongbao
                 }
                 string status = StateText(p, out var ink);
                 l.dot.color = ink;
-                l.icon.color = l.icon.sprite == null ? ZhongbaoSkin.Blue3 : p.Running ? Color.white : new Color(1, 1, 1, .55f);
+                l.icon.color = l.icon.sprite == null ? ZhongbaoSkin.Blue3 : p.Earning ? Color.white : new Color(1, 1, 1, .55f);
                 l.name.text = "<b>" + T(p.desk.name, p.desk.nameEn) + "</b>  <size=12><color=" + Hex(ink) + ">" + status + "</color></size>";
                 l.model.text = ModelText(p);
-                l.speed.text = p.Running ? N(p.rate, "0.##") + T(" 题/秒", " cards/s") + "  <color=" + Hex(ZhongbaoSkin.Green) + ">+" + ZhongbaoUi.Yuan(p.income) + T("/秒", "/s") + "</color>" : "<color=" + Hex(ZhongbaoSkin.Dim) + ">—</color>";
+                l.speed.text = p.Earning ? N(p.rate, "0.##") + T(" 题/秒", " cards/s") + "  <color=" + Hex(ZhongbaoSkin.Green) + ">+" + ZhongbaoUi.Yuan(p.income) + T("/秒", "/s") + "</color>" : "<color=" + Hex(ZhongbaoSkin.Dim) + ">—</color>";
                 var r = p.recent;
                 l.recent.text = r.automatic > 0 ? T("近 " + r.automatic + " 题自动交 · 对 " + ZhongbaoUi.Pct(r.automaticAccuracy), r.automatic + " auto · " + ZhongbaoUi.Pct(r.automaticAccuracy) + " right") : "";
             }

@@ -39,6 +39,7 @@ namespace HongmengOS.Aero2010
 
         private readonly ButtonState[] buttons = { new ButtonState(), new ButtonState(), new ButtonState() };
         private readonly List<RaycastResult> results = new List<RaycastResult>(128);
+        private readonly Vector3[] corners = new Vector3[4];
         private EventSystem eventSystem;
         private PointerEventData hoverData;
         private Canvas displayCanvas;
@@ -86,6 +87,9 @@ namespace HongmengOS.Aero2010
             // beneath the cursor without producing a hardware pointer-move event.
             if (havePointer && (pointerInside || AnyPressed())) RefreshPointer();
         }
+
+        /// <summary>The physical pointer is over the display itself (not over an overlay drawn above it).</summary>
+        public bool IsPointerOver => havePointer && pointerInside;
 
         public void SetInputEnabled(bool value)
         {
@@ -315,7 +319,8 @@ namespace HongmengOS.Aero2010
                 MapAndRaycast(data, true);
                 data.pointerEnter = hoverData.pointerEnter;
                 if (data.pointerDrag == null || data.delta.sqrMagnitude == 0) continue;
-                float threshold = eventSystem.pixelDragThreshold;
+                // The threshold is in physical screen pixels; positions here are render-texture pixels.
+                float threshold = eventSystem.pixelDragThreshold * SourcePixelsPerScreenPixel();
                 if (!data.dragging && (!data.useDragThreshold || (data.position - data.pressPosition).sqrMagnitude >= threshold * threshold))
                 {
                     ExecuteEvents.Execute(data.pointerDrag, data, ExecuteEvents.beginDragHandler);
@@ -396,6 +401,19 @@ namespace HongmengOS.Aero2010
                 for (Transform b = right.transform; b != null; b = b.parent)
                     if (a == b) return a;
             return null;
+        }
+
+        /// <summary>Render-texture pixels per on-screen pixel, measured along the display's height.</summary>
+        private float SourcePixelsPerScreenPixel()
+        {
+            if (displayRect == null || sourceCamera == null) return 1;
+            var texture = sourceCamera.targetTexture;
+            int height = texture != null ? texture.height : sourceCamera.pixelHeight;
+            displayRect.GetWorldCorners(corners);
+            Camera camera = DisplayEventCamera();
+            float onScreen = Vector2.Distance(RectTransformUtility.WorldToScreenPoint(camera, corners[0]),
+                RectTransformUtility.WorldToScreenPoint(camera, corners[1]));
+            return onScreen > 1 && height > 0 ? height / onScreen : 1;
         }
 
         private Camera DisplayEventCamera()

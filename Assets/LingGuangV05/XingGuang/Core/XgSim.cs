@@ -1185,7 +1185,7 @@ namespace LingGuangV05.XingGuang
             var pack = XgCatalog.Node(desk.id + ".pack");
             if (pack == null) return "";
             if (Has(pack.id) && S.owned.Contains(desk.id) && InstalledBatches(desk.id) == 0)
-                return T("下载好数据包后，从资料文件夹拖进练页安装。", "After downloading, drag the pack from your Files folder into Train to install.");
+                return T("下载好数据包后，从资料文件夹拖进练页安装。", "After downloading, drag the pack from Training files into Train to install.");
             string zh = "在科技买「" + pack.name + "」数据包（¥" + F(NodeCost(pack), "0") + "）";
             string en = "buy the " + pack.nameEn + " data pack in the tech tree (¥" + F(NodeCost(pack), "0") + ")";
             var items = new List<XgNode>();
@@ -1270,11 +1270,8 @@ namespace LingGuangV05.XingGuang
             }
         }
 
-        public static int LabelsPerLevel(string desk)
-        {
-            var d = XgCatalog.Desk(desk);
-            return d != null && (d.kind == XgDeskKind.Text || d.kind == XgDeskKind.Meme) ? 30 : 40;
-        }
+        /// <summary>Labels per desk level: 40 on every desk since v4 §2.5 (2026-10-22; text and meme desks were 30 and out-earned harder desks).</summary>
+        public static int LabelsPerLevel(string desk) => 40;
 
         /// <summary>Logic difficulty 1–5 (kept for the YY helpers).</summary>
         public int LogicLevel { get { return LevelOf("logic"); } }
@@ -1282,8 +1279,11 @@ namespace LingGuangV05.XingGuang
         /// <summary>Harder cards pay more (+50% per level).</summary>
         public double PayFor(string desk, int level) { return XgCatalog.LabelPay * (XgCatalog.Desk(desk)?.pay ?? 1) * (1 + .5 * (Math.Max(1, level) - 1)); }
 
-        /// <summary>Manual labelling only (hand answers and chat questions); automated answers keep their base pay.</summary>
+        /// <summary>Manual labelling only (hand answers and chat questions); automated answers use <see cref="AutoPayFor"/>.</summary>
         public double ManualPayFor(string desk, int level) { return PayFor(desk, level) * RaiseMultiplier * XgCatalog.HandPayScale; }
+
+        /// <summary>自动答题 and the spider: base pay plus <see cref="XgCatalog.AutoRaiseShare"/> of the 加薪 bonus (no hand scale, no streak).</summary>
+        public double AutoPayFor(string desk, int level) { return PayFor(desk, level) * (1 + XgCatalog.AutoRaiseShare * (RaiseMultiplier - 1)); }
 
         /// <summary>What a wrong pick costs on this desk (0 when the desk does not fine): its fine share of a right answer's base pay.</summary>
         public double HandFineFor(string desk, int level)

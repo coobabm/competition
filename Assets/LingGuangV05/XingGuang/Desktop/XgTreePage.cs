@@ -22,12 +22,14 @@ namespace LingGuangV05.Desktop.XingGuang
         public float minZoom = .5f, maxZoom = 1.6f;
         public const float ReadableZoom = .85f;
         public bool Dragging { get; private set; }
-        public bool Moving => Dragging || targetZoom > 0 || velocity.sqrMagnitude > 4 || glide.HasValue;
+        // Below 10 units/s the glide is invisible; it must not keep the page "moving" (suspending hover) for its long tail.
+        const float InertiaMinSq = 100;
+        public bool Moving => Dragging || targetZoom > 0 || velocity.sqrMagnitude > InertiaMinSq || glide.HasValue;
         public Action ResetRequested, MotionStarted, MotionFinished;
         public Action<float> ZoomChanged;
         bool wasMoving, reduceMotion;
         Vector2 last, velocity, zoomAnchor;
-        float targetZoom = -1;
+        float targetZoom = -1, lastDragAt;
         Vector2? glide;
 
         /// <summary>Finish pending navigation/zoom immediately; direct pointer input stays available.</summary>
@@ -56,26 +58,44 @@ namespace LingGuangV05.Desktop.XingGuang
             if (moving) MotionStarted?.Invoke(); else MotionFinished?.Invoke();
         }
 
-        public void OnBeginDrag(PointerEventData e) { Dragging = Local(e, out last); velocity = Vector2.zero; glide = null; NotifyMotion(); }
-        public void OnPointerClick(PointerEventData e) { if (e.clickCount == 2 && !Dragging) { SetView(1, content.anchoredPosition); ResetRequested?.Invoke(); } }
+        // Left (and middle) pan; the right button stays free for the pages' own actions (绉戞櫘 on the tech tree).
+        static bool PanButton(PointerEventData e) => e.button != PointerEventData.InputButton.Right;
+
+        public void OnBeginDrag(PointerEventData e)
+        {
+            if (!PanButton(e)) return;
+            Dragging = Local(e, out last); velocity = Vector2.zero; glide = null; lastDragAt = Time.unscaledTime; NotifyMotion();
+        }
+        public void OnPointerClick(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left && e.clickCount == 2 && !Dragging) { SetView(1, content.anchoredPosition); ResetRequested?.Invoke(); } }
 
         public void OnDrag(PointerEventData e)
         {
-            if (!Dragging || !Local(e, out var p)) return;
+            if (!Dragging || !PanButton(e) || !Local(e, out var p)) return;
             var d = p - last; last = p;
             content.anchoredPosition += d;
             Clamp();
             velocity = ReduceMotion ? Vector2.zero : Vector2.Lerp(velocity, d / Mathf.Max(Time.unscaledDeltaTime, .005f), .5f);
+            lastDragAt = Time.unscaledTime;
         }
 
-        public void OnEndDrag(PointerEventData e) { Dragging = false; if (ReduceMotion) velocity = Vector2.zero; NotifyMotion(); }
+        public void OnEndDrag(PointerEventData e)
+        {
+            if (!PanButton(e)) return;
+            Dragging = false;
+            // Held still before letting go: the last fling velocity is stale, so release without inertia.
+            if (ReduceMotion || Time.unscaledTime - lastDragAt > .08f) velocity = Vector2.zero;
+            NotifyMotion();
+        }
 
         public void OnScroll(PointerEventData e)
         {
             if (content == null || viewport == null) return;
+            // Trackpads send tiny and zero deltas; ignore those and scale partial notches so a gesture does not race.
+            float wheel = e.scrollDelta.y;
+            if (Mathf.Abs(wheel) < .01f) return;
             if (!Local(e, out zoomAnchor)) return;
             float from = targetZoom > 0 ? targetZoom : content.localScale.x;
-            targetZoom = Mathf.Clamp(from + Mathf.Sign(e.scrollDelta.y) * .1f, minZoom, maxZoom);
+            targetZoom = Mathf.Clamp(from + Mathf.Clamp(wheel, -1, 1) * .1f, minZoom, maxZoom);
             velocity = Vector2.zero; glide = null; NotifyMotion();
             if (ReduceMotion) SettleMotion();
         }
@@ -173,11 +193,12 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (content == null || viewport == null) return;
             NotifyMotion();
-            if (!Dragging && velocity.sqrMagnitude > 4)
+            if (!Dragging && velocity.sqrMagnitude > InertiaMinSq)
             {
                 content.anchoredPosition += velocity * dt;
                 velocity *= Mathf.Exp(-7 * dt);
                 Clamp();
+                if (velocity.sqrMagnitude <= InertiaMinSq) velocity = Vector2.zero;
             }
             float z = content.localScale.x;
             if (targetZoom > 0)
@@ -223,7 +244,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public float charge;
         public bool held;
         public void OnPointerDown(PointerEventData e) { if (e.button == PointerEventData.InputButton.Left) { held = true; page.Press(this); } }
-        public void OnPointerUp(PointerEventData e) { if (held) { held = false; page.Release(this); } }
+        public void OnPointerUp(PointerEventData e) { if (held && e.button == PointerEventData.InputButton.Left) { held = false; page.Release(this); } }
         public void OnPointerEnter(PointerEventData e) { page.Hover(this); }
         public void OnPointerExit(PointerEventData e) { if (held) { held = false; page.Release(this); } }
         public void OnBeginDrag(PointerEventData e) { if (held) { held = false; page.Release(this); } page.Pan.OnBeginDrag(e); }
@@ -548,8 +569,8 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (id)
             {
                 case "mlp": year = 1986; zh = "反向传播 · 错误可以一层一层往回传"; en = "Backpropagation · errors can travel backward through layers"; break;
-                case "lenet": year = 1989; zh = "卷积网络 · 先看局部，再看整体（LeCun 1989；LeNet-5 是 1998）"; en = "Convolution · local structure before the whole (LeCun 1989; LeNet-5 in 1998)"; break;
-                case "rnn": year = 1990; zh = "循环网络 · 前一个词影响后一个词"; en = "Recurrent networks · the previous word affects the next"; break;
+                case "lenet": year = 1998; zh = "卷积网络 · 先看局部，再看整体（LeNet-5）"; en = "Convolution · local structure before the whole (LeNet-5)"; break;
+                case "rnn": year = 1990; zh = "循环网络 · 前一个词影响后一个词（Elman）"; en = "Recurrent networks · the previous word affects the next (Elman)"; break;
                 case "lstm": year = 1997; zh = "LSTM · 用门守住记忆（「遗忘门」是 1999–2000 年加上的）"; en = "LSTM · gates guard the memory (the forget gate came in 1999–2000)"; break;
                 case "resnet": year = 2015; zh = "ResNet · 让信息原样穿过深层网络"; en = "ResNet · let information pass through deep layers"; break;
                 case "seq2seq": year = 2014; zh = "编码器-解码器 · 先读完整句，再从头说一遍"; en = "Encoder–decoder · read the whole sentence, then say it again"; break;

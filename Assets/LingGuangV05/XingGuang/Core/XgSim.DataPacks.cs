@@ -50,7 +50,7 @@ namespace LingGuangV05.XingGuang
             if (p.needs == "lstm" && !Has("lstm") && !Has("gru")) return T("先购买门控记忆", "Buy gated memory first");
             if (!purchasing && p.buy && !Has(p.NodeId)) return T("在科技的数据分支购买", "Buy this in Tech's Data branch");
             if (!purchasing && p.buy && !TeachingNodeInstalled(p.NodeId))
-                return T("在资料文件夹下载后拖进练页安装", "Download it in your Files folder, then drag it into Train to install");
+                return T("在资料文件夹下载后拖进练页安装", "Download it in Training files, then drag it into Train to install");
             return null;
         }
         public bool TeachingPackAvailable(string id) => TeachingPackBlocker(XgTeachingPacks.Find(id)) == null;

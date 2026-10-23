@@ -426,7 +426,7 @@ namespace LingGuangV05.Desktop.OS
 
         public void InvokeOnClick() { onClick.Invoke(); }
 
-        public void CreateRipple(Vector2 pos)
+        public void CreateRipple(Vector3 pos)
         {
             if (rippleParent == null) { return; }
 
@@ -496,12 +496,16 @@ namespace LingGuangV05.Desktop.OS
             if (!isPressedCGEmpty) { StartCoroutine(nameof(SetPressed)); }
             if (!useRipple || !isPointerOn) { return; }
 
-            Vector2 mouse = Mouse.current.position.ReadValue();
-            if (targetCanvas != null && (targetCanvas.renderMode == RenderMode.ScreenSpaceCamera || targetCanvas.renderMode == RenderMode.WorldSpace))
+            // The event's own position and camera: on the LCD the pointer is relayed into the offscreen source canvas,
+            // so the hardware mouse position and the canvas' world camera would place the ripple elsewhere.
+            if (rippleParent == null) { return; }
+            Camera eventCamera = eventData.pressEventCamera != null ? eventData.pressEventCamera : eventData.enterEventCamera;
+            if (targetCanvas != null && targetCanvas.renderMode == RenderMode.ScreenSpaceOverlay) { eventCamera = null; }
+            var plane = rippleParent.transform as RectTransform ?? (RectTransform)transform;
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(plane, eventData.position, eventCamera, out Vector3 world))
             {
-                CreateRipple(targetCanvas.worldCamera.ScreenToWorldPoint(mouse));
+                CreateRipple(world);
             }
-            else { CreateRipple(mouse); }
         }
 
         public void OnPointerUp(PointerEventData eventData)

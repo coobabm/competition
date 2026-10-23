@@ -220,14 +220,20 @@ namespace LingGuangV05.Desktop.XingGuang
     }
     public sealed class XgReadingWindowDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler
     {
-        public XgReadingWindow owner; Vector2 previous;
+        public XgReadingWindow owner; Vector2 start, startPosition;
         public void OnPointerDown(PointerEventData e) { if (owner?.Window != null) owner.Window.SetAsLastSibling(); }
-        public void OnBeginDrag(PointerEventData e) { if (owner?.Window != null) RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)owner.Window.parent, e.position, e.pressEventCamera, out previous); }
+        public void OnBeginDrag(PointerEventData e)
+        {
+            if (owner?.Window == null) return;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)owner.Window.parent, e.position, e.pressEventCamera, out start);
+            startPosition = owner.Window.anchoredPosition;
+        }
         public void OnDrag(PointerEventData e)
         {
             if (owner?.Window == null) return;
             RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)owner.Window.parent, e.position, e.pressEventCamera, out var now);
-            owner.Move(now - previous); previous = now;
+            // Start position plus the whole pointer offset, then clamp: pushing past a screen edge never drifts the grab point.
+            owner.Window.anchoredPosition = startPosition; owner.Move(now - start);
         }
     }
 }

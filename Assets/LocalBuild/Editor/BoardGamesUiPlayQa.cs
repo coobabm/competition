@@ -112,6 +112,29 @@ public static partial class BoardGamesUiPlayQa
     static object Call(object value,string name,params object[] args){var type=value.GetType();while(type!=null){var method=type.GetMethod(name,Flags|BindingFlags.DeclaredOnly);if(method!=null)return method.Invoke(value,args);type=type.BaseType;}throw new MissingMethodException(name);}
     static void Check(bool ok, string message) { (ok ? passed : failed).Add(message); }
     static void Require(bool ok, string message) { Check(ok, message); if (!ok) throw new InvalidOperationException(message); }
+    /// <summary>Which XgEndingPreparationHost.NarrativeAvailable / PollNarrative gates currently hold the shutdown question back.</summary>
+    static string NarrativeBlockers(XgEndingPreparationHost host,XgEndingPreparationFlow flow)
+    {
+        var parts=new List<string>();var lab=ctl.Sim;
+        void Add(string name,Func<bool> blocked){try{if(blocked())parts.Add(name);}catch(Exception e){parts.Add(name+"?"+e.GetType().Name);}}
+        Add("notCurrent",()=>!(bool)typeof(XgEndingPreparationHost).GetProperty("Current",Flags).GetValue(host));
+        Add("prologue",()=>runtime.Sim.InPrologue);
+        Add("minimized",()=>PlayerWindowState.IsMinimized);
+        Add("storyFocus",()=>StoryFocus.Active);
+        Add("innerVoice",()=>InnerVoice.Busy);
+        Add("stagePresentation",()=>lab.StagePresentationHeld);
+        Add("gamePaused",()=>XgLifeHostActivity.GamePaused);
+        Add("readingWindow",()=>XgLifeHostActivity.ReadingWindowVisible);
+        Add("groupScript",()=>LingGuangV05.Desktop.YY.YYChatHub.Instance?.GroupScriptPlaying==true);
+        Add("saveSlots",()=>SaveSlotsPanel.IsOpen);
+        Add("caseMenuSettings",()=>LingGuangV05.CaseMenu.CaseMenuHud.AnySettingsOpen);
+        Add("chapterComplete",()=>lab.S.chapterComplete);
+        Add("endingAreaShowing",()=>host.Showing);
+        Add("stageConsumed",()=>flow.ShutdownPromptStageConsumed);
+        Add("phase="+(lab.S.endingPreparation?.phase??"testing"),()=>(lab.S.endingPreparation?.phase??"testing")!="testing");
+        parts.Add("stage="+lab.S.stage+" waited="+lab.S.shutdownNarrativeElapsed+"/"+flow.ShutdownPromptDelay+" waitStage="+lab.S.shutdownNarrativeStage);
+        return string.Join(", ",parts);
+    }
     static void Boot()
     {
         try
@@ -256,9 +279,31 @@ public static partial class BoardGamesUiPlayQa
         // This regression does not claim a naturally elapsed random waiting period.
         var shutdownFlow=Field<XgEndingPreparationFlow>(narrative,"flow");
         shutdownFlow.TickShutdownPromptWait(shutdownFlow.ShutdownPromptDelay);
-        wait=EditorApplication.timeSinceStartup+2;
-        while(Field<RectTransform>(narrative,"seedPanel")==null&&EditorApplication.timeSinceStartup<wait)yield return null;
+        // Reaching stage 2 starts a YY group introduction (apps now arrive through group links). NarrativeAvailable holds
+        // the question while group playback runs, so it never interrupts the chat; it must appear once playback ends.
+        // The introduction is interactive and waits for the player, who here uses its own skip control.
+        var groupChat=LingGuangV05.Desktop.YY.YYChatHub.Instance;
+        if(groupChat!=null&&groupChat.GroupScriptPlaying)
+        {
+            wait=EditorApplication.timeSinceStartup+1;while(EditorApplication.timeSinceStartup<wait)yield return null;
+            if(groupChat.GroupScriptPlaying)Require(Field<RectTransform>(narrative,"seedPanel")==null,"Due shutdown question waits while a YY group script plays");
+            wait=EditorApplication.timeSinceStartup+60;
+            while(groupChat.GroupScriptPlaying&&EditorApplication.timeSinceStartup<wait)
+            {
+                if(groupChat.IntroPlaying&&groupChat.IntroHost.Held==false)groupChat.IntroHost.Skip(groupChat.IntroRevision);
+                yield return null;
+            }
+            Require(!groupChat.GroupScriptPlaying,"YY group playback finishes before the shutdown-question regression");
+        }
+        wait=EditorApplication.timeSinceStartup+3;
+        while(Field<RectTransform>(narrative,"seedPanel")==null&&EditorApplication.timeSinceStartup<wait)
+        {
+            // A further introduction may queue right behind the skipped one; it is skipped the same way.
+            if(groupChat!=null&&groupChat.IntroPlaying&&groupChat.IntroHost.Held==false)groupChat.IntroHost.Skip(groupChat.IntroRevision);
+            yield return null;
+        }
         var currentSeed=narrative==null?null:Field<RectTransform>(narrative,"seedPanel");
+        if(currentSeed==null||!currentSeed.gameObject.activeInHierarchy)Debug.LogWarning("[BoardGamesUiPlayQa] shutdown question blocked by: "+NarrativeBlockers(narrative,shutdownFlow));
         Require(currentSeed!=null&&currentSeed.gameObject.activeInHierarchy,"Actual pending shutdown question is available for language-switch regression");
         string seedId=Field<string>(narrative,"shownSeed");double seedWait=ctl.Sim.S.shutdownNarrativeElapsed;string seedDispatch=ctl.Sim.S.endingPreparation.seedDispatches.Single(d=>d.stage==ctl.Sim.S.stage).receipt;
         var seedQuestion=Field<TMP_Text>(narrative,"seedQuestionLabel");
@@ -462,14 +507,23 @@ public static partial class BoardGamesUiPlayQa
         Require(exposed,"Actual LCD top hit owns the native Files caption drag handler");
         var surface=LcdSurface();Require(surface.TryMap(start,out var sourceStart),"Files caption maps into source pixels");
         Require(RectTransformUtility.ScreenPointToLocalPointInRectangle(area,sourceStart,surface.sourceCamera,out var startLocal),"Files caption maps into native drag coordinates");
-        var e=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left,position=start};
+        var e=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left,position=start};Vector2 dragOrigin=startLocal;
         RequireTop(caption,e);surface.OnPointerDown(e);
         try
         {
             // The native begin-drag captures its origin at the threshold-crossing sample.
-            // Send that sample first, then move by the desired window offset across real frames.
-            var dragOrigin=startLocal+new Vector2(20,0);
-            e.position=LcdPoint(area,dragOrigin);surface.OnDrag(e);yield return null;
+            // The LCD drag threshold is in physical screen pixels scaled to render-texture pixels (2026-10-22 mouse fix),
+            // so it depends on the Game view size: step right until the real dragger reports a live drag, then use
+            // that sample as the origin and move by the desired window offset across real frames.
+            bool begun=false;
+            for(int probe=1;probe<=12&&!begun;probe++)
+            {
+                dragOrigin=startLocal+new Vector2(20*probe,0);
+                e.position=LcdPoint(area,dragOrigin);surface.OnDrag(e);yield return null;
+                // The surface's own left-button state (WindowDragger keeps its flag after a previous drag).
+                begun=Field<PointerEventData>(((Array)Field<object>(surface,"buttons")).GetValue(0),"data").dragging;
+            }
+            Require(begun,"Native caption drag crosses the LCD drag threshold");
             for(int step=1;step<=8;step++)
             {
                 e.position=LcdPoint(area,dragOrigin+new Vector2(deltaX*step/8f,0));
@@ -479,6 +533,7 @@ public static partial class BoardGamesUiPlayQa
         finally{surface.OnPointerUp(e);}
         yield return null;Canvas.ForceUpdateCanvases();frame.GetWorldCorners(corners);
         float afterLeft=corners.Min(p=>area.InverseTransformPoint(p).x);
+        if(Mathf.Abs(afterLeft-(area.rect.xMin+16))>=2)Debug.LogWarning("[BoardGamesUiPlayQa] Files drag: before="+beforeLeft+" after="+afterLeft+" target="+(area.rect.xMin+16)+" origin="+dragOrigin);
         Require(Mathf.Abs(afterLeft-(area.rect.xMin+16))<2,"Actual LCD title drag places Files at the desktop left margin");
         Require(Vector2.Distance(frame.rect.size,beforeSize)<.1f,"Native window drag preserves its full original size");
         Require(window.isOn&&ctl.Window.isOn,"Files and Train remain open after native window arrangement");

@@ -27,7 +27,48 @@ namespace LingGuangV05.Core.Era
             P("锦鲤(附体|本鲤)|转发锦鲤|成为锦鲤"), P("我酸了"), P("安排上|给(你|我|他|她|您)安排(上|了)(?!一)"),
         };
 
+        /// <summary>
+        /// AI words that only caught on after 2016 (research 04 §1.3 A6). They apply to in-world text and model output only:
+        /// the player layer (PlayerKnowledgeCopy, the out-of-world "no real model is called" notes) may use them, so
+        /// <see cref="FirstBanned"/> and <see cref="Audit"/> stay meme-only. Shown to the model and in docs.
+        /// </summary>
+        public static readonly string[] BannedAiTerms =
+        {
+            "大模型", "大语言模型", "LLM", "ChatGPT", "提示词", "AI 幻觉", "对齐微调", "RLHF", "RAG", "思维链", "AI 智能体", "AIGC", "扩散模型", "词元",
+        };
+
+        sealed class AiRule
+        {
+            public readonly Regex pattern; public readonly string zh, en;
+            public AiRule(Regex pattern, string zh, string en) { this.pattern = pattern; this.zh = zh; this.en = en; }
+        }
+
+        // Each later term is replaced by the plain 2016 wording rather than cut out, so a model's sentence still reads.
+        // Plain 2016 words stay: 放大模型, 幻觉 on its own, 智能体 in reinforcement learning, a cloth rag, and the game's
+        // own 偏好对齐 (XgGlossary).
+        static readonly AiRule[] AiRules =
+        {
+            new AiRule(P("(?<![放扩加增变庞])大(?:语言)?模型"), "模型", "model"),
+            new AiRule(P("large (language models?)"), "$1", "$1"),
+            new AiRule(C("(?<![A-Za-z])([Aa])n LLM(?![A-Za-z])"), "$1 language model", "$1 language model"),
+            new AiRule(C("(?<![A-Za-z])LLMs?(?![A-Za-z])"), "语言模型", "language model"),
+            new AiRule(P("ChatGPT"), "聊天程序", "chatbot"),
+            new AiRule(P("提示(?:词|工程)"), "提示", "prompt"),
+            new AiRule(P("(AI|人工智能|模型)\\s*的?\\s*幻觉"), "$1瞎编", "$1 making things up"),
+            new AiRule(P("对齐微调|RLHF"), "微调", "fine-tuning"),
+            new AiRule(P("检索增强(?:生成)?"), "检索", "retrieval"),
+            new AiRule(C("(?<![A-Za-z])RAG(?![A-Za-z])"), "检索", "retrieval"),
+            new AiRule(P("思维链|chain[- ]of[- ]thought"), "分步思考", "step-by-step reasoning"),
+            new AiRule(P("AI\\s*智能体"), "AI 程序", "AI program"),
+            new AiRule(P("AIGC"), "机器生成的内容", "machine-generated content"),
+            new AiRule(P("扩散模型"), "生成模型", "generative model"),
+            new AiRule(P("词元"), "字词", "token"),
+        };
+
+        static readonly Regex Cjk = new Regex("[\u4e00-\u9fff]", RegexOptions.CultureInvariant);
+
         static Regex P(string pattern) => new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        static Regex C(string pattern) => new Regex(pattern, RegexOptions.CultureInvariant);
 
         /// <summary>The first post-2016 meme in the text, or null.</summary>
         public static string FirstBanned(string text)
@@ -37,11 +78,21 @@ namespace LingGuangV05.Core.Era
             return null;
         }
 
-        /// <summary>Removes post-2016 memes from model output.</summary>
+        /// <summary>The first post-2016 AI term in in-world text, or null (the player layer is exempt).</summary>
+        public static string FirstBannedAiTerm(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return null;
+            foreach (var r in AiRules) { var m = r.pattern.Match(text); if (m.Success) return m.Value; }
+            return null;
+        }
+
+        /// <summary>Removes post-2016 memes from model output and rewords post-2016 AI terms in 2016 language.</summary>
         public static string Scrub(string text)
         {
             if (string.IsNullOrEmpty(text)) return text;
             foreach (var p in Patterns) text = p.Replace(text, "");
+            bool chinese = Cjk.IsMatch(text);
+            foreach (var r in AiRules) text = r.pattern.Replace(text, chinese ? r.zh : r.en);
             return text;
         }
 
@@ -49,8 +100,16 @@ namespace LingGuangV05.Core.Era
         public static string PromptRule(bool english)
         {
             return english
-                ? "It is 2016. Never use internet slang from after 2016, such as: " + string.Join(", ", Banned) + "."
-                : "现在是 2016 年。不要用 2016 年以后才流行的网络用语，例如：" + string.Join("、", Banned) + "。";
+                ? "It is 2016. Never use internet slang from after 2016, such as: " + string.Join(", ", Banned) + ". Nor AI terms that caught on after 2016, such as: " + string.Join(", ", BannedAiTerms) + "."
+                : "现在是 2016 年。不要用 2016 年以后才流行的网络用语，例如：" + string.Join("、", Banned) + "。也不要用 2016 年以后才流行的 AI 说法，例如：" + string.Join("、", BannedAiTerms) + "。";
+        }
+
+        /// <summary>Every post-2016 AI term found in a set of in-world authored lines (for content tests).</summary>
+        public static List<string> AuditAiTerms(IEnumerable<string> lines)
+        {
+            var found = new List<string>();
+            foreach (var line in lines) { var hit = FirstBannedAiTerm(line); if (hit != null) found.Add(hit + " ← " + line); }
+            return found;
         }
 
         /// <summary>Every banned meme found in a set of authored lines (for content tests).</summary>

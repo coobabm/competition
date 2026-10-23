@@ -48,7 +48,7 @@ namespace LingGuangV05.XingGuang
 
     /// <summary>
     /// 摆渡众包 quality control. The platform spot-checks automatic labels that left the lab (hand labels are never
-    /// checked), fines the wrong ones (twice their pay), tracks a credit score and a rolling pass rate over the last 40
+    /// checked), fines the wrong ones (their pay), tracks a credit score and a rolling pass rate over the last 40
     /// checks, and judges it every 20 checks: a 15% error rate warns once per crossing. Since 2026-10-16 the account is
     /// never reported or frozen (user call: 「账号别被举报了 标错扣钱就行」); a wrong label only costs money, and a low
     /// credit tier means more checks and lower pay. The freeze fields stay in the save and are cleared on load.
@@ -60,8 +60,8 @@ namespace LingGuangV05.XingGuang
         public const int QcWindow = 40, QcMinChecks = 20, QcJudgeEvery = 20, QcMonotoneMin = 20;
         public const double QcWarnRate = .15, QcMonotoneShare = .95;
         public const double QcCreditStart = 80, QcCreditMax = 100, QcCreditGold = 90, QcCreditWatch = 60;
-        public const double QcCreditFail = 4, QcCreditPass = 1, QcCreditHand = .2;
-        public const double QcFineMultiplier = 2, QcAppealMin = 100, QcAppealShare = .1;
+        public const double QcCreditFail = 2, QcCreditPass = 1, QcCreditHand = .2;
+        public const double QcFineMultiplier = 1, QcAppealMin = 100, QcAppealShare = .1;
         /// <summary>Credit drifts back up by this much a second, but only up to <see cref="QcCreditStart"/>; above that it is earned by passed checks.</summary>
         public const double QcCreditRegen = 1.0 / 15;
         /// <summary>A desk is named as the weak one once it has this many recent automatic labels.</summary>
@@ -97,8 +97,8 @@ namespace LingGuangV05.XingGuang
         public bool QualityWarning => QualityActive && !QualityFrozen && PassRateJudged && ErrorRate >= QcWarnRate - 1e-9;
 
         public static XgCreditTier TierOfCredit(double credit) => credit >= QcCreditGold ? XgCreditTier.Gold : credit >= QcCreditWatch ? XgCreditTier.Normal : XgCreditTier.Watch;
-        public static double CheckChanceOf(XgCreditTier tier) => tier == XgCreditTier.Gold ? .25 : tier == XgCreditTier.Normal ? .4 : .65;
-        public static double PayMultiplierOf(XgCreditTier tier) => tier == XgCreditTier.Gold ? 1.2 : tier == XgCreditTier.Normal ? 1 : .8;
+        public static double CheckChanceOf(XgCreditTier tier) => tier == XgCreditTier.Gold ? .15 : tier == XgCreditTier.Normal ? .3 : .5;
+        public static double PayMultiplierOf(XgCreditTier tier) => tier == XgCreditTier.Gold ? 1.5 : tier == XgCreditTier.Normal ? 1 : .8;
         /// <summary>Chance that the platform checks one automatic label right now.</summary>
         public double SpotCheckChance => !QualityActive ? 0 : ForcedCheckChance >= 0 ? Math.Min(1, ForcedCheckChance) : CheckChanceOf(CreditTier);
         /// <summary>Credit-tier multiplier on automatic income (1 while the platform is not active).</summary>

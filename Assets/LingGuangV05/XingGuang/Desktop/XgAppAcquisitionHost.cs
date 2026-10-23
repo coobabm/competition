@@ -87,7 +87,7 @@ namespace LingGuangV05.Desktop.XingGuang
                         var expected=save;var line=conv.messages[conv.messages.Count-1];
                         if(!chat.IsShowing(YYChatHub.EraGroup))Attention();
                         LingGuangV05.Desktop.Media.DesktopNotifications.Notify(owner.runtime,"YY",GameText.T("下班屁股群","Clock-out Overwatch squad"),line.text,
-                            chat.IsShowing(YYChatHub.EraGroup),()=>{if(Current&&ReferenceEquals(save,expected))chat.router?.Open(YYChatHub.AppId,YYChatHub.EraGroup);});
+                            chat.IsShowing(YYChatHub.EraGroup),()=>{if(Current&&ReferenceEquals(save,expected))chat.router?.Open(YYChatHub.AppId,YYChatHub.EraGroup);},aiReply:true);
                     }
                 }catch(Exception error){Debug.LogWarning("Group introduction redraw failed after save: "+error.GetType().Name);}
             }
@@ -136,7 +136,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if(step==null){Commit(()=>{p.completed=true;Data.activeScript="";});CloseThought();return;}
             if(step.type=="self")
             {ShowThought(Script.id+":"+p.step,GameText.T(step.text,step.textEn),GameText.T(step.button,step.buttonEn),()=>
-                {if(Commit(()=>p.step++)){if(step.action=="blinkYY")chat.router?.Open(YYChatHub.AppId,YYChatHub.EraGroup);CloseThought();}});return;}
+                {if(Commit(()=>p.step++)){if(step.action=="blinkYY")chat.router?.Open(YYChatHub.AppId,YYChatHub.EraGroup);CloseThought();}},
+                false,string.IsNullOrEmpty(step.button)&&p.step<Script.steps.Count-1);return;}
             CloseThought();
             if(step.type=="choice"&&p.choice<0)return;
             if(step.type=="group"||step.type=="choice")

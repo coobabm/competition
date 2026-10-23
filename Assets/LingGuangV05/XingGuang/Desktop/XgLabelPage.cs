@@ -1026,7 +1026,8 @@ namespace LingGuangV05.Desktop.XingGuang
             auto.Set(Sim.AutoLabelHidden ? Lang.T("？？？") : Lang.T("自动答题（全局）"), "Lv " + al + "/" + XgCatalog.AutoMaxLevel,
                 pausable && Sim.AutoPaused ? "<color=#D63031>" + T("已暂停：它不替你答题，也不挣这份钱", "Paused: it answers nothing for you and earns nothing") + "</color>"
                 : al > 0 && !Sim.AutoLabelHidden && !Sim.EligibleDesk(desk) ? "<color=#D63031>" + Lang.T("这张桌的检查点不到 60%，它不替你答") + "</color>"
-                : canAuto || al > 0 ? Lang.T("每秒 ") + N(Sim.AutoCardsPerSecond(desk, Host), "0.0") + Lang.T(" 张 → ") + "<b>" + N((al + 1) * XgCatalog.AutoRatePerLevel * Math.Min(1, Math.Max(0, Host.Compute)), "0.0") + "</b>" + Lang.T("  · 约 ¥") + N(Sim.AutoIncome(desk, Host), "0.00") + T("/秒", "/s")
+                : canAuto || al > 0 ? Lang.T("每秒 ") + N(Sim.AutoCardsPerSecond(desk, Host), "0.0") + Lang.T(" 张 → ") + "<b>" + N(Sim.CollaborationRateAt(desk, Host, al + 1), "0.0") + "</b>" + Lang.T("  · 约 ¥") + N(Sim.AutoIncome(desk, Host), "0.00")
+                        + (canAuto ? " → <b>¥" + N(Sim.CollaborationIncomeAt(desk, Host, al + 1), "0.00") + "</b>" : "") + T("/秒", "/s")
                     : (Sim.AutoLabelHidden ? "<color=#68748C>" : "<color=#D63031>") + (why ?? "") + "</color>",
                 canAuto ? "¥" + Money(acost) : al >= XgCatalog.AutoMaxLevel ? Lang.T("满级") : Lang.T("未解锁"), canAuto && Host.Money >= acost, canAuto ? (float)(Host.Money / acost) : 0, al / (float)XgCatalog.AutoMaxLevel);
 
@@ -1266,7 +1267,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string accuracy = st.automatic == 0 ? "—" : XgSim.Pct(st.automaticAccuracy);
             coopStats.text = Lang.T("近 100 题 · 自动 ") + share + Lang.T(" · 准确率 ") + accuracy
                 + "\n" + Lang.T("噪声标签 ") + N(Sim.NoiseTotal, "0") + Lang.T(" · 待复核 ") + Sim.ReviewCount() + "/" + Sim.ReviewLimit
-                + (Sim.ReviewFull ? " <color=#B36A00>" + Lang.T("自动已暂停") + "</color>" : "");
+                + (Sim.ReviewFull ? " <color=#B36A00>" + Lang.T("拿不准的先跳过") + "</color>" : "");
             bool online = Sim.BrainOnline && string.IsNullOrEmpty(Sim.BrainStatus);
             string source = Sim.Has("label.brain") && XgSim.IsBrainDesk(Desk)
                 ? online ? Lang.T("本地模型在线") : Lang.T("大脑离线 · 回退检查点估计")
@@ -1408,13 +1409,13 @@ namespace LingGuangV05.Desktop.XingGuang
             string pct(double v) => N(v * 100, "0") + "%";
             return T("摆渡众包会抽检自动标注（手动标注从不抽检）。\n"
                     + "· 当前信用 " + N(Sim.Credit, "0.#") + "（" + TierName + "）：抽检率 " + pct(Sim.SpotCheckChance) + "，自动收入 ×" + N(Sim.QualityPayMultiplier, "0.0#") + "。金牌 ≥ 90，重点关注 < 60。\n"
-                    + "· 抽检不合格：罚该题报酬的 2 倍，信用 −" + N(XgSim.QcCreditFail, "0") + "；抽检合格：信用 +" + N(XgSim.QcCreditPass, "0.#") + "。累计罚款 ¥" + N(Sim.S.qcFines, "0.##") + "。\n"
+                    + "· 抽检不合格：罚该题报酬的 " + N(XgSim.QcFineMultiplier, "0.#") + " 倍，信用 −" + N(XgSim.QcCreditFail, "0") + "；抽检合格：信用 +" + N(XgSim.QcCreditPass, "0.#") + "。累计罚款 ¥" + N(Sim.S.qcFines, "0.##") + "。\n"
                     + "· 账号不会被举报或冻结，标错只扣钱。近 " + XgSim.QcWindow + " 次抽检错误率 ≥ " + pct(XgSim.QcWarnRate) + " 会提醒一次。\n"
                     + "· 信用每 " + N(1 / XgSim.QcCreditRegen, "0") + " 秒 +1，自己回到 " + N(XgSim.QcCreditStart, "0") + "。\n"
                     + "现在怎么办：" + Sim.QualityAdvice(false) + "也可以去科技买「自查」，先拦下一部分错题。",
                 "Bodu Crowdsourcing spot-checks automatic labels (hand labels are never checked).\n"
                     + "· Credit " + N(Sim.Credit, "0.#") + " (" + TierName + "): " + pct(Sim.SpotCheckChance) + " checked, auto income ×" + N(Sim.QualityPayMultiplier, "0.0#") + ". Gold at 90+, under watch below 60.\n"
-                    + "· A failed check is fined twice the card's pay and costs " + N(XgSim.QcCreditFail, "0") + " credit; a passed one adds " + N(XgSim.QcCreditPass, "0.#") + ". Fines so far: ¥" + N(Sim.S.qcFines, "0.##") + ".\n"
+                    + "· A failed check is fined " + N(XgSim.QcFineMultiplier, "0.#") + "× the card's pay and costs " + N(XgSim.QcCreditFail, "0") + " credit; a passed one adds " + N(XgSim.QcCreditPass, "0.#") + ". Fines so far: ¥" + N(Sim.S.qcFines, "0.##") + ".\n"
                     + "· The account is never reported or frozen; a wrong label only costs money. An error rate of " + pct(XgSim.QcWarnRate) + " over the last " + XgSim.QcWindow + " checks warns once.\n"
                     + "· Credit regains 1 every " + N(1 / XgSim.QcCreditRegen, "0") + " s up to " + N(XgSim.QcCreditStart, "0") + ".\n"
                     + "Now: " + Sim.QualityAdvice(true) + " Buying Self-check in Tech also catches some mistakes first.");
@@ -1555,14 +1556,15 @@ namespace LingGuangV05.Desktop.XingGuang
             }
             else
             {
-                meta.text = Lang.T("第一章结束");
+                // A finished save: a short note that the ending is archived, no chapter-two entry.
+                meta.text = T("结局已存档", "Ending archived");
                 text.text = Sim.S.endingRegret ? Lang.T("那我还是会记得。") : Lang.T("那我们继续。");
                 question.text = Lang.T("只要注意力"); question.fontSize = 26;
-                suggestion.text = Lang.T("第二章入口已保留，内容尚未开放。");
-                yes.Set(Lang.T("第二章 · 蒸馏／转生"), true, Color.white, ZhongbaoSkin.Blue);
-                yes.label.fontSize = 17; ShowFrame(no, false);
-                steps.text = Lang.T("下一程");
-                specialInfo.text = Lang.T("蒸馏与转生\n\n把大模型的经验交给更小的模型。\n\n这是下一章的入口说明，不会重置你的存档，也不会开始尚未实现的第二章。");
+                suggestion.text = T("这个存档的故事已经走完。", "This save's story is complete.");
+                ShowFrame(yes, false); ShowFrame(no, false);
+                steps.text = T("结局档案", "Endings archive");
+                specialInfo.text = T("结局已经存进档案。\n\n读完结局信，点「读完，保存并返回标题」；之后随时可以在标题画面的「结局」里重看。",
+                    "The ending is in the archive.\n\nFinish the ending letter and press \"Finish reading, save and return to title\"; you can revisit it any time from Endings on the title screen.");
             }
         }
 
@@ -1570,7 +1572,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (Mode == 3)
             {
-                host.ShowToast(Lang.T("第二章：蒸馏／转生 · 尚未开放，当前存档保持不变。"), 4f);
+                host.ShowToast(T("结局已存档：可在标题画面的「结局」里重看。", "Ending archived: revisit it from Endings on the title screen."), 4f);
                 return;
             }
             bool accepted = Mode == 1 ? Sim.ProjectAnswer(answer) : Sim.EndingAnswer(answer);

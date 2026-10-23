@@ -324,8 +324,8 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 1; i <= XgCatalog.RaiseMax; i++)
             {
                 Assert.AreEqual(2 * i, XgCatalog.RaiseMultipliers[i], 1e-9, "×2, ×4, ×6 …: every raise adds exactly ×2");
-                double quoted = System.Math.Round(10 * System.Math.Pow(1.7,i));
-                while(quoted<100)quoted*=10;
+                double quoted = System.Math.Round(100 * System.Math.Pow(1.45,i));
+                Assert.Greater(quoted, XgCatalog.RaiseCost(i - 1), "never cheaper than the raise before");
                 Assert.AreEqual(quoted,XgCatalog.RaiseCost(i),"each ordinary purchase quote follows the approved hundred-yuan scaling rule");
             }
             Assert.AreEqual(100, XgCatalog.RaiseCost(0));
@@ -351,7 +351,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim(); var host = new Host { money = 1e9 };
             double cost = sim.RaiseCostFor(3, out int levels);
             Assert.AreEqual(3, levels);
-            Assert.AreEqual(100 + 170 + 290, cost, 1e-9);
+            Assert.AreEqual(100 + 145 + 210, cost, 1e-9);
             Assert.AreEqual(3, sim.BuyRaise(host, 3));
             Assert.AreEqual(1e9 - cost, host.money, 1e-6);
             Assert.AreEqual(XgCatalog.RaiseMax - 3, sim.BuyRaise(host, 100));
@@ -363,7 +363,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void AffordableRaisesCountsWhatTheWalletCovers()
         {
-            var sim = new XgSim(); var host = new Host { money = 100 + 170 + 5 };
+            var sim = new XgSim(); var host = new Host { money = 100 + 145 + 5 };
             Assert.AreEqual(2, sim.AffordableRaises(host));
             Assert.AreEqual(2, sim.BuyRaise(host, 99));
             Assert.AreEqual(5, host.money, 1e-9);
@@ -401,7 +401,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void RaiseDoesNotBoostAutomaticAnswers()
+        public void RaiseBoostsAutomaticAnswersByHalfItsBonus()
         {
             // The 摆渡众包 spot checks would fine this 80% model's wrong labels; they are covered in XgQualityTests.
             var sim = new XgSim { PlatformChecks = false }; var host = new Host { money = 600 };
@@ -411,11 +411,15 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.BuyAuto("mnist", host));
             double income = sim.AutoIncome("mnist", host);
             sim.S.payRaise = XgCatalog.RaiseMax;
-            Assert.AreEqual(income, sim.AutoIncome("mnist", host), 1e-9);
+            double boost = 1 + XgCatalog.AutoRaiseShare * (XgCatalog.RaiseMultipliers[XgCatalog.RaiseMax] - 1);
+            Assert.AreEqual(17.5, boost, 1e-9, "×34 hand pay gives automatic answers ×17.5");
+            Assert.AreEqual(income * boost, sim.AutoIncome("mnist", host), 1e-9);
+            Assert.AreEqual(sim.PayFor("mnist", 1) * boost, sim.AutoPayFor("mnist", 1), 1e-9);
+            Assert.Less(sim.AutoPayFor("mnist", 1), sim.ManualPayFor("mnist", 1), "hand answers still pay more per card");
             double before = host.money;
             sim.Tick(30, host);
             Assert.Greater(sim.S.autoCorrect, 0);
-            Assert.AreEqual(sim.S.autoCorrect * XgCatalog.LabelPay, host.money - before, 1e-9);
+            Assert.AreEqual(sim.S.autoCorrect * XgCatalog.LabelPay * XgCatalog.Desk("mnist").pay * boost, host.money - before, 1e-9);
         }
 
         [Test]
@@ -486,7 +490,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.teachMode = false; // the combo multiplier is what is being priced
             var r = sim.Answer("mnist", sim.Card("mnist").truth, host);
             Assert.IsTrue(r.correct);
-            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale, host.money, 1e-9, "first answer of a streak: ×1");
+            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.Desk("mnist").pay * XgCatalog.HandPayScale, host.money, 1e-9, "first answer of a streak: ×1 (手写数字 pays ×1.6 since v4 §3.3)");
             Assert.AreEqual(1, sim.Samples("mnist"), 1e-9);
             Assert.AreEqual(1, sim.S.combo);
         }
@@ -577,7 +581,7 @@ namespace LingGuangV05.XingGuang.Tests
             double answered = sim.S.autoCorrect + sim.S.autoWrong;
             Assert.AreEqual(1000 * XgCatalog.AutoRatePerLevel, answered, 1.5, "AutoRatePerLevel cards/s at level 1");
             Assert.AreEqual(XgSim.BinaryAccuracy("mnist", .8), sim.S.autoCorrect / answered, .07, "a card is one yes/no question: the score maps onto binary accuracy");
-            Assert.AreEqual(sim.S.autoCorrect * XgCatalog.LabelPay, host.money - start, 1e-6);
+            Assert.AreEqual(sim.S.autoCorrect * XgCatalog.LabelPay * XgCatalog.Desk("mnist").pay, host.money - start, 1e-6); // v4 §3.3: 手写数字 pays ×1.6
             Assert.AreEqual(sim.S.autoCorrect, sim.Samples("mnist"), 1e-9, "wrong auto labels are discarded too");
             Assert.AreEqual(0, sim.S.combo, "auto answers never build the combo");
         }
@@ -634,7 +638,7 @@ namespace LingGuangV05.XingGuang.Tests
             var card = sim.Card("mnist");
             Assert.IsTrue(card.gold);
             sim.Answer("mnist", card.truth, host);
-            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * 3, host.money, 1e-9);
+            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.Desk("mnist").pay * XgCatalog.HandPayScale * 3, host.money, 1e-9);
             sim.S.desk = "mnist"; sim.WindowOpen = true;
             int timeouts = 0; sim.CardTimedOut += _ => timeouts++;
             Label(sim, "mnist", 3, host);
@@ -647,7 +651,7 @@ namespace LingGuangV05.XingGuang.Tests
             var late = sim.Answer("mnist", pending.truth, host);
             Assert.IsTrue(late.correct); Assert.IsFalse(late.timeout); Assert.IsFalse(late.gold);
             Assert.AreEqual(streak + 1, sim.S.combo);
-            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.HandPayScale * sim.ComboMultiplier, host.money - beforePay, 1e-9,
+            Assert.AreEqual(XgCatalog.LabelPay * XgCatalog.Desk("mnist").pay * XgCatalog.HandPayScale * sim.ComboMultiplier, host.money - beforePay, 1e-9,
                 "late correct answers receive the ordinary payment, without the triple bonus");
         }
 

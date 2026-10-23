@@ -56,6 +56,8 @@ namespace LingGuangV05.Desktop.Story
             Think(L("m_virus"), 4);
             while (!answered)
             {
+                // A skipped alert is ignored, as the story goes on.
+                if (Skipping) { answered = true; break; }
                 if (presses > handled)
                 {
                     handled++;
@@ -70,18 +72,18 @@ namespace LingGuangV05.Desktop.Story
                         ((RectTransform)no.transform).anchoredPosition = yesAt;
                         ((RectTransform)yes.transform).anchoredPosition = noAt;
                         no.targetGraphic.color = new Color32(200, 214, 230, 255);
-                        yield return PrologueDesk.Wait(.45f);
+                        yield return W(.45f);
                         answered = true;
                         Think(L("m_dodge_3"), 2.5f);
-                        yield return PrologueDesk.Wait(1.6f);
+                        yield return W(1.6f);
                     }
                 }
                 yield return null;
             }
 
             Close(ref virusBox);
-            desk.StoryPopup(L("who_360"), L("virus_ignored"), 6);
-            yield return PrologueDesk.Wait(.8f);
+            if (!Skipping) desk.StoryPopup(L("who_360"), L("virus_ignored"), 6);
+            yield return W(.8f);
             yield return ThinkAndWait(L("m_ignored"), 1.5f);
         }
 
@@ -98,7 +100,7 @@ namespace LingGuangV05.Desktop.Story
                 if (Mathf.Abs(candidate.x) <= half.x && Mathf.Abs(candidate.y) <= half.y) { to = candidate; break; }
                 to = new Vector2(Mathf.Clamp(candidate.x, -half.x, half.x), Mathf.Clamp(candidate.y, -half.y, half.y));
             }
-            for (float t = 0; t < .14f; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < .14f; t += Dt)
             {
                 float k = 1 - (1 - t / .14f) * (1 - t / .14f);
                 box.anchoredPosition = Vector2.Lerp(from, to, k);

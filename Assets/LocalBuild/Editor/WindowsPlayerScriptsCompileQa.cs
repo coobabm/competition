@@ -79,7 +79,7 @@ public static class WindowsPlayerScriptsCompileQa
             foreach(var candidate in (IEnumerable)Property(Property(definition,"MainModule"),"Types"))
                 if((string)Property(candidate,"FullName")=="LingGuangV05.Desktop.XingGuang.XgIdleNativeWindow"){found=candidate;break;}
             if(found==null)throw new InvalidOperationException("Native compact window type was not compiled into the Player.");
-            var expected=new HashSet<string>{"SystemParametersInfo","SetWindowPos","GetWindowRect","GetWindowLong","SetWindowLong","ReleaseCapture","SendMessage"};
+            var expected=new HashSet<string>{"SetWindowPos","GetWindowRect","GetWindowLong","SetWindowLong","GetCursorPos","MonitorFromWindow","GetMonitorInfo"};
             foreach(var method in (IEnumerable)Property(found,"Methods"))
             {
                 string name=(string)Property(method,"Name");if(!expected.Contains(name))continue;

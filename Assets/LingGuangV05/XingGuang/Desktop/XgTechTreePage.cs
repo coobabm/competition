@@ -109,6 +109,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (e.button != PointerEventData.InputButton.Left && e.button != PointerEventData.InputButton.Right) return;
             dragged = false;
+            // A press on a square ends the tail of a pan/zoom, so its click is not swallowed by the settling view.
+            if (!page.Pan.Dragging && page.Pan.Moving) page.Pan.CancelMotion();
             if (e.button != PointerEventData.InputButton.Left) return;
             if (!MotionAllowed) return;
             StopSquareMotion(); pressedPointer = e.pointerId;
@@ -257,6 +259,8 @@ namespace LingGuangV05.Desktop.XingGuang
         readonly List<XgBtn> toolbar = new List<XgBtn>();
         readonly List<Link> links = new List<Link>();
         XgTechNodeView hovered, pinned;
+        // The square under the pointer even while hover is suspended by pan/zoom motion.
+        XgTechNodeView pointerNode;
         TMP_Text ownedPointerHint;
         RectTransform ownedPointerHintFrame;
         bool tipLayoutDirty = true, tipPointerInside;
@@ -337,6 +341,8 @@ namespace LingGuangV05.Desktop.XingGuang
                 // OnDisable also ends motion. Do not rearrange children while Unity is
                 // deactivating this hierarchy; ShowTab refreshes it when it is shown again.
                 if (root.gameObject.activeInHierarchy && Pan.isActiveAndEnabled) Refresh();
+                // Hover was ignored while the view moved: show the square that is under the pointer now.
+                if (pointerNode != null && hovered == null && pointerNode.isActiveAndEnabled && root.gameObject.activeInHierarchy) Hover(pointerNode, true);
             };
             Pan.ResetRequested = () => { Toolbar(2); };
             Pan.ZoomChanged = zoom => { foreach (var v in views) v.cost.gameObject.SetActive(zoom >= .7f); };
@@ -539,7 +545,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 float width = i == 6 ? 92 : i == 5 ? 60 : i >= 3 ? 34 : i == 0 ? 92 : 80;
                 PlaceTopRight(toolbar[i], right + width, 8, width, 30); right += width + 4;
             }
-            UiTip.Add(toolbar[0].rt, "跳到标注技能（加薪、自动答题）。", "Jump to the labelling skills (raises, auto labelling).");
+            UiTip.Add(toolbar[0].rt, () => Sim != null && Sim.AutoLabelHidden ? T("跳到标注技能（加薪）。", "Jump to the labelling skills (raises).") : T("跳到标注技能（加薪、自动答题）。", "Jump to the labelling skills (raises, auto labelling)."));
             UiTip.Add(toolbar[1].rt, "跳到当前阶段的最前沿。", "Jump to the current stage's frontier.");
             UiTip.Add(toolbar[2].rt, "依次跳到现在买得起的节点。", "Cycle through the nodes you can afford now.");
             UiTip.Add(toolbar[3].rt, "缩小。", "Zoom out.");
@@ -874,7 +880,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 case "label.raise": return "¥";
                 case "label.coop": return "?";
                 case "label.hard": return "×1.5";
-                case "label.parallel": return "20→60";
+                case "label.parallel": return XgSim.ReviewCapacity + "→" + XgSim.ExpandedReviewCapacity;
                 case "label.captcha": return "Aa";
             }
             return n.nameEn != null && n.nameEn.Length <= 4 ? n.nameEn : "";
@@ -945,6 +951,7 @@ namespace LingGuangV05.Desktop.XingGuang
         public void Hover(XgTechNodeView v, bool on)
         {
             if (!built || v == null) return;
+            if (on) pointerNode = v; else if (pointerNode == v) pointerNode = null;
             if (Pan.Moving) return;
             if (on)
             {
@@ -978,17 +985,18 @@ namespace LingGuangV05.Desktop.XingGuang
             foreach (var view in views) if (view.gameObject.activeSelf) view.ring.color = view == hovered || view == pinned ? new Color(1, 1, 1, .85f) : Color.clear;
         }
 
-        /// <summary>The hovered node owns wheel input; a short card must not start a pan that hides itself.</summary>
+        /// <summary>The hovered node's card takes the wheel only when it is too long to show whole; otherwise the wheel zooms.</summary>
         public bool ScrollTooltip(XgTechNodeView v, PointerEventData e)
         {
             if (v == null || v != detailShown || tooltip == null || !tooltip.gameObject.activeSelf || tipScroll == null) return false;
-            if (tipScroll.viewport != null && tipContent.rect.height > tipScroll.viewport.rect.height + 1) tipScroll.OnScroll(e);
+            if (tipScroll.viewport == null || tipContent.rect.height <= tipScroll.viewport.rect.height + 1) return false;
+            tipScroll.OnScroll(e);
             return true;
         }
 
         public void Click(XgTechNodeView v, bool purchaseUpgrade = false)
         {
-            if (v == null || !built || Pan.Moving || !v.gameObject.activeInHierarchy) return;
+            if (v == null || !built || Pan.Dragging || !v.gameObject.activeInHierarchy) return;
             var e = v.entry;
             // An owned square that still levels up buys its next level; only a maxed square opens its 科普 topic
             // (right click opens the topic at any level, see OpenTopic).
@@ -1020,7 +1028,7 @@ namespace LingGuangV05.Desktop.XingGuang
         /// <summary>Right click on a square: its 科普 topic, if it has one (a thud otherwise).</summary>
         public void OpenTopic(XgTechNodeView v)
         {
-            if (v == null || !built || Pan.Moving || !v.gameObject.activeInHierarchy) return;
+            if (v == null || !built || Pan.Dragging || !v.gameObject.activeInHierarchy) return;
             if (!HasTopic(v)) { Fx.Play(XgJuice.Sfx.Id.Thud, 1.2f, .6f); return; }
             OpenNodeKnowledge(v.entry.First);
             Fx.Play(XgJuice.Sfx.Id.Click);
@@ -1101,8 +1109,8 @@ namespace LingGuangV05.Desktop.XingGuang
             switch (id)
             {
                 case "mlp": year = 1986; zh = "反向传播 · 错误可以一层一层往回传"; en = "Backpropagation · errors can travel backward through layers"; break;
-                case "lenet": year = 1989; zh = "卷积网络 · 先看局部，再看整体（LeCun 1989；LeNet-5 是 1998）"; en = "Convolution · local structure before the whole (LeCun 1989; LeNet-5 in 1998)"; break;
-                case "rnn": year = 1990; zh = "循环网络 · 前一个词影响后一个词"; en = "Recurrent networks · the previous word affects the next"; break;
+                case "lenet": year = 1998; zh = "卷积网络 · 先看局部，再看整体（LeNet-5）"; en = "Convolution · local structure before the whole (LeNet-5)"; break;
+                case "rnn": year = 1990; zh = "循环网络 · 前一个词影响后一个词（Elman）"; en = "Recurrent networks · the previous word affects the next (Elman)"; break;
                 case "lstm": year = 1997; zh = "LSTM · 用门守住记忆（「遗忘门」是 1999–2000 年加上的）"; en = "LSTM · gates guard the memory (the forget gate came in 1999–2000)"; break;
                 case "resnet": year = 2015; zh = "ResNet · 让信息原样穿过深层网络"; en = "ResNet · let information pass through deep layers"; break;
                 case "seq2seq": year = 2014; zh = "编码器-解码器 · 先读完整句，再从头说一遍"; en = "Encoder–decoder · read the whole sentence, then say it again"; break;

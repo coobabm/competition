@@ -47,13 +47,13 @@ namespace LingGuangV05.Tests
             double balance=runtime.Sim.S.money;now+=86400;Open();
             Assert.AreEqual(balance,runtime.Sim.S.money);Assert.AreEqual(0,runtime.OfflineIncome);
         }
-        [Test] public void EnabledSettlementIsHalfRateAndChangesOnlyFunds()
+        [Test] public void EnabledSettlementUsesTheOfflineEfficiencyAndChangesOnlyFunds()
         {
             Assert.IsTrue(runtime.SetOfflineIncomeEnabled(true));
             var before=JsonUtility.FromJson<GameState>(JsonUtility.ToJson(runtime.Sim.S));
             now+=600;Open();
-            Assert.AreEqual(600,runtime.OfflineIncome);
-            Assert.AreEqual(before.money+600,runtime.Sim.S.money);
+            Assert.AreEqual(2*600*XgOfflineRules.Efficiency,runtime.OfflineIncome,1e-9);
+            Assert.AreEqual(before.money+2*600*XgOfflineRules.Efficiency,runtime.Sim.S.money,1e-9);
             Assert.AreEqual(before.samples,runtime.Sim.S.samples);
             Assert.AreEqual(before.steps,runtime.Sim.S.steps);
             Assert.AreEqual(before.day,runtime.Sim.S.day);
@@ -63,7 +63,7 @@ namespace LingGuangV05.Tests
         [Test] public void EightHourCapConsumesTheWholeInterval()
         {
             Assert.IsTrue(runtime.SetOfflineIncomeEnabled(true));now+=86400;Open();
-            Assert.AreEqual(28800,runtime.OfflineIncome);
+            Assert.AreEqual(2*XgOfflineRules.MaxSeconds*XgOfflineRules.Efficiency,runtime.OfflineIncome,1e-9);
             double money=runtime.Sim.S.money;Open();
             Assert.AreEqual(0,runtime.OfflineIncome);Assert.AreEqual(money,runtime.Sim.S.money);
         }
@@ -83,7 +83,7 @@ namespace LingGuangV05.Tests
         [Test] public void LoadingAnOlderManualSlotDoesNotReplayAConsumedReceipt()
         {
             Assert.IsTrue(runtime.SetOfflineIncomeEnabled(true));Assert.IsTrue(runtime.SaveSlot(2));
-            double before=runtime.Sim.S.money;now+=600;Open();Assert.AreEqual(before+600,runtime.Sim.S.money);
+            double before=runtime.Sim.S.money;now+=600;Open();Assert.AreEqual(before+2*600*XgOfflineRules.Efficiency,runtime.Sim.S.money,1e-9);
             Assert.IsTrue(runtime.LoadArchive(2));Assert.AreEqual(before,runtime.Sim.S.money);
             Open();Assert.AreEqual(before,runtime.Sim.S.money);Assert.AreEqual(0,runtime.OfflineIncome);
         }
@@ -91,7 +91,7 @@ namespace LingGuangV05.Tests
         {
             Assert.IsTrue(runtime.SetOfflineIncomeEnabled(true));double before=runtime.Sim.S.money;
             now=900;Open();Assert.AreEqual(0,runtime.OfflineIncome);
-            now=1100;Open();Assert.AreEqual(before+100,runtime.Sim.S.money);
+            now=1100;Open();Assert.AreEqual(before+2*100*XgOfflineRules.Efficiency,runtime.Sim.S.money,1e-9);
         }
         [Test] public void CorruptLedgerDisablesSettlementWithoutDiscardingGameProgress()
         {

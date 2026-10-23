@@ -65,7 +65,7 @@ namespace LingGuangV05.Desktop.Story
             XgJuice.Sfx.Play(XgJuice.Sfx.Id.Buzz, .7f);
             bool second = false;
             float nextJolt = 0;
-            for (float t = 0; t < TearSeconds; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < TearSeconds; t += Dt)
             {
                 float k = t / TearSeconds; // it gets worse
                 if (!second && k > .5f) { second = true; XgJuice.Sfx.Play(XgJuice.Sfx.Id.Buzz, .45f); }
@@ -101,7 +101,7 @@ namespace LingGuangV05.Desktop.Story
                 "", font, Color.white, TextAlignmentOptions.TopLeft);
             var buzz = Buzz();
             string body = L("bsod");
-            for (float t = 0; t < BsodSeconds; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < BsodSeconds; t += Dt)
             {
                 // The dump counts up while the buzz holds.
                 int dumped = Mathf.Clamp(Mathf.FloorToInt((t - .8f) / (BsodSeconds - 1.6f) * 100), 0, 100);
@@ -115,21 +115,21 @@ namespace LingGuangV05.Desktop.Story
             Destroy(bsod.gameObject);
             XgJuice.Sfx.Play(XgJuice.Sfx.Id.Thud, .5f);
             PrologueDesk.Fill(PrologueDesk.Rect("Black", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero), Color.black, false);
-            yield return PrologueDesk.Wait(DeadSeconds);
+            yield return W(DeadSeconds);
 
             // 4. The repair.
             var card = desk.Text(PrologueDesk.Centered("Repair", root, Vector2.zero, new Vector2(size.x - 160, 120)), L(Prologue.RepairKey(burns)), 30, Color.clear, TextAlignmentOptions.Center);
-            for (float t = 0; t < RepairFade; t += Time.unscaledDeltaTime) { card.color = new Color(1, 1, 1, t / RepairFade); yield return null; }
+            for (float t = 0; t < RepairFade; t += Dt) { card.color = new Color(1, 1, 1, t / RepairFade); yield return null; }
             card.color = Color.white;
-            yield return PrologueDesk.Wait(RepairHold);
-            for (float t = 0; t < RepairFade; t += Time.unscaledDeltaTime) { card.color = new Color(1, 1, 1, 1 - t / RepairFade); yield return null; }
+            yield return W(RepairHold);
+            for (float t = 0; t < RepairFade; t += Dt) { card.color = new Color(1, 1, 1, 1 - t / RepairFade); yield return null; }
             card.text = "";
 
             // 5. It boots, to the same desktop.
             var boot = desk.Text(PrologueDesk.Centered("Boot", root, new Vector2(0, -120), new Vector2(800, 60)), L("boot"), 30, Color.white, TextAlignmentOptions.Center);
             var dots = new List<Image>();
             for (int i = 0; i < 4; i++) dots.Add(PrologueDesk.Fill(PrologueDesk.Centered("Dot", root, new Vector2(-45 + i * 30, 0), new Vector2(18, 18)), new Color32(70, 160, 255, 255), false));
-            for (float t = 0; t < BootSeconds; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < BootSeconds; t += Dt)
             {
                 for (int i = 0; i < dots.Count; i++) dots[i].color = new Color(.27f, .63f, 1, .35f + .65f * Mathf.Clamp01(Mathf.Sin(t * 6 - i * .8f)));
                 yield return null;

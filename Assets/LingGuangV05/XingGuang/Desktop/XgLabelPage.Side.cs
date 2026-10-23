@@ -90,7 +90,7 @@ namespace LingGuangV05.Desktop.XingGuang
             raiseBtn.rt.anchorMin = new Vector2(0, 1); raiseBtn.rt.anchorMax = new Vector2(1, 1);
             raiseBtn.rt.offsetMin = new Vector2(12, -80); raiseBtn.rt.offsetMax = new Vector2(-12, -48);
             raiseBtn.label.fontStyle = FontStyles.Bold;
-            UiTip.Add(raiseBlock, "加薪：每升一级，手动标注每题拿得更多。\n每两级换一个头衔。" + Sim.AiDisplayName + "替你按的自动答题不吃加薪。", "Pay raise: every level pays more per hand-labelled card.\nA new title every two levels. Auto-answer does not get the raise.");
+            UiTip.Add(raiseBlock, "加薪：每升一级，手动标注每题拿得更多。\n每两级换一个头衔。" + Sim.AiDisplayName + "替你按的自动答题拿" + (XgCatalog.AutoRaiseShare == .5 ? "一半" : (int)Math.Round(XgCatalog.AutoRaiseShare * 100) + "%") + "加薪加成。", "Pay raise: every level pays more per hand-labelled card.\nA new title every two levels. Auto-answer gets " + (int)Math.Round(XgCatalog.AutoRaiseShare * 100) + "% of the raise bonus.");
             UiTip.Add(raiseBtn.rt, "加薪：每升一级，手动标注每题拿得更多。\n每两级换一个头衔。", "Pay raise: every level pays more per hand-labelled card.\nA new title every two levels.");
         }
 

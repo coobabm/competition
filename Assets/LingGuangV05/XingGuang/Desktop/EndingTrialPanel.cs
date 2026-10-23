@@ -46,7 +46,7 @@ namespace LingGuangV05.Desktop.XingGuang
             si = Button("ReadSi", .02f, .26f, 16, 34, true, () => Session.Preparation());
             readingArea = Rect("ReadingArea", root, new Vector2(.29f, 0), Vector2.one, new Vector2(0, 226), new Vector2(-16, -104));
             reader = readingArea.gameObject.AddComponent<ScrollRect>(); reader.horizontal = false; reader.inertia = false;
-            reader.movementType = ScrollRect.MovementType.Clamped;
+            reader.movementType = ScrollRect.MovementType.Clamped; reader.scrollSensitivity = 30;
             var viewport = Rect("Viewport", readingArea, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             Panel(viewport, XgDark.Card); viewport.gameObject.AddComponent<RectMask2D>();
             content = Rect("Content", viewport, new Vector2(0, 1), Vector2.one, Vector2.zero, Vector2.zero); content.pivot = new Vector2(.5f, 1);

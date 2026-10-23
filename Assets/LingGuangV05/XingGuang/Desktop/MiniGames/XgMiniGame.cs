@@ -126,8 +126,14 @@ namespace LingGuangV05.Desktop.XingGuang.MiniGames
             if (GetComponent<Button>() == null) Context.PlayerInput(() => Down?.Invoke(Point(e)));
             else Down?.Invoke(Point(e));
         }
-        public void OnDrag(PointerEventData e) { if (held && Context != null && Context.IsActive) Drag?.Invoke(Point(e)); }
-        public void OnPointerUp(PointerEventData e) { if (held && Context != null && Context.IsActive) Up?.Invoke(Point(e)); held = false; }
+        // Only the left button presses; another button's drag/release must not move or end the left-button gesture.
+        public void OnDrag(PointerEventData e) { if (held && e.button == PointerEventData.InputButton.Left && Context != null && Context.IsActive) Drag?.Invoke(Point(e)); }
+        public void OnPointerUp(PointerEventData e)
+        {
+            if (e.button != PointerEventData.InputButton.Left) return;
+            if (held && Context != null && Context.IsActive) Up?.Invoke(Point(e));
+            held = false;
+        }
         void OnDisable() { held = false; }
     }
 }
