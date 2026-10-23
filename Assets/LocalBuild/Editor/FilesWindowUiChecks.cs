@@ -362,7 +362,7 @@ public static class FilesWindowUiChecks
             ctl.View.ShowTab("train");files.window.CloseWindow();
             Need(InstallHint(ctl)!=null&&!InstallHint(ctl).gameObject.activeSelf,"training installation hint respects the existing unowned import gate");
             yield return null;Canvas.ForceUpdateCanvases();yield return null;capture("files-01-unowned.png");check("empty folder visible and browsable without granting installation");
-            var node=XgCatalog.Node(XgSim.DataEntryNode);Need(node!=null,"data import node exists");double importCost=sim.NodeCost(node);Need(importCost>=100,"ordinary data import base price is at least 100");
+            var node=XgCatalog.Node(XgSim.DataEntryNode);Need(node!=null,"data import node exists");double importCost=sim.NodeCost(node);Need(importCost>=XgSim.StagePriceFloor[1]&&importCost==XgSim.NicePrice(importCost),"ordinary data import price is a round stage-one price (定价重做 2026-10-24)");
             rt.Sim.S.money=importCost-1;Need(!sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==importCost-1,"insufficient funds do not grant access");
             rt.Sim.S.money=importCost+1000;Need(sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==1000,"official purchase charges the displayed price once");
             Need(!sim.BuyNode(node.id,ctl.Host)&&rt.Sim.S.money==1000,"duplicate purchase no charge");

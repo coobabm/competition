@@ -27,7 +27,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.SettleMiniAction("sense", false, host, 10);
             Assert.IsTrue(sim.FeatureVisible("tree"), "All submitted answers count, including errors");
             Assert.IsFalse(sim.TeachingTrainOpen);
-            // Under the ≥¥100 price ladder the curve costs more than the opening answers pay; fund it here.
+            // The curve is ¥10 (定价重做 2026-10-24); fund it so the test is about the gate, not the wallet.
             host.Earn(sim.NodeCost(XgCatalog.Node("train.curve")));
             Assert.IsTrue(sim.BuyNode("train.curve", host));
             Assert.IsTrue(sim.FeatureVisible("train"));

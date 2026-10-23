@@ -10,7 +10,7 @@ namespace LingGuangV05.XingGuang
         public const int ReviewCapacity = 40, PrefetchPerDesk = 3, RouteWindow = 100, BrainWindow = 50, FeedWindow = 6;
         public const double NoisePenalty = 2, AuditProbability = .4, BrainGpuSeconds = .05;
         public const int NoiseCleanBatchLimit = 10;
-        public static double NoiseCleanMoneyPerItem => LingGuangV05.Core.PurchasePricing.AtLeastHundred(2);
+        public static double NoiseCleanMoneyPerItem => 20; // ¥20 a card, ten for ¥200 (定价重做 2026-10-24; the ×10 floor had made it ¥200 a card)
         public const double NoiseCleanGpuSecondsPerItem = .1;
         static long nextCollaborationGeneration;
         readonly long collaborationGeneration = Interlocked.Increment(ref nextCollaborationGeneration);
@@ -33,15 +33,15 @@ namespace LingGuangV05.XingGuang
         // No reference to XgCatalog here: its static node initialization appends these nodes.
         public static readonly XgNode[] LabelNodes =
         {
-            LabelNode("label.raise", null, "加薪", "Pay raise", "人工标注报酬：×2、×4、×6 … ×34，每买一次 +2 倍；与标注台商店共用。", "Hand pay: ×2, ×4, ×6 … ×34, +2× per raise; shared with the labelling shop.", 10, 17, 0),
-            LabelNode("label.auto", "label.raise", "自动答题", "Auto labelling", "全局每级每桌 +0.2 题/秒；需任一 60% 检查点。", "Each global level adds 0.2 cards/s per eligible desk; needs any 60% checkpoint.", 60, 10, 130),
-            LabelNode("label.coop", "label.auto", "拿不准才问我", "Ask when unsure", "用把握阈值分流；待复核总量 40，满时只跳过拿不准的题，有把握的照常赚钱。", "Route by confidence; when the 40-card review inbox is full, only the unsure cards are skipped and the sure ones keep earning.", 300, 1, 260),
-            LabelNode("label.brain", "label.coop", LingGuangV05.Core.AppNames.AiZh + "的大脑", "Local brain", "第四阶段：它会说短句了，文字题让它用自己的话判断，不再只靠最好的检查点打分。", "Stage 4: it speaks in short sentences now, so text cards are judged in its own words, not only by the best checkpoint's score.", 1200, 1, 390),
-            LabelNode("label.hard", "label.coop", "难例加价", "Hard-case bonus", "人工复核答对：报酬 ×1.5，样本 ×2。", "Correct human reviews: pay ×1.5, samples ×2.", 800, 1, 520),
-            LabelNode("label.audit", "label.coop", "自查", "Self-check", "拦下 40% 自动错题，退回复核，不污染训练数据。", "Return 40% of wrong automatic labels for review before they contaminate training data.", 1500, 1, 650),
-            LabelNode("label.parallel", "label.brain", "复核扩容", "Review inbox expansion", "待复核容量 40 → 120 题。", "Review inbox capacity increases from 40 to 120 cards.", 3000, 1, 780),
-            LabelNode(TrapMemoryNode, "label.coop", "题库比对", "Trap memory", "记住平台抽过的金标题；再遇到时交给你人工复核，不自动提交。", "Remember the platform's known-answer trap items; when one comes back it goes to your review inbox instead of being auto-submitted.", 800, 1, 910),
-            LabelNode(CaptchaAutofillNode, "label.coop", "验证码代填", "Captcha autofill", "需要第四阶段、手写数字检查点 ≥ 95%。它替你填验证码，3–6 秒后提交；太规律会被平台盯上。", "Needs stage 4 and a digits checkpoint of 95% or more. It fills in captchas for you after 3–6 s; being too regular gets noticed.", 2000, 1, 1040),
+            LabelNode("label.raise", null, "加薪", "Pay raise", "人工标注报酬：×2、×4、×6 … ×34，每买一次 +2 倍；与标注台商店共用。", "Hand pay: ×2, ×4, ×6 … ×34, +2× per raise; shared with the labelling shop.", 30, 17, 0),
+            LabelNode("label.auto", "label.raise", "自动答题", "Auto labelling", "全局每级每桌 +0.06 题/秒；需任一 60% 检查点。", "Each global level adds 0.06 cards/s per eligible desk; needs any 60% checkpoint.", 40, 10, 130),
+            LabelNode("label.coop", "label.auto", "拿不准才问我", "Ask when unsure", "用把握阈值分流；待复核总量 40，满时只跳过拿不准的题，有把握的照常赚钱。", "Route by confidence; when the 40-card review inbox is full, only the unsure cards are skipped and the sure ones keep earning.", 150, 1, 260),
+            LabelNode("label.brain", "label.coop", LingGuangV05.Core.AppNames.AiZh + "的大脑", "Local brain", "第四阶段：它会说短句了，文字题让它用自己的话判断，不再只靠最好的检查点打分。", "Stage 4: it speaks in short sentences now, so text cards are judged in its own words, not only by the best checkpoint's score.", 1000, 1, 390),
+            LabelNode("label.hard", "label.coop", "难例加价", "Hard-case bonus", "人工复核答对：报酬 ×1.5，样本 ×2。", "Correct human reviews: pay ×1.5, samples ×2.", 300, 1, 520),
+            LabelNode("label.audit", "label.coop", "自查", "Self-check", "拦下 40% 自动错题，退回复核，不污染训练数据。", "Return 40% of wrong automatic labels for review before they contaminate training data.", 500, 1, 650),
+            LabelNode("label.parallel", "label.brain", "复核扩容", "Review inbox expansion", "待复核容量 40 → 120 题。", "Review inbox capacity increases from 40 to 120 cards.", 2000, 1, 780),
+            LabelNode(TrapMemoryNode, "label.coop", "题库比对", "Trap memory", "记住平台抽过的金标题；再遇到时交给你人工复核，不自动提交。", "Remember the platform's known-answer trap items; when one comes back it goes to your review inbox instead of being auto-submitted.", 300, 1, 910),
+            LabelNode(CaptchaAutofillNode, "label.coop", "验证码代填", "Captcha autofill", "需要第四阶段、手写数字检查点 ≥ 95%。它替你填验证码，3–6 秒后提交；太规律会被平台盯上。", "Needs stage 4 and a digits checkpoint of 95% or more. It fills in captchas for you after 3–6 s; being too regular gets noticed.", 800, 1, 1040),
         };
 
         static XgNode LabelNode(string id, string parent, string name, string en, string note, string noteEn, double cost, int max, float y)
@@ -155,7 +155,7 @@ namespace LingGuangV05.XingGuang
             return node.id == "label.raise" ? RaiseLevel : node.id == "label.auto" ? GlobalAutoLevel : Has(node.id) ? 1 : 0;
         }
         public double LabelNodeCost(XgNode node)
-        { return LingGuangV05.Core.PurchasePricing.AtLeastHundred(node.id == "label.raise" ? NextRaiseCost : node.id == "label.auto" ? (GlobalAutoLevel >= XgCatalog.AutoMaxLevel ? double.PositiveInfinity : XgCatalog.AutoCost(GlobalAutoLevel)) : node.cost); }
+        { return node.id == "label.raise" ? NextRaiseCost : node.id == "label.auto" ? (GlobalAutoLevel >= XgCatalog.AutoMaxLevel ? double.PositiveInfinity : XgCatalog.AutoCost(GlobalAutoLevel)) : Math.Ceiling(node.cost); }
         public NodeStatus StatusLabelNode(XgNode node, IXgHost host)
         {
             if (LabelNodeLevel(node) >= Math.Max(1, node.maxLevel)) return NodeStatus.Owned;

@@ -41,10 +41,27 @@ namespace LingGuangV05.Tests
         }
         AtomicSaveStore ReceiptStore()=>new AtomicSaveStore(Path.Combine(directory,"offline-income",runtime.Sim.S.offlineIncome.lineage));
 
-        [Test] public void DefaultIsOffAndLegacyTimeDoesNotEarnAnything()
+        // 2026-10-24 (负责人): offline income is on by default once automatic answering is unlocked; the player may turn it off.
+        [Test] public void DefaultIsOnOnceUnlockedAndEarnsWithoutAnOptIn()
         {
-            Assert.IsFalse(runtime.Sim.S.offlineIncome.enabled);
+            Assert.IsTrue(runtime.Sim.S.offlineIncome.enabled,"on by default");
+            Assert.IsTrue(runtime.SaveNow());double balance=runtime.Sim.S.money;now+=600;Open();
+            Assert.AreEqual(2*600*XgOfflineRules.Efficiency,runtime.OfflineIncome,1e-9);
+            Assert.AreEqual(balance+2*600*XgOfflineRules.Efficiency,runtime.Sim.S.money,1e-9);
+        }
+        [Test] public void DefaultOnStillEarnsNothingBeforeAutomaticAnsweringIsUnlocked()
+        {
+            runtime.OfflineIncomeQuoteProvider=()=>new XgOfflineQuote{unlocked=false,eligible=false,incomePerSecond=0};
+            Assert.IsTrue(runtime.SaveNow());double balance=runtime.Sim.S.money;
+            Assert.IsFalse(runtime.SetOfflineIncomeEnabled(true),"cannot be switched before it is unlocked");
+            now+=86400;Open();
+            Assert.AreEqual(balance,runtime.Sim.S.money);Assert.AreEqual(0,runtime.OfflineIncome);
+        }
+        [Test] public void TurnedOffInSettingsEarnsNothing()
+        {
+            Assert.IsTrue(runtime.SetOfflineIncomeEnabled(false));Assert.IsFalse(runtime.Sim.S.offlineIncome.enabled);
             double balance=runtime.Sim.S.money;now+=86400;Open();
+            Assert.IsFalse(runtime.Sim.S.offlineIncome.enabled,"the player's off survives a reload");
             Assert.AreEqual(balance,runtime.Sim.S.money);Assert.AreEqual(0,runtime.OfflineIncome);
         }
         [Test] public void EnabledSettlementUsesTheOfflineEfficiencyAndChangesOnlyFunds()

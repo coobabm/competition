@@ -108,7 +108,7 @@ namespace LingGuangV05.XingGuang.Tests
             steps = XgGuide.Current(sim, host.money);
             Assert.AreEqual("opening.curve", steps[0].id);
             Assert.IsFalse(sim.TrainingUnlocked(XgTrack.Sequence));
-            host.money += sim.NodeCost(XgCatalog.Node("train.curve")); // ≥¥100 price ladder: twelve answers do not cover it
+            host.money += sim.NodeCost(XgCatalog.Node("train.curve")); // ¥10 since 2026-10-24; funded so this test does not depend on the streak
             Assert.IsTrue(sim.BuyNode("train.curve", host));
             Assert.IsTrue(sim.TrainingUnlocked(XgTrack.Sequence));
             steps = XgGuide.Current(sim, host.money);

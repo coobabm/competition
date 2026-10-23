@@ -324,11 +324,11 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 1; i <= XgCatalog.RaiseMax; i++)
             {
                 Assert.AreEqual(2 * i, XgCatalog.RaiseMultipliers[i], 1e-9, "×2, ×4, ×6 …: every raise adds exactly ×2");
-                double quoted = System.Math.Round(100 * System.Math.Pow(1.45,i));
+                double quoted = XgSim.NicePrice(30 * System.Math.Pow(1.5,i));
                 Assert.Greater(quoted, XgCatalog.RaiseCost(i - 1), "never cheaper than the raise before");
-                Assert.AreEqual(quoted,XgCatalog.RaiseCost(i),"each ordinary purchase quote follows the approved hundred-yuan scaling rule");
+                Assert.AreEqual(quoted,XgCatalog.RaiseCost(i),"定价重做 2026-10-24: ¥30 x 1.5 per raise, in round numbers");
             }
-            Assert.AreEqual(100, XgCatalog.RaiseCost(0));
+            Assert.AreEqual(30, XgCatalog.RaiseCost(0));
             Assert.AreNotEqual(XgCatalog.RaiseTitle(0, false), XgCatalog.RaiseTitle(XgCatalog.RaiseMax, false));
         }
 
@@ -339,7 +339,7 @@ namespace LingGuangV05.XingGuang.Tests
             var host = new Host { money = 0, compute = 0, blocker = "停电" };
             Assert.AreEqual(0, sim.BuyRaise(host));
             for (int i = 0; i < 200 && host.money < sim.NextRaiseCost; i++) sim.Answer("mnist", sim.Card("mnist").truth, host);
-            Assert.GreaterOrEqual(host.money, 100);
+            Assert.GreaterOrEqual(host.money, XgCatalog.RaiseCost(0));
             Assert.AreEqual(1, sim.BuyRaise(host));
             Assert.AreEqual(2, sim.RaiseMultiplier, 1e-9);
             Assert.AreEqual(0, sim.S.epochs);
@@ -351,7 +351,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = new XgSim(); var host = new Host { money = 1e9 };
             double cost = sim.RaiseCostFor(3, out int levels);
             Assert.AreEqual(3, levels);
-            Assert.AreEqual(100 + 145 + 210, cost, 1e-9);
+            Assert.AreEqual(30 + 45 + 70, cost, 1e-9);
             Assert.AreEqual(3, sim.BuyRaise(host, 3));
             Assert.AreEqual(1e9 - cost, host.money, 1e-6);
             Assert.AreEqual(XgCatalog.RaiseMax - 3, sim.BuyRaise(host, 100));
@@ -363,7 +363,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void AffordableRaisesCountsWhatTheWalletCovers()
         {
-            var sim = new XgSim(); var host = new Host { money = 100 + 145 + 5 };
+            var sim = new XgSim(); var host = new Host { money = 30 + 45 + 5 };
             Assert.AreEqual(2, sim.AffordableRaises(host));
             Assert.AreEqual(2, sim.BuyRaise(host, 99));
             Assert.AreEqual(5, host.money, 1e-9);
@@ -401,7 +401,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void RaiseBoostsAutomaticAnswersByHalfItsBonus()
+        public void RaiseBoostsAutomaticAnswersByAQuarterOfItsBonus()
         {
             // The 摆渡众包 spot checks would fine this 80% model's wrong labels; they are covered in XgQualityTests.
             var sim = new XgSim { PlatformChecks = false }; var host = new Host { money = 600 };
@@ -412,7 +412,7 @@ namespace LingGuangV05.XingGuang.Tests
             double income = sim.AutoIncome("mnist", host);
             sim.S.payRaise = XgCatalog.RaiseMax;
             double boost = 1 + XgCatalog.AutoRaiseShare * (XgCatalog.RaiseMultipliers[XgCatalog.RaiseMax] - 1);
-            Assert.AreEqual(17.5, boost, 1e-9, "×34 hand pay gives automatic answers ×17.5");
+            Assert.AreEqual(9.25, boost, 1e-9, "定价重做 2026-10-24: x34 hand pay gives automatic answers x9.25 (a quarter of the bonus)");
             Assert.AreEqual(income * boost, sim.AutoIncome("mnist", host), 1e-9);
             Assert.AreEqual(sim.PayFor("mnist", 1) * boost, sim.AutoPayFor("mnist", 1), 1e-9);
             Assert.Less(sim.AutoPayFor("mnist", 1), sim.ManualPayFor("mnist", 1), "hand answers still pay more per card");

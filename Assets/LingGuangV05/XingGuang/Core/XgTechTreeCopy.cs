@@ -77,7 +77,7 @@ namespace LingGuangV05.XingGuang
             { "secret.6", new Copy("配置指南 GUIDE 工具2016","Setup guide GUIDE tool 2016","显示配置建议","Show setup suggestions","显示预训练配置","Show pretraining setup") },
             { "datacenter", new Copy("机柜租赁 IDC 工具2016","Rack rental IDC tool 2016","扩展计算设备","Expand computing hardware","显示机房机架","Show the server rack") },
             { "label.raise", new Copy("答题加薪 PAY 工具2016","Answer pay PAY tool 2016","提高答题报酬","Increase answer pay","提高手动答题报酬","Increase pay for manual answers") },
-            { "label.auto", new Copy("自动答题 AUTO 工具2016","Auto answering AUTO tool 2016","自动处理标注题","Automate labelling cards","每级每桌加0.2题/秒","Add 0.2 cards/s per desk per level") },
+            { "label.auto", new Copy("自动答题 AUTO 工具2016","Auto answering AUTO tool 2016","自动处理标注题","Automate labelling cards","每级每桌加0.06题/秒","Add 0.06 cards/s per desk per level") },
             { "label.coop", new Copy("把握门槛 CONF 工具2016","Confidence gate CONF tool 2016","筛选待复核题","Select cards for review","低把握题转人工","Route low-confidence cards to manual review") },
             { "label.brain", new Copy("本地判题 LM 工具2016","Local judging LM tool 2016","启用模型判题","Enable model judgment","文字题交由模型判断","Let the model judge text questions") },
             { "label.hard", new Copy("难例奖励 HARD 工具2016","Hard-case reward HARD tool 2016","提高复核报酬","Increase review pay","新题复核报酬×1.5","New-card review pay ×1.5") },

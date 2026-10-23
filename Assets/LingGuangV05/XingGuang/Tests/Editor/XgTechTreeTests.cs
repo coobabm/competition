@@ -142,15 +142,16 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim=new XgSim();var host=new Host();
             var node=new XgNode {id="price.test",tree="trunk",stage=1,cost=57};
-            Assert.AreEqual(150,sim.NodeCost(node),"ceil(57 * .25) * 10, not ceil(57 * 2.5)");
-            node.stage=2;Assert.AreEqual(150,sim.NodeCost(node),"later-stage positive prices also meet the new purchase floor");
-            node.stage=1;sim.S.stage=6;Assert.AreEqual(150,sim.NodeCost(node),"later purchase uses node stage");
-            // The final floor follows the existing stage-one scaling; no purchase is retroactively charged.
+            // 定价重做 2026-10-24: raw = ceil(57 * .25) * 10 = 150 (not ceil(57 * 2.5)); quote = Nice(.78 * 150^.75) = 35.
+            Assert.AreEqual(35,sim.NodeCost(node),"stage-one raw price x10 once, then the stage formula");
+            node.stage=2;Assert.AreEqual(30,sim.NodeCost(node),"stage two: raw 15, 1.4 * 15^.75 = 11, raised to the stage floor 30");
+            node.stage=1;sim.S.stage=6;Assert.AreEqual(35,sim.NodeCost(node),"later purchase uses node stage");
+            // Every stage-one functional unlock is at least the stage floor; no purchase is retroactively charged.
             foreach(var n in XgCatalog.Nodes)
             {
                 if(XgSim.EarlyTechnologyPriceFactor(n)!=10)continue;
                 double price=sim.NodeCost(n);
-                Assert.IsTrue(price == 0 || price >= 100, n.id);
+                Assert.IsTrue(price == 0 || price >= XgSim.StagePriceFloor[1], n.id);
             }
             var owned=XgCatalog.Node("train.curve");sim.S.unlocked.Add(owned.id);
             double money=host.money,spent=sim.S.totalSpent;

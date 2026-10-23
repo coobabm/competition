@@ -28,7 +28,7 @@ namespace LingGuangV05.Desktop.Story
         public const float HoldToSkip = .8f, ClickSeconds = .3f;
         const float SkipSpeed = 400;
         /// <summary>Steps that start a segment: a skip or a hurry ends at the next of these.</summary>
-        static readonly string[] Segments = { "title", "music-intent", "virus", "txt", "hijack", "grab", "shutdown", "extract", "setup", "done" };
+        static readonly string[] Segments = { "title", "virus", "txt", "hijack", "grab", "shutdown", "extract", "setup", "done" };
 
         bool pacing, hurry, skipping, skipAll, confirmingSkip;
         float pressedAt = -1, segmentStartedAt, runStartedAt;

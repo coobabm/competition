@@ -219,7 +219,7 @@ namespace LingGuangV05.Desktop.Story
             SetStep("title");
             yield return TitleAndBoot();
             if (!Skipping) StartCoroutine(desk.Balloon(this, L("who_360"), L("bubble_boot"), 5));
-            yield return ApproachMusicBeforeVirus();
+            // The song already plays from the desktop (GameMusic); the old music-intent beat is gone (负责人 10/24): straight to the alert.
 
             // Before Step 1: 360 finds it, and it will not let the player say 是.
             SetStep("virus");

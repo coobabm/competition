@@ -548,12 +548,12 @@ namespace LingGuangV05.XingGuang
         /// 加薪: hand-labelling pay multiplier per raise level. Whole numbers only: the first raise doubles the pay and
         /// every later one adds ×2 (×1 → ×2 → ×4 → ×6 … → ×34 over 17 raises), so each promotion reads cleanly at the
         /// desk. Applies in full to hand answers and chat questions; auto-answer gets <see cref="AutoRaiseShare"/> of the bonus.
-        /// Costs grow ×1.45 per level from ¥100 (never under ¥100, so the ×10 floor of PurchasePricing never makes a later
-        /// raise cheaper than the one before it).
+        /// Costs (定价重做 2026-10-24): ¥30 × 1.5 per level in small round numbers (30, 45, 70, 100, 150, 230 …), so the first
+        /// raise is a stage-one buy of under a minute and each later one stays a sensible side purchase of its stage.
         /// </summary>
         public static readonly double[] RaiseMultipliers = { 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
         public static int RaiseMax { get { return RaiseMultipliers.Length - 1; } }
-        public static double RaiseCost(int level) { return LingGuangV05.Core.PurchasePricing.AtLeastHundred(Math.Round(100 * Math.Pow(1.45, level))); }
+        public static double RaiseCost(int level) { return XgSim.NicePrice(30 * Math.Pow(1.5, Math.Max(0, level))); }
         static readonly string[] RaiseTitlesZh = { "实习标注员", "标注员", "熟练标注员", "资深标注员", "标注组长", "质检主管", "项目经理", "标注总监", "合伙人", "首席标注官" };
         static readonly string[] RaiseTitlesEn = { "Intern labeller", "Labeller", "Skilled labeller", "Senior labeller", "Team lead", "QA lead", "Project manager", "Labelling director", "Partner", "Chief labelling officer" };
         /// <summary>Job title for a raise level: a new title every two raises, the last one at max.</summary>
@@ -676,12 +676,16 @@ namespace LingGuangV05.XingGuang
         /// <summary>Auto-answering needs a deployed checkpoint at least this good.</summary>
         public const double AutoMinAccuracy = .6;
         public const int AutoMaxLevel = 10;
-        /// <summary>Cards per second per auto-answer level (needs the GPUs running).</summary>
-        public const double AutoRatePerLevel = .2;
+        /// <summary>
+        /// Cards per second per auto-answer level on every desk with a ≥ 60% checkpoint (needs the GPUs running). 定价重做
+        /// 2026-10-24: 0.06 (was 0.2) with a quarter of the raise bonus (was half), so by stage four 自动答题 earns about
+        /// as much as the player's own hands (1–1.5×) instead of several times more; it still pays 60% overnight.
+        /// </summary>
+        public const double AutoRatePerLevel = .06;
         /// <summary>Automatic answers get this share of the 加薪 bonus: pay × (1 + share × (raise multiplier − 1)).</summary>
-        public const double AutoRaiseShare = .5;
-        /// <summary>¥120 × 1.55 per level (120, 186, 288, 447, 693 …); starts at ≥ ¥100 so prices only ever rise.</summary>
-        public static double AutoCost(int level) { return LingGuangV05.Core.PurchasePricing.AtLeastHundred(Math.Round(120 * Math.Pow(1.55, level))); }
+        public const double AutoRaiseShare = .25;
+        /// <summary>¥40 × 2.2 per level in round numbers (40, 90, 195, 430, 940 …): early levels are cheap, later ones are a stage's big buy.</summary>
+        public static double AutoCost(int level) { return XgSim.NicePrice(40 * Math.Pow(2.2, Math.Max(0, level))); }
 
         /// <summary>Lines for the sequence cards (public-domain Tang poems).</summary>
         public static readonly string[] PoemLines =

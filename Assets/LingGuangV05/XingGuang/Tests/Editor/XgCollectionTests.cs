@@ -106,7 +106,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.BuyNode("imagenet.pack", host));
             Assert.IsTrue(sim.Downloading("imagenet"));
             double before = host.money, cost = sim.AccelerateCost("imagenet");
-            Assert.AreEqual(System.Math.Max(XgSim.AccelerateMin, System.Math.Ceiling(sim.DownloadLeft("imagenet") * XgSim.AcceleratePerSecond)), cost, 1, "¥ for the seconds it saves");
+            Assert.AreEqual(XgSim.NicePrice(System.Math.Max(XgSim.AccelerateMin, System.Math.Ceiling(sim.DownloadLeft("imagenet") * XgSim.AcceleratePerSecond))), cost, 100, "¥ for the seconds it saves, in round numbers");
             Assert.IsTrue(sim.Accelerate("imagenet", host));
             Assert.AreEqual(before - cost, host.money, 1e-9);
             Assert.IsFalse(sim.Owns("imagenet"), "download completion only creates a file");

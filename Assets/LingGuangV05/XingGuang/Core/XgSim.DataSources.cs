@@ -197,7 +197,7 @@ namespace LingGuangV05.XingGuang
                 list.Add(new XgDataOffer
                 {
                     id = n.id, datasetId = d.id, source = XgDataSource.Public, node = n.id, name = d.name, nameEn = d.nameEn,
-                    description = n.note, descriptionEn = n.noteEn, price = Math.Ceiling(n.cost * StoryResearchPrice), samples = d.samples, noise = noise,
+                    description = n.note, descriptionEn = n.noteEn, price = ListPrice(n), samples = d.samples, noise = noise,
                     downloadSec = DownloadSecondsAt(BatchMB(d), BroadbandMBps[0]), sizeMB = d.sizeMB, batches = PackBatches(d), stage = n.stage, month = StageMonth(n.stage),
                 });
             }
@@ -209,7 +209,7 @@ namespace LingGuangV05.XingGuang
                 list.Add(new XgDataOffer
                 {
                     id = d.id + ".junk", datasetId = d.id, source = XgDataSource.Junk, name = (string)j[3], nameEn = (string)j[4],
-                    description = (string)j[5], descriptionEn = (string)j[6], price = Math.Round((n != null ? n.cost * StoryResearchPrice : d.price) * JunkPriceFactor),
+                    description = (string)j[5], descriptionEn = (string)j[6], price = n != null ? NicePrice(ListPrice(n) * JunkPriceFactor) : Math.Round(d.price * JunkPriceFactor),
                     samples = samples, noise = (double)j[1], sizeMB = d.sizeMB * JunkSampleFactor, downloadSec = DownloadSecondsAt(d.sizeMB * JunkSampleFactor, BroadbandMBps[0] * JunkLineShare),
                     stage = n != null ? n.stage : 1, month = (int)j[2],
                 });
@@ -237,10 +237,8 @@ namespace LingGuangV05.XingGuang
                 });
             }
             list.Add(CrawlOfferDef());
-            // Purchase quotes only: per-row crowd wages remain continuous operating expenses.
-            foreach (var offer in list)
-                if (offer.source != XgDataSource.Crowd)
-                    offer.price = LingGuangV05.Core.PurchasePricing.AtLeastHundred(offer.price);
+            // Public and junk packs follow the tree's own list price (定价重做 2026-10-24); story copies and the crawl carry
+            // their own prices; per-row crowd wages remain continuous operating expenses. No ×10 floor any more.
             return list;
         }
 

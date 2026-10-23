@@ -51,7 +51,7 @@ namespace LingGuangV05.Desktop.Story
             dodge.Pressed = () => presses++;
             int handled = 0;
 
-            // The music-intent cursor has arrived; the alert now owns the screen.
+            // The alert now owns the screen (an earlier scripted beat may still hold the mouse).
             Release();
             Think(L("m_virus"), 4);
             while (!answered)

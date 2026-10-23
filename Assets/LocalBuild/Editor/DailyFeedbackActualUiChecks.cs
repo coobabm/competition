@@ -47,6 +47,9 @@ public static class DailyFeedbackActualUiChecks
         lab.S.abilitiesEmerged=Enumerable.Range(1,4).ToList();lab.S.teachingFlow=false;
         lab.S.spiderIntroDone=lab.S.firstWordsSaid=true;lab.S.teachIntroSaid=lab.S.teachThirdSaid=lab.S.teachTreeSaid=lab.S.teachTrainSaid=true;
         lab.MarkAfterthought("first.drift");
+        // A stage-4 player has long had the 自动答题 idea. Without this the AutoLabelEpiphany cutscene starts mid-check and holds
+        // the LCD input (the Train probe then read a stale hover over the curve's ChartArea at 1280x720).
+        lab.S.epiphanyVersion=1;lab.S.epiphany=lab.S.autoLabelRevealed=true;
         foreach(string id in new[]{"train.curve","shared.lr","train.checkpoint"})if(!lab.S.unlocked.Contains(id))lab.S.unlocked.Add(id);
         for(int i=0;i<3;i++){lab.RecordDailySongCompleted("qa-history-song-"+i,"qa-history-play-"+i);lab.RecordDailyGameCompleted("gomoku","qa-history-game-"+i,true);}
         lab.S.lessonCollected=XgTrainingLessons.Cards.Select(x=>x.id).ToList();lab.S.lessonDiscovered=new List<string>(lab.S.lessonCollected);

@@ -5,7 +5,10 @@ namespace LingGuangV05.Core
     [Serializable] public sealed class XgOfflineState
     {
         public string lineage = "";
-        public bool enabled, eligible;
+        // On by default (负责人 2026-10-24): it only ever pays once automatic answering is unlocked (the quote's
+        // `unlocked`/`eligible`), and the settings row can still turn it off. Old saves are not supported.
+        public bool enabled = true;
+        public bool eligible;
         public double incomePerSecond;
         public long capturedUnix, receipt;
     }

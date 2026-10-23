@@ -302,7 +302,10 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(3000, calculus.cost); Assert.AreEqual(3, calculus.stage); Assert.AreEqual(powers.id, calculus.parent);
             Assert.AreEqual(1500, auto.cost); Assert.AreEqual(2, auto.stage); Assert.IsTrue(string.IsNullOrEmpty(auto.parent));
             var sim = new XgSim();
-            Assert.AreEqual(800, sim.NodeCost(powers)); Assert.AreEqual(3000, sim.NodeCost(calculus)); Assert.AreEqual(1500, sim.NodeCost(auto));
+            // 定价重做 2026-10-24: the authored 800 / 3000 / 1500 go through their stage's formula, Nice(scale * raw^.75).
+            Assert.AreEqual(210, sim.NodeCost(powers)); Assert.AreEqual(1200, sim.NodeCost(calculus)); Assert.AreEqual(340, sim.NodeCost(auto));
+            Assert.AreEqual(XgSim.TechQuote(800, 2), sim.NodeCost(powers)); Assert.AreEqual(XgSim.TechQuote(3000, 3), sim.NodeCost(calculus));
+            Assert.Less(sim.NodeCost(mixed), sim.NodeCost(powers)); Assert.Less(sim.NodeCost(powers), sim.NodeCost(calculus));
         }
     }
 }

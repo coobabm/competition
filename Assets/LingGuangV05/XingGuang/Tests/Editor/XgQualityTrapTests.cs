@@ -118,7 +118,7 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = Ready(coop: true); var host = new Host();
             var node = XgCatalog.Node(XgSim.TrapMemoryNode);
-            Assert.IsNotNull(node); Assert.AreEqual("label.coop", node.parent); Assert.AreEqual(800, node.cost);
+            Assert.IsNotNull(node); Assert.AreEqual("label.coop", node.parent); Assert.AreEqual(300, node.cost);
             Assert.AreEqual(XgSim.NodeStatus.Buyable, sim.StatusLabelNode(node, host));
             Assert.AreEqual(XgSim.NodeStatus.Locked, Ready(coop: false).StatusLabelNode(node, host));
 

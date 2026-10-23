@@ -38,7 +38,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(XgSim.CrawlDataset, def.datasetId);
             Assert.IsNotNull(XgCatalog.Dataset(def.datasetId));
             Assert.AreEqual(XgSim.CrawlCap, def.samples);
-            Assert.AreEqual(800, def.price, 1e-9, "one-time crawling purchase follows the hundred-yuan price policy");
+            Assert.AreEqual(8, def.price, 1e-9, "one-time crawling purchase is the crowd rate (200 x ¥0.04), no x10 floor since 2026-10-24");
             Assert.AreEqual(3, def.stage);
             Assert.IsFalse(string.IsNullOrEmpty(def.nameEn) || string.IsNullOrEmpty(def.descriptionEn));
 

@@ -48,7 +48,7 @@ namespace LingGuangV05.XingGuang.Tests
         static XgSim Reload(XgSim sim) => new XgSim(JsonUtility.FromJson<XgState>(JsonUtility.ToJson(sim.S)));
 
         [Test]
-        public void RealPurchaseCosts3000AndImmediatelyMakesRoomForCard41ThenSkipsPast120()
+        public void RealPurchaseCosts2000AndImmediatelyMakesRoomForCard41ThenSkipsPast120()
         {
             var sim = Eligible(); var host = new Host();
             Assert.AreEqual(40, sim.ReviewLimit);
@@ -62,7 +62,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(unpaid, host.money, 1e-9, "a skipped card pays and fines nothing");
             double before = host.money;
             Assert.IsTrue(sim.BuyNode("label.parallel", host), "real node purchase, not injected entitlement");
-            Assert.AreEqual(3000, before - host.money, 1e-9);
+            Assert.AreEqual(2000, before - host.money, 1e-9, "定价重做 2026-10-24: ¥2000 (was ¥3000)");
             Assert.AreEqual(1, host.spends);
             Assert.AreEqual(120, sim.ReviewLimit);
             Assert.IsFalse(sim.ReviewFull);
@@ -86,16 +86,16 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void InsufficientFundsDoNotGrantCapacityAndFullInboxSkipsWaitingCards()
         {
-            var sim = Eligible(); var host = new Host { money = 2999 };
+            var sim = Eligible(); var host = new Host { money = 1999 };
             Fill(sim, host, 40); var waiting = Waiting(sim);
             Assert.IsFalse(sim.BuyNode("label.parallel", host));
-            Assert.AreEqual(2999, host.money);
+            Assert.AreEqual(1999, host.money);
             Assert.AreEqual(40, sim.ReviewLimit);
             Assert.IsTrue(sim.ReviewFull);
             Assert.IsTrue(sim.Route(waiting.id, host));
             CollectionAssert.DoesNotContain(sim.S.queue, waiting);
             Assert.AreEqual(40, sim.ReviewCount());
-            Assert.AreEqual(2999, host.money, "skipped, not paid");
+            Assert.AreEqual(1999, host.money, "skipped, not paid");
         }
 
         [Test]

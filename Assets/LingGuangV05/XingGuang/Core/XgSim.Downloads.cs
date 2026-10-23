@@ -142,7 +142,8 @@ namespace LingGuangV05.XingGuang
             var n = XgCatalog.Node(dataset + ".pack");
             if (n == null) return double.PositiveInfinity;
             if (index <= 0) return NodeCost(n);
-            double basePrice = LingGuangV05.Core.PurchasePricing.AtLeastHundred(Math.Ceiling(n.cost * StoryResearchPrice * Math.Pow(BatchPriceGrowth, index)));
+            // Each further batch costs 1.35× the one before (a rising price within one pack, like a shop's reroll).
+            double basePrice = NicePrice(ListPrice(n) * Math.Pow(BatchPriceGrowth, index));
             return Math.Ceiling(basePrice * (1 - Math.Min(.7, RelicFx.techCut)));
         }
 
@@ -424,7 +425,7 @@ namespace LingGuangV05.XingGuang
         public double AccelerateCost(string key)
         {
             var x = FirstQueued(key);
-            return LingGuangV05.Core.PurchasePricing.AtLeastHundred(x == null ? AccelerateMin : Math.Max(AccelerateMin, Math.Ceiling(SecondsLeft(x) * AcceleratePerSecond)));
+            return NicePrice(x == null ? AccelerateMin : Math.Max(AccelerateMin, Math.Ceiling(SecondsLeft(x) * AcceleratePerSecond))); // grows with the wait, never jumps ×10 (定价重做 2026-10-24)
         }
 
         /// <summary>Finishes the next item of this key at once (it still needs the room on the disk).</summary>

@@ -223,7 +223,7 @@ namespace LingGuangV05.CaseMenu
             offlineIncomeTitle.color = state >= 1 ? Ink : Muted;
             string pct = (LingGuangV05.Core.XgOfflineRules.Efficiency * 100).ToString("0", System.Globalization.CultureInfo.InvariantCulture) + "%";
             string hours = (LingGuangV05.Core.XgOfflineRules.MaxSeconds / 3600).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
-            offlineIncomeDetail.text = state == 0 ? T("解锁自动答题后可开启。", "Available after automatic answering is unlocked.")
+            offlineIncomeDetail.text = state == 0 ? T("解锁自动答题后自动开启。", "Turns on once automatic answering is unlocked.")
                 : state < 0 ? T("进入游戏后可设置。", "Available once a game is loaded.")
                 : T("退出游戏后，下次启动补算挂机收入。按" + pct + "效率，最多" + hours + "小时。仅增加游戏资金。",
                     "Idle income is settled on your next launch: " + pct + " efficiency, up to " + hours + " hours. Game funds only.");

@@ -23,7 +23,7 @@ public static class PrologueMusicOpeningChecks
     [Serializable] sealed class Report
     {
         public string status="running", failure="";
-        public string scope="Isolated empty-scene production prologue coroutine and UI. Original title/boot iterator skipped; no Main scene, save owner, model or real music app. Verifies event order, no icon click dispatched, cursor/input ownership cleanup, missing-icon fallback and interruption. Full LCD input relay, actual music player and new/load menu integration require scene QA.";
+        public string scope="Isolated empty-scene production prologue coroutine and UI. Original title/boot iterator skipped; no Main scene, save owner, model or real music app. Verifies boot goes straight to the virus alert (no music-intent beat since 2026-10-24), no music icon click dispatched, cursor/input ownership cleanup. Full LCD input relay, actual music player and new/load menu integration require scene QA.";
         public List<string> checks=new List<string>(),steps=new List<string>(),errors=new List<string>();
     }
     static PrologueMusicOpeningChecks(){EditorApplication.playModeStateChanged+=State;}
@@ -87,33 +87,26 @@ public static class PrologueMusicOpeningChecks
         try
         {
             // Follow the real Run iterator at the post-boot boundary, not a duplicate test sequence.
+            // Since 2026-10-24 (负责人) the music already plays from the desktop and the old music-intent beat is removed:
+            // after the title/boot the opening goes straight to the virus alert, with no cursor trip to the music icon.
             var run=(IEnumerator)Call(director,"Run");
             Need(run.MoveNext()&&director.Step=="title","Production Run first yields original title/boot");
-            Need(run.MoveNext(),"Production Run has a post-boot sequence");
-            yield return run.Current;
-            Need(director.Step=="music-interrupted","Music approach finishes before virus creation");
-            Need(Vector2.Distance(desk.Cursor.anchoredPosition,desk.LocalOf(music))<.01f,"Simulated cursor reaches actual music shortcut center");
-            Need(opens==0,"Approach never clicks or opens music shortcut");
-            Need((bool)Get(director,"hijacked")&&!Cursor.visible,"Approach owns the simulated cursor until alert construction");
-            Need(run.MoveNext()&&director.Step=="virus","Production Run immediately continues into virus alert");
+            Need(run.MoveNext()&&director.Step=="virus","Production Run continues straight from boot into the virus alert");
+            Need(typeof(PrologueDirector).GetMethod("ApproachMusicBeforeVirus",F)==null,"The music-intent beat no longer exists in the director");
+            var segments=(string[])typeof(PrologueDirector).GetField("Segments",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+            Need(!segments.Contains("music-intent")&&segments.SequenceEqual(new[]{"title","virus","txt","hijack","grab","shutdown","extract","setup","done"}),"Pacing segments run title -> virus -> txt ... without a music segment");
             var virus=(IEnumerator)run.Current;
             Need(virus.MoveNext(),"Production virus alert is constructed and awaits player answer");
-            Need(Get(director,"virusBox")!=null,"Virus window exists before input is released");
-            Need(!(bool)Get(director,"hijacked")&&Cursor.visible&&!desk.Cursor.gameObject.activeSelf,"Virus restores cursor and relinquishes input ownership");
-            var expected=new[]{"music-intent","music-approach","music-interrupted","virus"};
-            var ordered=report.steps.Where(x=>expected.Contains(x)).ToArray();
-            Need(ordered.SequenceEqual(expected),"Exact production music-intent -> music-approach -> music-interrupted -> virus order");
-            Call(director,"StopPrologue");
-            music.gameObject.SetActive(false);
-            yield return (IEnumerator)Call(director,"ApproachMusicBeforeVirus");
-            Need(!(bool)Get(director,"hijacked")&&Cursor.visible,"Unavailable music shortcut returns control without hanging");
-            Call(director,"StopPrologue");music.gameObject.SetActive(true);
-            var interrupted=(IEnumerator)Call(director,"ApproachMusicBeforeVirus");
-            Need(interrupted.MoveNext()&&(bool)Get(director,"hijacked"),"Interruption fixture starts while cursor is owned");
+            yield return null;
+            Need(Get(director,"virusBox")!=null,"Virus window exists");
+            Need(!(bool)Get(director,"hijacked")&&Cursor.visible&&(desk.Cursor==null||!desk.Cursor.gameObject.activeSelf),"The player keeps the real cursor and input at the alert");
+            Need(!report.steps.Any(x=>x.StartsWith("music-")),"No music-intent/approach/interrupted step is logged");
+            var thought=(TMPro.TMP_Text)Get(director,"thought");
+            Need(thought==null||!thought.text.Contains("切了"),"No 「先把歌切了」 thought is shown");
             director.enabled=false;
-            Need(!(bool)Get(director,"hijacked")&&Cursor.visible&&!desk.Cursor.gameObject.activeSelf,"Disabling director restores cursor and input ownership");
+            Need(!(bool)Get(director,"hijacked")&&Cursor.visible&&(desk.Cursor==null||!desk.Cursor.gameObject.activeSelf),"Disabling director restores cursor and input ownership");
             Need(Get(director,"thinking")==null,"Disabling director cancels outstanding opening thought");
-            Need(opens==0,"Normal, fallback and interrupted paths dispatch zero music-open events");
+            Need(opens==0,"The opening dispatches zero music-open events");
         }
         finally
         {

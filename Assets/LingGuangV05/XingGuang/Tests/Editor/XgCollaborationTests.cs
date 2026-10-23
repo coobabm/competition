@@ -438,9 +438,9 @@ namespace LingGuangV05.XingGuang.Tests
             double steps = sim.S.sequence.steps, score = sim.CeilingAcc(sim.S.sequence), best = sim.BestAcc("spam"), trainedSeconds = sim.S.trainedSeconds;
             int models = sim.S.models.Count, epochs = sim.S.epochs;
             Assert.AreEqual(10, Clean(sim, "spam", host));
-            Assert.AreEqual(2, sim.Noise("spam")); Assert.AreEqual(money - 2000, host.money, 1e-9);
+            Assert.AreEqual(2, sim.Noise("spam")); Assert.AreEqual(money - 10 * XgSim.NoiseCleanMoneyPerItem, host.money, 1e-9);
             Assert.AreEqual(1, host.trained, 1e-9); Assert.AreEqual(1, host.spendCalls); Assert.AreEqual(1, host.trainCalls);
-            Assert.AreEqual(2000, sim.S.totalSpent, 1e-9);
+            Assert.AreEqual(10 * XgSim.NoiseCleanMoneyPerItem, sim.S.totalSpent, 1e-9);
             Assert.AreEqual(samples, sim.Samples("spam")); Assert.AreEqual(labels, sim.Labels("spam"));
             Assert.AreEqual(income, sim.S.totalIncome); Assert.AreEqual(best, sim.BestAcc("spam"));
             Assert.AreEqual(models, sim.S.models.Count); Assert.AreEqual(epochs, sim.S.epochs);
@@ -461,7 +461,7 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void CleaningNoiseUsesTheAffordableRequestedSubset()
         {
-            var sim = Noisy(); var host = new Host { money = 401 };
+            var sim = Noisy(); var host = new Host { money = 2 * XgSim.NoiseCleanMoneyPerItem + 1 };
             Assert.AreEqual(2, Clean(sim, "spam", host)); Assert.AreEqual(1, host.money, 1e-9); Assert.AreEqual(.2, host.trained, 1e-9);
             Assert.AreEqual(10, sim.Noise("spam")); host.money = 600;
             Assert.AreEqual(3, Clean(sim, "spam", host, 3)); Assert.AreEqual(7, sim.Noise("spam"));

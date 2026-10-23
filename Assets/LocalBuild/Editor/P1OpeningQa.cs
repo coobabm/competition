@@ -274,7 +274,7 @@ public static class P1OpeningQa
     /// <summary>Every segment skipped by the same call a 0.8 s hold makes, one after another.</summary>
     static void TickSegments(string step)
     {
-        if (Array.IndexOf(new[] { "title", "music-intent", "virus", "txt", "hijack", "grab", "shutdown", "extract" }, step) >= 0)
+        if (Array.IndexOf(new[] { "title", "virus", "txt", "hijack", "grab", "shutdown", "extract" }, step) >= 0)
             After("seg-" + step, .3f, () =>
             {
                 typeof(PrologueDirector).GetMethod("SkipSegment", Flags).Invoke(director, null);

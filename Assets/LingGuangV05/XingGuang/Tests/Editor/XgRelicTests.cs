@@ -225,7 +225,7 @@ namespace LingGuangV05.XingGuang.Tests
             var node = XgCatalog.Nodes.First(n => n.cost > 20 && !double.IsInfinity(n.cost) && !XgItems.IsItem(n.id));
             var plain = Fresh(); var coupon = With("coupon"); var angel = With("angel_term"); var both = With("coupon", "angel_term");
             double basePrice = plain.NodeCost(node);
-            Assert.GreaterOrEqual(basePrice,100,"ordinary quote is scaled before discounts");
+            Assert.GreaterOrEqual(basePrice,XgSim.StagePriceFloor[System.Math.Max(1,System.Math.Min(6,node.stage))],"ordinary quote is on its stage scale before discounts");
             Assert.AreEqual(System.Math.Ceiling(basePrice*.9), coupon.NodeCost(node), 1e-6);
             Assert.AreEqual(System.Math.Ceiling(basePrice*.9), angel.NodeCost(node), 1e-6);
             Assert.AreEqual(System.Math.Ceiling(basePrice*.8), both.NodeCost(node), 1e-6, "discounts apply to the final ordinary quote and stack additively");

@@ -76,8 +76,9 @@ namespace LingGuangV05.XingGuang.Tests
             {
                 var pack = XgSim.DataOfferDef(o.datasetId + ".pack");
                 Assert.IsNotNull(pack, o.id);
-                double basePrice = XgCatalog.Node(o.datasetId + ".pack").cost * XgSim.StoryResearchPrice;
-                Assert.AreEqual(LingGuangV05.Core.PurchasePricing.AtLeastHundred(System.Math.Round(basePrice * XgSim.JunkPriceFactor)), o.price, o.id);
+                double basePrice = XgSim.ListPrice(XgCatalog.Node(o.datasetId + ".pack"));
+                Assert.AreEqual(XgSim.NicePrice(basePrice * XgSim.JunkPriceFactor), o.price, o.id);
+                Assert.Less(o.price, pack.price, o.id + " is cheaper than the public pack");
                 Assert.AreEqual(pack.samples * XgSim.JunkSampleFactor, o.samples, o.id);
                 Assert.That(o.noise, Is.InRange(.2, .4), o.id);
                 Assert.That(o.month, Is.InRange(201606, 201612), o.id);
@@ -95,7 +96,7 @@ namespace LingGuangV05.XingGuang.Tests
                 var o = XgSim.DataOfferDef(n.id);
                 Assert.IsNotNull(o, n.id);
                 Assert.AreEqual(XgDataSource.Public, o.source);
-                Assert.AreEqual(LingGuangV05.Core.PurchasePricing.AtLeastHundred(System.Math.Ceiling(n.cost * XgSim.StoryResearchPrice)), o.price, n.id);
+                Assert.AreEqual(XgSim.ListPrice(n), o.price, n.id + " shows the tree's list price");
                 Assert.That(o.noise, Is.InRange(0, .02), n.id);
                 Assert.AreEqual(XgSim.StageMonth(n.stage), o.month, n.id);
             }
@@ -143,7 +144,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = AtStage(1, "perceptron"); var host = new Host();
             Assert.IsTrue(sim.Offer("spam.pack").available);
             double price = sim.Offer("spam.pack").price;
-            Assert.AreEqual(750, price, "ordinary spam pack base price now follows the hundred-yuan policy");
+            Assert.AreEqual(20, price, "定价重做 2026-10-24: the stage-one route pack is a small first-minutes buy (raw 75, .78 x 75^.75 = 20)");
             Assert.AreEqual(sim.NodeCost(XgCatalog.Node("spam.pack")), price);
             Assert.IsTrue(sim.BuyDataOffer("spam.pack", host));
             Assert.IsTrue(sim.Has("spam.pack"));
@@ -168,7 +169,7 @@ namespace LingGuangV05.XingGuang.Tests
             var sim = AtStage(3, "mlp", "lenet"); var host = new Host();
             XgDataOffer bought = null; sim.DataOfferBought += o => bought = o;
             double price = sim.Offer("cifar.junk").price;
-            Assert.AreEqual(Math.Round(XgSim.DataOfferDef("cifar.pack").price * XgSim.JunkPriceFactor), price, 1e-9, "a third of the public pack");
+            Assert.AreEqual(XgSim.NicePrice(XgSim.DataOfferDef("cifar.pack").price * XgSim.JunkPriceFactor), price, 1e-9, "a third of the public pack");
             Assert.IsTrue(sim.BuyDataOffer("cifar.junk", host));
             Assert.IsNotNull(bought);
             Assert.AreEqual(100000 - price, host.money, 1e-9);

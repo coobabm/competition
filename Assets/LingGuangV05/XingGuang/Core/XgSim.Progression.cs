@@ -135,28 +135,20 @@ namespace LingGuangV05.XingGuang
         }
 
         public const double StoryResearchPrice = .25;
+        /// <summary>The quote: the list price (XgSim.Pricing.cs) with relic and diagnosis discounts. Label levels use their ladders.</summary>
         public double NodeCost(XgNode node)
         {
-            // Scale the regular price once. Genuine discounts may then bring it below 100.
-            double price = LingGuangV05.Core.PurchasePricing.AtLeastHundred(BaseNodeCost(node) * (node != null && node.tree != "label" ? EarlyTechnologyPriceFactor(node) : 1));
-            if (node == null || node.tree == "label" || node.id == PersonaArchiveNode || node.id.StartsWith("persona.", StringComparison.Ordinal)) return price;
+            if (node == null) return double.PositiveInfinity;
+            if (node.tree == "label") return LabelNodeCost(node);
+            double price = ListPrice(node);
+            if (node.id == PersonaArchiveNode || node.id.StartsWith("persona.", StringComparison.Ordinal)) return price;
             return Math.Ceiling(price * (1 - Math.Min(.7, RelicFx.techCut)) * DiagnosisFactor(node));
         }
+        /// <summary>Stage-one functional unlocks were authored at a tenth of their scale; question packs and data were not.</summary>
         public static double EarlyTechnologyPriceFactor(XgNode node)
         {
             if(node==null||node.stage!=1||node.tree=="label"||node.kind==XgNodeKind.Dataset||node.id.StartsWith("persona.",StringComparison.Ordinal)||node.id.StartsWith("pack.",StringComparison.Ordinal)||node.id==MoleMixedNode)return 1;
             return 10;
-        }
-        double BaseNodeCost(XgNode node)
-        {
-            if (node == null) return double.PositiveInfinity;
-            if (node.id == PersonaArchiveNode) return PersonaArchivePrice;
-            if (node.id.StartsWith("persona.",StringComparison.Ordinal)) return PersonaPrice(node.id.Substring(8));
-            if (node.tree == "label") return LabelNodeCost(node);
-            // Approved new ordinary price; keep discounts, not the legacy pacing multiplier.
-            if (XgBoardLogic.IsNode(node.id) || node.id==XgBoardRecords.Node || XgDailyLife.Node(node.id) != null || node.id == LedgerNode || node.id == DataEntryNode || node.id == LibraryNode || IsRelicExpansion(node.id) || IsMoleArithmeticNode(node.id)) return Math.Ceiling(node.cost);
-            // Compact story pacing: reduce the funding grind, keep architecture prerequisites and real training.
-            return Math.Ceiling(node.cost * StoryResearchPrice);
         }
 
         public bool NodeVisible(XgNode node)

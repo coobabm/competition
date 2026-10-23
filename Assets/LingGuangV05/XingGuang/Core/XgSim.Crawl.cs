@@ -24,7 +24,7 @@ namespace LingGuangV05.XingGuang
         /// <summary>Most words one run can grab.</summary>
         public const int CrawlCap = 200;
         /// <summary>One-off run price, normalized separately from continuous crowd-task rates.</summary>
-        public static double CrawlPrice => LingGuangV05.Core.PurchasePricing.AtLeastHundred(CrawlCap * CrowdPricePerLabel);
+        public static double CrawlPrice => NicePrice(CrawlCap * CrowdPricePerLabel); // the crowd rate, no ×10 floor (定价重做 2026-10-24)
         /// <summary>How long a run lasts on screen, in seconds.</summary>
         public const double CrawlSeconds = 60;
         /// <summary>Share of junk rows (adverts, typos, edit-war leftovers) before 数据清洗.</summary>
