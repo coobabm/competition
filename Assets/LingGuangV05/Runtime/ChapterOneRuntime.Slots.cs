@@ -21,8 +21,8 @@ namespace LingGuangV05.Runtime
         {
             get { for (int slot=1; slot<=ManualArchiveLimit+1; slot++) if (ArchiveExists(slot)) return true; return false; }
         }
-        // UI order changes without moving or renaming any existing save file.
-        public static int ArchiveDisplaySlot(int row) => row >= 0 && row < 5 ? row + 2 : row == 5 ? 1 : 0;
+        // UI order changes without moving or renaming any existing save file: the system autosave comes first.
+        public static int ArchiveDisplaySlot(int row) => row == 0 ? 1 : row >= 1 && row <= ManualArchiveLimit ? row + 1 : 0;
 
         public bool ArchiveExists(int index, bool chapter = false)
         {
@@ -53,9 +53,17 @@ namespace LingGuangV05.Runtime
 
         public bool SaveSlot(int index)
         {
-            if (index == 1) return SaveNow();
             var archive = ArchiveStore(index, false);
-            if (archive == null || !useDiskSave || Sim.InPrologue || persistenceBlocked || endingArchiveBusy) return false;
+            // Every refusal says why; the save UI shows SaveStatus after a false return.
+            string refusal = endingArchiveBusy ? GameText.T("正在保存结局，请稍后再保存。", "Saving the ending. Please try saving again shortly.")
+                : index == 1 ? null
+                : archive == null ? GameText.T("没有这个存档位。", "That save slot does not exist.")
+                : !useDiskSave ? GameText.T("测试模式：不写入本机存档", "Test mode: nothing is written to this computer.")
+                : Sim == null || Sim.InPrologue ? GameText.T("开场还没结束，暂时不能存到存档位；开场结束后会自动存档。", "The opening is not over yet, so it cannot be saved to a slot; it autosaves once the opening ends.")
+                : persistenceBlocked ? GameText.T("存档受保护：请备份后使用“重置进度”，不会自动覆盖。", "The save is protected: back it up, then use Reset progress. Nothing is overwritten automatically.")
+                : null;
+            if (refusal != null) { SaveStatus = refusal; return false; }
+            if (index == 1) return SaveNow();
             try {
                 Saving?.Invoke();
                 bool saved = archive.TrySaveSnapshot(JsonUtility.ToJson(Sim.S), out var message);

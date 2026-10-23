@@ -62,7 +62,7 @@ namespace LingGuangV05.Desktop.XingGuang
             window.legend.textWrappingMode=TextWrappingModes.Normal;
             window.viewport=Rect("History scroll",frame,new Vector2(.42f,0),Vector2.one,new Vector2(12,16),new Vector2(-18,-58));
             Panel(window.viewport,Color.clear);window.viewport.gameObject.AddComponent<RectMask2D>();
-            var scroll=window.viewport.gameObject.AddComponent<ScrollRect>();scroll.horizontal=false;scroll.vertical=true;scroll.viewport=window.viewport;scroll.movementType=ScrollRect.MovementType.Clamped;
+            var scroll=window.viewport.gameObject.AddComponent<ScrollRect>();scroll.horizontal=false;scroll.vertical=true;scroll.viewport=window.viewport;scroll.movementType=ScrollRect.MovementType.Clamped;scroll.scrollSensitivity=30;
             window.content=Rect("History content",window.viewport,new Vector2(0,1),Vector2.one,Vector2.zero,Vector2.zero);window.content.pivot=new Vector2(.5f,1);
             window.history=ui.Text(Rect("History text",window.content,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero),"",15,XgDark.Ink,TextAlignmentOptions.TopLeft);
             window.history.textWrappingMode=TextWrappingModes.Normal;scroll.content=window.content;

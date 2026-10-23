@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>03 情绪板 · 三方向 + 推荐 A×B</title>
+<style>
+:root{--m-bg:#050807;--m-panel:#0A100E;--m-dim:#1F3A31;--m-mid:#3FAF88;--m-main:#5FE3B5;--m-hot:#C9FFE9;--m-warn:#F2C46D;--m-err:#FF6E5E}
+*{box-sizing:border-box}body{margin:0;background:#1b1b1b;color:#ddd;font:14px/1.5 "Source Han Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;padding:24px}
+h1{font-size:20px;margin:0 0 4px}p.note{color:#999;margin:0 0 20px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{border-radius:0;overflow:hidden;min-height:520px;position:relative}
+.cap{font-size:12px;padding:8px 12px;background:#000;color:#aaa}
+.sw{display:flex;height:22px}.sw i{flex:1}
+/* A */
+.a{background:linear-gradient(160deg,#0b3a6b,#1b7cc4 60%,#5fb7ea);padding:18px}
+.win{background:rgba(191,217,242,.55);border:1px solid #2c4d70;border-radius:6px;padding:6px;box-shadow:0 4px 18px rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+.win .t{color:#1e395b;font-size:12px;padding:0 4px 6px}
+.win .b{background:#fff;color:#1e1e1e;font-size:12px;padding:8px;min-height:150px}
+.row{padding:3px 6px;border:1px solid transparent}.row.sel{background:#cbe8f6;border-color:#26a0da}.row.hv{background:#e5f3fb;border-color:#70c0e7}
+.ava{display:inline-block;width:32px;height:32px;margin-right:6px;vertical-align:middle;image-rendering:pixelated;filter:contrast(1.1) saturate(.85)}
+.task{position:absolute;left:0;right:0;bottom:0;height:34px;background:rgba(15,34,54,.85);border-top:1px solid rgba(255,255,255,.25)}
+/* B */
+.b{background:var(--m-bg);color:var(--m-main);font-family:"Sarasa Mono SC","Cascadia Mono",Consolas,monospace;padding:18px}
+.b::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px)}
+.big{font-size:40px;color:var(--m-hot);text-shadow:0 0 6px rgba(95,227,181,.45);letter-spacing:1px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}.tbl td{border-bottom:1px solid var(--m-dim);padding:4px 2px;color:var(--m-mid)}
+.tbl tr.on td{background:var(--m-main);color:var(--m-bg)}
+.warn{color:var(--m-warn)}.btn{display:inline-block;margin-top:12px;color:var(--m-hot)}
+.dither{margin-top:12px;height:90px;background-color:var(--m-bg);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4'><rect width='1' height='1' fill='%235FE3B5'/><rect x='2' y='2' width='1' height='1' fill='%235FE3B5'/></svg>");image-rendering:pixelated;-webkit-mask:linear-gradient(90deg,#000,transparent);mask:linear-gradient(90deg,#000,transparent)}
+/* C */
+.c{background:#ede6d6;color:#1c1b1a;padding:18px;font-family:"LXGW WenKai","KaiTi",serif}
+.c h2{font-family:"Smiley Sans","Source Han Serif SC",serif;font-size:34px;margin:0;line-height:1.1}
+.rz{position:relative;height:200px;margin-top:14px}
+.rz .r{position:absolute;width:150px;height:150px;border-radius:50%;background:#e2483d;mix-blend-mode:multiply;left:20px;top:20px}
+.rz .u{position:absolute;width:150px;height:150px;border-radius:50%;background:#2f5aa8;mix-blend-mode:multiply;left:110px;top:44px}
+.rz .g{position:absolute;width:60px;height:60px;border-radius:50%;background:#3fe0a0;mix-blend-mode:multiply;left:90px;top:120px}
+/* rec */
+.rec{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;min-height:220px}
+.rec .h{background:linear-gradient(160deg,#2a211b,#5a3b20);color:#ffd9a8;padding:18px;position:relative}
+.rec .h::before{content:"";position:absolute;left:30px;top:20px;width:160px;height:160px;border-radius:50%;background:radial-gradient(#ffb55a88,transparent 70%)}
+.rec .m{background:var(--m-bg);color:var(--m-main);font-family:Consolas,monospace;padding:18px;position:relative}
+.rec .m::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 1px,transparent 1px 3px)}
+</style></head><body>
+<h1>《我的电脑活了》美术方向情绪板</h1>
+<p class="note">配合 03_画面与美术方向.md。字体如果本机未安装会回退到系统字体，只用来示意版式和配色。</p>
+<div class="grid">
+ <div class="card a">
+  <div class="win"><div class="t">YY 2016 — 好友列表</div><div class="b">
+   <div class="row sel"><svg class="ava" viewBox="0 0 8 8"><rect width="8" height="8" fill="#c88"/><rect x="2" y="2" width="4" height="3" fill="#fff"/></svg>阿杰【在线】 今晚开黑?</div>
+   <div class="row hv"><svg class="ava" viewBox="0 0 8 8"><rect width="8" height="8" fill="#6a9"/><rect y="5" width="8" height="3" fill="#264"/></svg>青雯 ° 风景头像</div>
+   <div class="row"><svg class="ava" viewBox="0 0 8 8"><rect width="8" height="8" fill="#333"/><rect x="1" y="3" width="6" height="1" fill="#f6c"/></svg>╰☆ 非主流ゞ</div>
+   <div class="row">老周（真人头像，例外）</div>
+  </div></div>
+  <div class="task"></div>
+  <div class="sw" style="position:absolute;left:0;right:0;bottom:34px"><i style="background:#1E395B"></i><i style="background:#BFD9F2"></i><i style="background:#CBE8F6"></i><i style="background:#26A0DA"></i><i style="background:#F0F0F0"></i><i style="background:#FF5000"></i><i style="background:#FFC300"></i></div>
+ </div>
+ <div class="card b">
+  <div>len@lab:~$ train --epoch 12</div>
+  <div class="big">¥3,837</div><div class="warn">+¥89.2/s</div>
+  <table class="tbl"><tr><td>常识判断</td><td>99.5%</td><td>¥11.7</td></tr><tr class="on"><td>手写数字</td><td>90.0%</td><td>自动·槽1</td></tr><tr><td>逻辑题</td><td>71.0%</td><td>¥46.1</td></tr></table>
+  <div class="btn">[ 训练一轮 ]  [ 交给它 ]</div>
+  <div class="dither"></div>
+  <div style="font-size:11px;color:var(--m-dim);margin-top:6px">图片 → Bayer 4×4 抖动，AI 的塑料感被吃掉</div>
+  <div class="sw" style="position:absolute;left:0;right:0;bottom:0"><i style="background:#050807"></i><i style="background:#1F3A31"></i><i style="background:#3FAF88"></i><i style="background:#5FE3B5"></i><i style="background:#C9FFE9"></i><i style="background:#F2C46D"></i><i style="background:#FF6E5E"></i></div>
+ </div>
+ <div class="card c">
+  <h2>三颗<br>太阳</h2><div style="font-size:12px">孔版套色 · 错版 1px · 手写旁白</div>
+  <div class="rz"><div class="r"></div><div class="u"></div><div class="g"></div></div>
+  <p style="font-size:13px">“它第一次说话，是在一个停电的晚上。”</p>
+  <div class="sw" style="position:absolute;left:0;right:0;bottom:0"><i style="background:#EDE6D6"></i><i style="background:#1C1B1A"></i><i style="background:#E2483D"></i><i style="background:#2F5AA8"></i><i style="background:#3FE0A0"></i><i style="background:#151821"></i></div>
+ </div>
+</div>
+<div class="grid" style="grid-template-columns:1fr 1fr 1fr;margin-top:6px;font-size:12px;color:#aaa">
+ <div>A「2016 · 真桌面」：Win7 系统色，低清头像，真实的杂乱</div><div>B「荧光管」：一个主色加琥珀，扫描线，抖动，表格代替卡片</div><div>C「纸灯剧场」：孔版、手写、舞台光（成本最高）</div>
+</div>
+<h1 style="margin-top:28px">推荐：A × B「两个世界」</h1>
+<div class="rec">
+ <div class="h"><b style="position:relative">人的 2016</b><br><span style="position:relative;font-size:12px">台灯 #FFB55A · Aero 桌面 · 生活痕迹</span></div>
+ <div class="m"><b>机器的荧光</b><br><span style="font-size:12px">#5FE3B5 · 全屏实验室 · CRT 开机转场</span><br><br>&gt; 随剧情推进，右侧在画面中的占比越来越大_</div>
+</div>
+</body></html>

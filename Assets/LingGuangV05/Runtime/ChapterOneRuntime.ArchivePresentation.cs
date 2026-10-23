@@ -49,16 +49,23 @@ namespace LingGuangV05.Runtime
             try { SetArchiveThumbnail(slot,ArchiveThumbnailProvider?.Invoke()); }
             catch(Exception e) {InvalidateArchiveThumbnail(slot);Debug.LogWarning("[Save UI] Thumbnail unavailable: "+e.Message);}
         }
-        [Serializable] public sealed class ArchiveCardInfo { public string name="", savedAt="", revision="", gameDate=""; public int stage=1; public bool exists, readable; }
+        [Serializable] public sealed class ArchiveCardInfo { public string name="", savedAt="", revision="", gameDate=""; public int stage=1; public bool exists, readable, autosave, pendingNewGame; }
         [Serializable] sealed class ArchiveLabel { public string name; }
         [Serializable] sealed class ArchiveStage { public int stage=1; }
+        // Set by ResetProgress: the player chose a new game that is still in its (never saved) opening.
+        Core.ChapterOneSim newGameInOpening;
+        public bool NewGamePendingAutosave=>Sim!=null&&ReferenceEquals(Sim,newGameInOpening)&&Sim.InPrologue&&!ArchiveExists(1);
         public int FirstEmptyManualArchive()
         { for(int i=2;i<=ManualArchiveLimit+1;i++)if(!ArchiveExists(i))return i;return 0; }
         public ArchiveCardInfo DescribeArchiveCard(int slot,bool chapter=false)
         {
-            var result=new ArchiveCardInfo{name=slot==1&&!chapter?GameText.T("自动存档","Autosave"):GameText.T("存档 ","Save ")+(slot-1)};
+            bool autosave=slot==1&&!chapter;
+            var result=new ArchiveCardInfo{autosave=autosave,name=autosave?GameText.T("系统存档（自动）","System autosave"):GameText.T("存档 ","Save ")+(slot-1)};
             var archive=ArchiveStore(slot,chapter);if(archive==null)return result;
-            result.exists=ArchiveExists(slot,chapter);if(!result.exists)return result;
+            result.exists=ArchiveExists(slot,chapter);
+            // A new game in its opening has no autosave yet (the prologue is never saved); show it rather than an old or empty card.
+            if(!result.exists&&autosave&&NewGamePendingAutosave){result.pendingNewGame=true;result.name=GameText.T("系统存档 · 新游戏","System autosave · New game");result.savedAt=GameText.T("（开场中，尚未保存）","(Opening in progress, not saved yet)");}
+            if(!result.exists)return result;
             var load=archive.Load(ValidArchive);result.readable=load.Success;
             if(!load.Success){result.savedAt=GameText.T("无法读取","Unreadable");return result;}
             try {

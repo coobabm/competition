@@ -203,9 +203,10 @@ namespace LingGuangV05.Desktop.XingGuang
     }
     public sealed class XgBrainWindowDrag:MonoBehaviour,IBeginDragHandler,IDragHandler,IPointerDownHandler
     {
-        public XgBrainWindow owner;public bool resize;Vector2 last;
+        public XgBrainWindow owner;public bool resize;Vector2 start,startPosition,startSize;
         public void OnPointerDown(PointerEventData e){if(owner?.Window!=null)owner.Window.SetAsLastSibling();}
-        public void OnBeginDrag(PointerEventData e){if(owner?.Window!=null)RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)owner.Window.parent,e.position,e.pressEventCamera,out last);}
-        public void OnDrag(PointerEventData e){if(owner?.Window==null)return;RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)owner.Window.parent,e.position,e.pressEventCamera,out var now);owner.MoveResize(now-last,resize);last=now;}
+        public void OnBeginDrag(PointerEventData e){if(owner?.Window==null)return;RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)owner.Window.parent,e.position,e.pressEventCamera,out start);startPosition=owner.Window.anchoredPosition;startSize=owner.Window.sizeDelta;}
+        // Apply the whole pointer offset to the window as it was at drag start: clamping at an edge or a size limit then never drifts.
+        public void OnDrag(PointerEventData e){if(owner?.Window==null)return;RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)owner.Window.parent,e.position,e.pressEventCamera,out var now);owner.Window.anchoredPosition=startPosition;owner.Window.sizeDelta=startSize;owner.MoveResize(now-start,resize);}
     }
 }

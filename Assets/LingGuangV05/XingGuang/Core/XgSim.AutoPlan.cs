@@ -30,6 +30,8 @@ namespace LingGuangV05.XingGuang
         /// <summary>The last <see cref="XgSim.RouteWindow"/> routed cards of this desk.</summary>
         public XgCollaborationStats recent;
         public bool Running => state == XgAutoDeskState.Running;
+        /// <summary>Running, or running with a full review inbox (only the unsure cards are skipped then).</summary>
+        public bool Earning => state == XgAutoDeskState.Running || state == XgAutoDeskState.InboxFull;
     }
 
     public sealed partial class XgSim
@@ -40,9 +42,10 @@ namespace LingGuangV05.XingGuang
             if (GlobalAutoLevel <= 0 || AutoLabelHidden) return XgAutoDeskState.Off;
             if (S.autoPaused) return XgAutoDeskState.PausedByYou;
             if (AutomationHeld) return XgAutoDeskState.Held;
-            if (ReviewFull) return XgAutoDeskState.InboxFull;
             if (ProjectActive) return XgAutoDeskState.Project;
             if (host == null || host.Blocker != null || host.Compute <= 0) return XgAutoDeskState.NoPower;
+            // Informational: a full inbox no longer stops income, it only skips the low-confidence cards.
+            if (ReviewFull) return XgAutoDeskState.InboxFull;
             return XgAutoDeskState.Running;
         }
 
@@ -70,7 +73,7 @@ namespace LingGuangV05.XingGuang
                 else if (p.best == null || p.accuracy <= 0) p.state = XgAutoDeskState.NoCheckpoint;
                 else if (!EligibleDesk(desk.id)) p.state = XgAutoDeskState.BelowBar;
                 else p.state = global;
-                if (p.Running)
+                if (p.Earning)
                 {
                     p.rate = CollaborationRate(desk.id, host);
                     p.income = CollaborationIncome(desk.id, host);

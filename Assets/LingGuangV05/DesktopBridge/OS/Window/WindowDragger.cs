@@ -20,6 +20,7 @@ namespace LingGuangV05.Desktop.OS
 
         private Vector2 originalLocalPointerPosition;
         private Vector3 originalPanelLocalPosition;
+        private bool dragging;
 
         [HideInInspector] public WindowManager wManager;
 
@@ -65,7 +66,10 @@ namespace LingGuangV05.Desktop.OS
 
         public void OnBeginDrag(PointerEventData data)
         {
-            if (IsFullscreen) { return; }
+            // Only the left button moves a window; dragging a background window brings it to the front first.
+            dragging = data.button == PointerEventData.InputButton.Left && !IsFullscreen;
+            if (!dragging) { return; }
+            if (wManager != null) { wManager.FocusToWindow(); }
 
             originalPanelLocalPosition = dragObjectInternal.localPosition;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(dragAreaInternal, data.position, data.pressEventCamera, out originalLocalPointerPosition);
@@ -73,7 +77,7 @@ namespace LingGuangV05.Desktop.OS
 
         public void OnDrag(PointerEventData data)
         {
-            if (IsFullscreen) { return; }
+            if (!dragging || data.button != PointerEventData.InputButton.Left || IsFullscreen) { return; }
 
             Vector2 localPointerPosition;
 
@@ -105,7 +109,7 @@ namespace LingGuangV05.Desktop.OS
         public void OnPointerClick(PointerEventData eventData)
         {
             if (wManager == null) { return; }
-            if (wManager.allowGestures && eventData.clickCount == 2) { wManager.FullscreenWindow(); }
+            if (wManager.allowGestures && eventData.clickCount == 2 && eventData.button == PointerEventData.InputButton.Left) { wManager.FullscreenWindow(); }
             wManager.FocusToWindow();
         }
     }

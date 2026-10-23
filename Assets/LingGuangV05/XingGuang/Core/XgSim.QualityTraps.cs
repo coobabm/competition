@@ -28,7 +28,7 @@ namespace LingGuangV05.XingGuang
     public sealed partial class XgSim
     {
         public const int TrapPoolSize = 12, TrapMemoryLimit = 400;
-        public const double TrapChance = .02, TrapFineMultiplier = 5, TrapCreditFail = 8;
+        public const double TrapChance = .02, TrapFineMultiplier = 3, TrapCreditFail = 8;
         public const string TrapMemoryNode = "label.trapmemory";
         /// <summary>The forum flag that shows the thread about trap items.</summary>
         public const string TrapForumFlag = "qc.trap";

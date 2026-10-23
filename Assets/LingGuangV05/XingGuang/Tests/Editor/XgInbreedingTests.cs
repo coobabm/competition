@@ -138,7 +138,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void RecheckRespectsTheInboxCapacity()
         {
             var sim = Trained(30);
-            for (int i = 0; i < 15; i++) sim.S.queue.Add(sim.CreateLabelCard("spam"));
+            for (int i = 0; i < XgSim.ReviewCapacity - 5; i++) sim.S.queue.Add(sim.CreateLabelCard("spam"));
             Assert.AreEqual(5, sim.RecheckNoise("spam"));
             Assert.IsTrue(sim.ReviewFull);
             Assert.AreEqual(0, sim.RecheckNoise("spam"));

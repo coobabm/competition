@@ -27,7 +27,7 @@ namespace LingGuangV05.Core
     /// <summary>Money-only settlement arithmetic; never advances clocks, cards, models or narrative.</summary>
     public static class XgOfflineRules
     {
-        public const double Efficiency = .5;
+        public const double Efficiency = .6;
         public const double MaxSeconds = 8 * 60 * 60;
         public static bool Finite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
         public static double Estimate(double rate,double seconds)

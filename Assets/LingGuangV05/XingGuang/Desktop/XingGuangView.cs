@@ -397,11 +397,8 @@ namespace LingGuangV05.Desktop.XingGuang
             if (refreshTimer <= 0) Refresh(false);
         }
 
-        /// <summary>Lab income per second: contracts plus auto-answer on every desk.</summary>
-        public double IncomeRate
-        {
-            get { double r = Sim.IncomePerSecond; foreach (var l in Sim.S.autoLevels) r += Sim.AutoIncome(l.dataset, Host); return r; }
-        }
+        /// <summary>Lab income per second: crowd tier and contracts plus 自动答题 on every desk (the same rate offline settlement uses).</summary>
+        public double IncomeRate => XgIdleRules.IncomeRate(Sim, Host);
 
         void ShowWelcome(XingGuangController.OfflineReport r)
         {
@@ -412,7 +409,7 @@ namespace LingGuangV05.Desktop.XingGuang
             var t = TimeSpan.FromSeconds(Math.Min(r.seconds, 28800));
             string away = t.TotalHours >= 1 ? T((int)t.TotalHours + " 小时 " + t.Minutes + " 分", (int)t.TotalHours + " h " + t.Minutes + " min") : T(t.Minutes + " 分钟", t.Minutes + " min");
             var body = new System.Text.StringBuilder();
-            body.Append(T("离线结算：", "Offline settlement: ")).Append(away).Append("\n").Append(T("50% 效率 · 最多 8 小时 · 仅金钱", "50% efficiency · up to 8 hours · money only")).Append("\n").Append(T("游戏关闭时不运行模型或训练。", "The model and training do not run while the game is closed.")).Append("\n\n");
+            body.Append(T("离线结算：", "Offline settlement: ")).Append(away).Append("\n").Append(T(N(XgOfflineRules.Efficiency * 100, "0") + "% 效率 · 最多 8 小时 · 仅金钱", N(XgOfflineRules.Efficiency * 100, "0") + "% efficiency · up to 8 hours · money only")).Append("\n").Append(T("游戏关闭时不运行模型或训练。", "The model and training do not run while the game is closed.")).Append("\n\n");
             body.Append("<size=30><color=#FAC775><b>+¥").Append(Money(r.income)).Append("</b></color></size>\n");
             ui.Text(Rect("Body", card, Vector2.zero, Vector2.one, new Vector2(20, 64), new Vector2(-20, -54)), body.ToString(), 16, XgDark.Ink, TextAlignmentOptions.TopLeft);
             var ok = ui.Button(card, Lang.T("收下"), () =>

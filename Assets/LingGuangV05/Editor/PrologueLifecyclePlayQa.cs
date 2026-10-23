@@ -119,7 +119,11 @@ namespace LingGuangV05.Editor
             yield return Until(() => Thought.alpha == 0, 40, "Opening subtitle expires naturally");
             Require("Waiting for 0.txt leaves desktop controllable", surface.inputEnabled && director.Step == "txt");
             Capture("subtitle-gone");
-            yield return OpenOrdinaryApp("Calculator");
+            // The native Calculator hosts 摆渡众包, which stays hidden until it is installed (StudyDesktopGates.GateBeforeSetup):
+            // during the prologue its desktop icon must not be clickable at all.
+            yield return new WaitForSecondsRealtime(1.2f); // the gate rescans once per second
+            var calculator = PrologueDirector.Desk.icons.Find("Calculator");
+            Require("Uninstalled Calculator (摆渡众包) icon stays hidden in the prologue", calculator == null || !calculator.gameObject.activeInHierarchy);
             yield return OpenOrdinaryApp("Web Browser");
             yield return OpenOrdinaryApp("Notepad");
             Click((RectTransform)PrologueDirector.Desk.icons.Find("Prologue 0.txt"), true);
@@ -130,8 +134,17 @@ namespace LingGuangV05.Editor
             Capture("shutdown-choice");
             yield return new WaitForSecondsRealtime(.5f);
             Click(DialogButton("Prologue Shutdown", PrologueContent.L(yes ? "yes" : "no")));
+            if (yes)
+            {
+                // Since 2026-10-18 是 burns the machine, repairs it and asks again; only 否 goes on (PrologueDirector step 5).
+                yield return Until(() => director.Step == "shutdown-burn", 10, "是 starts the burn and repair");
+                yield return Until(() => director.Step == "shutdown", 90, "After the repair it asks the shutdown question again");
+                Require("Repeated shutdown choice returns input", surface.inputEnabled);
+                yield return new WaitForSecondsRealtime(.5f);
+                Click(DialogButton("Prologue Shutdown", PrologueContent.L("no")));
+            }
             // 老周's message no longer waits inside the prologue: it comes after the setup, in its opening turn.
-            yield return Until(() => director.Step == "setup", yes ? 45 : 135, "Branch reaches setup without softlock");
+            yield return Until(() => director.Step == "setup", 135, "Branch reaches setup without softlock");
             if (!yes) Require("Extraction returns input", surface.inputEnabled);
             Require("Setup leaves desktop interactive", surface.inputEnabled && runtime.Sim.AppInstalled);
             yield return new WaitForSecondsRealtime(10);

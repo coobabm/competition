@@ -25,7 +25,7 @@ namespace LingGuangV05.XingGuang
             var existing = XgKnowledge.Find(name);
             if (existing != null) return existing;
             string alias = node.id == "shared.lr" ? "学习率" : node.id == "lrschedule" ? "学习率调度"
-                : node.id == "backprop" ? "小批量" : node.id == "chainrule" ? "自动求导" : null;
+                : node.id == "chainrule" ? "自动求导" : null;
             if (alias != null && XgKnowledge.Find(alias) is XgKnowledge.Entry found) return found;
             // Feature/game nodes have no scientific glossary article. Display their own existing
             // description in the same reader, explicitly as a game function, without inventing facts.

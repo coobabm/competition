@@ -1301,6 +1301,7 @@ namespace LingGuangV05.Core
             { "能力表的 6 格同时亮了。喂进去的一直是数据，飞跃来自规模。", "All six cells of the abilities table lit at once. It was always data going in; the leap came from scale." },
             { "能力：", "Ability: " },
             { "自动已暂停", "automation paused" },
+            { "拿不准的先跳过", "unsure cards skipped" },
             { "自动标注没被发现的错：", "Own uncaught automatic mistakes: " },
             { "自动答题 Lv ", "Auto Lv " },
             { "自动答题标了 ", "Auto-answer labelled " },

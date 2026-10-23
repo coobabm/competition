@@ -325,16 +325,16 @@ namespace LingGuangV05.XingGuang.Tests
 
         [Test] public void CrowdEconomyUsesTheApprovedSmallSupplementAndKeepsPaidLedgers()
         {
-            CollectionAssert.AreEqual(new double[]{0,0,.1,.3,.6,1,1.5},XgSim.CrowdTierIncome);
-            CollectionAssert.AreEqual(new int[]{0,0,12,36,72,120,180},XgSim.AbilityResearchGrant);
+            CollectionAssert.AreEqual(new double[]{0,0,.2,.8,1.5,3,5},XgSim.CrowdTierIncome);
+            CollectionAssert.AreEqual(new int[]{0,0,24,96,180,360,600},XgSim.AbilityResearchGrant);
             var sim=new XgSim{GoldChance=0};var host=new Host{money=15120};
             sim.S.abilitiesEmerged.Add(2);sim.S.abilitiesEmerged.Add(3);sim.S.abilitiesEmerged.Add(4);
             sim.AppReceipt(XgSim.CrowdApp).installed=true;
             sim.S.fundedAbility=3;sim.S.crowdTier=3;sim.S.totalIncome=15120;
             sim.Tick(.25,host);
-            Assert.AreEqual(15120+72+.25*.6,host.money,1e-6,"old paid gifts are retained; only the unpaid fourth ability gets its new gift");
+            Assert.AreEqual(15120+180+.25*1.5,host.money,1e-6,"old paid gifts are retained; only the unpaid fourth ability gets its new gift");
             Assert.AreEqual(4,sim.S.fundedAbility);
-            StringAssert.Contains("0.6",sim.S.log.Last(l=>l.StartsWith("摆渡众包升级")),"fractional rates remain visible");
+            StringAssert.Contains("1.5",sim.S.log.Last(l=>l.StartsWith("摆渡众包升级")),"fractional rates remain visible");
         }
 
         [TestCase(3, 60)]

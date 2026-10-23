@@ -10,16 +10,18 @@ using UnityEngine.UI;
 namespace LingGuangV05.Desktop.Story
 {
     /// <summary>
-    /// The 任务 queue on the desktop (2026-10-21, replaces the sticky to-do note's list): a 「任务」 button that blinks six
-    /// times for news and then keeps a dot until opened, a corner notice that merges what happened within 1.5 s and
+    /// The 任务 queue on the desktop (2026-10-21, replaces the sticky to-do note's list): a 「任务」 button that pulses three
+    /// strong 1.6 s cycles for news, then breathes faintly with a dot until opened (static under reduced motion; closing the
+    /// notice stops the pulse, the dot stays), a silent 300×96 corner notice that merges what happened within 2 s and
     /// stays 4 s, and a panel with at most five tasks (progress, 「去看看」), the waiting ones and the guide's current
     /// step on top. The queue itself lives in the save (XgTasks.cs); this file only shows it. The guide still runs
     /// behind (TopStep, the lab's 「去做 ›」) but its yellow note is no longer shown.
     /// </summary>
     public sealed partial class GuideNote
     {
-        const float TaskPanelWidth = 380, TaskRowHeight = 52, TaskMerge = 1.5f, TaskToastStay = 4f, TaskBlinkHalf = .5f;
-        const int TaskBlinkToggles = 6;
+        const float TaskPanelWidth = 380, TaskRowHeight = 52, TaskMerge = 2f, TaskToastStay = 4f, TaskToastFadeIn = .24f, TaskBlinkCycle = 1.6f;
+        const int TaskBlinkStrongCycles = 3;
+        const float TaskBlinkStrong = .85f, TaskBlinkBreath = .22f;
         const float TaskClearAfter = 3f, TaskTickEvery = .5f;
         static readonly Color PanelBg = new Color32(22, 28, 36, 250), PanelRow = new Color32(29, 37, 48, 255), PanelLine = new Color32(42, 52, 64, 255);
         static readonly Color PanelInk = new Color32(232, 236, 239, 255), PanelSoft = new Color32(185, 194, 201, 255), PanelDim = new Color32(152, 162, 171, 255);
@@ -109,8 +111,8 @@ namespace LingGuangV05.Desktop.Story
             taskEmpty=d.Text(PrologueDesk.Rect("Empty task list",body,new Vector2(0,1),Vector2.one,new Vector2(10,-65),new Vector2(-10,-30)),"",16,Soft,TextAlignmentOptions.Center);
             taskEmpty.gameObject.SetActive(false);
 
-            // Corner notice: 320 wide, right bottom above the taskbar.
-            taskToast=PrologueDesk.Rect("Task notification",d.layer,new Vector2(1,0),new Vector2(1,0),new Vector2(-336,48),new Vector2(-16,132));
+            // Corner notice: 300×96, right bottom above the taskbar.
+            taskToast=PrologueDesk.Rect("Task notification",d.layer,new Vector2(1,0),new Vector2(1,0),new Vector2(-316,48),new Vector2(-16,144));
             PrologueDesk.Fill(taskToast,new Color32(26,33,43,250),true);
             taskToastGroup=taskToast.gameObject.AddComponent<CanvasGroup>();
             taskToastTitle=d.Text(PrologueDesk.Rect("Title",taskToast,Vector2.zero,Vector2.one,new Vector2(14,50),new Vector2(-36,-10)),"",16,new Color32(255,210,125,255),TextAlignmentOptions.TopLeft);
@@ -123,7 +125,8 @@ namespace LingGuangV05.Desktop.Story
             var close=PrologueDesk.Rect("Dismiss task notice",taskToast,Vector2.one,Vector2.one,new Vector2(-30,-28),new Vector2(-6,-4));
             var closeImage=PrologueDesk.Fill(close,Color.clear,true);var closeButton=close.gameObject.AddComponent<Button>();closeButton.targetGraphic=closeImage;
             d.Text(PrologueDesk.Rect("Label",close,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero),"×",18,PanelSoft,TextAlignmentOptions.Center);
-            closeButton.onClick.AddListener(()=>{if(TaskPresentationAllowed()){toastLive=false;ClickTaskSound();}});
+            // Closing the notice stops the pulse; the unread dot stays until the panel is opened.
+            closeButton.onClick.AddListener(()=>{if(TaskPresentationAllowed()){toastLive=false;blinkSince=-100;ClickTaskSound();}});
             taskToast.gameObject.SetActive(false);
 
             BuildTaskPanel(d);
@@ -217,7 +220,7 @@ namespace LingGuangV05.Desktop.Story
                 y+=h+8;
             }
             panelEmpty.gameObject.SetActive(shown.Count==0);
-            if(shown.Count==0){panelEmpty.text=GameText.T("还没有任务。","No tasks yet.");y+=70;}
+            if(shown.Count==0){panelEmpty.text=GameText.T("暂无任务","No tasks");y+=70;}
             var names=new List<string>();foreach(var id in sim.S.taskWaiting){var w=XgTaskBook.Find(id);if(w!=null)names.Add(w.Title(en));}
             panelWaiting.gameObject.SetActive(names.Count>0);
             if(names.Count>0){panelWaiting.text=GameText.T("排队中：","Waiting: ")+string.Join(GameText.T("、",", "),names);y+=24;}
@@ -245,16 +248,19 @@ namespace LingGuangV05.Desktop.Story
                 else if(!anyFinished)finishedSince=-1;
                 if(taskListOpen)RefreshTaskPanel();
             }
-            // Blink: light/dark every 500 ms, six times, then a steady dot until the panel is opened.
-            float b=now-blinkSince;bool lit=!TaskReduced&&b<TaskBlinkHalf*TaskBlinkToggles&&((int)(b/TaskBlinkHalf))%2==0;
-            taskButtonImage.color=lit?(Color)Warm*new Color(1,1,1,.85f):new Color32(42,58,76,255);
+            // Pulse: a 1.6 s cosine cycle, three strong cycles, then a faint breath until the panel is opened (or the
+            // notice is closed). Static under reduced motion; the unread dot carries the news either way.
+            float b=now-blinkSince,pulse=0;
+            if(!TaskReduced&&blinkSince>-50&&taskUnread)
+                pulse=(1-Mathf.Cos(2*Mathf.PI*b/TaskBlinkCycle))*.5f*(b<TaskBlinkCycle*TaskBlinkStrongCycles?TaskBlinkStrong:TaskBlinkBreath);
+            taskButtonImage.color=Color.Lerp(new Color32(42,58,76,255),Warm,pulse);
             taskUnreadDot.gameObject.SetActive(taskUnread);
             if(show&&!toastLive&&pendingEvents.Count>0&&now-firstPendingAt>=TaskMerge)ShowTaskNotice();
             taskToast.gameObject.SetActive(show&&toastLive);
             if(show&&toastLive)
             {
                 toastAge+=Time.unscaledDeltaTime;
-                taskToastGroup.alpha=TaskReduced?1:toastAge<.28f?toastAge/.28f:toastAge>TaskToastStay?Mathf.Clamp01((TaskToastStay+.36f-toastAge)/.36f):1;
+                taskToastGroup.alpha=TaskReduced?1:toastAge<TaskToastFadeIn?toastAge/TaskToastFadeIn:toastAge>TaskToastStay?Mathf.Clamp01((TaskToastStay+.36f-toastAge)/.36f):1;
                 if(toastAge>TaskToastStay+.36f)toastLive=false;
             }
             if(!show&&taskListOpen){taskListOpen=false;if(taskPanel!=null)taskPanel.gameObject.SetActive(false);}
@@ -268,17 +274,17 @@ namespace LingGuangV05.Desktop.Story
             if(total==0)return;
             if(total>1)
             {
-                taskToastTitle.text=GameText.T(total+" 条任务动态",total+" task updates");
+                taskToastTitle.text=GameText.T(total+"项任务有更新",total+" task updates");
                 var parts=new List<string>();
                 if(fresh>0)parts.Add(GameText.T("新任务 "+fresh,fresh+" new"));if(done>0)parts.Add(GameText.T("完成 "+done,done+" done"));if(queued>0)parts.Add(GameText.T("排队 "+queued,queued+" waiting"));
                 taskToastBody.text=string.Join(" · ",parts);
             }
             else if(done>0){taskToastTitle.text=GameText.T("任务完成","Task done");taskToastBody.text=one.Title(en);}
-            else if(queued>0){taskToastTitle.text=GameText.T("新任务已排队","New task waiting");taskToastBody.text=one.Title(en)+GameText.T(" · 任务已满 5/5，完成一个后补上"," · list full, it joins when one is done");}
+            else if(queued>0){taskToastTitle.text=GameText.T("任务更新","Task update");taskToastBody.text=one.Title(en)+GameText.T(" · 已排队：任务已满 5/5，完成一个后补上"," · waiting: list full, it joins when one is done");}
             else{taskToastTitle.text=GameText.T("新任务","New task");taskToastBody.text=one.Title(en)+GameText.T("：","：")+one.Body(en);}
             noticeStep=null;toastAge=0;toastLive=true;
             if(fresh+queued>0&&!taskListOpen){taskUnread=true;blinkSince=Time.unscaledTime;}
-            ClickTaskSound(); // existing UI audio respects the game's mute flag
+            // Automatic notices are silent: there is no notification-sound option, and the click sound is for the player's own clicks.
         }
 
         void DestroyTaskNotifications(){if(taskButtonRoot!=null)Destroy(taskButtonRoot.gameObject);if(taskToast!=null)Destroy(taskToast.gameObject);if(taskPanel!=null)Destroy(taskPanel.gameObject);}

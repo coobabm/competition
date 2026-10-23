@@ -91,6 +91,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void ASignableContractSuggestsSigning()
         {
             var sim = Trained(CrowdStage);
+            sim.AppReceipt(XgSim.CrowdApp).installed = true; // orders are signed in 摆渡众包
             Assert.IsFalse(XgGuide.Current(sim, 0).Exists(s => s.id.StartsWith("contract.", StringComparison.Ordinal)));
             sim.S.best.Add(new XgBest { dataset = "spam", acc = .95 });
             var s = First(XgGuide.Current(sim, 0));
@@ -105,6 +106,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void AnUnpaidBillComesFirst()
         {
             var sim = Trained(CrowdStage);
+            sim.AppReceipt(XgSim.CrowdApp).installed = true; // orders are signed in 摆渡众包
             sim.S.best.Add(new XgBest { dataset = "spam", acc = .95 });
             var steps = XgGuide.Current(sim, 0, new XgGuideHouse { unpaidPower = true, billDue = 12.5, breakerTripped = true });
             Assert.AreEqual("power.bill", steps[0].id);
@@ -241,7 +243,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsNotNull(s, "3 failures in 20 is on the 15% line");
             Assert.AreEqual(XgGuideKind.Main, s.kind);
             Assert.AreEqual(XgGuide.Lab, s.app); Assert.AreEqual("tree", s.tab); Assert.AreEqual("node:label.coop", s.target, "without the node, point at the node");
-            StringAssert.Contains("拿不准才问我", s.zh); StringAssert.Contains("85%", s.whyZh); StringAssert.Contains("罚 2 倍", s.whyZh); StringAssert.Contains("2× its pay", s.whyEn); StringAssert.DoesNotContain("举报", s.whyZh);
+            StringAssert.Contains("拿不准才问我", s.zh); StringAssert.Contains("85%", s.whyZh); StringAssert.Contains("罚 1 倍", s.whyZh); StringAssert.Contains("1× its pay", s.whyEn); StringAssert.DoesNotContain("举报", s.whyZh);
             sim.S.unlocked.Add("label.coop");
             s = Find(XgGuide.Current(sim, 0), "qc.rate");
             Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("label", s.tab); Assert.AreEqual("name:ThresholdSlider", s.target);
@@ -419,7 +421,7 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.autoLabelRevealed = true;
             var s = Find(XgGuide.Current(sim, 0), "label.auto");
             Assert.IsNotNull(s);
-            Assert.AreEqual(XgGuide.Crowd, s.app); Assert.AreEqual("name:Row自", s.target);
+            Assert.AreEqual(XgGuide.Lab, s.app); Assert.AreEqual("tree", s.tab); Assert.AreEqual("node:label.auto", s.target);
             Assert.IsTrue(s.money, "its price is shown while short");
             sim.S.autoLevel = 1;
             Assert.IsNull(Find(XgGuide.Current(sim, 1e4), "label.auto"), "bought");

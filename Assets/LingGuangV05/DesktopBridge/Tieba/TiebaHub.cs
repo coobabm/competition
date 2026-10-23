@@ -79,7 +79,7 @@ namespace LingGuangV05.Desktop.Tieba
             Changed?.Invoke();
         }
 
-        void WriteToSave() { if (runtime != null && runtime.Sim != null && S != null) runtime.Sim.S.forumState = JsonUtility.ToJson(S); }
+        void WriteToSave() { if (runtime != null && runtime.Sim != null && S != null && ReferenceEquals(runtime.Sim, linked)) runtime.Sim.S.forumState = JsonUtility.ToJson(S); }
 
         void Touch() { if (runtime != null && !runtime.TestMode) runtime.MarkDirty(); Changed?.Invoke(); }
 

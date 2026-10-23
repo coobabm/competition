@@ -58,30 +58,31 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.autoLevel = 1;
             Assert.IsFalse(sim.QualityActive, "the checks wait for the crowd stage even once auto-labelling is owned");
             sim.S.stage = XgSim.FeatureUnlock["quality"];
-            Assert.IsTrue(sim.QualityActive); Assert.AreEqual(.4, sim.SpotCheckChance, 1e-9);
+            Assert.IsTrue(sim.QualityActive); Assert.AreEqual(.3, sim.SpotCheckChance, 1e-9);
         }
 
         [Test]
-        public void CheckedWrongLabelIsFinedTwiceItsPayAndAddsNoNoise()
+        public void CheckedWrongLabelIsFinedItsPayAndAddsNoNoise()
         {
             var sim = Ready(coop: true); var host = new Host(); sim.ForcedCheckChance = 1;
             XgQcFine fined = null; sim.QualityFined += f => fined = f;
             var c = Judged(sim, false);
             double money = host.money, pay = sim.PayFor("spam", c.level);
+            Assert.AreEqual(1, XgSim.QcFineMultiplier, "stage-four fines were softened from twice the pay");
             Assert.IsTrue(sim.Route(c.id, host));
             Assert.IsNotNull(fined);
-            Assert.AreEqual(2 * pay, fined.fine, 1e-9); Assert.AreEqual(pay, fined.pay, 1e-9); Assert.AreEqual("spam", fined.dataset);
-            Assert.AreEqual(money - 2 * pay, host.money, 1e-9);
-            Assert.AreEqual(2 * pay, sim.S.qcFines, 1e-9); Assert.AreEqual(2 * pay, sim.S.totalSpent, 1e-9);
+            Assert.AreEqual(XgSim.QcFineMultiplier * pay, fined.fine, 1e-9); Assert.AreEqual(pay, fined.pay, 1e-9); Assert.AreEqual("spam", fined.dataset);
+            Assert.AreEqual(money - XgSim.QcFineMultiplier * pay, host.money, 1e-9);
+            Assert.AreEqual(XgSim.QcFineMultiplier * pay, sim.S.qcFines, 1e-9); Assert.AreEqual(XgSim.QcFineMultiplier * pay, sim.S.totalSpent, 1e-9);
             Assert.AreEqual(XgSim.QcCreditStart - XgSim.QcCreditFail, sim.Credit, 1e-9);
             Assert.AreEqual(0, sim.NoiseTotal, "a label the platform rejected never enters the lab's data");
             var record = sim.S.autoFeed[sim.S.autoFeed.Count - 1];
-            Assert.IsTrue(record.spotChecked); Assert.AreEqual(2 * pay, record.fine, 1e-9);
+            Assert.IsTrue(record.spotChecked); Assert.AreEqual(XgSim.QcFineMultiplier * pay, record.fine, 1e-9);
 
             sim.ForcedCheckChance = 0;
             Assert.IsTrue(Route(sim, host, false));
             Assert.AreEqual(1, sim.NoiseTotal, "unchecked wrong labels still become noise");
-            Assert.AreEqual(money - 2 * pay, host.money, 1e-9);
+            Assert.AreEqual(money - XgSim.QcFineMultiplier * pay, host.money, 1e-9);
         }
 
         [Test]
@@ -173,7 +174,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.IsTrue(sim.QualityWarning);
             string said = sim.S.log[sim.S.log.Count - 1];
             StringAssert.Contains("85%", said);
-            StringAssert.Contains("罚 2 倍", said);
+            StringAssert.Contains("罚 1 倍", said);
             StringAssert.DoesNotContain("举报", said);
             Checks(sim, host, 15, 5);
             Assert.AreEqual(.2, sim.ErrorRate, 1e-9);
@@ -311,7 +312,7 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(XgCreditTier.Gold, XgSim.TierOfCredit(90)); Assert.AreEqual(XgCreditTier.Normal, XgSim.TierOfCredit(89.9));
             Assert.AreEqual(XgCreditTier.Normal, XgSim.TierOfCredit(60)); Assert.AreEqual(XgCreditTier.Watch, XgSim.TierOfCredit(59.9));
             var sim = Ready(); var host = new Host();
-            foreach (var (credit, chance, mult) in new[] { (95.0, .25, 1.2), (75.0, .4, 1.0), (30.0, .65, .8) })
+            foreach (var (credit, chance, mult) in new[] { (95.0, .15, 1.5), (75.0, .3, 1.0), (30.0, .5, .8) })
             {
                 sim.S.qcCredit = credit;
                 Assert.AreEqual(chance, sim.SpotCheckChance, 1e-9); Assert.AreEqual(mult, sim.QualityPayMultiplier, 1e-9);
@@ -328,7 +329,7 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.AreEqual(chance, (double)checkedCount / n, .03, "credit " + credit);
             }
             var normal = Ready(); var gold = Ready(); gold.S.qcCredit = 95;
-            Assert.AreEqual(normal.CollaborationIncome("spam", host) * 1.2, gold.CollaborationIncome("spam", host), 1e-9);
+            Assert.AreEqual(normal.CollaborationIncome("spam", host) * 1.5, gold.CollaborationIncome("spam", host), 1e-9);
         }
 
         [Test]

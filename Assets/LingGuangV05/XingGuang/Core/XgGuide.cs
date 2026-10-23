@@ -549,8 +549,8 @@ namespace LingGuangV05.XingGuang
                 list.Add(Step("ability.study", XgGuideKind.Ability,
                     "下一步：科技买「" + recommended.name + "」 · ¥" + sim.NodeCost(recommended).ToString("0"),
                     "Next: buy " + recommended.nameEn + " in Tech · ¥" + sim.NodeCost(recommended).ToString("0"),
-                    "为「" + name + "」做准备。买好以后回训练页，练完再和它聊聊。通过能力考后，摆渡众包升级会发一笔见面礼；留些钱付电费。",
-                    "Prepare for " + nameEn + ". Then train and talk to it. Each new ability funds your next research.",
+                    "为「" + name + "」做准备。买好以后回训练页，练完再和它聊聊。" + (sim.DesktopAppInstalled(XgSim.CrowdApp) ? "通过能力考后，装好的摆渡众包会升一档，发一笔见面礼" : "摆渡众包还没装：装好以后，每过一次能力考它都会升一档") + "；留些钱付电费。",
+                    "Prepare for " + nameEn + ". Then train and talk to it. " + (sim.DesktopAppInstalled(XgSim.CrowdApp) ? "Passing the exam moves Bodu Crowd up a tier with a welcome bonus." : "Bodu Crowd is not installed yet: once it is, every passed exam moves it up a tier.") + " Keep some money for power.",
                     Lab, "tree", "node:" + recommended.id, ""));
                 return;
             }
@@ -1277,8 +1277,8 @@ namespace LingGuangV05.XingGuang
             if (sim.S.stage >= 6 || sim.GlobalAutoLevel > 0 || !sim.CanBuyGlobalAuto(out _)) return;
             var node = XgCatalog.Node("label.auto");
             if (node == null) return;
-            var s = Step("label.auto", XgGuideKind.Boost, "标注台买「" + node.name + "」", "Buy '" + node.nameEn + "' on the labelling page",
-                "让模型替你答题：每张能用的桌都会自己标，钱和样本照拿。", "Let the model answer for you: every eligible desk labels itself, money and samples included.", Crowd, "label", "name:Row自", "");
+            var s = Step("label.auto", XgGuideKind.Boost, "科技买「" + node.name + "」", "Buy '" + node.nameEn + "' in the tech tree",
+                "让模型替你答题：每张能用的桌都会自己标，钱和样本照拿。", "Let the model answer for you: every eligible desk labels itself, money and samples included.", Lab, "tree", "node:" + node.id, "");
             MoneyProgress(sim, wallet, node, s);
             list.Add(s);
         }

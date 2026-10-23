@@ -220,7 +220,7 @@ namespace LingGuangV05.Desktop.XingGuang
                     if (d.samplesFactor < 1) sb.Append(T(" 样本 ×", " samples ×")).Append(N(d.samplesFactor, "0.0#"));
                 }
             }
-            if (sb.Length == 0 && node.id == "cooler") sb.Append("<color=#7FD3FF>").Append(T("烧卡概率 −50%", "burn-out chance −50%")).Append("</color>");
+            if (sb.Length == 0 && node.id == "cooler") sb.Append("<color=#7FD3FF>").Append(T("显卡高温损耗 −50%", "GPU heat wear −50%")).Append("</color>");
             if (sb.Length == 0 && node.id == "cudnn") sb.Append("<color=#7FD3FF>").Append(T("训练 ×1.3 · 电费 −30%", "training ×1.3 · power −30%")).Append("</color>");
             if (sb.Length == 0)
             {

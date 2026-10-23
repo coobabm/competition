@@ -39,7 +39,7 @@ namespace LingGuangV05.Desktop.XingGuang
             for (int i = 0; i < tabs.Length; i++) { int n = i; tabs[i] = Button("Tab" + i, .01f + i * .245f, .245f + i * .245f, 82, 34, () => SelectPage(n)); }
             readingArea = Rect("ReadingArea", root, new Vector2(0, 0), Vector2.one, new Vector2(16, 142), new Vector2(-16, -128));
             reader = readingArea.gameObject.AddComponent<ScrollRect>(); reader.horizontal = false;
-            reader.movementType = ScrollRect.MovementType.Clamped; reader.inertia = false;
+            reader.movementType = ScrollRect.MovementType.Clamped; reader.inertia = false; reader.scrollSensitivity = 30;
             var viewport = Rect("Viewport", readingArea, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             viewport.gameObject.AddComponent<RectMask2D>();
             var hit = Panel(viewport, XgDark.Card); hit.raycastTarget = true;

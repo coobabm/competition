@@ -145,8 +145,6 @@ namespace LingGuangV05.XingGuang
             Node(2, "wider", "v.w2", "把网络加宽", "Widen the network", "每层多装一些线索。", "Hold more clues per layer.");
             Add(2, "auto.three", "自动答题 3 级", "Auto answering Lv 3", "升到 3 级，后台赚得更多。", "Level 3 earns more in the background.",
                 c => c.sim.GlobalAutoLevel >= 1, c => c.sim.GlobalAutoLevel >= 3, Lab, "tree", "node:label.auto").Goal(c => c.sim.GlobalAutoLevel, 3);
-            Add(2, "worker", "雇个帮手", "Hire a helper", "转包给阿杰他们，多一份产出。", "Subcontract to A-Jie and friends.",
-                c => c.sim.SubcontractReady, c => c.sim.S.scWorkers != null && c.sim.S.scWorkers.Exists(w => w != null && w.labelsTotal > 0), XgGuide.Crowd, "label");
             Add(2, "gpu.two", "加第二张显卡", "Add a second card", "两张卡一起训练，快一倍。", "Two cards train twice as fast.",
                 c => c.house != null && Stage(c, 2), c => c.house != null && c.house.S.gpuCount >= 2, XgGuide.Shop);
             Add(2, "book.first", "读完一本书", "Finish a book", "读给它听，它会记住。", "Read to it and it remembers.",
@@ -189,6 +187,8 @@ namespace LingGuangV05.XingGuang
                 c => Stage(c, 4), c => c.sim.S.contracts != null && c.sim.S.contracts.Count >= 3, XgGuide.Crowd, "contracts").Goal(c => c.sim.S.contracts == null ? 0 : c.sim.S.contracts.Count, 3);
             Add(4, "qc.twenty", "通过 20 次抽检", "Pass 20 spot checks", "平台会抽查你的答案。", "The platform spot-checks answers.",
                 c => c.sim.QualityActive, c => PassedChecks(c) >= 20, XgGuide.Crowd, "label").Goal(c => PassedChecks(c), 20);
+            Add(4, "worker", "雇个帮手", "Hire a helper", "转包给阿杰他们，多一份产出。", "Subcontract to A-Jie and friends.",
+                c => c.sim.SubcontractReady, c => c.sim.S.scWorkers != null && c.sim.S.scWorkers.Exists(w => w != null && w.labelsTotal > 0), XgGuide.Crowd, "subcontract");
             Add(4, "forget.night", "度过忘言夜", "Through Forget Night", "那一晚，问问它还记得什么。", "That night, ask what it remembers.",
                 c => c.sim.OfferForgetNight || c.sim.S.fnDone, c => c.sim.S.fnDone, XgGuide.YY, XgGuide.YYChat);
             Add(4, "book.question", "回答书里的问题", "Answer a book question", "它读书时会问你问题。", "It asks you about what it reads.",

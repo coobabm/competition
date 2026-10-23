@@ -53,6 +53,28 @@ namespace LingGuangV05.UI.Tests
             finally{UnityEngine.Object.DestroyImmediate(rtHost);}
         }
 
+        [Test]
+        public void OfflineIncomeSettingIsLockedUntilUnlockedThenTogglesWithTheDesignNumbers()
+        {
+            BuildHud();
+            var hud=host.GetComponent(Type.GetType("LingGuangV05.CaseMenu.CaseMenuHud, Assembly-CSharp"));
+            var type=hud.GetType();
+            int state=0;bool? written=null;
+            type.GetMethod("ConfigureOfflineIncome").Invoke(hud,new object[]{new Func<int>(()=>state),new Action<bool>(v=>{written=v;state=v?2:1;})});
+            var button=host.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b=>b.name=="OfflineIncome");
+            var detail=button.GetComponentsInChildren<TextMeshProUGUI>(true).Single(l=>l.name=="Description");
+            Assert.That(button.interactable,Is.False,"locked until automatic answering is unlocked");
+            Assert.That(detail.text,Is.Not.Empty,"a locked toggle explains why");
+            button.onClick.Invoke();Assert.That(written,Is.Null,"a locked toggle never writes");
+            state=1;type.GetMethod("RefreshOfflineIncomeSetting").Invoke(hud,null);
+            Assert.That(button.interactable,Is.True);
+            string pct=(LingGuangV05.Core.XgOfflineRules.Efficiency*100).ToString("0",System.Globalization.CultureInfo.InvariantCulture)+"%";
+            string hours=(LingGuangV05.Core.XgOfflineRules.MaxSeconds/3600).ToString("0.#",System.Globalization.CultureInfo.InvariantCulture);
+            StringAssert.Contains(pct,detail.text);StringAssert.Contains(hours,detail.text);
+            button.onClick.Invoke();Assert.That(written,Is.True);
+            button.onClick.Invoke();Assert.That(written,Is.False);
+        }
+
         [TearDown]
         public void TearDown()
         {
@@ -94,7 +116,8 @@ namespace LingGuangV05.UI.Tests
             Assert.That(logo.color, Is.EqualTo(Color.white));
             Assert.That(logo.rectTransform.rect.width, Is.EqualTo(500f));
             Assert.That(logo.rectTransform.rect.height, Is.EqualTo(500f * 1040f / 1775f).Within(.01f));
-            Assert.That(logo.rectTransform.anchoredPosition, Is.EqualTo(new Vector2(65f, -98f)));
+            Assert.That(logo.rectTransform.anchoredPosition, Is.EqualTo(new Vector2(123f, -110f)),
+                "the lockup's visible ink starts at x~128, in line with the title action row");
             Assert.That(logo.rectTransform.anchorMin, Is.EqualTo(new Vector2(0f, 1f)));
             Assert.That(logo.rectTransform.anchorMax, Is.EqualTo(new Vector2(0f, 1f)));
             Assert.That(logo.rectTransform.anchoredPosition.x + logo.rectTransform.rect.width, Is.LessThanOrEqualTo(715f),
@@ -105,17 +128,22 @@ namespace LingGuangV05.UI.Tests
                 .Single(label => label.name == "Eyebrow").text, Does.Contain("MY COMPUTER IS ALIVE"));
         }
         [Test]
-        public void MainTitleLineBoxDoesNotOverlapItsSubheading()
+        public void MainTitleHasNoSubheadingAndStaysClearOfTheTitleActions()
         {
             BuildHud();
             var labels = host.GetComponentsInChildren<TextMeshProUGUI>(true);
             var title = host.GetComponentsInChildren<UnityEngine.UI.RawImage>(true).Single(image => image.name == "TitleLogoV9").rectTransform;
-            var subheading = labels.Single(label => label.name == "Subheading").rectTransform;
+            Assert.That(labels.Any(label => label.name == "Subheading"), Is.False,
+                "the v9 lockup carries the whole title; the retired subheading line is gone");
             float titleBottom = title.anchoredPosition.y - title.rect.height;
-            Assert.That(titleBottom, Is.GreaterThanOrEqualTo(subheading.anchoredPosition.y + 8f),
-                "The title artwork must retain at least 8 reference pixels above its subheading");
-            Assert.That(subheading.anchoredPosition.y, Is.EqualTo(-398.96f).Within(.05f),
-                "The subheading follows the v9 lockup height (500 x 292.96), not the retired 500 x 267 v5 block");
+            Assert.That(titleBottom, Is.EqualTo(-110f - 500f * 1040f / 1775f).Within(.05f),
+                "the lockup is 500 x 292.96 from its top at -110");
+            // Title actions are bottom-anchored in the 1920 x 1080 reference canvas.
+            float actionsTop = host.GetComponentsInChildren<UnityEngine.UI.Button>(true)
+                .Where(button => button.name == "ReadArchives" || button.name == "EndingArchives" || button.name == "QuitGame")
+                .Max(button => { var rect = (RectTransform)button.transform; return rect.anchoredPosition.y + rect.rect.height; }) - 1080f;
+            Assert.That(titleBottom, Is.GreaterThanOrEqualTo(actionsTop + 8f),
+                "the title artwork must retain at least 8 reference pixels above the title action row");
         }
 
         private void BuildHud()

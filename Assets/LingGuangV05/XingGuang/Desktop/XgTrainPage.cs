@@ -514,7 +514,7 @@ namespace LingGuangV05.Desktop.XingGuang
             string line = Sim.TrainingRiskLine(forecast);
             double dirty = Math.Floor(Sim.Noise(run.dataset) + Sim.DataNoise(run.dataset));
             if (dirty >= 1) line += "  <color=#3A5566>" + T("脏标注 " + N(dirty, "0") + " 条", N(dirty, "0") + " dirty labels") + "</color>";
-            if (HeatWarning()) line += "\n<color=#EF9F27>" + T("显卡太热，可能烧卡", "The cards are hot and may burn out") + "</color>";
+            if (HeatWarning()) line += "\n<color=#EF9F27>" + T("显卡太热：会降频，高温损耗也在加快", "The cards are hot: throttling, and heat wear is speeding up") + "</color>";
             // Stays on the page for a while after an overfit drop, whatever toast comes next (XgTrainPage.Overfit.cs).
             if (OverfitNudging) line = "<color=#E24B4A><b>" + T("上一轮过拟合退步了：补数据 / Dropout / 点「回档」", "Last round overfit: more data / Dropout / Restore") + "</b></color>\n" + line;
             return line;

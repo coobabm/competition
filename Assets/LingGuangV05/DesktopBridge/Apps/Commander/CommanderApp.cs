@@ -80,7 +80,7 @@ namespace LingGuangV05.Desktop.Apps
         {
             if (string.IsNullOrEmpty(commandInput.text) || EventSystem.current.currentSelectedGameObject != commandInput.gameObject) return;
             if (!commandInput.isFocused) commandInput.ActivateInputField();
-            if (Keyboard.current.enterKey.wasPressedThisFrame) ProcessCommand();
+            if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame) ProcessCommand();
         }
 
         public void UpdateColors()

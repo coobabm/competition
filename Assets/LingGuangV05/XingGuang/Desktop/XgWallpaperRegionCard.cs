@@ -7,7 +7,9 @@ using UnityEngine.UI;
 
 namespace LingGuangV05.Desktop.XingGuang
 {
+    // The wallpaper lies under every window: its Esc runs after theirs (see EscapeKey).
     /// <summary>A small read-only explanation, owned by the desktop rather than the pinned wallpaper.</summary>
+    [DefaultExecutionOrder(100)]
     public sealed class XgWallpaperRegionCard : MonoBehaviour
     {
         XgBrainWallpaper wallpaper;
@@ -94,7 +96,7 @@ namespace LingGuangV05.Desktop.XingGuang
         {
             if (!IsOpen) return;
             if (wallpaper == null || !wallpaper.Reveal.Visible || save != CurrentSave()) { Hide(); return; }
-            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) { Hide(); return; }
+            if (EscapeKey.TryConsume()) { Hide(); return; }
             if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && bridge != null && bridge.inputSurface != null
                 && bridge.inputSurface.TryMap(Mouse.current.position.ReadValue(), out var position)
                 && !RectTransformUtility.RectangleContainsScreenPoint(card, position, bridge.sourceCamera)) { Hide(); return; }

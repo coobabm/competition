@@ -66,7 +66,7 @@ namespace LingGuangV05.XingGuang
 
         /// <summary>
         /// The spider answers the desk's current card with the checkpoint's guess. Settled like an automatic label:
-        /// <see cref="PayFor"/> × the credit multiplier when right, a spot check may fine it, a wrong label the platform
+        /// <see cref="AutoPayFor"/> × the credit multiplier when right, a spot check may fine it, a wrong label the platform
         /// did not catch becomes the lab's noise (with 人机协作). The next card comes up; hand counts and the combo are
         /// untouched.
         /// </summary>
@@ -78,7 +78,7 @@ namespace LingGuangV05.XingGuang
             card = Card(desk);
             bool correct = guess == card.truth;
             var result = new XgSpiderAnswer { accepted = true, yes = guess, correct = correct, cardId = card.id };
-            double unitPay = PayFor(desk, card.level) * QualityPayMultiplier;
+            double unitPay = AutoPayFor(desk, card.level) * QualityPayMultiplier;
             result.fine = SettleSpotCheck(card, correct, unitPay, host, out result.spotChecked);
             NoteLabelSpeed();
             if (correct)

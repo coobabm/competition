@@ -10,7 +10,7 @@ using LingGuangV05.Desktop;
 namespace LingGuangV05.CaseMenu
 {
     /// <summary>Preloads the real Main desktop; entering only moves the same camera and unlocks its screen.</summary>
-    [DisallowMultipleComponent]
+    [DisallowMultipleComponent, DefaultExecutionOrder(EscapeKey.SettingsOrder)]
     public sealed class CaseMenuController : MonoBehaviour
     {
         public const string ScenePath = "Assets/LingGuangV05/Scenes/ComputerCaseMenu.unity";
@@ -25,6 +25,8 @@ namespace LingGuangV05.CaseMenu
         public TMP_FontAsset font;
         public AudioClip hoverClip, pressClip, releaseClip, bootClip, fanClip;
         public float transitionSeconds = 4.8f;
+        /// <summary>The flight runs at this share of <see cref="transitionSeconds"/> (2026-10-22 opening pace).</summary>
+        public const float FlightPace = .6f;
         public bool IsTransitioning { get; private set; }
         public bool IsSettingsOpen => hud != null && hud.IsSettingsOpen;
         public int TransitionCount { get; private set; }
@@ -71,6 +73,7 @@ namespace LingGuangV05.CaseMenu
                 () => Play(releaseClip, .24f));
             mainDisplay = gameObject.AddComponent<CaseMenuMainDisplay>();
             hud.ConfigureLifeEvents(CurrentLifeEventMode, SetLifeEventMode);
+            hud.ConfigureOfflineIncome(CurrentOfflineIncome, SetOfflineIncome);
             hud.ConfigureTitleActions(() => IsMainReady ? mainDisplay.Runtime : null, BeginGame, QuitGame, RequestPowerOn);
             Cursor.visible = true; Cursor.lockState = CursorLockMode.None;
         }
@@ -95,15 +98,15 @@ namespace LingGuangV05.CaseMenu
             var keyboard = Keyboard.current;
             if (HasEnteredGame)
             {
-                if (IsSettingsOpen && keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+                if (IsSettingsOpen && EscapeKey.TryConsume())
                 { if (hud.IsPlayerHelpOpen) hud.ClosePlayerHelp(); else CloseSettings(); }
                 return;
             }
-            if (hud.IsArchiveOpen) { if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) hud.CloseArchiveByPlayer(); return; }
+            if (hud.IsArchiveOpen) { if (EscapeKey.TryConsume()) hud.CloseArchiveByPlayer(); return; }
             if (hud.HasTitleSelection && keyboard != null && (keyboard.enterKey.isPressed || keyboard.spaceKey.isPressed || keyboard.enterKey.wasReleasedThisFrame || keyboard.spaceKey.wasReleasedThisFrame)) return;
             if (IsSettingsOpen)
             {
-                if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+                if (EscapeKey.TryConsume())
                 { if (hud.IsPlayerHelpOpen) hud.ClosePlayerHelp(); else CloseSettings(); }
                 return;
             }
@@ -215,6 +218,8 @@ namespace LingGuangV05.CaseMenu
         }
         int? CurrentLifeEventMode() => GameSettings.CurrentLifeEventMode(IsMainReady ? mainDisplay.Runtime : null);
         void SetLifeEventMode(int mode) => GameSettings.SetLifeEventMode(IsMainReady ? mainDisplay.Runtime : null, mode, hud);
+        int CurrentOfflineIncome() => GameSettings.CurrentOfflineIncome(IsMainReady ? mainDisplay.Runtime : null);
+        void SetOfflineIncome(bool enabled) => GameSettings.SetOfflineIncome(IsMainReady ? mainDisplay.Runtime : null, enabled, hud);
 
         public void SetVolume(float value)
         {
@@ -282,7 +287,8 @@ namespace LingGuangV05.CaseMenu
             // Give the physical switch and LCD backlight a short, visible lead before the dolly.
             yield return new WaitForSecondsRealtime(.20f);
             // Original camera timing and physical monitor framing; the LCD stays on the model.
-            float duration = reducedMotion ? .65f : Mathf.Max(2f, transitionSeconds);
+            // Paced like the prologue (玩家反馈 F1): the scene's 4.8 s flight runs at 0.6 of its length.
+            float duration = reducedMotion ? .65f : Mathf.Max(2f, transitionSeconds * FlightPace);
             Vector3 start = menuCamera.transform.position;
             Quaternion startRotation = menuCamera.transform.rotation;
             // Match Main's native monitor framing (scaled by .25) at every aspect ratio.

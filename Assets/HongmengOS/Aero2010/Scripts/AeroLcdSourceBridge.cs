@@ -63,8 +63,9 @@ namespace HongmengOS.Aero2010
             RefreshRaycasters();
             var mouse=Mouse.current;
             if(mouse==null||inputSurface==null||controller==null||!controller.CanInteract)return;
+            // Only a click that reaches the LCD sounds; overlays drawn above it (saves, settings) keep their own sounds.
             if((mouse.leftButton.wasPressedThisFrame||mouse.rightButton.wasPressedThisFrame)&&inputSurface.TryMap(mouse.position.ReadValue(),out var sourcePoint))
-            { controller.PlayDesktopClick();contextPosition=sourcePoint; }
+            { if(inputSurface.IsPointerOver)controller.PlayDesktopClick();contextPosition=sourcePoint; }
         }
         private void RefreshRaycasters()
         {

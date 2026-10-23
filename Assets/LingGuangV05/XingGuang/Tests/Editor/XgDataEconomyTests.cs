@@ -414,6 +414,8 @@ namespace LingGuangV05.XingGuang.Tests
             sim.S.desksOpen.Add("danmu");
             sim.S.best.Add(new XgBest { dataset = "danmu", acc = .9, arch = "rnn" });
             sim.S.contracts.Add("danmaku");
+            // Orders now pay (and send back logs) only while 摆渡众包 is installed.
+            sim.AppReceipt(XgSim.CrowdApp).installed = true;
             return sim;
         }
 

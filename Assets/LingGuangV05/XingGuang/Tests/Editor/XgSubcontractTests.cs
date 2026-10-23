@@ -24,7 +24,7 @@ namespace LingGuangV05.XingGuang.Tests
         {
             var sim = new XgSim { GoldChance = 0 };
             sim.S.stage = XgSim.FeatureUnlock["quality"]; sim.S.fundedAbility = sim.S.stage; // the milestone payments are not what these tests count
-            sim.S.autoLevel = 1;
+            sim.S.autoLevel = 1; sim.AppReceipt(XgSim.CrowdApp).installed = true;
             sim.ForcedCheckChance = checkChance;
             sim.ClockOfDaySeconds = 12 * 3600;
             sim.Tick(1, host);
@@ -34,17 +34,21 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void UnlocksAtStageTwoWithAutoLabellingThroughCrowdNotYY()
+        public void UnlocksAtStageFourWithAutoLabellingAndCrowdInstalledThroughCrowdNotYY()
         {
             var host = new Host();
             var sim = new XgSim { GoldChance = 0 };
             int opened = 0; sim.SubcontractOpened += () => opened++;
-            sim.S.autoLevel = 1; sim.Tick(5, host);
-            Assert.IsFalse(sim.SubcontractUnlocked, "stage 1");
-            sim.S.autoLevel = 0; sim.S.stage = 2; sim.Tick(5, host);
+            sim.S.autoLevel = 1; sim.AppReceipt(XgSim.CrowdApp).installed = true;
+            sim.S.stage = 3; sim.S.fundedAbility = 3; sim.Tick(5, host);
+            Assert.IsFalse(sim.SubcontractUnlocked, "stage 3");
+            sim.S.autoLevel = 0; sim.S.stage = XgSim.SubcontractStage; sim.S.fundedAbility = sim.S.stage; sim.Tick(5, host);
             Assert.IsFalse(sim.SubcontractUnlocked, "no 自动答题 yet");
             Assert.IsFalse(sim.Hire("ajie", host));
-            sim.S.autoLevel = 1; sim.Tick(1, host); sim.Tick(5, host);
+            sim.S.autoLevel = 1; sim.AppReceipt(XgSim.CrowdApp).installed = false; sim.Tick(5, host);
+            Assert.IsFalse(sim.SubcontractUnlocked, "摆渡众包 not installed");
+            Assert.AreEqual(0, opened, "no announcement before it is ready");
+            sim.AppReceipt(XgSim.CrowdApp).installed = true; sim.Tick(1, host); sim.Tick(5, host);
             Assert.IsTrue(sim.SubcontractUnlocked);
             Assert.AreEqual(1, opened);
             var lines = sim.TakeYYLines();
@@ -168,7 +172,7 @@ namespace LingGuangV05.XingGuang.Tests
         public void WorkerLabelsGoThroughThePlatformsSpotChecks()
         {
             var host = new Host(); var sim = Open(host, checkChance: 1);
-            sim.S.qcCredit = 70; // stays in the 普通 tier: one pay multiplier throughout
+            sim.S.qcCredit = 61; // stays in the 普通 tier (at most +8 regen and +20 passes): one pay multiplier throughout
             var external = new List<XgAutoRecord>(); sim.ExternalLabelled += (who, r) => external.Add(r);
             var fines = new List<XgQcFine>(); sim.QualityFined += f => fines.Add(f);
             Assert.IsTrue(sim.AssignWorkerDesk("xiaogang", "logic"));

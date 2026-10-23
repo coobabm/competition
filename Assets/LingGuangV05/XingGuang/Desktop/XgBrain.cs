@@ -71,7 +71,7 @@ namespace LingGuangV05.Desktop.XingGuang
 
             // The Core assigns clearly labelled checkpoint predictions if the live service is unavailable.
             sim.FillJudgmentBuffer();
-            if (!ready || sim.ReviewFull) return;
+            if (!ready) return;
             const int limit = 1;
             while (pending.Count < limit && sim.TryTakeBrainTicket(out var ticket))
             {

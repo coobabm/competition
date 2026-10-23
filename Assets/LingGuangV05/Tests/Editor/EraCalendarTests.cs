@@ -192,6 +192,35 @@ namespace LingGuangV05.Tests
         }
 
         [Test]
+        public void LaterAiTermsAreRewordedButPlain2016WordsStay()
+        {
+            foreach (var term in new[] { "大模型", "大语言模型", "LLM", "ChatGPT", "提示词", "AI 幻觉", "对齐微调", "RAG", "思维链", "AIGC", "扩散模型", "词元" })
+                Assert.IsNotNull(EraLexicon.FirstBannedAiTerm("它说：" + term), term);
+            foreach (var plain in new[] { "把图放大模型就糊了", "他发烧出现了幻觉", "多智能体强化学习", "a rag doll", "语言模型", "Fragile", "偏好对齐" })
+            {
+                Assert.IsNull(EraLexicon.FirstBannedAiTerm(plain), plain);
+                Assert.AreEqual(plain, EraLexicon.Scrub(plain), plain);
+            }
+            Assert.AreEqual("我是一个模型，不是聊天程序。", EraLexicon.Scrub("我是一个大模型，不是ChatGPT。"));
+            Assert.AreEqual("I am a language model.", EraLexicon.Scrub("I am an LLM."));
+            Assert.AreEqual("先分步思考，再按提示回答。", EraLexicon.Scrub("先思维链，再按提示词回答。"));
+            // The player layer may say these words: authored-content audits stay meme-only.
+            Assert.IsNull(EraLexicon.FirstBanned("不调用真实大模型"));
+            CollectionAssert.IsEmpty(EraLexicon.AuditAiTerms(new[] { "训练好了", "AlphaGo 赢了" }));
+            Assert.AreEqual(1, EraLexicon.AuditAiTerms(new[] { "训练好了", "我是 LLM" }).Count);
+            StringAssert.Contains("ChatGPT", EraLexicon.PromptRule(false));
+            StringAssert.Contains("ChatGPT", EraLexicon.PromptRule(true));
+        }
+
+        [Test]
+        public void EraEventsUseNoLaterAiTerms()
+        {
+            var lines = new List<string>();
+            foreach (var e in Events().All) { lines.Add(e.title); lines.Add(e.text); lines.Add(e.who); }
+            Assert.IsEmpty(EraLexicon.AuditAiTerms(lines));
+        }
+
+        [Test]
         public void FreestyleKeeps2016SportsAndMusicButRejectsTheLaterCatchphrase()
         {
             foreach (var plain in new[] {

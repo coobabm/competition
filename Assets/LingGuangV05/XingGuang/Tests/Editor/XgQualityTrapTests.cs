@@ -69,7 +69,7 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
-        public void AWrongTrapCostsFiveTimesThePayEightCreditAndTwoErrors()
+        public void AWrongTrapCostsThreeTimesThePayEightCreditAndTwoErrors()
         {
             var sim = Ready(); var host = new Host();
             XgQcFine fined = null; sim.QualityFined += f => fined = f;
@@ -77,8 +77,9 @@ namespace LingGuangV05.XingGuang.Tests
             var c = Trap(sim, 2, false);
             double money = host.money, pay = sim.PayFor("spam", c.level);
             Assert.IsTrue(sim.Route(c.id, host));
-            Assert.AreEqual(money - 5 * pay, host.money, 1e-9);
-            Assert.IsNotNull(fined); Assert.IsTrue(fined.trap); Assert.AreEqual(5 * pay, fined.fine, 1e-9);
+            Assert.AreEqual(3, XgSim.TrapFineMultiplier);
+            Assert.AreEqual(money - 3 * pay, host.money, 1e-9);
+            Assert.IsNotNull(fined); Assert.IsTrue(fined.trap); Assert.AreEqual(3 * pay, fined.fine, 1e-9);
             Assert.AreEqual(XgSim.QcCreditStart - XgSim.TrapCreditFail, sim.Credit, 1e-9);
             CollectionAssert.AreEqual(new[] { false, false }, sim.S.qcChecks, "counts as two errors in the window");
             Assert.AreEqual(1, sim.S.qcTrapFails);

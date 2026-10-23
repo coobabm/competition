@@ -142,7 +142,8 @@ namespace LingGuangV05.Runtime
 
         string OfflineSummary() => !string.IsNullOrEmpty(OfflineIncomeStatus) ? " " + OfflineIncomeStatus : OfflineIncome > 0
             ? GameText.T(" 离线收益 ¥", " Offline income ¥") + OfflineIncome.ToString("0.00")
-                + GameText.T("（50%效率，最多8小时，仅资金）。", " (50% efficiency, up to 8 hours, funds only).") : "";
+                + GameText.T("（" + Pct + "效率，最多8小时，仅资金）。", " (" + Pct + " efficiency, up to 8 hours, funds only).") : "";
+        static string Pct => (XgOfflineRules.Efficiency * 100).ToString("0", CultureInfo.InvariantCulture) + "%";
 
         void OnSimulationChanged() { dirty = true; notify = true; }
         void OnSimulationSignal(string name, string arg) { Signal?.Invoke(name, arg); }
@@ -302,14 +303,21 @@ namespace LingGuangV05.Runtime
         public bool ResetProgress(bool replayOpening = false)
         {
             EnsureInitialized();
-            if (endingArchiveBusy) return false;
+            if (endingArchiveBusy) { SaveStatus = GameText.T("正在保存结局，请稍后再开始新游戏。", "Saving the ending. Please start the new game again shortly."); Changed?.Invoke(); return false; }
             // Learn the player's setup before the files are moved aside.
             var known = KnownProfile(Sim, true);
             if (useDiskSave && !store.ArchiveForReset(out var message)) { SaveStatus = message; Changed?.Invoke(); return false; }
             persistenceBlocked = false;
             OfflineSeconds = 0;
             BeginNewGame(replayOpening, known);
-            return !dirty || SaveNow();
+            newGameInOpening = Sim;
+            bool saved = !dirty || SaveNow();
+            // The prologue is never saved, so say plainly that the new game is running and when it will be saved.
+            SaveStatus = !saved ? UnsavedNewGameStatus()
+                : Sim.InPrologue ? GameText.T("新游戏已开始 · 开场结束后自动存档", "New game started · It autosaves once the opening ends")
+                : GameText.T("新游戏已开始 · 已自动存档", "New game started · Autosaved");
+            Changed?.Invoke();
+            return saved;
         }
 
         // ───────────── the opening, once ─────────────

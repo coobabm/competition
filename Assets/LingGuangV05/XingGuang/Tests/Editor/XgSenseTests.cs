@@ -147,7 +147,8 @@ namespace LingGuangV05.XingGuang.Tests
             var data = XgCatalog.Dataset("sense");
             Assert.AreEqual(XgTrack.Sequence, data.track); Assert.IsTrue(data.handLabel);
             Assert.AreEqual(1, XgSim.StageOfDataset("sense"));
-            Assert.AreEqual(sim.PayFor("arith", 1), sim.PayFor("sense", 1), 1e-9, "pay factor 1, like 算术");
+            // v4 §3.3 (2026-10-22): 常识 is the base of the difficulty pay table; every other desk pays at least as much.
+            foreach (var d in XgCatalog.Desks) Assert.GreaterOrEqual(sim.PayFor(d.id, 1), sim.PayFor("sense", 1), d.id);
             Assert.AreEqual(XgCatalog.HandFine * sim.ManualPayFor("sense", 3), sim.HandFineFor("sense", 3), 1e-9, "the default half fine");
             Assert.IsTrue(XgSim.IsBrainDesk("sense"));
         }

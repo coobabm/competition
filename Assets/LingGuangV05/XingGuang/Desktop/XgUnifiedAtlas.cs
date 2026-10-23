@@ -83,7 +83,7 @@ namespace LingGuangV05.Desktop.XingGuang
             action=ui.Button(detail,"",ReplayOrUnlock,15);action.rt.gameObject.name="Atlas replay or unlock";PlaceTopRight(action,178,18,162,36);
             bodyArea=Rect("Entry text",detail,Vector2.zero,Vector2.one,new Vector2(16,16),new Vector2(-16,-78));
             Panel(bodyArea,Color.clear).raycastTarget=true;bodyArea.gameObject.AddComponent<RectMask2D>();
-            var scroll=bodyArea.gameObject.AddComponent<ScrollRect>();scroll.horizontal=false;scroll.vertical=true;scroll.viewport=bodyArea;scroll.movementType=ScrollRect.MovementType.Clamped;
+            var scroll=bodyArea.gameObject.AddComponent<ScrollRect>();scroll.horizontal=false;scroll.vertical=true;scroll.viewport=bodyArea;scroll.movementType=ScrollRect.MovementType.Clamped;scroll.scrollSensitivity=30;
             bodyContent=Rect("Text content",bodyArea,new Vector2(0,1),Vector2.one,Vector2.zero,Vector2.zero);bodyContent.pivot=new Vector2(.5f,1);
             body=ui.Text(Rect("Body",bodyContent,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero),"",17,XgDark.Ink,TextAlignmentOptions.TopLeft);
             body.textWrappingMode=TextWrappingModes.Normal;scroll.content=bodyContent;

@@ -78,7 +78,12 @@ namespace LingGuangV05.Desktop.Apps
         void Awake() => Initialize();
 
         // Pause() does nothing once the window is inactive, so closing the window leaves the video running (as before).
-        void OnDisable() => Pause();
+        // The controls' fade may have hidden the cursor; never leave it hidden once the window goes away.
+        void OnDisable()
+        {
+            Cursor.visible = true;
+            Pause();
+        }
 
         public void Initialize()
         {
@@ -256,7 +261,9 @@ namespace LingGuangV05.Desktop.Apps
         public void UpdateControlInput(bool value)
         {
             watchPointer = value;
-            if (!value) HideVideoControls();
+            if (value) return;
+            Cursor.visible = true;
+            HideVideoControls();
         }
 
         public void UpdateDataItems()

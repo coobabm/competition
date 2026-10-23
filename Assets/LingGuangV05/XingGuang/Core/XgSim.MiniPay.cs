@@ -25,7 +25,7 @@ namespace LingGuangV05.XingGuang
     ///    the third right answer in a row pays double, each two completed answers unlock the following tier), plus a speed bonus of at most
     ///    <see cref="MiniSpeedCap"/> of the base for being quick (<see cref="MiniFastSeconds"/>; 常识判断: under 7.5 s);
     ///  - wrong: no sample, no pay, the combo breaks, and the desk's own fine if it has one (XgDesk.fine; only 算术 does).
-    /// The size of a game round, its score or the value of an item never changes the pay.
+    /// The size of a game round, its score or the value of an item never changes the pay (one exception: a calculus card, see <see cref="MiniBasePay"/>).
     /// </summary>
     public sealed partial class XgSim
     {
@@ -38,8 +38,9 @@ namespace LingGuangV05.XingGuang
         /// <summary>An answer this fast earns the full speed bonus; it fades to nothing at this many seconds.</summary>
         public const double MiniFastSeconds = 5;
 
-        /// <summary>What one right answer on a desk pays before any bonus.</summary>
-        public double MiniBasePay(string desk) { return ManualPayFor(desk, LevelOf(desk)); }
+        /// <summary>What one right answer on a desk pays before any bonus. A calculus card of the arithmetic games (topic 微积分)
+        /// pays <see cref="XgCatalog.CalculusPayFactor"/> times the desk's card: the one item value that does change the pay.</summary>
+        public double MiniBasePay(string desk) { return ManualPayFor(desk, LevelOf(desk)) * (desk == "arith" && MoleTopic == XgMoleTopic.Calculus ? XgCatalog.CalculusPayFactor : 1); }
 
         /// <summary>The speed share of the bonus: +50% for an instant answer, fading linearly to 0 at five seconds. A negative time means "not timed".</summary>
         public static double MiniSpeedShare(double seconds)

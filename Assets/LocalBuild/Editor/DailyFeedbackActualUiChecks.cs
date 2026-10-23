@@ -101,7 +101,7 @@ public static class DailyFeedbackActualUiChecks
         ctl.View.Refresh(true);var run=sim.Run(sim.SelectedTrack);var forecast=sim.TrainingRiskForecast(run);
         string risk=Get<TMP_Text>(ctl.View.Train,"risk").text,bill=Get<TMP_Text>(ctl.View.Train,"trainBill").text;
         Need(risk.Contains(sim.TrainingRiskLine(forecast)),"visible risk line includes current production forecast");
-        string hot=english?"The cards are hot and may burn out":"显卡太热，可能烧卡";
+        string hot=english?"The cards are hot: throttling, and heat wear is speeding up":"显卡太热：会降频，高温损耗也在加快";
         Need(risk.Contains(hot)==home.WearRiskLive,"visible cooling warning agrees with current real host");
         double price=home.RoundPrice(XgSim.DurationFor(run),sim.TrainPriceFactor,sim.TrainEnergyFactor);
         Need(bill==(english?"Power ¥":"电费 ¥")+XgUi.N(price,price<10?"0.0":"0"),"visible power price agrees with actual next-round billing");

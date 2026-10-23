@@ -47,7 +47,7 @@ public static class MusicInteractionChecks
     [Serializable] sealed class Item { public string check, detail; public bool passed; }
     [Serializable] sealed class Report
     {
-        public string scope="Editor PlayMode Main; actual Music WindowManager.OpenWindow/CloseWindow; real AudioSource; shutdown fade followed by GameMusic disable/enable simulates boot lifecycle, not full title camera animation";
+        public string scope="Editor PlayMode Main; actual Music WindowManager.OpenWindow/CloseWindow; real AudioSource; shutdown fade followed by GameMusic disable/enable simulates boot lifecycle, not full title camera animation; since 2026-10-22 the desktop starts the music itself (F2)";
         public string unityVersion, audioDriver, voiceClip, status="running", failure="";
         public bool batchMode, audioListenerPaused;
         public int audioSampleRate;
@@ -227,13 +227,15 @@ public static class MusicInteractionChecks
                 manager=Field(music,"manager") as MusicApp;source=Field(music,"source") as AudioSource;window=Field(music,"musicWindow") as WindowManager;
                 if(window==null||window.transform.parent==null||!window.transform.parent.gameObject.activeInHierarchy)return;
                 Check(manager!=null&&source!=null&&window!=null,"real music components","manager, source and actual parent WindowManager resolved");
-                Check(!GameMusic.Started&&!source.isPlaying,"boot stays silent","Started="+GameMusic.Started+", playing="+source.isPlaying);
+                // 2026-10-22 (玩家反馈 F2): the background music starts on its own once the desktop shows.
                 Wait(1,1);return;
             }
             if(now<due)return;
             if(phase==1)
             {
-                Check(!GameMusic.Started&&!source.isPlaying,"idle does not autoplay","one second without opening Music");
+                Check(GameMusic.Started&&source.isPlaying,"desktop starts the background music on its own","Started="+GameMusic.Started+", playing="+source.isPlaying+", queue="+manager.playerQueue.Count);
+                Check(source.clip!=null&&source.clip.name=="emergency_1","correct first track",source.clip==null?"null clip":source.clip.name);
+                Check(!manager.repeat&&!manager.shuffle&&!source.loop,"autoplay starts in playlist order","repeat/shuffle/source.loop all false, overriding legacy modes");
                 string line="我去，什么玩意儿在动我电脑？不会中病毒了吧？！";
                 Check(VoiceLines.Find(line)==null,"recordings do not ship","VoiceLines.Find finds no legacy clip");
                 float duration=VoiceLines.Play(line);
@@ -271,11 +273,10 @@ public static class MusicInteractionChecks
                     Check(manager.currentTrack==first,"shuffle previous uses playable rows too","No raw playlist index into filtered queue");
                     manager.playerQueue.Clear();manager.playerQueue.AddRange(fullQueue);
                 }
-                manager.repeat=true;manager.shuffle=true;source.loop=true;
+                manager.SetShuffle(false);manager.SetRepeatOne(false);
+                var playingClip=source.clip;
                 ticketsBefore=VoiceTicket();window.OpenWindow();ticketsAfter=VoiceTicket();
-                Check(!manager.repeat&&!manager.shuffle&&!source.loop,"first opening defaults to sequential playlist","repeat/shuffle/source.loop all false, overriding legacy modes");
-                Check(GameMusic.Started&&source.isPlaying,"real window open starts music","Started="+GameMusic.Started+", playing="+source.isPlaying+", queue="+manager.playerQueue.Count);
-                Check(source.clip!=null&&source.clip.name=="emergency_1","correct first track",source.clip==null?"null clip":source.clip.name);
+                Check(GameMusic.Started&&source.isPlaying&&source.clip==playingClip,"real window open keeps the playing song","Started="+GameMusic.Started+", playing="+source.isPlaying+", clip="+(source.clip==null?"null":source.clip.name));
                 Check(ticketsBefore>=0&&ticketsAfter==ticketsBefore&&MusicThoughtCount()==0,"music open does not repeat prologue thought","InnerVoice ticket "+ticketsBefore+" -> "+ticketsAfter);
                 Wait(2,1);return;
             }
@@ -359,7 +360,7 @@ public static class MusicInteractionChecks
             }
             if(phase==7)
             {
-                Check(!GameMusic.Started&&!source.isPlaying,"next boot does not autoplay","Started="+GameMusic.Started+", playing="+source.isPlaying);
+                Check(GameMusic.Started&&source.isPlaying,"next boot starts the background music again","Started="+GameMusic.Started+", playing="+source.isPlaying);
                 report.status="passed";Save();File.WriteAllText(Path.Combine(Root,"passed.txt"),"All checks passed; see report.json for scope and evidence.");Finish();
             }
         }

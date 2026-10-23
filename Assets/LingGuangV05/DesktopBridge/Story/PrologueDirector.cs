@@ -50,7 +50,7 @@ namespace LingGuangV05.Desktop.Story
         public bool Running => run != null;
         public string Step { get; private set; } = "";
 
-        void SetStep(string step) { Step = step; Debug.Log("[Prologue] " + step); }
+        void SetStep(string step) { Step = step; Debug.Log("[Prologue] " + step); PaceStep(step); }
 
         void OnEnable()
         {
@@ -75,6 +75,7 @@ namespace LingGuangV05.Desktop.Story
                 playing = runtime.Sim;
                 if (playing.InPrologue) run = StartCoroutine(Run());
             }
+            if (run != null) TickSkipInput();
             if (!runtime.Sim.InPrologue)
             {
                 var lab = LingGuangV05.Desktop.Tieba.TiebaHub.Lab();
@@ -175,7 +176,9 @@ namespace LingGuangV05.Desktop.Story
 
         void Think(string text, float hold = 3.5f)
         {
-            if (thinking != null) { StopCoroutine(thinking); VoiceLines.Stop(); }
+            if (thinking != null) { StopCoroutine(thinking); VoiceLines.Stop(); thinking = null; }
+            // A skipped segment says nothing: its thoughts are not part of the end state it jumps to.
+            if (Skipping) { if (thoughtGroup != null) thoughtGroup.alpha = 0; return; }
             thinking = StartCoroutine(Thinking(text, hold));
         }
 
@@ -184,17 +187,20 @@ namespace LingGuangV05.Desktop.Story
             thought.text = text; thought.maxVisibleCharacters = 0;
             thought.ForceMeshUpdate();
             float spoken = VoiceLines.Play(text, text), started = Time.unscaledTime;
-            for (float t = 0; t < .2f; t += Time.unscaledDeltaTime) { thoughtGroup.alpha = t / .2f; yield return null; }
+            for (float t = 0; t < .2f; t += Dt) { thoughtGroup.alpha = t / .2f; yield return null; }
             thoughtGroup.alpha = 1;
             int length = thought.GetParsedText().Length;
+            // The voice keeps its own speed (the prologue's pace is for animation and waits); a click shows the whole line.
             if (VoiceLines.Revealed(0) >= 0)
                 // Typed as it is said. Revealed turns -1 if another line takes the voice mid-sentence: stop following it then.
-                for (int said; (said = VoiceLines.Revealed(Time.unscaledTime - started)) >= 0 && said < length;) { thought.maxVisibleCharacters = said; yield return null; }
+                for (int said; !hurry && !Skipping && (said = VoiceLines.Revealed(Time.unscaledTime - started)) >= 0 && said < length;) { thought.maxVisibleCharacters = said; yield return null; }
             else
-                for (int i = 0; i <= length; i++) { thought.maxVisibleCharacters = i; yield return PrologueDesk.Wait(.035f); }
+                for (int i = 0; i <= length && !hurry && !Skipping; i++) { thought.maxVisibleCharacters = i; yield return W(.035f); }
             thought.maxVisibleCharacters = length;
-            yield return PrologueDesk.Wait(Mathf.Max(hold, spoken - (Time.unscaledTime - started) + .3f));
-            for (float t = 0; t < .3f; t += Time.unscaledDeltaTime) { thoughtGroup.alpha = 1 - t / .3f; yield return null; }
+            bool cut = hurry || Skipping;
+            if (cut) VoiceLines.Stop();
+            yield return W(cut ? hold : Mathf.Max(hold, spoken - (Time.unscaledTime - started) + .3f));
+            for (float t = 0; t < .3f; t += Dt) { thoughtGroup.alpha = 1 - t / .3f; yield return null; }
             thoughtGroup.alpha = 0;
             thinking = null;
         }
@@ -209,15 +215,16 @@ namespace LingGuangV05.Desktop.Story
 
         IEnumerator Run()
         {
+            BeginPacing();
             SetStep("title");
             yield return TitleAndBoot();
-            StartCoroutine(desk.Balloon(this, L("who_360"), L("bubble_boot"), 5));
+            if (!Skipping) StartCoroutine(desk.Balloon(this, L("who_360"), L("bubble_boot"), 5));
             yield return ApproachMusicBeforeVirus();
 
             // Before Step 1: 360 finds it, and it will not let the player say 是.
             SetStep("virus");
             yield return VirusAlert();
-            yield return PrologueDesk.Wait(1.2f);
+            yield return W(1.2f);
 
             // Step 1: 0.txt is there.
             SetStep("txt");
@@ -226,7 +233,7 @@ namespace LingGuangV05.Desktop.Story
             txtIcon.GetComponent<PrologueClick>().Open = () => txtOpened = true;
             Think(L("m_txt"));
             // Nothing happens until it is opened: a second thought after a while, and the icon wiggles now and then.
-            for (float waited = 0, next = NudgeAfter; !txtOpened; waited += Time.unscaledDeltaTime)
+            for (float waited = 0, next = NudgeAfter; !txtOpened && !Skipping; waited += Dt)
             {
                 if (waited >= next)
                 {
@@ -240,23 +247,23 @@ namespace LingGuangV05.Desktop.Story
             // Step 2: it does not open. The mouse moves on its own.
             SetStep("hijack");
             Hijack(true);
-            yield return PrologueDesk.Wait(.6f);
+            yield return W(.6f);
             var browserIconRt = desk.icons.Find("Web Browser") as RectTransform;
-            yield return desk.Move(desk.LocalOf(browserIconRt), 1.1f);
-            yield return desk.Click(2);
+            yield return Mv(desk.LocalOf(browserIconRt), 1.1f);
+            yield return Ck(2);
             var address = OpenBrowser();
-            yield return PrologueDesk.Wait(.5f);
-            yield return desk.Move(desk.LocalOf(address), .6f);
-            yield return desk.Click();
+            yield return W(.5f);
+            yield return Mv(desk.LocalOf(address), .6f);
+            yield return Ck();
             // The long number, one digit at a time, so the player can read it.
-            yield return PrologueDesk.Type(address.GetComponentInChildren<TMP_Text>(), "", Prologue.LongNumber, .045f);
-            yield return PrologueDesk.Wait(2.5f);
+            yield return Ty(address.GetComponentInChildren<TMP_Text>(), "", Prologue.LongNumber, .045f);
+            yield return W(2.5f);
             var page = ShowGarbledPage();
-            yield return PrologueDesk.Wait(1.2f);
-            yield return desk.Move(desk.LocalOf(page, new Vector2(120, -60)), .8f);
-            yield return desk.Click();
+            yield return W(1.2f);
+            yield return Mv(desk.LocalOf(page, new Vector2(120, -60)), .8f);
+            yield return Ck();
             var progress = StartDownload();
-            StartCoroutine(desk.Balloon(this, L("who_360"), L("bubble_safe"), 5));
+            if (!Skipping) StartCoroutine(desk.Balloon(this, L("who_360"), L("bubble_safe"), 5));
             yield return ThinkAndWait(L("m_hijack"), 1.5f);
 
             // Step 3: the player tries to take it back.
@@ -279,14 +286,14 @@ namespace LingGuangV05.Desktop.Story
             int cue = question.text.IndexOf(GameText.IsEnglish ? "shut" : "关", StringComparison.OrdinalIgnoreCase);
             float cueTime = speak * (cue >= 0 ? (float)(cue + 1) / Mathf.Max(1, chars) : .7f);
             bool noteShown = false;
-            for (float t = 0; t < speak && shutdownAnswer < 0; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < speak && shutdownAnswer < 0; t += Dt)
             {
                 question.maxVisibleCharacters = Mathf.CeilToInt(chars * t / speak);
                 if (!noteShown && t >= cueTime) { noteShown = true; OpenNotepad(L("txt_bios")); dialog.SetAsLastSibling(); }
                 yield return null;
             }
             question.maxVisibleCharacters = 99999;
-            if (shutdownAnswer < 0) yield return PrologueDesk.Wait(.3f);
+            if (shutdownAnswer < 0) yield return W(.3f);
             if (!noteShown && shutdownAnswer != 1) OpenNotepad(L("txt_bios"));
             dialog.SetAsLastSibling(); // the question stays on top until it is answered
             Think(L("m_who"), 5);
@@ -296,7 +303,8 @@ namespace LingGuangV05.Desktop.Story
             int burns = 0;
             while (true)
             {
-                while (shutdownAnswer < 0) yield return null;
+                // A skipped question takes the answer the story goes on with (否).
+                while (shutdownAnswer < 0) { if (Skipping) shutdownAnswer = 0; else yield return null; }
                 if (shutdownAnswer != 1) break;
                 burns++;
                 SetStep("shutdown-burn");
@@ -315,18 +323,18 @@ namespace LingGuangV05.Desktop.Story
             yield return FinishDownload(progress);
             Close(ref browser);
             archiveIcon = Spawn(desk.Icon("Prologue jpg", Prologue.Jpg, desk.photoIcon));
-            yield return PrologueDesk.Wait(.5f);
-            yield return desk.Move(desk.LocalOf(archiveIcon), 1f);
+            yield return W(.5f);
+            yield return Mv(desk.LocalOf(archiveIcon), 1f);
             yield return Rename();
-            yield return desk.Click(2);
+            yield return Ck(2);
             yield return WinRarNag();
             yield return Extract();
-            yield return PrologueDesk.Wait(.6f);
+            yield return W(.6f);
             Bring(notepad);
             notepadText.text = "";
-            yield return PrologueDesk.Type(notepadText, "", L("txt_poem"), .045f);
+            yield return Ty(notepadText, "", L("txt_poem"), .045f);
             yield return ThinkAndWait(L("m_poem"), 1.5f);
-            yield return PrologueDesk.Wait(2);
+            yield return W(2);
             Close(ref notepad);
             Despawn(ref txtIcon);
             Despawn(ref archiveIcon);
@@ -340,8 +348,9 @@ namespace LingGuangV05.Desktop.Story
             Think(L("m_open_exe").Replace("{exe}", GameText.IsEnglish ? AppNames.ExeEn : AppNames.ExeZh), 3);
 
             // Step 8 happens in the exe (XgSetupOverlay). The prologue ends when the setup is saved. 老周's only
-            // unprompted message (Step 7) comes afterwards, in its turn (LaoZhouInTurn).
-            yield return WaitForSetup();
+            // unprompted message (Step 7) comes afterwards, in its turn (LaoZhouInTurn). A skipped opening opens the exe
+            // for the player: the setup itself is never skipped.
+            yield return WaitForSetup(skipAll);
             run = null;
         }
 
@@ -356,19 +365,29 @@ namespace LingGuangV05.Desktop.Story
             return shortcut != null ? shortcut.transform as RectTransform : null;
         }
 
-        /// <summary>Step 8 waits in the exe. While the exe is closed its icon wiggles now and then (a gentle rock, no flash).</summary>
-        IEnumerator WaitForSetup()
+        /// <summary>
+        /// Step 8 waits in the exe. The first time the exe stays closed for <see cref="SpotlightAfter"/> seconds the desktop
+        /// dims around it and the spider beckons (PrologueDirector.Spotlight.cs); afterwards its icon rocks now and then
+        /// (a gentle rock, no flash) and the spider walks over for a round.
+        /// </summary>
+        IEnumerator WaitForSetup(bool openForPlayer = false)
         {
             SetStep("setup");
+            if (openForPlayer && router != null && !ExeOpen()) router.Open(LingGuangInstallFlow.AppId);
             float closedFor = 0, next = NudgeAfter;
             while (runtime.Sim != null && runtime.Sim.InPrologue)
             {
-                var app = router != null ? router.Get(LingGuangInstallFlow.AppId) : null;
-                if (app != null && app.Window != null && app.Window.isOn) { closedFor = 0; next = NudgeAfter; }
-                else if ((closedFor += Time.unscaledDeltaTime) >= next)
+                if (ExeOpen()) { closedFor = 0; next = NudgeAfter; }
+                else
                 {
-                    next += NudgeEvery;
-                    StartCoroutine(Wiggle(ExeIcon()));
+                    closedFor += Time.unscaledDeltaTime;
+                    if (!spotlightShown && closedFor >= SpotlightAfter) spotlightRun = StartCoroutine(Spotlight());
+                    if (closedFor >= next)
+                    {
+                        next += NudgeEvery;
+                        StartCoroutine(Wiggle(ExeIcon()));
+                        if (spotlightShown && spotlightRun == null) StartCoroutine(SpiderNudge());
+                    }
                 }
                 yield return null;
             }
@@ -397,9 +416,9 @@ namespace LingGuangV05.Desktop.Story
             var title = desk.Text(PrologueDesk.Centered("Chapter", black, new Vector2(0, 40), new Vector2(1400, 100)), L("title"), 64, new Color(.92f, .94f, .97f), TextAlignmentOptions.Center);
             var sub = desk.Text(PrologueDesk.Centered("Sub", black, new Vector2(0, -40), new Vector2(1400, 60)), L("title_sub"), 34, new Color(.56f, .72f, .87f), TextAlignmentOptions.Center);
             title.alpha = 0; sub.alpha = 0;
-            for (float t = 0; t < .8f; t += Time.unscaledDeltaTime) { title.alpha = t / .8f; yield return null; }
-            for (float t = 0; t < .8f; t += Time.unscaledDeltaTime) { sub.alpha = t / .8f; yield return null; }
-            yield return PrologueDesk.Wait(1.8f);
+            for (float t = 0; t < .8f; t += Dt) { title.alpha = t / .8f; yield return null; }
+            for (float t = 0; t < .8f; t += Dt) { sub.alpha = t / .8f; yield return null; }
+            yield return W(1.8f);
             Destroy(title.gameObject); Destroy(sub.gameObject);
 
             // The fake boot runs on the monitor itself.
@@ -409,9 +428,9 @@ namespace LingGuangV05.Desktop.Story
             var dots = new List<Image>();
             for (int i = 0; i < 4; i++) dots.Add(PrologueDesk.Fill(PrologueDesk.Centered("Dot", boot, new Vector2(-45 + i * 30, 0), new Vector2(18, 18)), new Color32(70, 160, 255, 255), false));
             var group = black.gameObject.AddComponent<CanvasGroup>();
-            for (float t = 0; t < .6f; t += Time.unscaledDeltaTime) { group.alpha = 1 - t / .6f; yield return null; }
+            for (float t = 0; t < .6f; t += Dt) { group.alpha = 1 - t / .6f; yield return null; }
             Destroy(black.gameObject);
-            for (float t = 0; t < 2.6f; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < 2.6f; t += Dt)
             {
                 for (int i = 0; i < dots.Count; i++) dots[i].color = new Color(.27f, .63f, 1, .35f + .65f * Mathf.Clamp01(Mathf.Sin(t * 6 - i * .8f)));
                 yield return null;
@@ -438,12 +457,12 @@ namespace LingGuangV05.Desktop.Story
                 if (d.magnitude > 3)
                 {
                     desk.Cursor.anchoredPosition = anchor + Vector2.ClampMagnitude(d * 5, 110);
-                    yield return PrologueDesk.Wait(.06f);
-                    yield return desk.Move(anchor, .22f);
+                    yield return W(.06f);
+                    yield return Mv(anchor, .22f);
                     tugs++;
                     waited += .3f;
                 }
-                else { waited += Time.unscaledDeltaTime; yield return null; }
+                else { waited += Dt; yield return null; }
             }
         }
 
@@ -499,7 +518,7 @@ namespace LingGuangV05.Desktop.Story
         IEnumerator Downloading(RectTransform fill, TMP_Text status, float upTo, float seconds)
         {
             float start = fill.anchorMax.x;
-            for (float t = 0; t < seconds && fill != null; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < seconds && fill != null; t += Dt)
             {
                 float k = Mathf.Lerp(start, upTo, t / seconds);
                 fill.anchorMax = new Vector2(k, 1);
@@ -514,7 +533,7 @@ namespace LingGuangV05.Desktop.Story
             var fill = progress.rectTransform;
             var status = fill.parent.parent.Find("Status").GetComponent<TMP_Text>();
             yield return Downloading(fill, status, 1, 1.4f);
-            yield return PrologueDesk.Wait(.6f);
+            yield return W(.6f);
         }
 
         TMP_Text ShowShutdownDialog()
@@ -561,7 +580,7 @@ namespace LingGuangV05.Desktop.Story
             PrologueDesk.Fill(black, new Color32(10, 40, 90, 255));
             desk.Text(PrologueDesk.Centered("Text", black, Vector2.zero, new Vector2(800, 60)), L("shutting_down"), 30, Color.white, TextAlignmentOptions.Center);
             spawned.Add(black.gameObject);
-            yield return PrologueDesk.Wait(2.5f);
+            yield return W(2.5f);
             // 是 is not an ending, and it does not undo anything either: everything the SI left behind is cleared off
             // the screen, the machine boots again, and 灵光.exe and sophon.dll are simply there.
             Hijack(true);
@@ -572,12 +591,12 @@ namespace LingGuangV05.Desktop.Story
             var label = black.GetComponentInChildren<TMP_Text>();
             PrologueDesk.Fill(black, Color.black);
             label.text = "";
-            yield return PrologueDesk.Wait(1.5f);
+            yield return W(1.5f);
             label.text = L("boot");
             label.rectTransform.anchoredPosition = new Vector2(0, -120);
             var dots = new List<Image>();
             for (int i = 0; i < 4; i++) dots.Add(PrologueDesk.Fill(PrologueDesk.Centered("Dot", black, new Vector2(-45 + i * 30, 0), new Vector2(18, 18)), new Color32(70, 160, 255, 255), false));
-            for (float t = 0; t < 2.4f; t += Time.unscaledDeltaTime)
+            for (float t = 0; t < 2.4f; t += Dt)
             {
                 for (int i = 0; i < dots.Count; i++) dots[i].color = new Color(.27f, .63f, 1, .35f + .65f * Mathf.Clamp01(Mathf.Sin(t * 6 - i * .8f)));
                 yield return null;
@@ -596,7 +615,7 @@ namespace LingGuangV05.Desktop.Story
         IEnumerator Rename()
         {
             var at = desk.LocalOf(archiveIcon);
-            yield return desk.Click();
+            yield return Ck();
             menu = PrologueDesk.Rect("Prologue Menu", desk.layer, new Vector2(.5f, .5f), new Vector2(.5f, .5f), Vector2.zero, Vector2.zero);
             menu.pivot = new Vector2(0, 1); menu.sizeDelta = new Vector2(170, 4 * 34 + 8); menu.anchoredPosition = at + new Vector2(10, -10);
             PrologueDesk.Fill(menu, new Color32(245, 245, 245, 255));
@@ -611,10 +630,10 @@ namespace LingGuangV05.Desktop.Story
                 if (keys[i] == "rename") renameRow = row;
             }
             desk.Cursor.SetAsLastSibling();
-            yield return PrologueDesk.Wait(.5f);
-            yield return desk.Move(desk.LocalOf(renameRow), .5f);
+            yield return W(.5f);
+            yield return Mv(desk.LocalOf(renameRow), .5f);
             PrologueDesk.Fill(renameRow, new Color32(200, 225, 250, 255), false);
-            yield return desk.Click();
+            yield return Ck();
             Destroy(menu.gameObject); menu = null;
 
             // The name becomes editable; the extension goes, .rar comes.
@@ -623,18 +642,18 @@ namespace LingGuangV05.Desktop.Story
             PrologueDesk.Fill(edit, Color.white, false);
             var editText = desk.Text(PrologueDesk.Rect("Text", edit, Vector2.zero, Vector2.one, new Vector2(4, 0), new Vector2(-4, 0)), Prologue.Jpg, 15, PrologueDesk.Ink, TextAlignmentOptions.Center);
             title.gameObject.SetActive(false);
-            yield return PrologueDesk.Wait(.6f);
+            yield return W(.6f);
             string stem = Prologue.Jpg.Substring(0, Prologue.Jpg.Length - 4);
-            for (int i = 3; i >= 0; i--) { editText.text = stem + ".jpg".Substring(0, i); yield return PrologueDesk.Wait(.15f); }
-            yield return PrologueDesk.Type(editText, stem, ".rar", .18f);
-            yield return PrologueDesk.Wait(.4f);
+            for (int i = 3; i >= 0; i--) { editText.text = stem + ".jpg".Substring(0, i); yield return W(.15f); }
+            yield return Ty(editText, stem, ".rar", .18f);
+            yield return W(.4f);
             Destroy(edit.gameObject);
             title.gameObject.SetActive(true);
             title.text = Prologue.Rar;
             var art = archiveIcon.Find("Icon") as RectTransform;
             Destroy(art.GetComponent<Image>());
             desk.DrawArchive(art);
-            yield return PrologueDesk.Wait(.5f);
+            yield return W(.5f);
         }
 
         IEnumerator WinRarNag()
@@ -645,10 +664,10 @@ namespace LingGuangV05.Desktop.Story
             desk.Button(client, L("buy"), new Vector2(-80, -55), new Vector2(130, 38), null);
             var close = desk.Button(client, L("close"), new Vector2(80, -55), new Vector2(130, 38), null);
             desk.Cursor.SetAsLastSibling();
-            yield return PrologueDesk.Wait(.9f);
+            yield return W(.9f);
             // It knows where 关闭 is.
-            yield return desk.Move(desk.LocalOf((RectTransform)close.transform), .45f);
-            yield return desk.Click();
+            yield return Mv(desk.LocalOf((RectTransform)close.transform), .45f);
+            yield return Ck();
             Destroy(nag.gameObject);
         }
 
@@ -669,19 +688,19 @@ namespace LingGuangV05.Desktop.Story
                 desk.Text(PrologueDesk.Rect("Row", client, new Vector2(0, 1), Vector2.one, new Vector2(14, -34 - (i + 1) * 34), new Vector2(0, -34 - i * 34)), rows[i], 17, PrologueDesk.Ink, TextAlignmentOptions.MidlineLeft);
             var button = desk.Button(client, L("extract"), new Vector2(250, -140), new Vector2(190, 40), null);
             desk.Cursor.SetAsLastSibling();
-            yield return PrologueDesk.Wait(.8f);
-            yield return desk.Move(desk.LocalOf((RectTransform)button.transform), .6f);
-            yield return desk.Click();
-            yield return PrologueDesk.Wait(.5f);
+            yield return W(.8f);
+            yield return Mv(desk.LocalOf((RectTransform)button.transform), .6f);
+            yield return Ck();
+            yield return W(.5f);
             // The two files land on the desktop: the exe is the real one, sophon.dll has no icon.
             runtime.Sim.InstallApp();
             // DreamOS may remember the app window as open from an earlier session; the player opens it (Step 8).
             var app = router.Get(LingGuangInstallFlow.AppId);
             if (app != null && app.Window != null && app.Window.isOn) app.CloseApp();
             EnsureFrozenFiles();
-            yield return PrologueDesk.Wait(.6f);
-            yield return desk.Move(desk.LocalOf(rar.Find("Title/Close") as RectTransform), .5f);
-            yield return desk.Click();
+            yield return W(.6f);
+            yield return Mv(desk.LocalOf(rar.Find("Title/Close") as RectTransform), .5f);
+            yield return Ck();
             Destroy(rar.gameObject);
         }
 
@@ -1068,6 +1087,8 @@ namespace LingGuangV05.Desktop.Story
                     }
                 }
             txtIcon = archiveIcon = notepad = browser = menu = dialog = virusBox = null;
+            EndPacing();
+            EndSpotlight();
             if (screenRoot != null)
                 for (int i = screenRoot.childCount - 1; i >= 0; i--)
                     if (screenRoot.GetChild(i).name == "Title") PrologueDesk.RemoveTransient(screenRoot.GetChild(i).gameObject);

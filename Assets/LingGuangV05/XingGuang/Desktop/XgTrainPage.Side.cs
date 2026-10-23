@@ -271,7 +271,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 switch (id)
                 {
                     case "cudnn": g.big = T("电费 −30%", "power −30%"); if (includeTip) effect = T("所有训练快 30%，电费少 30%。", "All training 30% faster and 30% less electricity."); break;
-                    case "cooler": g.big = T("烧卡 −50%", "burn-outs −50%"); if (includeTip) effect = T("连着练太久时，显卡烧坏的概率减半。要有两张卡才会烧。", "Training non-stop burns a card out half as often. A card only burns out when you own two."); break;
+                    case "cooler": g.big = T("高温损耗 −50%", "heat wear −50%"); if (includeTip) effect = T("连着练太久时，显卡烧坏的概率减半。要有两张卡才会烧。", "Training non-stop burns a card out half as often. A card only burns out when you own two."); break;
                     default: g.big = T("少退步", "fewer drops"); if (includeTip) effect = T("让「退步」少一些。", "Makes drops rarer."); break;
                 }
                 var small = g.big; g.big = "<size=12>" + small + "</size>";

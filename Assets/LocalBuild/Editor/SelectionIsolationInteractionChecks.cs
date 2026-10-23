@@ -108,6 +108,8 @@ public static class SelectionIsolationInteractionChecks
                 if(ctl==null||ctl.Sim==null||ctl.View==null)return;
                 runtime.useDiskSave=false;
                 var lab=new XgSim();lab.S.stage=6;lab.S.firstSpecialty="vision";lab.S.handCorrect=200;lab.S.epochs=20;
+                // 摆渡众包 arrives through a group link and refuses to open until installed; this fixture has installed it.
+                lab.AppReceipt("zhongbao").installed=true;
                 foreach(var node in XgCatalog.Nodes)if(!lab.S.unlocked.Contains(node.id))lab.S.unlocked.Add(node.id);
                 // This layout fixture is explicitly fully purchased AND installed; purchase alone no longer opens data desks.
                 foreach(var pack in XgTeachingPacks.All){if(!lab.S.unlocked.Contains(pack.NodeId))lab.S.unlocked.Add(pack.NodeId);if(!lab.S.installedTeachingNodes.Contains(pack.NodeId))lab.S.installedTeachingNodes.Add(pack.NodeId);if(!lab.S.owned.Contains(pack.dataset))lab.S.owned.Add(pack.dataset);if(!lab.S.desksOpen.Contains(pack.dataset))lab.S.desksOpen.Add(pack.dataset);}
@@ -161,13 +163,13 @@ public static class SelectionIsolationInteractionChecks
                 ctl.View.Teach.Refresh();desk=(XgDeskGamePage)Field(ctl.View.Teach,"deskGame");
                 Require(desk.SelectedGame=="headline_swipe"&&desk.Playing,"Teach pack selection not immediately reflected");
                 AssertSingleSelection(ctl.View.Teach,"headline_swipe");
-                Require(runtime.GetComponent<ChapterOneDesktopRouter>().Open(ZhongbaoHub.AppId,"label"),"Cannot open real crowd window");
+                // A real crowd page: 标注 now routes to the lab itself, so the ledger is what puts the crowd window in front.
+                Require(runtime.GetComponent<ChapterOneDesktopRouter>().Open(ZhongbaoHub.AppId,"ledger"),"Cannot open real crowd window");
                 frames=0;phase=2;return;
             }
             if(phase==2)
             {
                 if(++frames<4)return;
-                var crowd=ZhongbaoHub.Instance.View;var work=crowd.Label;
                 Require(!desk.Focused,"Crowd window did not take focus; test cannot assert background gate");
                 // Switching a visible background page must update its surface immediately, while input remains gated.
                 Require(ctl.Sim.SelectTeachingPack("spam_swipe"),"SMS fixture pack unavailable");
@@ -177,43 +179,24 @@ public static class SelectionIsolationInteractionChecks
                 typeof(XgDeskGamePage).GetMethod("Settle",Flags).Invoke(desk,new object[]{true,1.0,false});
                 Require(JsonUtility.ToJson(ctl.Sim.S)==before,"Unfocused game settled an answer");
                 report.checks.Add("Background selection refresh is immediate; actual Settle rejects unfocused input");
-                // Real hall callback: work MNIST while the private lesson still points to SMS.
-                Press(work.root,"Desk mnist");AssertWork(work,"mnist","spam_swipe");
-                ctl.Sim.SelectTeachingPack("mnist_write");ctl.View.Teach.Refresh();
-                Press(work.root,"Desk headline");AssertWork(work,"headline","mnist_write");
-                frames=0;phase=3;return;
-            }
-            if(phase==3)
-            {
-                if(++frames<2)return;
-                var work=ZhongbaoHub.Instance.View.Label;var sim=ctl.Sim;
-                int submitted=sim.S.workSubmitted,correct=sim.S.workCorrect,hand=sim.S.handCorrect+sim.S.handWrong;
-                string lessons=JsonUtility.ToJson(new Notes{items=sim.S.teachingNotebook});
-                string minis=JsonUtility.ToJson(new Minis{items=sim.S.miniGames});
-                double samples=sim.Samples("headline");
-                var card=sim.WorkCard("headline");var button=(XgBtn)Field(work,card.truth?"yes":"no");
-                var input=button.button.GetComponent<XgLessonAnswerInput>();
-                Require(input!=null&&button.button.IsInteractable(),"Work answer input unavailable");
-                var data=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current){button=UnityEngine.EventSystems.PointerEventData.InputButton.Left,pointerId=71};
-                input.OnPointerDown(data);input.OnPointerClick(data);
-                Require(sim.S.workSubmitted==submitted+1&&sim.S.workCorrect==correct+1,"Real company answer did not settle");
-                Require(sim.S.handCorrect+sim.S.handWrong==hand&&sim.Samples("headline")==samples,"Work answer changed private teaching counts/samples");
-                Require(JsonUtility.ToJson(new Notes{items=sim.S.teachingNotebook})==lessons&&JsonUtility.ToJson(new Minis{items=sim.S.miniGames})==minis,"Work answer entered teaching record/game path");
-                Require(sim.S.teachingPack=="mnist_write"&&sim.S.desk=="mnist","Work answer changed lesson selection");
-                report.checks.Add("Company real pointer answer increments work counters only, keeps lesson selection/history/mini records/samples");
-                ctl.Open();ctl.View.Open("teach");frames=0;phase=4;return;
+                // 标注台 lives in 灵光 now: the crowd window hosts no copy, and its labelling route brings the lab's teach page forward.
+                Require(ZhongbaoHub.Instance.View.Label==null,"Crowd window hosts no duplicate labelling desk");
+                Require(ctl.Sim.SelectTeachingPack("mnist_write"),"Digit fixture pack unavailable");ctl.View.Teach.Refresh();
+                workDeskBefore=ctl.Sim.S.workDesk;
+                Require(runtime.GetComponent<ChapterOneDesktopRouter>().Open(ZhongbaoHub.AppId,"label"),"Crowd labelling route unavailable");
+                frames=0;phase=4;return;
             }
             if(phase==4)
             {
                 if(++frames<3)return;
                 var teach=ctl.View.Teach;teach.Refresh();
                 Require(desk.SelectedGame=="mnist_write","Restored teach window shows wrong game");
-                Require(desk.Focused,"Restored foreground game did not recover input focus");
+                Require(desk.Focused,"Crowd labelling route restores the lab's foreground game and its input focus");
                 AssertSingleSelection(teach,"mnist_write");
                 Press(teach.root,"Desk sense");
                 Require(ctl.Sim.S.desk=="sense"&&string.IsNullOrEmpty(ctl.Sim.S.teachingPack),"Base desk did not clear pack");
                 AssertBaseDeskSurface(teach,"sense");
-                Require(ctl.Sim.S.workDesk=="headline","Teach selection changed company desk");
+                Require(ctl.Sim.S.workDesk==workDeskBefore,"Teach selection changed company desk");
                 report.checks.Add("Real base-desk callback updates game immediately and preserves independent company selection");
                 PrepareClassicTheme(teach,"sense",false);frames=0;phase=5;return;
             }
@@ -233,18 +216,7 @@ public static class SelectionIsolationInteractionChecks
                     report.checks.Add("Focused classic run proceeds directly to both window sizes; company-app installation/routing belongs to the full selection suite");
                     footerSize=0;PrepareFooterSize();frames=0;phase=9;return;
                 }
-                Require(runtime.GetComponent<ChapterOneDesktopRouter>().Open(ZhongbaoHub.AppId,"label"),"Cannot open crowd theme control");
-                frames=0;phase=7;return;
-            }
-            if(phase==7)
-            {
-                if(++frames<5)return;
-                PrepareClassicTheme(ZhongbaoHub.Instance.View.Label,"headline",true);frames=0;phase=8;return;
-            }
-            if(phase==8)
-            {
-                if(++frames<5)return;
-                CaptureClassicTheme(ZhongbaoHub.Instance.View.Label,true,false,"crowd-light-control");
+                // The crowd window no longer hosts a labelling desk, so there is no separate crowd theme control to capture.
                 ctl.Open();ctl.View.Open("teach");footerSize=0;PrepareFooterSize();frames=0;phase=9;return;
             }
             if(phase==9)
@@ -295,6 +267,7 @@ public static class SelectionIsolationInteractionChecks
         }
     }
     static int footerSize;
+    static string workDeskBefore;
     static void PrepareFooterSize()
     {
         var frame=ctl.Window.windowContainer;
@@ -393,20 +366,6 @@ public static class SelectionIsolationInteractionChecks
         string image=Path.Combine(Root,name+".png");
         Require(QaDesktopCapture.Save(image),"Actual LCD capture unavailable: "+name);
         report.checks.Add("Classic theme "+name+": current card and counters preserved; contextual colours asserted; five rendered frames; LCD screenshot "+image);Save();
-    }
-    [Serializable] sealed class Notes{public List<XgTeachingNote> items;}
-    [Serializable] sealed class Minis{public List<XgMiniRecord> items;}
-    static void AssertWork(XgLabelPage page,string id,string pack)
-    {
-        var sim=ctl.Sim;Require(sim.S.workDesk==id&&sim.S.teachingPack==pack,"Selections are not isolated");
-        var card=(XgCard)typeof(XgLabelPage).GetProperty("CurrentCard",Flags).GetValue(page);
-        Require(card.dataset==id&&card.id==sim.WorkCard(id).id,"Work content does not match selected company desk");
-        Require((long)Field(page,"displayedId")==card.id,"Work rendered card not refreshed immediately");
-        var mini=(XgDeskGamePage)Field(page,"deskGame");
-        Require(!mini.root.gameObject.activeSelf&&!mini.Playing,"Teaching game leaked into company surface");
-        Require(!((RectTransform)Field(page,"drawRoot")).gameObject.activeSelf,"Private handwriting leaked into company surface");
-        var selected=FindButton(page.root,"Desk "+id);Require(selected!=null&&selected.transform.Find("Selected").gameObject.activeSelf,"Selected company row does not match content");
-        report.checks.Add("Company "+id+" matches rendered WorkCard while private pack="+pack);
     }
     static void CheckHiddenSurfaceLifecycle()
     {

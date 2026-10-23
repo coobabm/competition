@@ -62,13 +62,13 @@ public static partial class DesignWallpaperSmoke
             Check(IdleField<double>(idle,"displayed")==0,"Compact session income starts at zero");
             string originalTab=controller.View.Tab;
             TechCapture(controller,"idle-compact-start");
-            idle.SetMini(true);Canvas.ForceUpdateCanvases();
-            Check(idle.Mini&&!IdleField<TMPro.TMP_Text>(idle,"details").gameObject.activeSelf,"Mini hides secondary automation detail");
-            Check(surface.GetComponent<UnityEngine.UI.CanvasScaler>().referenceResolution==XgIdleWindow.WindowSize(true),"Mini uses its own reference dimensions");
+            Check(surface.GetComponent<UnityEngine.UI.CanvasScaler>().referenceResolution==XgIdleWindow.WindowSize&&IdleField<RectTransform>(idle,"monitor").sizeDelta==XgIdleWindow.WindowSize,"Compact window uses the single 256x148 notification size");
             IdleCall(idle,"Update");
-            TechCapture(controller,"idle-mini");
-            idle.SetMini(false);Canvas.ForceUpdateCanvases();
-            Check(!idle.Mini&&IdleField<TMPro.TMP_Text>(idle,"details").gameObject.activeSelf,"Standard restores automation detail without reentering session");
+            var heading=IdleField<TMPro.TMP_Text>(idle,"heading");var rate=IdleField<TMPro.TMP_Text>(idle,"rate");
+            Check(heading.text.StartsWith(controller.Sim.AiDisplayName+" · "),"Status line names the AI and its state");
+            Check(rate.text.Contains("近10秒平均")||rate.text.Contains("10s average"),"Rate line shows the 10-second average");
+            Check(!IdleField<RectTransform>(idle,"options").gameObject.activeSelf,"More menu starts closed");
+            TechCapture(controller,"idle-compact-status");
             yield return .75f;
             // Inject one already-settled automation receipt, not a second wallet settlement.
             controller.Sim.S.idleAutomaticIncome+=1.5;
@@ -80,6 +80,8 @@ public static partial class DesignWallpaperSmoke
             yield return 1.05f;
             IdleCall(idle,"Update");
             Check(IdleField<double>(idle,"displayed")>=shown&&IdleField<double>(idle,"displayed")<=1.5,"Paused display may finish the existing receipt but invents no income");
+            Check(heading.text.EndsWith("已暂停")||heading.text.EndsWith("Paused"),"Paused status replaces earning status");
+            Check(rate.text.Contains("¥0.00"),"Paused rate reads zero per second");
             Check(controller.Sim.S.idleAutomaticIncome==income+1.5&&runtime.Sim.S.money==money,"Idle display never credits a second income stream");
             TechCapture(controller,"idle-paused-settled-income");
             yield return .75f;

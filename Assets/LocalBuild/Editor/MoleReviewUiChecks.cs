@@ -45,15 +45,20 @@ public static class MoleReviewUiChecks
         foreach (var b in root.GetComponentsInChildren<Button>(true)) if (b.name == name && b.gameObject.activeInHierarchy) return b.transform as RectTransform;
         throw new Exception("Missing active button " + name);
     }
-    static void Whack(XgMoleGraphic hole)
+    /// <summary>
+    /// A strike only counts on the visible head dome (XgMoleGraphic.ContainsHead), so a <paramref name="strike"/> aims there
+    /// once the mole has risen at least 90%. A miss (empty hole, or a mole already hit) aims at <paramref name="aim"/>
+    /// (default the cell centre) and must not reach the game. Returns the local point used.
+    /// </summary>
+    static Vector2 Whack(XgMoleGraphic hole, bool strike, Vector2? aim = null)
     {
-        // The existing LCD mapper is shared; moles receive pointer-down, not Button pointer-click.
+        // Moles receive pointer-down, not Button pointer-click.
         Canvas.ForceUpdateCanvases();
-        var mapper = typeof(FilesWindowUiChecks).GetMethod("Pointer", BindingFlags.Static | BindingFlags.NonPublic);
-        Need(mapper != null, "actual LCD coordinate mapper available");
-        var p = (PointerEventData)mapper.Invoke(null, new object[] { hole.rectTransform });
+        var local = aim ?? hole.rectTransform.rect.center;
+        if (strike) { Need(hole.Rise >= .9f && hole.HitTime < 0, "mole has risen at least 90% before the strike: rise=" + hole.Rise); local = HeadPoint(hole); }
         var bridge = UnityEngine.Object.FindAnyObjectByType<AeroLcdSourceBridge>();
         Need(bridge != null && bridge.inputSurface != null && bridge.inputSurface.inputEnabled, "actual LCD input available");
+        var p = LcdPointer(bridge, hole.rectTransform, local);
         var surface = bridge.inputSurface; surface.OnPointerEnter(p);
         var data = (PointerEventData)Field(surface, "hoverData"); var hit = data?.pointerCurrentRaycast.gameObject;
         Need(hit != null && ExecuteEvents.GetEventHandler<IPointerDownHandler>(hit) == hole.gameObject, "mole pointer is not intercepted: " + hit);
@@ -62,7 +67,29 @@ public static class MoleReviewUiChecks
         hole.Down = () => { dispatched++; original?.Invoke(); };
         try { surface.OnPointerDown(p); surface.OnPointerUp(p); }
         finally { hole.Down = original; }
-        Need(dispatched == 1, "LCD down dispatched exactly once to current hole; actual=" + dispatched);
+        Need(dispatched == (strike ? 1 : 0), (strike ? "LCD down dispatched exactly once to current hole" : "LCD down off a visible head is not a strike") + "; actual=" + dispatched);
+        return local;
+    }
+    /// <summary>The middle of the visible dome on the cell's vertical centre line.</summary>
+    static Vector2 HeadPoint(XgMoleGraphic hole)
+    {
+        var r = hole.rectTransform.rect; float lo = float.NaN, hi = float.NaN;
+        for (float y = r.yMin; y <= r.yMax; y += .5f) if (hole.ContainsHead(new Vector2(r.center.x, y))) { if (float.IsNaN(lo)) lo = y; hi = y; }
+        Need(!float.IsNaN(lo), "risen mole has a visible head dome");
+        return new Vector2(r.center.x, (lo + hi) * .5f);
+    }
+    /// <summary>The shared LCD mapping (FilesWindowUiChecks.Pointer) for a point inside <paramref name="target"/> rather than its centre.</summary>
+    static PointerEventData LcdPointer(AeroLcdSourceBridge bridge, RectTransform target, Vector2 local)
+    {
+        var surface = bridge.inputSurface; var tex = bridge.sourceCamera.targetTexture;
+        var src = bridge.sourceCamera.WorldToScreenPoint(target.TransformPoint(local));
+        Need(src.z > 0 && src.x >= 0 && src.x < tex.width && src.y >= 0 && src.y < tex.height, "target point outside source camera viewport: " + src);
+        float u = src.x / tex.width, v = src.y / tex.height; if (surface.flipY) v = 1 - v;
+        var display = surface.displayRect; var r = display.rect;
+        var camera = (Camera)typeof(AeroLcdInputSurface).GetMethod("DisplayEventCamera", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Invoke(surface, null);
+        var p = RectTransformUtility.WorldToScreenPoint(camera, display.TransformPoint(new Vector3(r.xMin + u * r.width, r.yMin + v * r.height, 0)));
+        Need(surface.TryMap(p, out var mapped) && Vector2.Distance(mapped, new Vector2(src.x, src.y)) < 1, "LCD coordinate roundtrip");
+        return new PointerEventData(EventSystem.current) { position = p, button = PointerEventData.InputButton.Left };
     }
     static string State(XingGuangController ctl, XgDeskGamePage desk, XgMiniGame game, int slot)
     {
@@ -247,6 +274,14 @@ public static class MoleReviewUiChecks
                 foreach (var f in Wait(.2)) yield return f;
                 if ((bool)Field(game, "autoEnabled")) click(Button(surface, "MoleAuto"));
                 Need(!(bool)Field(game, "autoEnabled"), "actual auto toggle pauses model actions for reading fixture");
+                // Calculus claims come only from the purchased 极限 / 求导 / 积分 topic; the default topic is basic arithmetic.
+                click(Button(surface, "MoleTopic"));
+                foreach (var f in Wait(.5)) yield return f; // the menu's options settle in before they take a click
+                click(Button(surface, "MoleTopic3"));
+                yield return null;
+                Need(sim.MoleTopic == XgMoleTopic.Calculus && (bool)Field(game, "playing"), "actual topic menu restarts the round on the calculus pack");
+                if ((bool)Field(game, "autoEnabled")) click(Button(surface, "MoleAuto"));
+                Need(!(bool)Field(game, "autoEnabled"), "auto stays paused on the calculus round");
                 var holes = (XgMoleGraphic[])Field(game, "holes");
                 long initialCards = sim.S.board.cards; double initialSamples = sim.Labels("arith"), initialMoney = ctl.Host.Money;
                 var initialExpiry = (float[])Field(game, "expires");
@@ -255,9 +290,11 @@ public static class MoleReviewUiChecks
                 Debug.Log("Mole empty-hole before: " + State(ctl, desk, game, empty));
                 Need(ReferenceEquals(game, Field(desk, "game")) && ((XgMiniContext)Field(game, "C")).IsActive
                     && (bool)Field(game, "playing") && !(bool)Field(game, "reviewing"), "empty-hole fixture owns an active live round: " + State(ctl, desk, game, empty));
-                Whack(holes[empty]);
+                string feedbackBefore = ((TMP_Text)Field(game, "feedback")).text;
+                // An empty hole has no head to hit: the pointer is ignored, without feedback.
+                Whack(holes[empty], false);
                 Debug.Log("Mole empty-hole after: " + State(ctl, desk, game, empty));
-                Need(((TMP_Text)Field(game, "feedback")).text.Contains(english ? "no unanswered" : "没有尚未作答"), "empty-hole pointer gives immediate feedback: " + State(ctl, desk, game, empty));
+                Need(((TMP_Text)Field(game, "feedback")).text == feedbackBefore, "empty-hole pointer is not a strike: " + State(ctl, desk, game, empty));
                 Need(sim.S.board.cards == initialCards && sim.Labels("arith") == initialSamples && ctl.Host.Money == initialMoney, "empty clicks neither train nor settle");
                 int picked = -1;
                 for (int step = 0; step < 100 && picked < 0; step++)
@@ -268,6 +305,7 @@ public static class MoleReviewUiChecks
                 }
                 Need(picked >= 0, "actual generator produced a live calculus claim");
                 game.Tick(.2f);
+                for (int rising = 0; rising < 20 && holes[picked].Rise < .9f; rising++) game.Tick(.05f);
                 var signs = (TMP_Text[])Field(game, "signs"); signs[picked].ForceMeshUpdate();
                 Fits(signs[picked], "calculus equation fits widened sign without ellipsis");
                 Canvas.ForceUpdateCanvases(); yield return null;
@@ -276,10 +314,11 @@ public static class MoleReviewUiChecks
                 sim.ArithmeticMoleFeedback += manual;
                 try
                 {
-                    Whack(holes[picked]);
+                    var head = Whack(holes[picked], true);
                     Need(feedbacks == 1 && ((TMP_Text[])Field(game, "bangs"))[picked].enabled, "real pointer whack emits feedback and visible result immediately");
                     long cards = sim.S.board.cards; double money = ctl.Host.Money, labels = sim.Labels("arith");
-                    Whack(holes[picked]);
+                    // The struck mole no longer takes strikes on the same spot.
+                    Whack(holes[picked], false, head);
                     Need(feedbacks == 1 && sim.S.board.cards == cards && ctl.Host.Money == money && sim.Labels("arith") == labels, "repeated pointer cannot settle or train twice");
                     Need(cards == initialCards, "whack did not silently teach its generated label");
                     var manualRecord=sim.S.askedLog.Last();

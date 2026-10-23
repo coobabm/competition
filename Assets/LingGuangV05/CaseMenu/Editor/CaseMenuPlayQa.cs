@@ -251,8 +251,9 @@ namespace LingGuangV05.CaseMenu.Editor
             Result.observedBootSeconds = bootObservedCompleteAt >= 0 ? (float)(bootObservedCompleteAt - bootClickAt) : -1;
             Require("Boot completes and its screen-contained artwork disappears before gameplay",
                 display.IsBootComplete && Mathf.Abs(display.BootProgress - 1) < .001f && !display.IsBootScreenVisible);
-            Require("Visible boot is not bypassed by camera arrival", Result.observedBootSeconds >= 4f
-                && Result.clickToDesktopSeconds >= 4f,
+            // At least the configured boot (3 s since the 2026-10-22 opening pace; it was 4.2 s).
+            Require("Visible boot is not bypassed by camera arrival", Result.observedBootSeconds >= CaseMenuMainDisplay.BootDuration
+                && Result.clickToDesktopSeconds >= CaseMenuMainDisplay.BootDuration,
                 "configured=" + Result.configuredBootSeconds + "s; observedCompletion=" + Result.observedBootSeconds
                 + "s; clickToDesktop=" + Result.clickToDesktopSeconds + "s (completion sampled once per rendered frame)");
             Require("Entry retains the original camera and preloaded Main", menu.menuCamera.GetInstanceID() == cameraId
@@ -304,7 +305,13 @@ namespace LingGuangV05.CaseMenu.Editor
             Require("LCD input restored for ordinary desktop use", lcd != null && lcd.inputEnabled);
             Capture("04-main-desktop");
             var icon = PrologueDirector.Desk.icons.Find("Calculator") as RectTransform;
-            Require("Native Calculator shortcut exists", icon != null && icon.gameObject.activeInHierarchy);
+            // The native Calculator hosts 摆渡众包, which arrives through a group link: no icon until it is installed.
+            yield return Seconds(1.2f);
+            Require("Uninstalled 摆渡众包 has no desktop shortcut", icon != null && !icon.gameObject.activeSelf);
+            var crowd = runtime.GetComponent<XingGuangController>().Sim.AppReceipt("zhongbao");
+            crowd.installed = true;
+            yield return Seconds(1.2f);
+            Require("Native Calculator shortcut exists once installed", icon != null && icon.gameObject.activeInHierarchy);
             LingGuangV05.Editor.ChapterOnePlayQa.Click(icon);
             LingGuangV05.Editor.ChapterOnePlayQa.Click(icon);
             yield return Seconds(.8f);
@@ -313,6 +320,7 @@ namespace LingGuangV05.CaseMenu.Editor
                 && calculator.gameObject.activeInHierarchy && calculator.GetComponent<CanvasGroup>().alpha > .5f);
             Capture("05-main-calculator");
             calculator.CloseWindow();
+            crowd.installed = false;
             yield return Frames(4);
             foreach (string screenshot in Result.screenshots)
                 Require("Screenshot written: " + Path.GetFileName(screenshot), File.Exists(screenshot) && new FileInfo(screenshot).Length > 0);

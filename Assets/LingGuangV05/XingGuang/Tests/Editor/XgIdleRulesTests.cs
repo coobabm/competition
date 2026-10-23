@@ -114,6 +114,26 @@ namespace LingGuangV05.XingGuang.Tests
         }
 
         [Test]
+        public void AFullReviewInboxNoLongerStopsAutomaticIncome()
+        {
+            var sim = Ready(); var host = new Host();
+            sim.S.unlocked.Add("label.coop");
+            for (int i = 0; i < sim.ReviewLimit; i++) sim.S.queue.Add(sim.CreateLabelCard("mnist"));
+            Assert.IsTrue(sim.ReviewFull, "the UI can still say the inbox is full");
+            Assert.Greater(XgIdleRules.IncomeRate(sim, host), 0, "the estimate (and offline settlement) ignores the full inbox");
+            for (int second = 0; second < 120; second++) sim.TickCollaboration(1, host);
+            Assert.Greater(host.earned, 0, "confident cards keep earning while the inbox is full");
+            Assert.AreEqual(sim.ReviewLimit, sim.ReviewCount(), "skipped cards never overfill the inbox");
+        }
+
+        [Test]
+        public void IncomeRateIncludesCrowdAndContractIncome()
+        {
+            var sim = Ready(); var host = new Host();
+            Assert.AreEqual(sim.IncomePerSecond + XgIdleRules.AutoIncomeRate(sim, host), XgIdleRules.IncomeRate(sim, host), 1e-12);
+        }
+
+        [Test]
         public void NoAutomationOrWeakCheckpointReportsNoAutomaticIncome()
         {
             var sim = Ready(); var host = new Host();

@@ -38,7 +38,8 @@ namespace LingGuangV05.Desktop.XingGuang
         {var old=panel;panel=null;if(old!=null){old.gameObject.SetActive(false);Destroy(old.gameObject);}}
         void CloseThought(){if(thought!=null)thoughtGeneration++;Dispose(ref thought);thoughtKey="";}
         void CloseDownload(){if(downloadPage!=null)downloadGeneration++;Dispose(ref downloadPage);installWizard=null;downloadApp="";}
-        void ShowThought(string key,string body,string button,Action next,bool optional=false)
+        /// <param name="groupButton">Add a 「看看群聊」 next to 「继续」: only when the step names no button of its own and is not the script's last thought.</param>
+        void ShowThought(string key,string body,string button,Action next,bool optional=false,bool groupButton=false)
         {
             if(Held||optional&&Time.unscaledTime<nextSampleHelp)return;
             key+="|"+Revision+"|"+GameText.LanguageId;
@@ -65,7 +66,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 {if(!Stamp(expectedSave,expectedState,revision)||generation!=thoughtGeneration||panel!=thought)return;nextSampleHelp=Time.unscaledTime+90;CloseThought();},14);
                 Position(later,0,.5f,10,44);
             }
-            else
+            else if(groupButton)
             {
                 var open=ui.Button(thought,GameText.T("看看群聊","Check the group"),()=>
                 {if(Stamp(expectedSave,expectedState,revision)&&generation==thoughtGeneration&&panel==thought)chat.router?.Open(YYChatHub.AppId,YYChatHub.EraGroup);},14);
@@ -79,6 +80,13 @@ namespace LingGuangV05.Desktop.XingGuang
             if(appId=="miaoyu")
             {LingGuangV05.Desktop.Miaoyu.MiaoyuView.Instance?.Open("used");return;}
             chat.router?.Open(XgSim.DesktopRoute(appId));
+        }
+        /// <summary>The player already followed this app's group link (download started, installed, or the games window opened).</summary>
+        public bool LinkFollowed(string appId)
+        {
+            if(!Current||string.IsNullOrEmpty(appId))return false;
+            if(appId=="gamecenter")return Data.gamesOpened;
+            var r=lab.S.appAcquisition.apps.Find(a=>a.id==appId);return r!=null&&(r.downloading||r.downloaded||r.installed);
         }
         public void OpenLink(string appId)
         {

@@ -48,6 +48,10 @@ namespace LingGuangV05.CaseMenu
         private Action<int> lifeEventModeChanged;
         private UnityEngine.UI.Button lifeEventsButton;
         private TextMeshProUGUI lifeEventsTitle, lifeEventsDetail;
+        private Func<int> offlineIncomeState;
+        private Action<bool> offlineIncomeChanged;
+        private UnityEngine.UI.Button offlineIncomeButton;
+        private TextMeshProUGUI offlineIncomeTitle, offlineIncomeDetail;
         private int displayedVolume = -1;
         private int displayedProgress = -1;
         private string loadingMessage;
@@ -203,6 +207,47 @@ namespace LingGuangV05.CaseMenu
             RefreshLifeEventsSetting(); return lifeEventsButton;
         }
 
+        /// <summary>readState: -1 no game loaded, 0 locked, 1 off, 2 on.</summary>
+        public void ConfigureOfflineIncome(Func<int> readState, Action<bool> writeState)
+        {
+            offlineIncomeState = readState; offlineIncomeChanged = writeState;
+            RefreshOfflineIncomeSetting();
+        }
+        public void RefreshOfflineIncomeSetting()
+        {
+            if (offlineIncomeButton == null) return;
+            int state = offlineIncomeState?.Invoke() ?? -1;
+            offlineIncomeButton.interactable = state >= 1 && offlineIncomeChanged != null;
+            string value = state == 2 ? T("开启", "On") : state == 1 ? T("关闭", "Off") : state == 0 ? T("未解锁", "Locked") : "";
+            offlineIncomeTitle.text = T("离线收益", "Offline income") + (value.Length > 0 ? " · " + value : "");
+            offlineIncomeTitle.color = state >= 1 ? Ink : Muted;
+            string pct = (LingGuangV05.Core.XgOfflineRules.Efficiency * 100).ToString("0", System.Globalization.CultureInfo.InvariantCulture) + "%";
+            string hours = (LingGuangV05.Core.XgOfflineRules.MaxSeconds / 3600).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+            offlineIncomeDetail.text = state == 0 ? T("解锁自动答题后可开启。", "Available after automatic answering is unlocked.")
+                : state < 0 ? T("进入游戏后可设置。", "Available once a game is loaded.")
+                : T("退出游戏后，下次启动补算挂机收入。按" + pct + "效率，最多" + hours + "小时。仅增加游戏资金。",
+                    "Idle income is settled on your next launch: " + pct + " efficiency, up to " + hours + " hours. Game funds only.");
+        }
+        private UnityEngine.UI.Button BuildOfflineIncomeSetting(RectTransform parent)
+        {
+            var background = Panel("OfflineIncome", parent, Color.clear, true);
+            Place(background.rectTransform, new Vector2(0, 1), new Vector2(42, -547), new Vector2(900, 56));
+            offlineIncomeButton = background.gameObject.AddComponent<UnityEngine.UI.Button>();
+            Style(offlineIncomeButton, background);
+            offlineIncomeTitle = Label("Label", background.transform, "", 26, Ink);
+            Place(offlineIncomeTitle.rectTransform, new Vector2(0, 1), new Vector2(14, -5), new Vector2(872, 27));
+            offlineIncomeDetail = Label("Description", background.transform, "", 12, Muted);
+            Place(offlineIncomeDetail.rectTransform, new Vector2(0, 0), new Vector2(14, 5), new Vector2(872, 22));
+            offlineIncomeButton.onClick.AddListener(() =>
+            {
+                int state = offlineIncomeState?.Invoke() ?? -1;
+                if (state < 1 || offlineIncomeChanged == null) return;
+                offlineIncomeChanged(state != 2);
+                RefreshOfflineIncomeSetting(); uiClick?.Invoke();
+            });
+            RefreshOfflineIncomeSetting(); return offlineIncomeButton;
+        }
+
         public void ShowSettings(float volume, bool reduceMotion, bool fullscreen)
         {
             if (settingsGroup == null) return;
@@ -218,6 +263,7 @@ namespace LingGuangV05.CaseMenu
             foreach(var refresh in settingsTranslations)refresh();
             SetVolumeLabel(volumeSlider.value);
             RefreshLifeEventsSetting();
+            RefreshOfflineIncomeSetting();
             SetTitleActionsVisible(false);
             SetSubpageChrome(true);
             settingsGroup.gameObject.SetActive(true);
@@ -342,7 +388,8 @@ namespace LingGuangV05.CaseMenu
             Place(eyebrow.rectTransform, new Vector2(0, 1), new Vector2(84, -19), new Vector2(494, 23));
             eyebrow.characterSpacing = 2.7f; eyebrow.gameObject.SetActive(false);
             var title = SettingsLabel("SettingsTitle", card.transform, "设置", "Settings", 52, Ink);
-            Place(title.rectTransform, new Vector2(0, 1), new Vector2(42, -55), new Vector2(900, 64));
+            // 70 px holds Desktop CJK's full 52 pt line box (68.96); top raised 3 px so the line's middle stays at -87.
+            Place(title.rectTransform, new Vector2(0, 1), new Vector2(42, -52), new Vector2(900, 70));
             title.overflowMode = TextOverflowModes.Overflow;title.gameObject.AddComponent<CaseMenuPageCaret>();
             var separator = Panel("HeaderRule", card.transform, new Color(1, 1, 1, .13f));
             Place(separator.rectTransform, new Vector2(0, 1), new Vector2(42, -113), new Vector2(536, 1));
@@ -360,9 +407,10 @@ namespace LingGuangV05.CaseMenu
             fps.onValueChanged.AddListener(LingGuangV05.Desktop.GamePerformance.SetSixty);
 
             var lifeEvents = BuildLifeEventsSetting(card.rectTransform);
+            var offlineIncome = BuildOfflineIncomeSetting(card.rectTransform);
             var playerHelp = BuildPlayerHelpEntry(card.rectTransform);
             var returnImage = Panel("Return", card.transform, Color.clear, true);
-            Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -557), new Vector2(142, 44));
+            Place(returnImage.rectTransform, new Vector2(0, 1), new Vector2(42, -625), new Vector2(142, 44));
             var returnButton = returnImage.gameObject.AddComponent<UnityEngine.UI.Button>();
             Style(returnButton, returnImage);
             returnButton.onClick.AddListener(() => { uiClick?.Invoke(); closeRequested?.Invoke(); });
@@ -370,7 +418,7 @@ namespace LingGuangV05.CaseMenu
             Stretch(returnLabel.rectTransform);
             returnLabel.alignment = TextAlignmentOptions.Midline;
             var escape = SettingsLabel("EscapeHint", card.transform, "ESC 关闭", "ESC Close", 14, Muted);
-            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -562), new Vector2(180, 34));
+            Place(escape.rectTransform, new Vector2(1, 1), new Vector2(-42, -630), new Vector2(180, 34));
             escape.alignment = TextAlignmentOptions.MidlineRight; escape.gameObject.SetActive(false);
             var saved = settingsStatus = Label("SaveHint", card.transform, "", 20, Amber);
             Place(saved.rectTransform, Vector2.zero, new Vector2(42, 22), new Vector2(536, 24));
@@ -382,8 +430,9 @@ namespace LingGuangV05.CaseMenu
             Link(fullscreenToggle, reduceMotionToggle, quality);
             Link(quality, fullscreenToggle, fps);
             Link(fps, quality, lifeEvents);
-            Link(lifeEvents, fps, playerHelp);
-            Link(playerHelp, lifeEvents, returnButton);
+            Link(lifeEvents, fps, offlineIncome);
+            Link(offlineIncome, lifeEvents, playerHelp);
+            Link(playerHelp, offlineIncome, returnButton);
             Link(returnButton, playerHelp, volumeSlider);
             HideSettings();
         }

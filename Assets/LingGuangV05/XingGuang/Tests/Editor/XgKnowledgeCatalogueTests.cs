@@ -6,10 +6,10 @@ namespace LingGuangV05.XingGuang.Tests
 {
     public sealed class XgKnowledgeCatalogueTests
     {
-        static readonly string[] V4Learning = { "激活函数", "神经元", "神经网络", "归一化指数", "交叉熵", "梯度下降", "随机梯度下降", "梯度爆炸", "训练轮次", "超参数", "欠拟合", "正则化", "权重衰减", "泛化", "初始化", "推理", "预训练", "微调" };
-        static readonly string[] V4Architecture = { "全连接层", "池化", "编码解码", "自注意力", "语言模型", "词元", "温度", "生成对抗网络", "自编码器", "强化学习", "自我对弈" };
+        static readonly string[] V4Learning = { "激活函数", "神经元", "神经网络", "归一化指数", "交叉熵", "梯度下降", "随机梯度下降", "梯度爆炸", "训练轮次", "超参数", "欠拟合", "正则化", "权重衰减", "泛化", "初始化", "推断", "预训练", "微调" };
+        static readonly string[] V4Architecture = { "全连接层", "池化", "编码解码", "自注意力", "语言模型", "字词单位", "温度", "生成对抗网络", "自编码器", "强化学习", "自我对弈" };
         static readonly string[] V4Data = { "数据集", "样本", "标注", "标签噪声", "训练集", "验证集", "测试集", "精确率", "召回率", "混淆矩阵", "基准测试" };
-        static readonly string[] OriginalHardware = { "显卡", "GPU", "显卡加速", "CPU", "塔式散热", "算力", "浮点运算", "显存", "显存带宽", "多卡并行", "数据并行", "卡间互联", "PCIe", "主板插槽", "电源功率", "功耗", "电费", "降频", "机房", "机柜", "内存", "硬盘", "CUDA", "专用芯片" };
+        static readonly string[] OriginalHardware = { "显卡", "GPU", "显卡加速", "CPU", "机箱风道", "算力", "浮点运算", "显存", "显存带宽", "多卡并行", "数据并行", "卡间互联", "PCIe", "主板插槽", "电源功率", "功耗", "电费", "降频", "机房", "机柜", "内存", "硬盘", "CUDA", "专用芯片" };
         [Test] public void DesignCatalogueHasCompleteBilingualEntriesAndResolvableLinks()
         {
             Assert.AreEqual(132, XgKnowledge.Entries.Length);
@@ -99,7 +99,7 @@ namespace LingGuangV05.XingGuang.Tests
                 Assert.IsFalse(entry.Matches("no_matching_v4_term_123"), entry.Key);
             }
             Assert.IsTrue(XgKnowledge.Find("归一化指数").Matches("softmax"));
-            Assert.IsTrue(XgKnowledge.Find("词元").Matches("token"));
+            Assert.IsTrue(XgKnowledge.Find("字词单位").Matches("token"));
         }
         [Test] public void SearchHandlesBothLanguagesWhitespaceAndCase()
         {

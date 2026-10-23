@@ -120,8 +120,8 @@ namespace LingGuangV05.Desktop.Zhongbao
             if (!open)
                 locked.text = Sim.SubcontractReady
                     ? T("分包马上开放……", "Subcontracting opens in a moment…")
-                    : T("分包还没开放。\n\n第 " + XgSim.SubcontractStage + " 阶段起、买下自动答题以后开放。",
-                        "Subcontracting is not open yet.\n\nIt opens from stage " + XgSim.SubcontractStage + ", once you own auto-answer.");
+                    : T("分包还没开放。\n\n第 " + XgSim.SubcontractStage + " 阶段起、装好摆渡众包并买下自动答题以后开放。",
+                        "Subcontracting is not open yet.\n\nIt opens from stage " + XgSim.SubcontractStage + ", once Bodu Crowd is installed and you own auto-answer.");
             list.sizeDelta = new Vector2(0, market.Refresh(0));
             LayoutChat();
         }
@@ -250,7 +250,7 @@ namespace LingGuangV05.Desktop.Zhongbao
             items.Add(Row.Sub(T("阶梯电价：每月 " + Money(cfg.tierOneKwh) + " 度以上 ×" + N(cfg.tierTwoFactor, "0.0#") + "，" + Money(cfg.tierTwoKwh) + " 度以上 ×" + N(cfg.tierThreeFactor, "0.0#"),
                 "Tiered pricing: above " + Money(cfg.tierOneKwh) + " kWh a month ×" + N(cfg.tierTwoFactor, "0.0#") + ", above " + Money(cfg.tierTwoKwh) + " kWh ×" + N(cfg.tierThreeFactor, "0.0#"))));
             items.Add(Row.Row(T("宽带（每月 1 号）", "Broadband (the 1st of each month)"), "−" + ZhongbaoUi.Yuan(cfg.broadbandPerMonth), ZhongbaoSkin.Red));
-            items.Add(Row.Row(T("夏天空调（8 月）", "Summer air con (August)"), "−" + ZhongbaoUi.Yuan(cfg.summerAirconPerDay) + T("/天", "/day"), ZhongbaoSkin.Red));
+            items.Add(Row.Row(T("夏天空调（7–8 月）", "Summer air con (July–August)"), "−" + ZhongbaoUi.Yuan(cfg.summerAirconPerDay) + T("/天", "/day"), ZhongbaoSkin.Red));
             if (s.repairs != null && s.repairs.Count > 0) items.Add(Row.Row(T("送修中的显卡", "Cards at the repair shop"), s.repairs.Count.ToString()));
             if (s.ticketDay > 0) items.Add(Row.Row(T("周末火车票", "Weekend train ticket"), T("周六扣 ¥", "¥") + Money(cfg.weekendTicket) + T("", " on Saturday"), ZhongbaoSkin.Red));
             var b = s.bills ?? new HouseBills();
@@ -321,8 +321,7 @@ namespace LingGuangV05.Desktop.Zhongbao
 
             // ── income per second ──
             // The ability tier is its own row: it pays with no contract signed, so it must not read as business orders.
-            double tier = Sim.CrowdTierPay, contracts = Sim.IncomePerSecond - tier, auto = 0, wages = Sim.WagesPerMinute;
-            foreach (var l in s.autoLevels) auto += Sim.AutoIncome(l.dataset, Host);
+            double tier = Sim.CrowdTierPay, contracts = Sim.IncomePerSecond - tier, auto = XgIdleRules.AutoIncomeRate(Sim, Host), wages = Sim.WagesPerMinute;
             int signedCount = 0; foreach (var c in XgCatalog.Contracts) if (Sim.Signed(c.id)) signedCount++;
             double net = tier + contracts + auto - wages / XgSim.WageSeconds;
             double dayLength = house != null ? house.Config.rentDaySeconds : 60;

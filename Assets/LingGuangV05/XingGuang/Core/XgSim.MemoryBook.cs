@@ -550,7 +550,8 @@ namespace LingGuangV05.XingGuang
             DateUndatedMemories();
             var sb = new StringBuilder();
             sb.Append(T(MemoryAiName + "的笔记", MemoryAiName + "'s notes")).Append(T("（共 ")).Append(S.memoryBook.Count).Append(T(" 条，最多 ")).Append(MemoryBookLimit).Append(T(" 条）")).Append('\n');
-            sb.Append(T("部分笔记由 AI 整理生成，仅供参考。", "Some notes are summarized by AI and are for reference only.")).Append('\n');
+            // The standard label, word for word as Runtime's AiContentNotice.Footer (this assembly cannot reference Runtime).
+            sb.Append(T("AI 合成内容 · 仅供参考", "AI-generated content · For reference only")).Append('\n');
             sb.Append(T("每行一件事：日期  [关于谁] 内容  ★ 越多越重要")).Append("\n\n");
             if (S.memoryBook.Count == 0) sb.Append(T("（还没有记下什么。）")).Append('\n');
             foreach (var e in S.memoryBook) sb.Append(NotebookLine(e)).Append('\n');

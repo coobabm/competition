@@ -119,8 +119,9 @@ namespace LingGuangV05.Desktop.Games
             string state=game.Over?(game.S.winner==0?T("你赢了！","You won!"):OpponentName+T("赢了。"," won.")):
                 game.S.turn==1?OpponentName+T("正在选择……"," is choosing…"):game.S.die==0?T("轮到你，掷骰子。","Your turn. Roll the die."):T("点你要移动的飞机。","Click the plane you want to move.");
             status.text="<b><size=27>"+Title+"</size></b>\n\n"+T("对手：","Opponent: ")+OpponentName+"\n\n"+state+"\n\n"+
-                T("你的终点：","Your planes home: ")+game.AtHome(0)+"/2\n"+T("对方终点：","Opponent planes home: ")+game.AtHome(1)+"/2\n\n"+
-                T("5或6起飞 · 6可再掷\n同色前跳 · 终点反弹","Launch on 5/6 · Roll again on 6\nColour jump · Bounce at home")+LabLines();
+                T("你的终点：","Your planes home: ")+game.AtHome(0)+"/2\n"+T("对方终点：","Opponent planes home: ")+game.AtHome(1)+"/2"+
+                // A finished board drops its rules so the result, win bonus and receipt fit the status column.
+                (game.Over?"":"\n\n"+T("5或6起飞 · 6可再掷\n同色前跳 · 终点反弹","Launch on 5/6 · Roll again on 6\nColour jump · Bounce at home"))+LabLines();
             dieLabel.text=game.S.die==0?"—":game.S.die.ToString();
             rollLabel.text=T("掷骰子","Roll die");againLabel.text=T("重新开局","New game");
             rollButton.interactable=!game.Over&&game.S.turn==0&&game.S.die==0;

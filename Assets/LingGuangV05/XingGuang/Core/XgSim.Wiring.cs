@@ -651,7 +651,7 @@ namespace LingGuangV05.XingGuang
                 Add(v, new XgWNode
                 {
                     key = key, lane = XgWireLane.Task, group = T("标注台", "Labelling desk"), name = T(desk.name, desk.nameEn) + T(" · 自动代标", " · auto-label"),
-                    dataset = desk.id, min = XgCatalog.AutoMinAccuracy, pay = PayFor(desk.id, LevelOf(desk.id)) * QualityPayMultiplier, unit = T("条", "label"), earns = true,
+                    dataset = desk.id, min = XgCatalog.AutoMinAccuracy, pay = AutoPayFor(desk.id, LevelOf(desk.id)) * QualityPayMultiplier, unit = T("条", "label"), earns = true,
                     available = open, shown = on || (open && w.idle.Contains(key)), model = on && m != null ? m.key : "", realItems = true,
                     lockWhy = T("标注台还没开这张桌", "This desk is not open yet"), candidate = m?.key ?? "", held = w.idle.Contains(key),
                 });

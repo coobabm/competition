@@ -75,7 +75,8 @@ namespace LingGuangV05.Desktop.OS
         {
             if (targetRect == null) { return; }
 
-            sizeDelta = targetRect.sizeDelta;
+            Vector2 before = targetRect.sizeDelta;
+            sizeDelta = before;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(targetRect, data.position, data.pressEventCamera, out currentPointerPosition);
             resizeValue = currentPointerPosition - previousPointerPosition;
 
@@ -85,7 +86,10 @@ namespace LingGuangV05.Desktop.OS
 
             sizeDelta = new Vector2(Mathf.Clamp(sizeDelta.x, minSize.x, maxSize.x), Mathf.Clamp(sizeDelta.y, minSize.y, maxSize.y));
             targetRect.sizeDelta = sizeDelta;
-            previousPointerPosition = currentPointerPosition;
+            // Advance the reference point only by what was applied: past a size limit the pointer must come back
+            // to where the edge stopped before the window follows again (no drift).
+            Vector2 applied = sizeDelta - before;
+            previousPointerPosition += new Vector2(invertDeltaX ? -applied.x : applied.x, -applied.y);
         }
 
         public void OnEndDrag(PointerEventData eventData)

@@ -826,8 +826,8 @@ namespace LingGuangV05.Desktop.YY
                 return T("训练要你自己按「训练一轮」，没有挂机的法子。标注嘛，也只能靠手。",
                          "Training means pressing 训练一轮 yourself; there is no idle mode. Labelling? That's by hand too.");
             if (Has(q, "自动", "挂机", "auto", "idle", "脚本", "crontab"))
-                return T("两种自动：标注台的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练要你自己按「训练一轮」。",
-                         "Two kinds: auto-answer in the desk needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training you press yourself.");
+                return T("两种自动：科技树里的「自动答题」要检查点过 " + P(XgCatalog.AutoMinAccuracy) + "；训练要你自己按「训练一轮」。",
+                         "Two kinds: Auto answering in the tech tree needs a checkpoint over " + P(XgCatalog.AutoMinAccuracy) + "; training you press yourself.");
             if (Has(q, "技能", "架构", "层", "宽", "tree", "skill", "layer", "alexnet", "lstm"))
                 return T("「科技」用钱买层数、宽度、数据包和研究；「道具」买新结构和技巧。模型自己配：用最好的结构、装得下的最大尺寸，技巧全开。参数量不够就再练也涨不动，那就去加宽、加深。按住节点不放就买了。",
                          "The tech tree sells layers, width, data packs and research; the Items page sells structures and techniques. The model sets itself up: the best structure, the biggest size that fits, every technique on. Short of parameters it stops improving, so widen or deepen. Hold a node to buy it.");
@@ -844,14 +844,14 @@ namespace LingGuangV05.Desktop.YY
                 return T("每个阶段有一组必修节点。买齐了、看懂了当前的瓶颈，科技前沿的突破节点才能买。现在是第 " + lab.S.stage + " 阶段。",
                          "Each stage has required nodes. Own them and understand the current bottleneck, then the breakthrough on the frontier opens. You are at stage " + lab.S.stage + ".");
             if (Has(q, "订单", "赚钱", "收入", "钱", "order", "contract", "money", "earn"))
-                return T("一开始只能在摆渡众包的标注台手点挣钱。有了检查点就能在摆渡众包接「企业订单」，按秒给钱，比手点多得多。现在订单每秒 ¥" + lab.IncomePerSecond.ToString("0.0") + "。",
-                         "At first you earn by hand at the labelling desk in Bodu Crowd. With a checkpoint you can take its business orders, which pay every second. Now ¥" + lab.IncomePerSecond.ToString("0.0") + "/s.");
+                return T("一开始只能在" + AppNames.ExeZh + "的「教」里手点答题挣钱。过了第二项能力考，群里会发摆渡众包的链接，装好以后就能接委托，按秒给钱，比手点多得多。现在每秒 ¥" + lab.IncomePerSecond.ToString("0.0") + "。",
+                         "At first you earn by answering by hand in Teach in " + AppNames.ExeEn + ". After the second ability exam the group shares a Bodu Crowd link; once it is installed you can take its contracts, which pay every second. Now ¥" + lab.IncomePerSecond.ToString("0.0") + "/s.");
             if (Has(q, "标注", "开始", "怎么", "你好", "在吗", "hello", "hi", "help", "start", "label") && lab.OpeningFocus)
-                return T("先去「摆渡众包」的「标注台」，标「常识判断」：看句子点「是」或「否」。答对给钱、多一条样本。攒够 " + XgCatalog.SamplesToTrain + " 条就能回灵光训练，练到它分得清对错，别的桌和页面就都开了。你现在 " + lab.Samples("sense").ToString("0") + " 条。",
-                         "Open the labelling desk in Bodu Crowd and label Common sense: read the sentence and press Yes or No. Right answers pay and add a sample. " + XgCatalog.SamplesToTrain + " samples unlock training in LingGuang; train until it can tell right from wrong and the other desks and pages open. You have " + lab.Samples("sense").ToString("0") + ".");
+                return T("先去" + AppNames.ExeZh + "的「教」，标「常识判断」：看句子点「是」或「否」。答对给钱、多一条样本。攒够 " + XgCatalog.SamplesToTrain + " 条就能回灵光训练，练到它分得清对错，别的桌和页面就都开了。你现在 " + lab.Samples("sense").ToString("0") + " 条。",
+                         "Open Teach in " + AppNames.ExeEn + " and label Common sense: read the sentence and press Yes or No. Right answers pay and add a sample. " + XgCatalog.SamplesToTrain + " samples unlock training in LingGuang; train until it can tell right from wrong and the other desks and pages open. You have " + lab.Samples("sense").ToString("0") + ".");
             if (Has(q, "标注", "开始", "怎么", "你好", "在吗", "hello", "hi", "help", "start", "label"))
-                return T("先去「摆渡众包」的「标注台」，看图点「是」或「否」。答对给钱、多一条样本；答错不给钱、连击清零、那条作废。攒够 " + XgCatalog.SamplesToTrain + " 条就能训练。开局有算术、常识判断、逻辑题和垃圾短信：算术最简单，常识判断专教它分是和否，逻辑题最值钱，其它桌以后开。你现在算术 " + lab.Samples("arith").ToString("0") + " 条，常识判断 " + lab.Samples("sense").ToString("0") + " 条，逻辑题 " + lab.Samples("logic").ToString("0") + " 条，垃圾短信 " + lab.Samples("spam").ToString("0") + " 条。",
-                         "Open the labelling desk in Bodu Crowd and answer Yes or No. Right answers pay and add a sample; wrong ones pay nothing, reset the combo and are discarded. " + XgCatalog.SamplesToTrain + " samples unlock training. You start with arithmetic, common sense, logic and spam: arithmetic is easiest, common sense is what teaches it yes from no, logic pays best, the other desks open later. Arithmetic " + lab.Samples("arith").ToString("0") + ", common sense " + lab.Samples("sense").ToString("0") + ", logic " + lab.Samples("logic").ToString("0") + ", spam " + lab.Samples("spam").ToString("0") + ".");
+                return T("先去" + AppNames.ExeZh + "的「教」，看题点「是」或「否」。答对给钱、多一条样本；答错不给钱、连击清零、那条作废。攒够 " + XgCatalog.SamplesToTrain + " 条就能训练。开局有算术、常识判断、逻辑题和垃圾短信：算术最简单，常识判断专教它分是和否，逻辑题最值钱，其它桌以后开。你现在算术 " + lab.Samples("arith").ToString("0") + " 条，常识判断 " + lab.Samples("sense").ToString("0") + " 条，逻辑题 " + lab.Samples("logic").ToString("0") + " 条，垃圾短信 " + lab.Samples("spam").ToString("0") + " 条。",
+                         "Open Teach in " + AppNames.ExeEn + " and answer Yes or No. Right answers pay and add a sample; wrong ones pay nothing, reset the combo and are discarded. " + XgCatalog.SamplesToTrain + " samples unlock training. You start with arithmetic, common sense, logic and spam: arithmetic is easiest, common sense is what teaches it yes from no, logic pays best, the other desks open later. Arithmetic " + lab.Samples("arith").ToString("0") + ", common sense " + lab.Samples("sense").ToString("0") + ", logic " + lab.Samples("logic").ToString("0") + ", spam " + lab.Samples("spam").ToString("0") + ".");
             return T("我不一定马上回。可以问我：怎么开始、算术、逻辑题、训练、连击、科技、退步、显卡、电费、阶段、订单。",
                      "I may not answer right away. Ask me about: getting started, arithmetic, logic, training, combo, tech, drops, cards, power, stages, orders.");
         }

@@ -41,5 +41,14 @@ namespace LingGuangV05.XingGuang.Tests
             for (int i = 0; i < XgCatalog.AutoMaxLevel; i++) Assert.GreaterOrEqual(XgCatalog.AutoCost(i), 100);
             Assert.AreEqual(150, sim.NodeCost(XgCatalog.Node("shared.lr")), "already raised stage-one price stays 150");
         }
+
+        [Test]
+        public void RaiseAndAutoLaddersNeverGetCheaperFromOneLevelToTheNext()
+        {
+            // The ×10 floor once made 加薪 Lv5 ¥142 after Lv4's ¥840 (and 自动答题 Lv2 ¥102 after Lv1's ¥600).
+            for (int i = 1; i < XgCatalog.RaiseMax; i++) Assert.Greater(XgCatalog.RaiseCost(i), XgCatalog.RaiseCost(i - 1), "raise " + i);
+            for (int i = 1; i < XgCatalog.AutoMaxLevel; i++) Assert.Greater(XgCatalog.AutoCost(i), XgCatalog.AutoCost(i - 1), "auto " + i);
+            Assert.AreEqual(120, XgCatalog.AutoCost(0), "自动答题 Lv1 pays back within minutes at stage two");
+        }
     }
 }

@@ -20,7 +20,7 @@ public static class IdleWindowLayoutChecks
     {
         public string status="running",error="";
         public List<string> checks=new List<string>();
-        public string uncovered="Inactive geometry fixture only. Run DesignWallpaperSmoke.RunIdle for actual entry, locked-node navigation, income pause/catchup and return-context checks. Native Windows resize/drag requires a player build.";
+        public string uncovered="Inactive geometry fixture only. Run DesignWallpaperSmoke.RunIdle for actual entry, locked-node navigation, status text, income pause/catchup and return-context checks. Native Windows resize/drag/always-on-top and save+quit require a player build.";
     }
     static void Need(Report r,bool ok,string label){if(!ok)throw new InvalidOperationException(label);r.checks.Add(label);}
     static RectTransform Child(string name,Transform parent)
@@ -51,39 +51,45 @@ public static class IdleWindowLayoutChecks
             var entry=Get<XgBtn>(idle,"entry");var panel=Get<RectTransform>(idle,"surface");
             Need(r,entry.rt.parent.parent.name=="AI Utility Tray"&&entry.rt.parent.parent.parent==bar&&!entry.rt.IsChildOf(prologue),"Tray entry is independent of hidden Prologue Layer");
             Need(r,entry.rt.parent.GetComponent<LayoutElement>().preferredWidth==32&&entry.rt.anchorMin==Vector2.zero&&entry.rt.anchorMax==Vector2.one&&!entry.label.gameObject.activeSelf,"Tray entry has a 32px hit area and no long label");
-            Need(r,entry.rt.Find("Visual/Monitor glyph")!=null&&Get<RectTransform>(idle,"entryMenu")!=null,"Computer glyph and size selection menu exist");
+            Need(r,entry.rt.Find("Visual/Monitor glyph")!=null&&typeof(XgIdleWindow).GetField("entryMenu",F)==null,"Computer glyph exists and enters directly without a size menu");
             var entryFx=entry.rt.parent.GetComponent<XgJuice>();var surfaceFx=panel.GetComponent<XgJuice>();
             // This geometry fixture deliberately keeps the entire canvas inactive. Runtime presses require active buttons.
-            Need(r,entryFx!=null&&Get<XgBtn>(idle,"miniEntry").rt.parent.GetComponentInParent<XgJuice>(true)==entryFx,"Entry and menu use the idle-owned feedback policy");
+            Need(r,entryFx!=null&&entry.rt.GetComponentInParent<XgJuice>(true)==entryFx,"Entry uses the idle-owned feedback policy");
             sim.S.reduceFx=true;Call(idle,"SyncFeedback");
             Need(r,entryFx.Reduced&&surfaceFx.Reduced&&entryFx.Muted&&surfaceFx.Muted,"Reduced effects and mute synchronize before clicking in both hierarchies");
             sim.S.reduceFx=false;sim.S.mute=false;Call(idle,"SyncFeedback");
             Need(r,!entryFx.Muted&&!surfaceFx.Muted&&entryFx.Reduced==surfaceFx.Reduced,"Feedback settings stay synchronized after toggling");
             sim.S.mute=true;Call(idle,"SyncFeedback");
             string before=JsonUtility.ToJson(sim.S);
-            foreach(bool mini in new[]{false,true,false})
-            {
-                idle.SetMini(mini);var face=Get<RectTransform>(idle,"face");face.ForceUpdateRectTransforms();
-                Need(r,panel.GetComponent<CanvasScaler>().referenceResolution==XgIdleWindow.WindowSize(mini),"Reference resolution matches mode "+mini);
-                Need(r,Get<TMP_Text>(idle,"details").gameObject.activeSelf==!mini,"Secondary detail visibility matches mode "+mini);
-                var pause=Get<XgBtn>(idle,"pause");var back=Get<XgBtn>(idle,"review");
-                Need(r,pause.rt.offsetMax.x<back.rt.offsetMin.x&&back.rt.offsetMax.x<=face.rect.width&&pause.rt.offsetMin.y>=0,"Mode buttons fit without overlap "+mini);
-                Need(r,Get<RectTransform>(idle,"wallet").rect.height>0,"Digit viewport retains positive height "+mini);
-                Call(idle,"SetDigits",12.34);
-                Need(r,Get<string>(idle,"digits").Contains("12.34"),"Both modes use the settled-income number formatter "+mini);
-            }
-            var native=host.GetComponent<XgIdleNativeWindow>();native.SetMini(true);
-            Need(r,native.RequestedSize==new Vector2(360,280),"Native mini dimensions match canvas");native.SetMini(false);
-            Need(r,native.RequestedSize==new Vector2(560,430),"Native standard dimensions match canvas");
-            Get<XgBtn>(idle,"review").button.onClick.Invoke();
-            Need(r,JsonUtility.ToJson(sim.S)==before,"Layout and return callback neither change save data nor open an exe (fixture has no runtime)");
-            Need(r,Get<XgBtn>(idle,"optionsRestore").label.text.Contains("桌面")||Get<XgBtn>(idle,"optionsRestore").label.text.Contains("desktop"),"Explicit desktop return is separate from game return");
+            var face=Get<RectTransform>(idle,"face");face.ForceUpdateRectTransforms();
+            Need(r,XgIdleWindow.WindowSize==new Vector2(256,148)&&panel.GetComponent<CanvasScaler>().referenceResolution==XgIdleWindow.WindowSize,"Single 256x148 notification size drives the canvas");
+            Need(r,Get<RectTransform>(idle,"monitor").sizeDelta==XgIdleWindow.WindowSize,"Title monitor art fills exactly the window size");
+            foreach(string removed in new[]{"details","metricLabel","sizeToggle","offline","explanation","reviewTasks","optionsRestore","miniEntry"})
+                Need(r,typeof(XgIdleWindow).GetField(removed,F)==null,"Removed final-design row/control stays absent: "+removed);
+            Need(r,typeof(XgIdleWindow).GetMethod("SetMini",F)==null,"No Standard/Mini switch");
+            var pause=Get<XgBtn>(idle,"pause");var back=Get<XgBtn>(idle,"review");
+            Need(r,pause.rt.anchorMax.x<=back.rt.anchorMin.x&&pause.rt.offsetMax.x<0&&back.rt.offsetMin.x>0&&pause.rt.offsetMin.y>=0,"Two body buttons fit side by side without overlap");
+            Need(r,Get<RectTransform>(idle,"wallet").rect.height>0&&face.rect.height>Get<RectTransform>(idle,"wallet").rect.height,"Digit viewport fits inside the monitor screen");
+            Call(idle,"SetDigits",12.34);
+            Need(r,Get<string>(idle,"digits").Contains("12.34"),"Wallet uses the settled-income number formatter");
+            var options=Get<RectTransform>(idle,"options");
+            Need(r,!options.gameObject.activeSelf&&options.GetComponentsInChildren<Button>(true).Length==2,"More menu holds only always-on-top and quit");
+            var native=host.GetComponent<XgIdleNativeWindow>();
+            Need(r,native.RequestedSize==XgIdleWindow.WindowSize&&!native.Topmost,"Native window requests the canvas size and is not topmost by default");
+            Get<XgBtn>(idle,"pin").button.onClick.Invoke();
+            Need(r,Get<bool>(idle,"topmost")&&native.Topmost,"Always-on-top toggle reaches the native window");
+            Get<XgBtn>(idle,"pin").button.onClick.Invoke();
+            Need(r,!Get<bool>(idle,"topmost")&&!native.Topmost,"Always-on-top toggles back off");
+            Get<XgBtn>(idle,"quit").button.onClick.Invoke();
+            Need(r,Get<float>(idle,"quitArmed")>=0,"First quit click only arms the confirmation");
+            back.button.onClick.Invoke();
+            Need(r,JsonUtility.ToJson(sim.S)==before,"Layout, menu and return callbacks neither change save data nor open an exe (fixture has no runtime)");
             r.status="passed";
         }
         catch(Exception ex){r.status="failed";r.error=ex.ToString();throw;}
         finally
         {
-            if(idle!=null){Set(idle,"surface",null);Set(idle,"entryHost",null);Set(idle,"entry",null);Set(idle,"miniEntry",null);}
+            if(idle!=null){Set(idle,"surface",null);Set(idle,"entryHost",null);Set(idle,"entry",null);}
             if(root!=null)UnityEngine.Object.DestroyImmediate(root);
             File.WriteAllText(Path.Combine(dir,"report.json"),JsonUtility.ToJson(r,true));Debug.Log("IDLE_LAYOUT "+r.status+" "+dir);
         }

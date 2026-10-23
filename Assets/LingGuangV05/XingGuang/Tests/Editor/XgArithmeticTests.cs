@@ -146,7 +146,11 @@ namespace LingGuangV05.XingGuang.Tests
             Assert.AreEqual(2, sim.LevelOf("arith"), "one level per 40 labels");
             Assert.AreEqual(40, sim.Samples("arith"), 1e-9);
             Assert.AreEqual(0, sim.Samples("logic"), 1e-9, "arithmetic labels are not logic labels");
-            Assert.Less(sim.PayFor("arith", 1), sim.PayFor("spam", 1));
+            // v4 §3.3 (2026-10-22): pay follows difficulty. 算术 now pays more than the quick text desks, a calculus card about 4× 常识.
+            Assert.Greater(sim.PayFor("arith", 1), 2 * sim.PayFor("spam", 1), "arithmetic pays clearly more than SMS spam");
+            Assert.Greater(sim.PayFor("arith", 1), 2 * sim.PayFor("sense", 1), "arithmetic pays at least twice common sense");
+            Assert.That(XgCatalog.Desk("arith").pay * XgCatalog.CalculusPayFactor / XgCatalog.Desk("sense").pay, Is.InRange(3.0, 4.5), "a calculus card ≈ 3–4× 常识");
+            Assert.Greater(XgCatalog.Desk("mnist").pay, XgCatalog.Desk("sense").pay, "picture desks pay more than common sense");
             Assert.Greater(sim.PayFor("logic", 1), 2 * sim.PayFor("spam", 1), "logic pays clearly more than the other hand desks");
             foreach (var d in XgCatalog.Desks) if (d.id != "logic") Assert.Greater(XgCatalog.Desk("logic").pay, d.pay, d.id);
         }
