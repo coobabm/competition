@@ -1,0 +1,12 @@
+{
+  "existingPatches": [
+    "Assets/LingGuangV05/XingGuang/Desktop/XgPublicDiscourseNotifier.cs",
+    "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs"
+  ],
+  "newFiles": [
+    "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs",
+    "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs.meta"
+  ],
+  "runtimeValidation": "NOT RUN; staging-only static inspection and patch applicability",
+  "runMethod": "PublicReadingInteractionUiChecks.Run"
+}

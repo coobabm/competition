@@ -1,0 +1,33 @@
+{
+  "note": "Synthetic representative history, labState nested in a minimal house payload; actual complete house adds bytes. Compression is illustrative only, not a production codec.",
+  "samples": [
+    {
+      "records": 100,
+      "payloadUtf8Bytes": 120562,
+      "limitBytes": 2097152,
+      "exceedsExistingLimit": false,
+      "deflateBase64Bytes": 13788
+    },
+    {
+      "records": 1000,
+      "payloadUtf8Bytes": 1094369,
+      "limitBytes": 2097152,
+      "exceedsExistingLimit": false,
+      "deflateBase64Bytes": 75108
+    },
+    {
+      "records": 2500,
+      "payloadUtf8Bytes": 2724869,
+      "limitBytes": 2097152,
+      "exceedsExistingLimit": true,
+      "deflateBase64Bytes": 173944
+    },
+    {
+      "records": 5000,
+      "payloadUtf8Bytes": 5442369,
+      "limitBytes": 2097152,
+      "exceedsExistingLimit": true,
+      "deflateBase64Bytes": 338944
+    }
+  ]
+}

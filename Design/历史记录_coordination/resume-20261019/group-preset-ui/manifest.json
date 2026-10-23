@@ -1,0 +1,29 @@
+{
+  "status": "isolated_compiled_not_unity_executed",
+  "entry": "GroupPresetActualUiRunner.Run",
+  "base_head": "3533141a406940d571e064f3797328c7d214235a",
+  "production_modified": false,
+  "unity_started": false,
+  "patch_sha256": "d11b77ed4195941e4540b5153937e9165f0a33c9e2927b7e3393ef2359b61ea4",
+  "apply_check_exit_code": 0,
+  "files": [
+    {
+      "path": "Assets/LocalBuild/Editor/GroupPresetActualUiRunner.cs",
+      "sha256": "494f3d5272a49a0bb61f1f460a83dd0e138f3c79bab830ccac3f314edeb30f38",
+      "status": "new"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/GroupPresetActualUiRunner.cs.meta",
+      "sha256": "9284efc47587713263bf80ddc1e96cca35a252791deaf5bc40c60f3d74b78c2f",
+      "status": "new"
+    }
+  ],
+  "dependencies": {
+    "Assets/LingGuangV05/YY2016/YYChatHub.cs": "0d9661beb489406b1861598fce458093e1ad2d71101ac2f61dcd74de00a26f0c",
+    "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs": "8c1b5f4f90ebffa38aa5d71ceef9fdab55b89aaadd4ca1bef4e8f70476dcab09",
+    "Assets/LingGuangV05/YY2016/YYChatHub.GroupLifecycle.cs": "8a4194f440c5ce233ab4f9ea31df0b1f4071b1a849d1f707781a5dc552987c6b",
+    "Assets/LocalBuild/Editor/LaoZhouNewsChecks.cs": "eaffdda3f8362a5dffcd09226986e3f6649ce7a75ec3741e6598acc5844dfff5",
+    "Assets/LocalBuild/Editor/WorldYyGiftRoutingChecks.cs": "60b21f810b15b47d320c5bf4fecca074190554b72c8cdd3d5216b2921c21cd1c",
+    "Assets/LocalBuild/Editor/FilesWindowUiChecks.cs": "21eb81c08c41631a1c295fe678869b984bc4f7dea8d551cad2aee3c16ad298f9"
+  }
+}

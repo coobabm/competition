@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "file": "Assets/LocalBuild/Editor/DailyFeedbackActualUiChecks.cs",
+      "base_sha256": "f2199acd226ee238e16544925bbb9b14e8be9debfd895eefb529b2f3ca0f59f2",
+      "candidate_sha256": "c375df90b604dad9cb8254e424e2f97eb5c8fe79834f98a9c632c493a98966db"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/DailyFeedbackActualUiRunner.cs",
+      "base_sha256": "8537655903ba424c259c3a2b33914139b0314b7c4298580271deb0fd6f502f82",
+      "candidate_sha256": "a6b39a81c3f354cddcb153a8a01cc805c59628370dd2fd07b271d2a8d5b3038f"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

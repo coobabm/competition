@@ -1,0 +1,28 @@
+{
+  "runtimeBank": 57,
+  "intro": 7,
+  "lichessMate1": 25,
+  "lichessMate2": 25,
+  "validatedWithProductionChessGame": 57,
+  "runtimePositionsReplayedAndMatched": 57,
+  "alternativeFirstMovePositions": [
+    {
+      "id": "m2_ladder",
+      "mate": 2,
+      "verifiedFenMatchesPGN": true,
+      "winningFirstMoves": [
+        "a1a7",
+        "b2b7"
+      ],
+      "canonicalFirst": "b2b7",
+      "alternate": [
+        "a1a7"
+      ]
+    }
+  ],
+  "perPackRatingSorted": {
+    "1": true,
+    "2": false
+  },
+  "scope": "Source and production-engine rules revalidation; not a new Unity UI run."
+}

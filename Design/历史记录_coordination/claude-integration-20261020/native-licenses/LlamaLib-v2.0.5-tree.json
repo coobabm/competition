@@ -1,0 +1,1197 @@
+{
+  "sha": "21d3b9dcd1c05ad13f94f198e59462960019a057",
+  "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/21d3b9dcd1c05ad13f94f198e59462960019a057",
+  "tree": [
+    {
+      "path": ".gitattributes",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6313b56c57848efce05faa7aa7e901ccfc2886ea",
+      "size": 19,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6313b56c57848efce05faa7aa7e901ccfc2886ea"
+    },
+    {
+      "path": ".github",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6977b492cef51f2b2b1d742493b59c550a2243cd",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/6977b492cef51f2b2b1d742493b59c550a2243cd"
+    },
+    {
+      "path": ".github/doxygen",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b66938fe4c5012d9f23b30d49592d6e574f75f37",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/b66938fe4c5012d9f23b30d49592d6e574f75f37"
+    },
+    {
+      "path": ".github/doxygen/Doxyfile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07d5084da5d40605b0f03bf9aeb0b18f403211d9",
+      "size": 128988,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/07d5084da5d40605b0f03bf9aeb0b18f403211d9"
+    },
+    {
+      "path": ".github/doxygen/custom.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecd78e87c43308fc36d7951658f5bc42d661626a",
+      "size": 75,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/ecd78e87c43308fc36d7951658f5bc42d661626a"
+    },
+    {
+      "path": ".github/doxygen/doxygen-awesome-darkmode-toggle.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40fe2d38e090c2edffc04f5be214673b5dd309a8",
+      "size": 8469,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/40fe2d38e090c2edffc04f5be214673b5dd309a8"
+    },
+    {
+      "path": ".github/doxygen/doxygen-awesome-fragment-copy-button.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "86c16fd93a71686745a8c5568ac41a5d270a1b26",
+      "size": 4042,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/86c16fd93a71686745a8c5568ac41a5d270a1b26"
+    },
+    {
+      "path": ".github/doxygen/doxygen-awesome-interactive-toc.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "20a9669d7df048e75464480c56500854c01fe881",
+      "size": 3177,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/20a9669d7df048e75464480c56500854c01fe881"
+    },
+    {
+      "path": ".github/doxygen/doxygen-awesome-paragraph-link.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e53d132cea5abbc5a016e585c805f52ed715352c",
+      "size": 2447,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/e53d132cea5abbc5a016e585c805f52ed715352c"
+    },
+    {
+      "path": ".github/doxygen/doxygen-awesome-sidebar-only-darkmode-toggle.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d207446e0be8ca2f2129dc03e556f2678bf0abc8",
+      "size": 1474,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/d207446e0be8ca2f2129dc03e556f2678bf0abc8"
+    },
+    {
+      "path": ".github/doxygen/doxygen-awesome-sidebar-only.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "853f6d6926e258aca286b70bbc5d8661c5efd0b1",
+      "size": 3287,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/853f6d6926e258aca286b70bbc5d8661c5efd0b1"
+    },
+    {
+      "path": ".github/doxygen/doxygen-awesome.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a44945b366e56d59fde2db58361f213f2ae0f79c",
+      "size": 67222,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/a44945b366e56d59fde2db58361f213f2ae0f79c"
+    },
+    {
+      "path": ".github/doxygen/header.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "79497302a7dfc2f64d73fa115d18255e6ed5ac09",
+      "size": 4345,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/79497302a7dfc2f64d73fa115d18255e6ed5ac09"
+    },
+    {
+      "path": ".github/doxygen/layout.xml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aaddebf1f139cd82e6fb9ce3d4ef8b87567b8e59",
+      "size": 8953,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/aaddebf1f139cd82e6fb9ce3d4ef8b87567b8e59"
+    },
+    {
+      "path": ".github/doxygen/prepare_readme.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "9d77c6ffbb9c302db885899d9b4eed89d4616f6c",
+      "size": 491,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/9d77c6ffbb9c302db885899d9b4eed89d4616f6c"
+    },
+    {
+      "path": ".github/doxygen/run.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "e0b9985f12c0968ce036695885509ae0f3253979",
+      "size": 489,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/e0b9985f12c0968ce036695885509ae0f3253979"
+    },
+    {
+      "path": ".github/logo.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "44e5984e4aa1cded024a643ef2ea2a793ba679e9",
+      "size": 14566,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/44e5984e4aa1cded024a643ef2ea2a793ba679e9"
+    },
+    {
+      "path": ".github/logo_tiny.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "71b54c42b5c31a8960d83fcaa9702ef9bd44260e",
+      "size": 15058,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/71b54c42b5c31a8960d83fcaa9702ef9bd44260e"
+    },
+    {
+      "path": ".github/logo_white.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac35a1aef29deb700bda710038d1c5574c5b7397",
+      "size": 12347,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/ac35a1aef29deb700bda710038d1c5574c5b7397"
+    },
+    {
+      "path": ".github/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ec146c847e369f3d1eb974786d4a4a6689b270f7",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/ec146c847e369f3d1eb974786d4a4a6689b270f7"
+    },
+    {
+      "path": ".github/scripts/build_openssl.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "1dc431d72102ee1320f695b9a1bc681ed15d0f59",
+      "size": 4671,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/1dc431d72102ee1320f695b9a1bc681ed15d0f59"
+    },
+    {
+      "path": ".github/scripts/change_version.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "10ae83f9bd30bf63da7ffcc0085a287d848b714b",
+      "size": 1701,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/10ae83f9bd30bf63da7ffcc0085a287d848b714b"
+    },
+    {
+      "path": ".github/scripts/find_includes.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9515f6e772b0fb2a9e8f8e360e1a1bdf45b9a355",
+      "size": 1423,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/9515f6e772b0fb2a9e8f8e360e1a1bdf45b9a355"
+    },
+    {
+      "path": ".github/scripts/release.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "1c0ae19f3d799b108a156841e01bc938e73ede6f",
+      "size": 1051,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/1c0ae19f3d799b108a156841e01bc938e73ede6f"
+    },
+    {
+      "path": ".github/scripts/upgrade_llama.cpp.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f30868d1ef3debf947d3424aad0e8deb14322d5",
+      "size": 1482,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6f30868d1ef3debf947d3424aad0e8deb14322d5"
+    },
+    {
+      "path": ".github/tests",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0a05e7fc0aaf70dc23f5f9b0598d81559dcd0336",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/0a05e7fc0aaf70dc23f5f9b0598d81559dcd0336"
+    },
+    {
+      "path": ".github/tests/csharp-dotnet",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b981a96cedb10932490db4b0f26f0587dec6f46d",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/b981a96cedb10932490db4b0f26f0587dec6f46d"
+    },
+    {
+      "path": ".github/tests/csharp-dotnet/LlamaLib.2.0.1.nupkg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d77887e30d8ea2fdf118dfe839e1d60b7ae8a092",
+      "size": 72654,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/d77887e30d8ea2fdf118dfe839e1d60b7ae8a092"
+    },
+    {
+      "path": ".github/tests/csharp-dotnet/Program.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a99cc791d03f16c1a5521f018364b0e8ef27ac1a",
+      "size": 1300,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/a99cc791d03f16c1a5521f018364b0e8ef27ac1a"
+    },
+    {
+      "path": ".github/tests/csharp-dotnet/Program.csproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c5386d29a654f1fce3d0d84f18ff2f3b6522aab",
+      "size": 332,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/2c5386d29a654f1fce3d0d84f18ff2f3b6522aab"
+    },
+    {
+      "path": ".github/tests/csharp-dotnet/test.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "de76b88c096ff7483fb63e88e523ad106481fab8",
+      "size": 8001,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/de76b88c096ff7483fb63e88e523ad106481fab8"
+    },
+    {
+      "path": ".github/workflows",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b084f31ca88c946b407058d1082bca01be92a017",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/b084f31ca88c946b407058d1082bca01be92a017"
+    },
+    {
+      "path": ".github/workflows/build_library.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "926ac0cd2f8e6c2c9a28fae023f2059f63e28cfa",
+      "size": 26470,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/926ac0cd2f8e6c2c9a28fae023f2059f63e28cfa"
+    },
+    {
+      "path": ".github/workflows/documentation.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d568b0ce1bd782cad3ed06b6cf2c733e66965bd2",
+      "size": 659,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/d568b0ce1bd782cad3ed06b6cf2c733e66965bd2"
+    },
+    {
+      "path": ".github/workflows_template",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6b790b8a02c57166cbe64904c041869055a9c0a7",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/6b790b8a02c57166cbe64904c041869055a9c0a7"
+    },
+    {
+      "path": ".github/workflows_template/build_library_steps.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4fbda21fff2d591f4f76b482ba2bca5ac43712c1",
+      "size": 12743,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/4fbda21fff2d591f4f76b482ba2bca5ac43712c1"
+    },
+    {
+      "path": ".github/workflows_template/build_library_template.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75129991ee051fbd8ce5b5f20bcc55f060bc0b28",
+      "size": 4248,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/75129991ee051fbd8ce5b5f20bcc55f060bc0b28"
+    },
+    {
+      "path": ".github/workflows_template/create_build_script.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd5334190f9d6b7165cb99cb2c685279b603e741",
+      "size": 2382,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/cd5334190f9d6b7165cb99cb2c685279b603e741"
+    },
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "14b3c85bc145026a1b676714db12d88b71f8fdd6",
+      "size": 321,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/14b3c85bc145026a1b676714db12d88b71f8fdd6"
+    },
+    {
+      "path": ".gitmodules",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c6220cae79c17cba677c7a38b9f50cb729f92bc",
+      "size": 249,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/5c6220cae79c17cba677c7a38b9f50cb729f92bc"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e8660d04a7dc77791fcf7ac0fe9fee8b2a48fdc",
+      "size": 3782,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/1e8660d04a7dc77791fcf7ac0fe9fee8b2a48fdc"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0a62ae6b5d639c5200330b10a48f234cdd67098",
+      "size": 3208,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/c0a62ae6b5d639c5200330b10a48f234cdd67098"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8269a57ad3d73410e4936524223afd5490e2b1ed",
+      "size": 5254,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/8269a57ad3d73410e4936524223afd5490e2b1ed"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+      "size": 11357,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "edabe2e6b4e992ef44f8b718c8045d996afcfdd2",
+      "size": 8180,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/edabe2e6b4e992ef44f8b718c8045d996afcfdd2"
+    },
+    {
+      "path": "VERSION",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e01025862f79350522cba47477d9bb6c51729e12",
+      "size": 6,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/e01025862f79350522cba47477d9bb6c51729e12"
+    },
+    {
+      "path": "cmake",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "347639cf27f0492b9132c6c8b6272e4049a8f88d",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/347639cf27f0492b9132c6c8b6272e4049a8f88d"
+    },
+    {
+      "path": "cmake/LLAMALIBConfig.cmake",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a3c9e9ef6346b151779be78eafd096416d7bf3f",
+      "size": 92,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/7a3c9e9ef6346b151779be78eafd096416d7bf3f"
+    },
+    {
+      "path": "cmake/LLAMALIBConfigVersion.cmake",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9defa0966ee52e8d92427acbcb614c989ed553f0",
+      "size": 106,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/9defa0966ee52e8d92427acbcb614c989ed553f0"
+    },
+    {
+      "path": "cmake/LlamaLibConfig.cmake",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab748cb8f5352dfb18b77123b2a6d25579529b2a",
+      "size": 4979,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/ab748cb8f5352dfb18b77123b2a6d25579529b2a"
+    },
+    {
+      "path": "cmake/LlamaLibConfigVersion.cmake",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0cc812af19b4f12e417bbad2d8dddfdc38309325",
+      "size": 1977,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/0cc812af19b4f12e417bbad2d8dddfdc38309325"
+    },
+    {
+      "path": "cmake/LlamaLibTargets.cmake",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6607476228bc8c2610ac73c4f537c8e194de0af9",
+      "size": 9292,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6607476228bc8c2610ac73c4f537c8e194de0af9"
+    },
+    {
+      "path": "cpp_api.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a5762ff343cb8a766b93d16fe81e1c4b8e48c51b",
+      "size": 26439,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/a5762ff343cb8a766b93d16fe81e1c4b8e48c51b"
+    },
+    {
+      "path": "csharp",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ebaa4e8dd440738ba061dabbfcbdb8570873c067",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/ebaa4e8dd440738ba061dabbfcbdb8570873c067"
+    },
+    {
+      "path": "csharp/LLM.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e1d8193b2de812f6f33c4a94c1f49f6effe6d79",
+      "size": 12380,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/0e1d8193b2de812f6f33c4a94c1f49f6effe6d79"
+    },
+    {
+      "path": "csharp/LLMAgent.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5fb822668eeb3727b5dcc6f6ec87d4447358e083",
+      "size": 10393,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/5fb822668eeb3727b5dcc6f6ec87d4447358e083"
+    },
+    {
+      "path": "csharp/LLMClient.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4829fe798829202b5c222431b5c70f3478aa8e63",
+      "size": 1794,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/4829fe798829202b5c222431b5c70f3478aa8e63"
+    },
+    {
+      "path": "csharp/LLMService.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3cff34dc8723393794fd3d38eaa6c1217f26bdc6",
+      "size": 5132,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/3cff34dc8723393794fd3d38eaa6c1217f26bdc6"
+    },
+    {
+      "path": "csharp/LibraryLoader.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aae01bed3bedfde16c7531f8a201874449b44aad",
+      "size": 8684,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/aae01bed3bedfde16c7531f8a201874449b44aad"
+    },
+    {
+      "path": "csharp/LlamaLib.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "778d256a25bb6d3afab814bbd399340cf0b129fc",
+      "size": 63552,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/778d256a25bb6d3afab814bbd399340cf0b129fc"
+    },
+    {
+      "path": "csharp/LlamaLib.csproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a282e2db1c2f381cae86aa9be873c005f6a516d",
+      "size": 3626,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/9a282e2db1c2f381cae86aa9be873c005f6a516d"
+    },
+    {
+      "path": "csharp/LlamaLib.targets",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a5b139e368d5d918c058fdd09c2e9e10b9acd8fd",
+      "size": 10951,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/a5b139e368d5d918c058fdd09c2e9e10b9acd8fd"
+    },
+    {
+      "path": "csharp/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6786ad32806a5adbc3b45891cc714964f867e6c1",
+      "size": 2349,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6786ad32806a5adbc3b45891cc714964f867e6c1"
+    },
+    {
+      "path": "csharp_api.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "000b5b3faf6221d534a3e9e6ea6258f5d9efa7e7",
+      "size": 26900,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/000b5b3faf6221d534a3e9e6ea6258f5d9efa7e7"
+    },
+    {
+      "path": "examples",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "66bbb78e119b2f9910581e7719a219b99983e19a",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/66bbb78e119b2f9910581e7719a219b99983e19a"
+    },
+    {
+      "path": "examples/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd50ab0e3886f580fe1cc1adeb836761321e2498",
+      "size": 91,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/bd50ab0e3886f580fe1cc1adeb836761321e2498"
+    },
+    {
+      "path": "examples/cpp",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4d6c332525fd802fb0580170246f56bf50b11b9d",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/4d6c332525fd802fb0580170246f56bf50b11b9d"
+    },
+    {
+      "path": "examples/cpp/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9fce63501d93398f3b967f6d1ebae980b83ad0fb",
+      "size": 473,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/9fce63501d93398f3b967f6d1ebae980b83ad0fb"
+    },
+    {
+      "path": "examples/cpp/agent",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ad6e945b37948dbd350873d3cb38fa683cbaa513",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/ad6e945b37948dbd350873d3cb38fa683cbaa513"
+    },
+    {
+      "path": "examples/cpp/agent/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d06e9da765ec211b4438dfbd1783878a85a99779",
+      "size": 258,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/d06e9da765ec211b4438dfbd1783878a85a99779"
+    },
+    {
+      "path": "examples/cpp/agent/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c39510ca42319711f3607025abf1f8b59bb42986",
+      "size": 539,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/c39510ca42319711f3607025abf1f8b59bb42986"
+    },
+    {
+      "path": "examples/cpp/agent/main.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3625127b9152a59af4a29eb6f01a6f4f29abd6ac",
+      "size": 3196,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/3625127b9152a59af4a29eb6f01a6f4f29abd6ac"
+    },
+    {
+      "path": "examples/cpp/basic",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5ad91ce421b0cbe721596644b19a3a785f004752",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/5ad91ce421b0cbe721596644b19a3a785f004752"
+    },
+    {
+      "path": "examples/cpp/basic/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d06e9da765ec211b4438dfbd1783878a85a99779",
+      "size": 258,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/d06e9da765ec211b4438dfbd1783878a85a99779"
+    },
+    {
+      "path": "examples/cpp/basic/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e116c767dfd3ba86e5a24fc9352387353b62cc8",
+      "size": 580,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/0e116c767dfd3ba86e5a24fc9352387353b62cc8"
+    },
+    {
+      "path": "examples/cpp/basic/main.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8eeab049adce0e9fa6cc3653bb143f555a471376",
+      "size": 1949,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/8eeab049adce0e9fa6cc3653bb143f555a471376"
+    },
+    {
+      "path": "examples/cpp/basic_embeddings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9dd5d005f2fd71391727a026641ad6a3206c5817",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/9dd5d005f2fd71391727a026641ad6a3206c5817"
+    },
+    {
+      "path": "examples/cpp/basic_embeddings/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d06e9da765ec211b4438dfbd1783878a85a99779",
+      "size": 258,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/d06e9da765ec211b4438dfbd1783878a85a99779"
+    },
+    {
+      "path": "examples/cpp/basic_embeddings/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f7864a5b15fd8e27e7349cc97f0fe70da3bdb056",
+      "size": 538,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/f7864a5b15fd8e27e7349cc97f0fe70da3bdb056"
+    },
+    {
+      "path": "examples/cpp/basic_embeddings/main.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f593fc483682be21cf89246faab446a06d2e1d3",
+      "size": 893,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6f593fc483682be21cf89246faab446a06d2e1d3"
+    },
+    {
+      "path": "examples/cpp/remote_client",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "05298723e394be3c22e1f7b9dab2155822c51bf4",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/05298723e394be3c22e1f7b9dab2155822c51bf4"
+    },
+    {
+      "path": "examples/cpp/remote_client/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7205e46df9e6e6db6059794521b349245f2468f0",
+      "size": 352,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/7205e46df9e6e6db6059794521b349245f2468f0"
+    },
+    {
+      "path": "examples/cpp/remote_client/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03bba07932297c63023584141a7e32253e506969",
+      "size": 883,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/03bba07932297c63023584141a7e32253e506969"
+    },
+    {
+      "path": "examples/cpp/remote_client/main.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0669e8a53baaf7a35b8756f88d977e1416c55e69",
+      "size": 1500,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/0669e8a53baaf7a35b8756f88d977e1416c55e69"
+    },
+    {
+      "path": "examples/cpp/remote_client/server.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75ba08bb37a225b18e59a7e69bd36e1c112469df",
+      "size": 588,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/75ba08bb37a225b18e59a7e69bd36e1c112469df"
+    },
+    {
+      "path": "examples/csharp",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "436203ced79e5905c5f3e4a7b346768f75ad94ed",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/436203ced79e5905c5f3e4a7b346768f75ad94ed"
+    },
+    {
+      "path": "examples/csharp/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee7fefe829a20f1e792c05d5ce7a0d040bc8e8b8",
+      "size": 472,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/ee7fefe829a20f1e792c05d5ce7a0d040bc8e8b8"
+    },
+    {
+      "path": "examples/csharp/agent",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5d9c3f04f8cd19779074ffec69cd4d8083f5add6",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/5d9c3f04f8cd19779074ffec69cd4d8083f5add6"
+    },
+    {
+      "path": "examples/csharp/agent/LlamaLibExamples.csproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4fb40de92e6d34b0393e5ddafb9a5a73958eb25",
+      "size": 386,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/c4fb40de92e6d34b0393e5ddafb9a5a73958eb25"
+    },
+    {
+      "path": "examples/csharp/agent/Program.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "07f489eccab07be8175112c5293cfc24f095325e",
+      "size": 3252,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/07f489eccab07be8175112c5293cfc24f095325e"
+    },
+    {
+      "path": "examples/csharp/agent/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f802bdc3f33259b18f103faa68bf9a59ce60a68",
+      "size": 295,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6f802bdc3f33259b18f103faa68bf9a59ce60a68"
+    },
+    {
+      "path": "examples/csharp/basic",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6808e1d83e0ffddb801b57217b0c72440bda0855",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/6808e1d83e0ffddb801b57217b0c72440bda0855"
+    },
+    {
+      "path": "examples/csharp/basic/LlamaLibExamples.csproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6107bee2d3a9b8edcc67d882028181b2a783b86",
+      "size": 454,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/c6107bee2d3a9b8edcc67d882028181b2a783b86"
+    },
+    {
+      "path": "examples/csharp/basic/Program.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8dc0288f6a5be7c643b9ceb43fd6cf5a6386ea74",
+      "size": 1871,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/8dc0288f6a5be7c643b9ceb43fd6cf5a6386ea74"
+    },
+    {
+      "path": "examples/csharp/basic/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "577f902220fc60d544d825c23218bc8618cead9b",
+      "size": 336,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/577f902220fc60d544d825c23218bc8618cead9b"
+    },
+    {
+      "path": "examples/csharp/basic_embeddings",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5444b5ff9dafc5cb6fda2872db3250913b3eab9b",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/5444b5ff9dafc5cb6fda2872db3250913b3eab9b"
+    },
+    {
+      "path": "examples/csharp/basic_embeddings/LlamaLibExamples.csproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4fb40de92e6d34b0393e5ddafb9a5a73958eb25",
+      "size": 386,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/c4fb40de92e6d34b0393e5ddafb9a5a73958eb25"
+    },
+    {
+      "path": "examples/csharp/basic_embeddings/Program.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4586af549fd9d9b0fe8a794ca2eeb86618f0d81a",
+      "size": 982,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/4586af549fd9d9b0fe8a794ca2eeb86618f0d81a"
+    },
+    {
+      "path": "examples/csharp/basic_embeddings/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "74982d1dbb9fec7d392454a0dfb636fabb9d8dde",
+      "size": 283,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/74982d1dbb9fec7d392454a0dfb636fabb9d8dde"
+    },
+    {
+      "path": "examples/csharp/remote_client",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "17d44be491806f2b9012c8abc7466da308086b07",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/17d44be491806f2b9012c8abc7466da308086b07"
+    },
+    {
+      "path": "examples/csharp/remote_client/Client.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "497536a6368dd8f52dfd9deb208a8c20e502e6b5",
+      "size": 1677,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/497536a6368dd8f52dfd9deb208a8c20e502e6b5"
+    },
+    {
+      "path": "examples/csharp/remote_client/LlamaLibExamples.csproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "33de637edf6ddf26f134eedb08292dd60777d9a0",
+      "size": 759,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/33de637edf6ddf26f134eedb08292dd60777d9a0"
+    },
+    {
+      "path": "examples/csharp/remote_client/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e8e002ac93a2540c5f894c3f0a6102b46ac49c1",
+      "size": 687,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/9e8e002ac93a2540c5f894c3f0a6102b46ac49c1"
+    },
+    {
+      "path": "examples/csharp/remote_client/Server.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8d831f0542cad8bcaa5eea51deeb38f506e91498",
+      "size": 656,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/8d831f0542cad8bcaa5eea51deeb38f506e91498"
+    },
+    {
+      "path": "include",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b5c31dde44c6a34ffff5dd1c323dbaa4cac695ba",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/b5c31dde44c6a34ffff5dd1c323dbaa4cac695ba"
+    },
+    {
+      "path": "include/FeatureDetector",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "97438507491e6efd00e3374f7887848fba09fae5",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/97438507491e6efd00e3374f7887848fba09fae5"
+    },
+    {
+      "path": "include/FeatureDetector/cpu_x86.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6162b10db464935ec94f4132fde36b0d10ce1dac",
+      "size": 2953,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6162b10db464935ec94f4132fde36b0d10ce1dac"
+    },
+    {
+      "path": "include/LLM.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a394ea11cfaa0620aa05c02766f4af545d7615b",
+      "size": 27356,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/1a394ea11cfaa0620aa05c02766f4af545d7615b"
+    },
+    {
+      "path": "include/LLM_agent.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c691070aa76d65d7076c881fb4feac84c7982538",
+      "size": 21726,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/c691070aa76d65d7076c881fb4feac84c7982538"
+    },
+    {
+      "path": "include/LLM_client.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4612aa23af1ce3d633d93261b9f250e9ec26c49a",
+      "size": 7041,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/4612aa23af1ce3d633d93261b9f250e9ec26c49a"
+    },
+    {
+      "path": "include/LLM_runtime.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff904a3b0809181b5d13a0afb37b2fd4040735ee",
+      "size": 13945,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/ff904a3b0809181b5d13a0afb37b2fd4040735ee"
+    },
+    {
+      "path": "include/LLM_service.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9bdd34a0a4f6fd389938a7bd75454cc1220626b",
+      "size": 13179,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/a9bdd34a0a4f6fd389938a7bd75454cc1220626b"
+    },
+    {
+      "path": "include/LLM_service_builder.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c2b7b4f9b1ecb6ccc775f7db75e99c9871ad61f4",
+      "size": 1921,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/c2b7b4f9b1ecb6ccc775f7db75e99c9871ad61f4"
+    },
+    {
+      "path": "include/LlamaLib.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c812090eab6efe140a60b41e28a4075be1959f6",
+      "size": 665,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/4c812090eab6efe140a60b41e28a4075be1959f6"
+    },
+    {
+      "path": "include/archchecker.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9877db6485c60a27f8ce477695d02160746484b0",
+      "size": 362,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/9877db6485c60a27f8ce477695d02160746484b0"
+    },
+    {
+      "path": "include/completion_processor.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "809ac8a3fa0856d2dcd30f286181f37210c0b514",
+      "size": 2343,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/809ac8a3fa0856d2dcd30f286181f37210c0b514"
+    },
+    {
+      "path": "include/defs.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c7b9f90a6dbbb13e38d400e8ddd8490d0c63264",
+      "size": 1896,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/3c7b9f90a6dbbb13e38d400e8ddd8490d0c63264"
+    },
+    {
+      "path": "include/error_handling.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "836826e0f273a5908361668ee879c330e06fac01",
+      "size": 1927,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/836826e0f273a5908361668ee879c330e06fac01"
+    },
+    {
+      "path": "include/ios_http_transport.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb85cccc132ef102aa30188f81b0434b710cce5f",
+      "size": 1141,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/cb85cccc132ef102aa30188f81b0434b710cce5f"
+    },
+    {
+      "path": "patches",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "492fdd9497b1524d654c650d4fb49a06bb00db40",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/492fdd9497b1524d654c650d4fb49a06bb00db40"
+    },
+    {
+      "path": "patches/llama.cpp.patch",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ff77c58c21a42aa056e5969a6a9259bea6b2c4e",
+      "size": 14287,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/7ff77c58c21a42aa056e5969a6a9259bea6b2c4e"
+    },
+    {
+      "path": "patches/llama.cpp.patch.old",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b44fabeb125a0b788f3f8c2c15236516b3d4186",
+      "size": 8708,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6b44fabeb125a0b788f3f8c2c15236516b3d4186"
+    },
+    {
+      "path": "patches/tinyBLAS.patch",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f74f465abf2a890fadc29f71f7c41fdcc574c14",
+      "size": 63318,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/3f74f465abf2a890fadc29f71f7c41fdcc574c14"
+    },
+    {
+      "path": "src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f290a2799dfddcba3bd8c94800eaa6e00822f835",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/f290a2799dfddcba3bd8c94800eaa6e00822f835"
+    },
+    {
+      "path": "src/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eba5be66d96658d03907b0d27832f7acb4df6fca",
+      "size": 3216,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/eba5be66d96658d03907b0d27832f7acb4df6fca"
+    },
+    {
+      "path": "src/LLM.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "732fcf1a7e8f09ca467bdcdab57eda8f996a3741",
+      "size": 14635,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/732fcf1a7e8f09ca467bdcdab57eda8f996a3741"
+    },
+    {
+      "path": "src/LLM_agent.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6cb1c57a2e0b237ebdd6caa782bb89b8b30ad4a5",
+      "size": 12564,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/6cb1c57a2e0b237ebdd6caa782bb89b8b30ad4a5"
+    },
+    {
+      "path": "src/LLM_client.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f79f79e4bf45946a8bd2a9f69bcedd62fad81535",
+      "size": 10769,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/f79f79e4bf45946a8bd2a9f69bcedd62fad81535"
+    },
+    {
+      "path": "src/LLM_runtime.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc0760cceb723fe75db81d6c863c23a8f9488e3c",
+      "size": 10875,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/cc0760cceb723fe75db81d6c863c23a8f9488e3c"
+    },
+    {
+      "path": "src/LLM_service.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "68f70d3001f483d392d9ef22dc8ee3aa5e9b3548",
+      "size": 24518,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/68f70d3001f483d392d9ef22dc8ee3aa5e9b3548"
+    },
+    {
+      "path": "src/archchecker.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "467764ccdd55d9af1013a5303280c7385e90bbed",
+      "size": 1124,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/467764ccdd55d9af1013a5303280c7385e90bbed"
+    },
+    {
+      "path": "src/completion_processor.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a123fcbc514766a30d7e8c31781827753c87a76c",
+      "size": 3077,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/a123fcbc514766a30d7e8c31781827753c87a76c"
+    },
+    {
+      "path": "src/error_handling.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d36fa7bd5edb150d012237d3e53a17a505dea0b",
+      "size": 3733,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/2d36fa7bd5edb150d012237d3e53a17a505dea0b"
+    },
+    {
+      "path": "src/ios_http_transport.mm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23a28995d7a970abff073df46413c7fa9b6e76ba",
+      "size": 8822,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/23a28995d7a970abff073df46413c7fa9b6e76ba"
+    },
+    {
+      "path": "tests",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d136053bb2c62a25d1b09a4ecdb575c232175021",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/d136053bb2c62a25d1b09a4ecdb575c232175021"
+    },
+    {
+      "path": "tests/cpp-cmake",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "adc9607cd644f32f472a53d1bdb3536f3cc44e70",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/adc9607cd644f32f472a53d1bdb3536f3cc44e70"
+    },
+    {
+      "path": "tests/cpp-cmake/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ac96bef311e2acb7967a0625ee7c0bb3f789f302",
+      "size": 200,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/ac96bef311e2acb7967a0625ee7c0bb3f789f302"
+    },
+    {
+      "path": "tests/cpp-cmake/test.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85638638759435bb1fe1fcbe0168632a208be076",
+      "size": 3075,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/85638638759435bb1fe1fcbe0168632a208be076"
+    },
+    {
+      "path": "tests/cpp",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "519d6cfc287ee980cd83bc8fffd4470fd308e016",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/519d6cfc287ee980cd83bc8fffd4470fd308e016"
+    },
+    {
+      "path": "tests/cpp/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "210027f3018f03178a27980255fc31e852404821",
+      "size": 581,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/210027f3018f03178a27980255fc31e852404821"
+    },
+    {
+      "path": "tests/cpp/llamalib_tests.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "deae03d7d21b288b272c7f830cbf71ccfdd5e58a",
+      "size": 37429,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/deae03d7d21b288b272c7f830cbf71ccfdd5e58a"
+    },
+    {
+      "path": "tests/csharp",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a7cd2ed5909f8691846426ed3b103a5d47073868",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/a7cd2ed5909f8691846426ed3b103a5d47073868"
+    },
+    {
+      "path": "tests/csharp/LlamaLib.Test.csproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7e98cfbd46fe3c458bdeec3dbe9b74388a795da2",
+      "size": 663,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/7e98cfbd46fe3c458bdeec3dbe9b74388a795da2"
+    },
+    {
+      "path": "tests/csharp/NuGet.Config",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f40acc0f25f0def1d6e1c237f94e74921edff5f1",
+      "size": 248,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/f40acc0f25f0def1d6e1c237f94e74921edff5f1"
+    },
+    {
+      "path": "tests/csharp/Tests.cs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ebcf9e60ef240c6279757fbf68732f6c0cef32e9",
+      "size": 12925,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/ebcf9e60ef240c6279757fbf68732f6c0cef32e9"
+    },
+    {
+      "path": "tests/download_test_models.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "65174c17760649cb20a11cef2cd2887320346d9b",
+      "size": 460,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/65174c17760649cb20a11cef2cd2887320346d9b"
+    },
+    {
+      "path": "third_party",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "62af66b6e762f2998aa51cef9199caace1f1c640",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/62af66b6e762f2998aa51cef9199caace1f1c640"
+    },
+    {
+      "path": "third_party/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fa15093dfbd655475b488362d4caeb67d52de9b9",
+      "size": 5896,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/fa15093dfbd655475b488362d4caeb67d52de9b9"
+    },
+    {
+      "path": "third_party/FeatureDetector",
+      "mode": "160000",
+      "type": "commit",
+      "sha": "077393260d5e0e19938582a33b9dd0e74baa8ff2"
+    },
+    {
+      "path": "third_party/llama.cpp",
+      "mode": "160000",
+      "type": "commit",
+      "sha": "872646b30c342c5fa98efec002f94fdb4f1f1ea5"
+    },
+    {
+      "path": "tools",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6c76c058b8a0b7eed342be758ee99603ba426daa",
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/trees/6c76c058b8a0b7eed342be758ee99603ba426daa"
+    },
+    {
+      "path": "tools/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8015d5043000772328777f7f6bff69e46afd2e97",
+      "size": 345,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/8015d5043000772328777f7f6bff69e46afd2e97"
+    },
+    {
+      "path": "tools/llamalib_server.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bdf1870d944d6cb5a9794ac4328974f891c1246a",
+      "size": 440,
+      "url": "https://api.github.com/repos/undreamai/LlamaLib/git/blobs/bdf1870d944d6cb5a9794ac4328974f891c1246a"
+    }
+  ],
+  "truncated": false
+}

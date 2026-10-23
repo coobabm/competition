@@ -1,0 +1,13 @@
+{
+  "status": "not_run",
+  "prepared_only": true,
+  "build": {"path": "", "source_digest": "", "exe_sha256": "", "company": "", "product": "", "recording_preview": false},
+  "isolation": {"status": "not_run", "windows_test_account_sid": "", "profile_path": "", "copied_build_path": "", "evidence_path": "", "player_account_untouched": null},
+  "player_ui": {"status": "not_run", "pid": null, "hwnd": null, "title": "", "client_size": "", "steps": ["title", "begin", "desktop", "teach", "train", "yy", "return_title", "exit"], "screenshots": [], "log": "", "exit_code": null, "stage_and_fixture_origin": "", "notes": ""},
+  "player_model_reply": {"status": "unverified", "prompt": "", "sent_utc": "", "reply": "", "received_utc": "", "model_ready_log": "", "actual_native_callback_evidence": "", "fallback_excluded": false, "reason": "Current ordinary Player has no per-request source trace; readiness and a chat bubble alone do not prove this response is native."},
+  "editor_native_serial": {"status": "not_run", "scope": "Separate empty-scene SerialNativeQa; never substitutes for Player response or cancellation evidence", "result_json": "", "source_digest": "", "max_native_calls": null, "max_actual_tasks": null, "cancel_while_task_incomplete": null, "next_dispatch_after_task_complete": null, "single_callbacks": null, "service_stopped": null},
+  "player_native_serial_cancel": {"status": "unverified", "actual_task_lifecycle_evidence": "", "reason": "No ordinary Player probe currently exposes exact native cancellation and next-dispatch ordering. Closing a window is not proof."},
+  "audio": {"status": "not_run", "device_json": "", "takes": [], "listening_review": "", "other_apps_muted": null, "scope": "Actual WASAPI output samples; includes other applications; metrics alone do not establish expected music or long-duration continuity."},
+  "errors": [],
+  "remaining_gaps": ["Final build not run by this preparation task", "Player per-response native provenance", "Player native Task cancellation and serial dispatch evidence"]
+}

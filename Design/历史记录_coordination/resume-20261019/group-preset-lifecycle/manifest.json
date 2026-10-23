@@ -1,0 +1,87 @@
+{
+  "status": "isolated_compile_and_core_pass_unity_pending",
+  "production_modified": false,
+  "unity_started": false,
+  "base_commit": "3533141a406940d571e064f3797328c7d214235a",
+  "patch_sha256": "db578cb66993c97f559f7d710c7cb988d68d2420c3ea6e1b625fd5a6e2505653",
+  "apply_check_executed": true,
+  "apply_check_exit_code": 0,
+  "core_tests_passed": 9,
+  "core_tests_failed": 0,
+  "unity_json_tests_pending": 3,
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/Core/GroupPresetLifecycle.cs",
+      "status": "new",
+      "baseline_sha256": null,
+      "candidate_sha256": "7286b4025483246f6d8bcb33196d3b6697f94a451bf72c67c816f6de2eb4cded"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/GroupPresetLifecycle.cs.meta",
+      "status": "new",
+      "baseline_sha256": null,
+      "candidate_sha256": "e29f250c258ff036580f3cb68bdb150118ad1185983ec7f4d54e4471f072a9dd"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/GroupPresetLifecycleTests.cs",
+      "status": "new",
+      "baseline_sha256": null,
+      "candidate_sha256": "becb8532309f5724e17ab9c72a28a2db82d35bac51d51842c8939d923ed6ff9b"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/GroupPresetLifecycleTests.cs.meta",
+      "status": "new",
+      "baseline_sha256": null,
+      "candidate_sha256": "2520139344d35199418055ff507ba768e20215244daeeaede2246bb76128eaed"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "status": "modified",
+      "baseline_sha256": "f9dc02d22902439c3b66eceec435ea0382053843e6c57a6bfb27511474ff714f",
+      "candidate_sha256": "0d9661beb489406b1861598fce458093e1ad2d71101ac2f61dcd74de00a26f0c"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupLifecycle.cs",
+      "status": "new",
+      "baseline_sha256": null,
+      "candidate_sha256": "8a4194f440c5ce233ab4f9ea31df0b1f4071b1a849d1f707781a5dc552987c6b"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupLifecycle.cs.meta",
+      "status": "new",
+      "baseline_sha256": null,
+      "candidate_sha256": "4eda7102ce00efa0e546ae814acaa6e26fc34be44f9b233e5f5f353f6d803cbd"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+      "status": "modified",
+      "baseline_sha256": "7a533035eca2cf2f9f589a93d01fd5aae759077bd19802afa24793357d993021",
+      "candidate_sha256": "8c1b5f4f90ebffa38aa5d71ceef9fdab55b89aaadd4ca1bef4e8f70476dcab09"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/GroupPresetRuntimeChecks.cs",
+      "status": "new",
+      "baseline_sha256": null,
+      "candidate_sha256": "0eff394b04152289bcffdf6f2989fd795edd6691647ef7c98128e16a6fff5290"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/GroupPresetRuntimeChecks.cs.meta",
+      "status": "new",
+      "baseline_sha256": null,
+      "candidate_sha256": "4a80e378cf11ce17a21737012d92c915c2c194b304600c4877e9438d9bd7e6b3"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LaoZhouNewsChecks.cs",
+      "status": "modified",
+      "baseline_sha256": "894bb90596f381207590517e57b2a1fee7cda759e20d2277482e36bd55e0ee0e",
+      "candidate_sha256": "eaffdda3f8362a5dffcd09226986e3f6649ce7a75ec3741e6598acc5844dfff5"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/WorldYyGiftRoutingChecks.cs",
+      "status": "modified",
+      "baseline_sha256": "85b502992e4c2743db8f177f4a73fc1cf8e162329e0c9c3f041835e21daf4e7f",
+      "candidate_sha256": "60b21f810b15b47d320c5bf4fecca074190554b72c8cdd3d5216b2921c21cd1c"
+    }
+  ],
+  "upstream_candidate": "../../claude-batch-01/group-preset-lifecycle-v2 (read-only reviewed)"
+}

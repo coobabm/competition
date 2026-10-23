@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "svg-path-properties": "^2.2.0"
+  }
+}

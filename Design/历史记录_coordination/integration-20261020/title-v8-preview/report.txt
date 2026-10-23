@@ -1,0 +1,4 @@
+Actual CaseMenuHud Chrome + title actions on a neutral dark background. Not the 3D menu or a Player run.
+Full Build/BuildSettings deliberately omitted because they read PlayerPrefs through GamePerformance.
+FAIL: System.InvalidOperationException: title keeps >= 8 reference px above the subheading, actual 0.07
+  at TitleMarkPreview.Capture () [0x007aa] in C:\Users\xomem\Documents\ChatGPT\games\competition-integration-20261020\Assets\LocalBuild\Editor\TitleMarkPreview.cs:111 

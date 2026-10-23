@@ -1,0 +1,52 @@
+{
+  "baselineHEAD": "3533141a406940d571e064f3797328c7d214235a",
+  "productionRoot": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016",
+  "productionWritten": false,
+  "baselineFiles": [
+    {
+      "path": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+      "sha256": "f80553299b01803d8467bf67ba90b3fa8febf6b563b97b8fe417960400a82616"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+      "sha256": "99599dcaf1201ea1b381fae1e42c92481187239d38efb77c643cb223a124aa1e"
+    },
+    {
+      "path": "Library/ScriptAssemblies/Assembly-CSharp.dll",
+      "sha256": "aa7deba81b231d2051bf860ae6c6fa3ebefcae3e568251ef5b0fcdfd09801327"
+    },
+    {
+      "path": "Library/ScriptAssemblies/Assembly-CSharp-Editor.dll",
+      "sha256": "1738809ad44f55ddb560723c046ebc677457322ed702508bee5cf63719bf4dc7"
+    },
+    {
+      "path": "Library/ScriptAssemblies/LingGuangV05.XingGuang.Core.dll",
+      "sha256": "44b4712c82cbe49c55edf00c97c60e6569e9ba752189b6b50119e7f57ef5a77f"
+    }
+  ],
+  "candidateFiles": [
+    {
+      "path": "Assets/LocalBuild/Editor/ReadNewsRagActualUiChecks.cs",
+      "sha256": "9e6631e9056a0988bfda8bf73d05e2bd17b7fcc0dea2d64e22447837989044c5"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/ReadNewsRagActualUiChecks.cs.meta",
+      "sha256": "ea3986aaf69660ecb7795f30fc348e4e8af3552bb9bc9ac185b1e17b1b838cf0"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+      "sha256": "dc7e34e822e4c8cad8939bf22f9b7cf63a626ba4f9c03ac4d443cf8162bac3ad"
+    }
+  ],
+  "patch": "patch/read-news-ui-integration.patch",
+  "patchSHA256": "3ae9ab0a40b71fd1a32042bb2d5643704228669204b9f979e5182c15ba2d89d5",
+  "entryPoint": "SidebarLayoutChecks.RunReadNewsRag",
+  "phase": 23,
+  "compilerExitCode": 0,
+  "compilerWarnings": 12,
+  "compilerLog": "compile/compile.log",
+  "readOnlyApplyCheck": "passed",
+  "unityStarted": false,
+  "actualUiPassed": false,
+  "modelInferenceVerified": false
+}

@@ -1,0 +1,1 @@
+gitdir: C:/Users/xomem/Documents/ChatGPT/games/competition-latest-20261016/.git/worktrees/competition-model-integration-20261021

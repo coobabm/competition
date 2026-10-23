@@ -1,0 +1,96 @@
+{
+  "base": "retained original bf354fdb + event working files; parent has since integrated production",
+  "status": "candidate synchronized with parent short-temp-path fix; standalone storage75,core787,legacy14 passed; parent owns Unity evidence",
+  "files": [
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+      "base_sha256": "a87e77445e7e026dbb71043f016772370a8d75efff9a3118a03c40745fc61d97",
+      "candidate_sha256": "6616b95d5f0fc819e3c95be6b17bd357f3a54055ba192b94f4ee4b905a650198"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Slots.cs",
+      "base_sha256": "71c31477d03a756f4fdab4b429563fd25793624bf1b29cab48a76d1e18c5c7f4",
+      "candidate_sha256": "c64ce36e517565d81666d5861a72c62a9e5fcdf1ef96312d667e0229a37ac6d2"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.SnapshotTransfer.cs",
+      "base_sha256": null,
+      "candidate_sha256": "55b413ecde8c105d457c337fe54a1875e7c932de5c4d0646b2ca5ce75a39aa3d"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/Runtime/Persistence/AtomicSaveStore.cs",
+      "base_sha256": "434a44e801827172995bba8cc59d517948115549c4240cd86a1a2c2640065c2e",
+      "candidate_sha256": "800af9f91b1f21fd913b777a827cca694f1f189ba9de3968bbc248487457e8d2"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/Runtime/Persistence/SnapshotArchive.cs",
+      "base_sha256": null,
+      "candidate_sha256": "9c447bf191de3c4eb7138e2d63f97d445b3eea7b98eca44c19656cedc14a1e9e"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataPacks.cs",
+      "base_sha256": "2353e69e31b2877e29b97f6d4d72cd73698d13e578333338eddd9657a6c2e1a7",
+      "candidate_sha256": "b83f27303b9740c8d49f180459cabb225608d19f95907a5381ea05bf069a8cb7"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningRecords.cs",
+      "base_sha256": null,
+      "candidate_sha256": "205ea2a3110fca1e46e425f4f11971778850a04c7d64f1da0acc23568f2d30c1"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs",
+      "base_sha256": "3e31800e50aba36c4af4a7782c809ef9b67f5d94f8c56763fbabf316bf532cd8",
+      "candidate_sha256": "122208020ebb00d9c05cb0bce07bd6b98308af15ba42689f59ff130db75cbc6a"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.Records.cs",
+      "base_sha256": "62bf84fbe3f597fff5ef892c815a8ce7002606fe588b6c30ff26d29abc414080",
+      "candidate_sha256": "b21afa5aa63499ca08d2bc8b16147a89d9b0ce6005cdac7aa68bbf97e5b84d26"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Learning.cs",
+      "base_sha256": "0810e8e85b85f82582f1186e61e33bb7bb17f15fdf9ea074eb40ac6637277c43",
+      "candidate_sha256": "12d47c6290f861b47956c421f3043c91a9ed1f83ff1aaf07b0f294774213c8c1"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgTeachingSnapshotTests.cs",
+      "base_sha256": "b111f797787fcd402421bd0a771a77cd38f456010c2e963d1197aeabcdaecfc6",
+      "candidate_sha256": "c3a6be3b22ec73e0e97b54b38e4fcf6a36daf8c23e1553b09446a58bd772ea27"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LingGuangV05/YY2016/YYChatView.Learning.cs",
+      "base_sha256": "e1118233067d8441c13c863b4bc1bbf1158165674bad734b88e333825c874713",
+      "candidate_sha256": "d34574f5d71e2c63d1ed3695ec0b3e7970c5f69c17d068029eac7de3cdff1af3"
+    },
+    {
+      "scope": "candidate",
+      "file": "Assets/LocalBuild/Editor/LearningSnapshotEditorChecks.cs",
+      "base_sha256": null,
+      "candidate_sha256": "19a0ceb5f76e74ac1f0fef809f0feca0785017ebe32875f3ef324a1d3befd1db"
+    },
+    {
+      "scope": "shared",
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.cs",
+      "base_sha256": "a92446b625a5467975233cc964d0ae46d4b0018ec915976b47002072199db445",
+      "candidate_sha256": "dbe30f521d478c263c472c9eaa2c379682bb7e1c4020b9b40a97726535d0ad2d"
+    },
+    {
+      "scope": "shared",
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+      "base_sha256": "78ab96f7f841d379a626babf003f104836e54b8e21177b671cee97325cf7d71c",
+      "candidate_sha256": "5bb0fdb430699f111523cc4999d8f5f83a030d1c75321ef0cdb462a966b68c56"
+    }
+  ]
+}

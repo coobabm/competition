@@ -1,0 +1,7 @@
+# C3 保存诊断双语增量
+
+localization-addon.patch以已交C3候选为基线，主patch后应用；没有改写已交candidate。新增SnapshotStatusText纯.NET映射，并令Runtime.SaveStatus getter按GameText.IsEnglish翻译。覆盖超容量、分块备份恢复、导入导出及组合内部错误前缀；保持底层AtomicSaveStore测试/中文协议不变。
+
+消费处：ChapterOneRuntime.SaveNow/TryRead与SnapshotTransfer赋值SaveStatus；CaseMenuHud.Archives、CaseMenuController退出失败、ChapterOneNativeAppView保存状态显示读取该属性，统一得到当前语言。系统异常的原始路径/错误正文保留诊断，不翻译路径。独立导出工具若绕过Runtime直接消费store.message，应显式调用SnapshotStatusText.Localize(message,language)。
+
+待root Unity编译与中英文状态UI验证；此增量不宣称旧Runtime全部中文字符串已完成全项目本地化。

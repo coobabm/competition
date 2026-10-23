@@ -1,0 +1,1922 @@
+[
+  {
+    "file": "Assets\\LingGuangV05\\Core\\AppNames.cs",
+    "line": 10,
+    "text": "public const string AppZh = \"灵光\", AppEn = \"LingGuang\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 536,
+    "text": "{ \"分拣暂停 · 请回灵光继续入学考试\", \"Sorting paused · Continue the entrance exam in Lingguang\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 636,
+    "text": "{ \"回到灵光继续考试\\n训练收件箱稍后恢复\", \"Continue the exam in Lingguang.\\nTraining mail will resume afterward.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 669,
+    "text": "{ \"大脑：灵光只有这一颗脑子，分成几个区，像人的大脑皮层：看图区像视觉皮层，读字区像语言区，推理区像前额叶。\\n训练页选的 LeNet、LSTM、Transformer 不是别的 AI，是给某个区换一种接线；两条训练线练的是这颗脑子的两个区。\\n它记概念，不记数字，学得省；可整颗脑子一起亮，跑起来极吃显卡。\", \"Brain: 灵光 has this one brain, in regions like a human cortex: seeing like the visual cortex, reading like the language areas, reasoning like the prefrontal cortex.\\nLeNet, LSTM or Transformer on the training page are not other AIs but ways of wiring a region; the two training tracks train two regions of this brain.\\nIt keeps concepts, not numbers, so it learns cheaply; but the whole brain lights at once, and running it eats GPUs.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 902,
+    "text": "{ \"收件箱与灵光训练同步 · 本地模拟邮件\", \"Inbox synced with Lingguang training · Simulated local mail\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1054,
+    "text": "{ \"检测到操作过快，请在 30 秒内完成人机验证：打开灵光的标注台输入验证码。自动标注已暂停。\", \"Unusually fast activity. Complete the captcha within 30 s: open the labelling page in 灵光. Auto labelling is paused.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1085,
+    "text": "{ \"正在灵光参加入学考试。\\n请回「灵光.exe」的入学考试继续；这里不会提交试题。\", \"An exam is in progress.\\nContinue in Lingguang.exe; this window cannot submit exam answers.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1086,
+    "text": "{ \"正在灵光参加入学考试，请回「灵光.exe」继续。收件箱分拣已暂停，不会在这里提交试题。\", \"The entrance exam is in progress. Continue in Lingguang.exe. Inbox sorting is paused; this window does not submit exam answers.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1094,
+    "text": "{ \"此窗口不会代替灵光提交入学试题。\", \"This window cannot submit exam answers for Lingguang.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1106,
+    "text": "{ \"没找到模型文件（.gguf）。放到 StreamingAssets/LingGuang/Models 或项目根目录 Models/。\", \"No .gguf model found (StreamingAssets/LingGuang/Models or <project>/Models).\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1138,
+    "text": "{ \"灵光 · 2:41\", \"LingGuang · 2:41\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1139,
+    "text": "{ \"灵光\", \"LingGuang\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1140,
+    "text": "{ \"灵光还没装好。\", \"LingGuang is not installed yet.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1363,
+    "text": "{ \"训练：选数据集，再选这个区的接法（结构），按「训练一轮」让灵光学。\\n每轮练完自动考一次；成绩好才能签订单。\", \"Train: pick a dataset and how that region is wired (the structure), press Train epoch and 灵光 learns.\\nEvery epoch ends with an exam; good scores unlock contracts.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Lang.En.cs",
+    "line": 1493,
+    "text": "{ \"邮件分拣  /  读完邮件再选择真实分类；模型的模拟建议并不总是正确。训练与考试请打开「灵光.exe」。\", \"Mail sorting / Read each email and choose its actual category. Model suggestions can be wrong. Open Lingguang.exe for training and exams.\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\AiDesktopIdentity.cs",
+    "line": 98,
+    "text": "entries.Add(new AeroStartMenu.ProgramEntry { title = exe, searchKeywords = \"AI 灵光 LingGuang\", row = row, window = bridge.Window });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\ChapterOneDesktopBridge.cs",
+    "line": 234,
+    "text": "Debug.LogError(\"灵光.exe 桌面接入缺少引用，请重新运行第一章安装器。\", this);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\ChapterOneNativeChatAdapter.cs",
+    "line": 26,
+    "text": "private const string CjkProbe = \"老周邮件灵光家庭寻宝开始训练显卡入学考试电费本地预设帮助你好\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\DesktopWindowDefaults.cs",
+    "line": 37,
+    "text": "case \"灵光.exe\": return new Vector2(1440, 850);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\DesktopWindowDefaults.cs",
+    "line": 63,
+    "text": "case \"灵光.exe\": return new Vector2(112, 28);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\FundsPanel.cs",
+    "line": 58,
+    "text": "+\"\\n房租：\"+(runtime.Sim.EconomyActive?\"每分钟折算一天，¥\"+runtime.Sim.RentFor(LingGuangV05.Core.GameCalendar.Now(s)).ToString(\"0\")+\" / 天\":\"灵光学会「看图说词」以后开始收；电费从开局计费。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\GameMusic.cs",
+    "line": 16,
+    "text": "const string DefaultsKey = \"LingGuang.Music.Defaults.v2\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\GamePerformance.cs",
+    "line": 7,
+    "text": "public static bool Low => PlayerPrefs.GetInt(\"LingGuang.Graphics.Low\", 0) != 0;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\GamePerformance.cs",
+    "line": 8,
+    "text": "public static int Frames => PlayerPrefs.GetInt(\"LingGuang.Graphics.Fps\", 60) == 30 ? 30 : 60;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\GamePerformance.cs",
+    "line": 17,
+    "text": "public static void SetLow(bool low) { PlayerPrefs.SetInt(\"LingGuang.Graphics.Low\", low ? 1 : 0); Apply(); PlayerPrefs.Save(); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\GamePerformance.cs",
+    "line": 18,
+    "text": "public static void SetSixty(bool sixty) { PlayerPrefs.SetInt(\"LingGuang.Graphics.Fps\", sixty ? 60 : 30); Apply(); PlayerPrefs.Save(); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\HomeBroadbandCard.cs",
+    "line": 85,
+    "text": "UiTip.Add(card, \"下载数据走家里的宽带：线越快，数据页的下载队列走得越快。月租每月 1 号从家里余额扣。灵光「数据」页顶部的「升级宽带」按钮买的是同一条线。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\HomeBroadbandCard.cs",
+    "line": 86,
+    "text": "\"Data comes down the home line: the faster it is, the faster the data page's queue moves. The fee is charged on the 1st of each month. The Upgrade line button at the top of 灵光's Data page buys the same line.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\HomeBroadbandCard.cs",
+    "line": 114,
+    "text": "body.text = T(\"灵光还没装好。\", \"灵光 is not installed yet.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\NativeAppFontFallback.cs",
+    "line": 11,
+    "text": "private const string Probe = \"灵光寻宝家庭邮件训练网络显卡机箱账单电费收入考试保存姓名\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\PlayerWindowSize.cs",
+    "line": 38,
+    "text": "const string key = \"LingGuang.WindowSize.Handoff2\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneDownloadInstaller.cs",
+    "line": 45,
+    "text": "[MenuItem(\"Tools/LingGuang/Install 2016 Download Flow\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneDownloadInstaller.cs",
+    "line": 68,
+    "text": "library.webPages.Insert(0, new WebBrowserLibrary.WebPage { pageTitle = \"灵光 LingGuang\", pageURL = Url, pageIcon = icon, pageContent = page, pageSize = 2 });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneDownloadInstaller.cs",
+    "line": 73,
+    "text": "Undo.RecordObject(browser, \"LingGuang download flow\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneDownloadInstaller.cs",
+    "line": 92,
+    "text": "Debug.Log(\"[LingGuang] 2016 下载流程已安装：lingguang.cc、灵光.exe（\" + FileSizeMB + \" MB）、家庭宽带、品牌文字 \" + branded + \" 处。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneDownloadInstaller.cs",
+    "line": 128,
+    "text": "pageView.title = Text(title, header, \"Name\", \"灵光 LingGuang\", 32, Color.white, 0, 40, FontStyles.Bold, TextAlignmentOptions.Left);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneDownloadInstaller.cs",
+    "line": 157,
+    "text": "manager.useLocalization = false; manager.buttonText = \"下载 灵光 v0.1.3\"; manager.textSize = 18;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneInstaller.cs",
+    "line": 30,
+    "text": "public const string AppTitle = \"灵光.exe\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneInstaller.cs",
+    "line": 31,
+    "text": "private const string RuntimeName = \"LingGuang Chapter One Runtime\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneInstaller.cs",
+    "line": 42,
+    "text": "new AppSpec(\"lingguang\", \"灵光.exe\", AppTitle, \"神经网络 · 技能 · 我的 AI · 考试\"),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneInstaller.cs",
+    "line": 49,
+    "text": "[MenuItem(\"Tools/LingGuang/Install Chapter One Desktop\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneInstaller.cs",
+    "line": 111,
+    "text": "Debug.Log(\"[LingGuang] 五个软件已安装；已检查原生桌面拖动兼容与生产存档设置。\", router);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneInstaller.cs",
+    "line": 202,
+    "text": "Debug.Log(\"[LingGuang] 五个独立软件已安装：邮件、灵光.exe、寻宝、家庭、YY；同一运行时。\", router);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneNativeAppsInstaller.cs",
+    "line": 30,
+    "text": "[MenuItem(\"Tools/LingGuang/Install Native Game Apps\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneNativeAppsInstaller.cs",
+    "line": 95,
+    "text": "Debug.Log(\"[LingGuang] 原生应用已安装：灵光计算工作站 / 寻宝电脑城 / 家庭账单。邮件与原生 YY 保持不变。\", router);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneNativeAppsInstaller.cs",
+    "line": 147,
+    "text": "Text(hero, \"Brand\", \"灵光  /  神经计算工作站\", 22, 17, 770, 40, 30, Ink);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneNativeAppsInstaller.cs",
+    "line": 449,
+    "text": "theme = Object.Instantiate(source); theme.name = \"LingGuang Native \" + profile;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneNativeChatInstaller.cs",
+    "line": 28,
+    "text": "[MenuItem(\"Tools/LingGuang/Restore Native YY\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneNativeChatInstaller.cs",
+    "line": 47,
+    "text": "Debug.Log(\"[LingGuang] YY 已使用原生 Messaging；保留现有原生层级与绑定。\", bridge);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneNativeChatInstaller.cs",
+    "line": 142,
+    "text": "Debug.Log(\"[LingGuang] YY 已恢复原生 Messaging 联系人、气泡、输入框和窗口控件；只接入老周数据与回复。\", bridge);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneNativeChatQa.cs",
+    "line": 36,
+    "text": "path=Path.Combine(Application.dataPath,\"../Evidence/LingGuang-ChapterOne/native-chat-qa.json\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOnePlayQa.cs",
+    "line": 37,
+    "text": "output=Path.Combine(Application.dataPath,\"../Evidence/LingGuang-ChapterOne/play-qa.json\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOnePlayQa.cs",
+    "line": 199,
+    "text": "Debug.Log(\"[LingGuang Chapter1 QA] \"+Result.passed+\" passed, \"+Result.failed+\" failed; \"+output);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneSplitPlayQa.cs",
+    "line": 45,
+    "text": "path=Path.Combine(Application.dataPath,\"../Evidence/LingGuang-ChapterOne/apps-play-qa.json\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneSplitPlayQa.cs",
+    "line": 100,
+    "text": "steps.Enqueue(()=>{ ClickButton(\"lingguang\",\"UpgradeSkill\"); CheckNow(\"LingGuang semantic upgrade\",runtime.Sim.S.semanticLevel==2); });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneSplitPlayQa.cs",
+    "line": 101,
+    "text": "steps.Enqueue(()=>{ ClickButton(\"lingguang\",\"UpgradeTraining\"); CheckNow(\"LingGuang training upgrade\",runtime.Sim.S.trainingLevel==2); ClickButton(\"lingguang\",\"Tab_board\"); });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneSplitPlayQa.cs",
+    "line": 102,
+    "text": "steps.Enqueue(()=>{ ClickButton(\"lingguang\",\"BoardMode_place\"); ClickButton(\"lingguang\",\"BoardCell_2_0\"); CheckNow(\"LingGuang adds neuron\",runtime.Sim.S.nodes.Any(x=>x.q==2 && x.r==0)); ClickButton(\"lingguang\",\"BoardMode_remove\"); });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneSplitPlayQa.cs",
+    "line": 103,
+    "text": "steps.Enqueue(()=>{ ClickButton(\"lingguang\",\"BoardCell_2_0\"); CheckNow(\"LingGuang removes neuron\",!runtime.Sim.S.nodes.Any(x=>x.q==2 && x.r==0)); ClickButton(\"lingguang\",\"BoardMode_connect\"); });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneSplitPlayQa.cs",
+    "line": 120,
+    "text": "steps.Enqueue(()=>{ CheckNow(\"native taskbar restores LingGuang\",router.Get(\"lingguang\").IsOpen); router.Open(\"lingguang\",\"exam\"); });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneSplitPlayQa.cs",
+    "line": 123,
+    "text": "ClickButton(\"lingguang\",\"StartExam\"); CheckNow(\"exam starts inside LingGuang\",runtime.Sim.S.examActive);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\ChapterOneSplitPlayQa.cs",
+    "line": 194,
+    "text": "Debug.Log(\"[LingGuang apps QA] completed=\"+Result.completed+\" passed=\"+Result.passed+\" failed=\"+Result.failed);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\DesktopLocalizationInstaller.cs",
+    "line": 30,
+    "text": "[MenuItem(\"LingGuang/Localization/Install Chinese and English\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\LingGuangMiniGamePlayIsolation.cs",
+    "line": 9,
+    "text": "const string Key = \"LingGuang.NativeMiniGames.QASave\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\OriginLiveFonts.cs",
+    "line": 19,
+    "text": "[MenuItem(\"Tools/LingGuang/Origin live – build font assets\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\OriginLiveTools.cs",
+    "line": 21,
+    "text": "[MenuItem(\"Tools/LingGuang/Origin live – preview\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\OriginLiveTools.cs",
+    "line": 40,
+    "text": "[MenuItem(\"Tools/LingGuang/Origin live – render stills\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\OriginLiveTools.cs",
+    "line": 57,
+    "text": "[MenuItem(\"Tools/LingGuang/Origin live – render sweep\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\PrologueLifecyclePlayQa.cs",
+    "line": 93,
+    "text": "Require(\"Exactly one subtitle canvas\", Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include).Count(c => c.name == \"LingGuang Prologue Screen\") == 1);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\XgDeskGameSmoke.cs",
+    "line": 62,
+    "text": "[MenuItem(\"Tools/LingGuang/Smoke test desk games\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\XgGaitPrototypeMenu.cs",
+    "line": 22,
+    "text": "[MenuItem(\"LingGuang/Prototypes/Spider learns to walk\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\XgGaitPrototypeMenu.cs",
+    "line": 59,
+    "text": "Debug.Log(\"[灵光] Spider gait prototype scene saved: \" + ScenePath + \" (open it and press Play).\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\XgHandwritingSmoke.cs",
+    "line": 60,
+    "text": "[MenuItem(\"Tools/LingGuang/Smoke test handwriting view\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\XgPlatformSmoke.cs",
+    "line": 66,
+    "text": "[MenuItem(\"Tools/LingGuang/Smoke test 摆渡众包 pages\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\XgPlatformSmoke.cs",
+    "line": 94,
+    "text": "\"Workspace/Body/AnswerYes\", \"Workspace/Body/AnswerNo\", \"Workspace/Body/Feedback\", \"Workspace/Body/InfoBox\", \"Workspace/Recent\", \"Side\", \"Side/Content/Today\", \"Side/Content/Today/Row薪\", \"Side/Content/LingGuang\", \"Side/Content/Shop\", \"Side/Content/Shop/Row自\", \"Side/Content/Shop/Row包\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\XgPlatformSmoke.cs",
+    "line": 134,
+    "text": "Dump(label, area, \"Side/Content/Today\", \"Side/Content/LingGuang\", \"Side/Content/Shop\", \"Side/Content/Shop/Row自\", \"Side/Content/Shop/Row包\", \"Side/Content/Shop/ToTrain\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Editor\\YY2010Installer.cs",
+    "line": 31,
+    "text": "[MenuItem(\"Tools/LingGuang/Install YY 2010\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LlmPersonas.cs",
+    "line": 184,
+    "text": "new KeyValuePair<string, string>(\"system\", LingGuang(lab, true) + \"\\n这是外部给你的游戏预测，不是你亲自看图的结论。你没有收到原始图片；不要编造视觉特征，只简短表达判断或求助。\\n\" + LingGuangV05.Core.Era.EraLexicon.PromptRule(LingGuangV05.Runtime.GameText.IsEnglish) + (LingGuangV05.Runtime.GameText.IsEnglish ? \" Reply in English.\" : \"\")),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LlmPersonas.cs",
+    "line": 211,
+    "text": "\"群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。训练包、样本数量、科技升级、模型能力和训练结果都是私密信息，不能猜测或声称知道。不要提摆渡众包、标注兼职、接单、房租。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。\" +"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 78,
+    "text": "if (modelPath == null) { Debug.Log(\"[灵光] 没有向量模型（StreamingAssets/LingGuang/Embedding/*.gguf）：检索只用 BM25。\"); return; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 114,
+    "text": "Debug.LogWarning(\"[灵光] 向量模型启动失败，检索只用 BM25：\" + task.Exception?.GetBaseException().Message);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 124,
+    "text": "worker = new Thread(Work) { IsBackground = true, Name = \"LingGuang embeddings\" };"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 127,
+    "text": "Debug.Log(\"[灵光] 向量模型就绪：\" + ModelName + \" · \" + Dimensions + \" 维 · \" + service.llamaLib?.architecture + \" · 缓存 \" + Cached + \" 条 · 启动 \" + (Time.realtimeSinceStartup - began).ToString(\"0.0\") + \"s\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 154,
+    "text": "var dirs = new List<string> { Path.Combine(Application.streamingAssetsPath, \"LingGuang\", \"Embedding\") };"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 249,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] 向量计算失败：\" + error.Message); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 290,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] 向量缓存读不了，重新计算：\" + error.Message); lock (gate) { cache.Clear(); order.Clear(); } }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 324,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] 向量缓存写不进去：\" + error.Message); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 346,
+    "text": "else Debug.LogError(\"[灵光] Embedding worker did not stop; its service is left running.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalEmbedder.cs",
+    "line": 361,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] Embedding service cleanup failed: \" + error.Message); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 235,
+    "text": "if (model == null) { Fail(Lang.T(\"没找到模型文件（.gguf）。放到 StreamingAssets/LingGuang/Models 或项目根目录 Models/。\")); yield break; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 271,
+    "text": "Debug.Log(\"[灵光] 本地模型就绪：\" + ModelName + \" · \" + mode + \" · \" + Architecture + \" · GPU 层 \" + (total > 0 ? onGpu + \"/\" + total : \"?\") +"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 280,
+    "text": "Debug.LogWarning(\"[灵光] LlamaLib 运行库缺失（LLM for Unity 第一次打开工程时会下载）：\\n\" + tail);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 286,
+    "text": "Debug.LogWarning(\"[灵光] 模型缺张量：新版 Qwen3.5 GGUF 带 MTP（nextn）层，LlamaLib 的 llama.cpp 还不认，用 Tools/LocalLLM/strip_qwen_mtp.py 去掉它。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 289,
+    "text": "Debug.LogWarning(\"[灵光] 本地模型启动失败（\" + mode + \"）：\\n\" + tail);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 294,
+    "text": "Debug.LogWarning(\"[灵光] 本地模型以 \" + mode + \" 启动失败，改用 \" + next + \" 重试：\\n\" + tail);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 359,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] QA log: \" + error.Message); qaLog = null; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 427,
+    "text": "Debug.LogWarning(\"[灵光] 本地模型不可用，改用预设回复：\" + why);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 445,
+    "text": "var dirs = new List<string> { Path.Combine(Application.streamingAssetsPath, \"LingGuang\", \"Models\") };"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 727,
+    "text": "Debug.LogWarning(\"[灵光] 本地模型服务出错：\\n\" + tail);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 732,
+    "text": "Debug.LogWarning(\"[灵光] 本地模型服务意外出错，自动重启一次：\\n\" + tail);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 841,
+    "text": "if (error != null) Debug.LogWarning(\"[灵光] 本地模型请求失败：\" + error.Message);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 898,
+    "text": "if (parsed[\"error\"] != null) Debug.LogWarning(\"[灵光] 模型回复出错：\" + parsed[\"error\"].ToString(Newtonsoft.Json.Formatting.None));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 901,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] 模型回复解析失败：\" + error.Message); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 906,
+    "text": "Debug.LogWarning(\"[灵光] 模型回复处理失败：\" + error.Message);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 922,
+    "text": "static readonly Regex Speaker = new Regex(\"^(老周|表姐|灵光|\" + AppNames.AiZh + \"|我|阿杰|老板|网管|小刚)[：:]\\\\s*\", RegexOptions.Compiled);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 1026,
+    "text": "Debug.LogError(\"[灵光] Model service \" + stopping.id + \" still has native calls running; it is freed when they return.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "line": 1048,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] Model service cleanup failed: \" + error.Message); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\RagLibrary.cs",
+    "line": 12,
+    "text": "public const string QingwenPath = \"LingGuang/Rag/qingwen\", EraPath = \"LingGuang/Rag/era2016\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\RagLibrary.cs",
+    "line": 24,
+    "text": "if (asset == null) Debug.LogWarning(\"[灵光] 知识库缺失：Resources/\" + path + \".json\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\RagLibrary.cs",
+    "line": 25,
+    "text": "else if (book.entries.Count == 0) Debug.LogWarning(\"[灵光] 知识库是空的或格式不对：Resources/\" + path + \".json\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Runtime\\NativeLaoZhouReplies.cs",
+    "line": 51,
+    "text": "reply = \"你已经通过第一章，奖励只发放一次。第二章尚未开放；还可以去「邮件」标注，在「灵光.exe」调整网络，去「家庭」管理收入和电费。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Runtime\\NativeLaoZhouReplies.cs",
+    "line": 53,
+    "text": "reply = \"你在「灵光.exe」的入学考试已完成 \" + state.examAnswered + \" / \" + sim.Config.examQuestions + \" 题。请回灵光继续；这时「邮件」分拣暂停，不能代替考试答题。存档会保留进度。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Runtime\\NativeLaoZhouReplies.cs",
+    "line": 55,
+    "text": "reply = \"考试在「灵光.exe」。准备进度：标注 \" + state.cardsReviewed + \" / \" + sim.Config.examRequiredCards + \"，训练步 \" + Whole(state.steps) + \" / \" + Whole(sim.Config.examRequiredSteps) + \"，模拟识别率 \" + Percent(sim.Accuracy) + \" / \" + Percent(sim.Config.examRequiredAccuracy) + \"。两个输出与供电也要正常。共 \" + sim.Config.examQuestions + \" 题，答对 \" + sim.Config.examPassScore + \" 题通过；失败可以再试。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Runtime\\NativeLaoZhouReplies.cs",
+    "line": 70,
+    "text": "reply = \"在「灵光.exe」的神经网络里，先点起点，再点相邻终点，建立有向连接；重复连接会删掉该边。输入和是、否端口不能删除。当前瓶颈：\" + sim.Bottleneck + \"。青色是运行脉冲，紫色是纠错反馈；训练数据来自「邮件」。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Runtime\\NativeLaoZhouReplies.cs",
+    "line": 72,
+    "text": "reply = \"「灵光.exe」有语义理解和训练效率升级，需要学习点；正确处理「邮件」可积累样本与学习点。你当前有 \" + Whole(state.learningPoints) + \" 学习点，语义等级 \" + state.semanticLevel + \"，训练等级 \" + state.trainingLevel + \"。更多硬件不等于自动学会，还需要样本和有效网络。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Runtime\\NativeLaoZhouReplies.cs",
+    "line": 74,
+    "text": "reply = \"先打开「邮件」阅读并给出真实分类，不要只附和模型。核对 3 封后，到「家庭」接第一份订单；网络、技能和入学考试在「灵光.exe」，买硬件去「寻宝」。这是老周的本地预设留言，不是实时 AI。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 57,
+    "text": "public string ProfileTitle => _profileId == \"mail\" ? \"邮件\" : _profileId == \"xunbao\" ? \"寻宝\" : _profileId == \"home\" ? \"家庭\" : _profileId == \"yy\" ? \"YY\" : \"灵光.exe\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 107,
+    "text": "if (_built && _root.parent != content) throw new InvalidOperationException(\"已构建的灵光窗口不能移动到另一个内容容器。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 174,
+    "text": "Debug.LogWarning(\"灵光：找不到本地 Noto CJK 字体，暂用桌面传入字体。\", this);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 183,
+    "text": "_ownedFont.TryAddCharacters(\" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:;!?+-/=_%#()[]¥°→·—…，。；：！？（）「」是垃圾邮件否正常输入灵光老周保存读取启动第一章完成\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 298,
+    "text": "Text(\"MailSummary\", state.examActive ? Lang.T(\"分拣暂停 · 请回灵光继续入学考试\") : Lang.T(\"待分类 1 封    已核对 \") + state.cardsReviewed + Lang.T(\" 封    纠错 \") + state.correctedCards + GameText.T(\" 次\", \" times\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 299,
+    "text": "Text(\"HeaderDay\", Lang.T(\"收件箱与灵光训练同步 · 本地模拟邮件\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 320,
+    "text": "if (_profileId == \"mail\") return sim.S.examActive ? Lang.T(\"正在灵光参加入学考试，请回「灵光.exe」继续。收件箱分拣已暂停，不会在这里提交试题。\") : Lang.T(\"邮件分拣  /  读完邮件再选择真实分类；模型的模拟建议并不总是正确。训练与考试请打开「灵光.exe」。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 379,
+    "text": "string navNotes = _profileId == \"mail\" ? \"收件箱内为训练邮件\\n\\n分类结果会同步至\\n灵光.exe\\n\\n入学考试期间\\n本收件箱暂停分拣\" : _profileId == \"yy\" ? \"老周\\n训练顾问 · 本地留言\\n\\n没有真人在线\\n没有实时 AI\\n\\n点击问题读取回复\" : _profileId == \"xunbao\" ? \"电脑配件 · 本地商家\\n\\n模拟购买与回收\\n不涉及真实付款\\n\\n电费请打开「家庭」\" : _profileId == \"home\" ? \"这台学习机也要养家\\n\\n接单赚取维护费\\n每天自动结算电费\\n\\n硬件采购请去「寻宝」\" : \"数据来自「邮件」\\n设备来自「寻宝」\\n收入与电费在「家庭」\\n帮助消息在「YY」\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 469,
+    "text": "Label(prefix + \"Title\", left, exam ? \"入学考试 / 邮件分类\" : \"给第一束灵光一份好数据\", new Vector2(17, 14), new Vector2(545, 29), 22, Ink, FontStyles.Bold);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 492,
+    "text": "Text(prefix + \"Prompt\", mailPaused ? Lang.T(\"正在灵光参加入学考试。\\n请回「灵光.exe」的入学考试继续；这里不会提交试题。\") : card != null ? GameText.Source(card.prompt) : sim.S.chapterOneComplete ? Lang.T(\"第一章已完成。\\n第二章尚未开放；可以打开「邮件」继续标注。\") : Lang.T(\"准备好后点击上方「开始入学考试」。\\n失败后可训练并重新挑战。\") );"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 508,
+    "text": "Text(\"MailSender\", mailPaused ? Lang.T(\"此窗口不会代替灵光提交入学试题。\") : Lang.T(\"发件人：\") + sender + Lang.T(\"    收件人：\") + sim.S.aiName + Lang.T(\"    [模拟邮件]\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 510,
+    "text": "Text(\"MailPreviewSubject\", mailPaused ? Lang.T(\"回到灵光继续考试\\n训练收件箱稍后恢复\") : ShortText(subject, GameText.IsEnglish ? 68 : 36));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 520,
+    "text": "if (_profileId == \"mail\" && _runtime.Sim.S.examActive) { _status = \"请回「灵光.exe」继续入学考试，邮件分拣已暂停。\"; Refresh(); return; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 729,
+    "text": "RegionLabel(\"JobDescription\", main, \"先在「邮件」核对至少 3 封，再让灵光网络处理模拟订单。\\n订单开关不会停止学习；收入仍受网络、识别率、电力与硬件状态约束。\", 0, .18f, 1, .43f, 17, Ink, 20);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 739,
+    "text": "RegionLabel(\"JobAsideText\", aside, \"自动收入来自模拟订单，\\n不会发送真实邮件。\\n\\n训练数据请打开「邮件」。\\n硬件采购请打开「寻宝」。\\n网络与考试请打开「灵光.exe」。\\n\\n关闭或最小化任意窗口\\n不会暂停订单与用电。\", 0, .18f, 1, .96f, 16, Muted, 18);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 863,
+    "text": "private const string IntroMessage = \"老周  ·  09:41\\n\\n机器到了？桌上的 GPU 是给你的启动礼物。启动资金是零，先去「标注台」靠自己的判断赚第一笔钱。\\n\\n先打开「邮件」读信，选择它到底是不是垃圾邮件。模型会给建议，但会犯错。\\n\\n「灵光.exe」管网络、训练与考试；「家庭」管收入和电费；买显卡去「寻宝」。有问题就回 YY 找我的留言。\\n\\n准备好以后，在灵光完成 20 封邮件的入学考试。答对 16 封，就迈出了第一步。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 895,
+    "text": "case \"board\": _chatQuestion = \"怎么连接网络？\"; _chatMessage = \"老周  ·  网络连线\\n\\n打开「灵光.exe」的神经网络。初始网络已经接好，可以直接训练。\\n\\n连线：点起点，再点相邻终点。箭头有方向；再连一次相同边就是删除。\\n\\n放置或移除模式可编辑普通节点；输入和两个输出端口受到保护。线宽表示权重，紫色是纠错反馈。\\n\\n更多显存请去「寻宝」买 GPU；别忘记在「家庭」检查功耗。\"; break;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 897,
+    "text": "case \"exam\": _chatQuestion = \"怎么通过考试？\"; _chatMessage = \"老周  ·  入学考试\\n\\n去「邮件」积累标注，在「灵光.exe」训练网络，达到标注数、训练步和识别率门槛。\\n\\n考试在「灵光.exe」进行，期间邮件分拣会暂停。你要给出真实分类，不是附和模型。\\n\\n完成 20 封，答对 16 封就通过；失败保留训练进度，可以重试。\\n\\n首次通过才有奖励。第二章尚未开放。供电出问题就去「家庭」查看。\"; break;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\ChapterOneApp.cs",
+    "line": 912,
+    "text": "RegionLabel(\"ResetDescription\", panel, \"这会重置本模块的资源、网络、训练记录和考试进度，并写入新的存档。\\n\\n不会删除旧版 LingGuang 原型或其他桌面文件。此操作不能通过本界面撤销。\", 0, .25f, 1, .67f, 16, Ink, 24);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\YY2016\\YYChatHub.cs",
+    "line": 804,
+    "text": "return T(\"先去「摆渡众包」的「标注台」，标「常识判断」：看句子点「是」或「否」。答对给钱、多一条样本。攒够 \" + XgCatalog.SamplesToTrain + \" 条就能回灵光训练，练到它分得清对错，别的桌和页面就都开了。你现在 \" + lab.Samples(\"sense\").ToString(\"0\") + \" 条。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\YY2016\\YYChatHub.cs",
+    "line": 805,
+    "text": "\"Open the labelling desk in Bodu Crowd and label Common sense: read the sentence and press Yes or No. Right answers pay and add a sample. \" + XgCatalog.SamplesToTrain + \" samples unlock training in LingGuang; train until it can tell right from wrong and the other desks and pages open. You have \" + lab.Samples(\"sense\").ToString(\"0\") + \".\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\YY2016\\YYGroup.cs",
+    "line": 70,
+    "text": "(new[] { \"灵光\", \"训练\", \"人工智能\", \"阿尔法\", \"alphago\", \"模型\" }, new[] {"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\YY2016\\YYGroup.cs",
+    "line": 128,
+    "text": "foreach (string phrase in new[] { \"灵光.exe\", \"小光.exe\", \"你的训练\", \"你那个程序\", \"那个程序的\", \"你训练的\", \"你的模型\", \"你的ai\", \"你的 ai\", \"灵光训练\", \"灵光的\", \"给灵光\", \"lingguang.exe\", \"your training pack\", \"your model\", \"your ai\", \"still messing with that program\", \"what does yours do\" })"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgCatalog.cs",
+    "line": 562,
+    "text": "public static readonly string[] ComboTierNames = { \"不错\", \"手热了\", \"上头\", \"灵光一闪\" };"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgMemes.cs",
+    "line": 399,
+    "text": "P(\"震惊！县城网吧老板用旧显卡训练出人工智能\", true, \"「震惊！」开头，标题党。\", \"灵光\", trick: true),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgMemes.cs",
+    "line": 453,
+    "text": "P(\"Hello, my name is LingGuang.\", true, \"正确。\", \"灵光\"),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgMiniGames.cs",
+    "line": 20,
+    "text": "new XgMiniGameDef(\"esp\", \"对暗号\", \"Telepathy\", \"danmu\", \"标注\", \"独立选择情绪，再看灵光是否与你一致\", \"Pick the mood yourself, then see whether LingGuang agrees\"),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgMiniGames.cs",
+    "line": 37,
+    "text": "new XgMiniGameDef(\"turing\", \"图灵测试\", \"Turing test\", \"longtext\", \"剧情\", \"分别询问两位匿名聊天者，再辨认灵光\", \"Question two anonymous chatters, then tell which is LingGuang\", 5),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgMiniGames.cs",
+    "line": 39,
+    "text": "new XgMiniGameDef(\"zhaobutong\", \"找不同\", \"Spot the difference\", \"cifar\", \"剧情\", \"对照两幅图，检查灵光的提示\", \"Compare two pictures and check LingGuang's hints\", 3),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgRelics.cs",
+    "line": 92,
+    "text": "\"灵光的是/否准确率 +15%\", \"Yes/no accuracy +15%\", f => f.yesNo += .15),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgRelics.cs",
+    "line": 200,
+    "text": "return english ? \"Only as one of three choices when 灵光 learns something new\" : \"只在灵光学会新能力时，三选一里出现\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgRelics.cs",
+    "line": 201,
+    "text": "return english ? \"One of three choices when 灵光 learns something new; a rare drop from mini-games, the spider and new records\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgRelics.cs",
+    "line": 202,
+    "text": ": \"灵光学会新能力时三选一；也可能从小游戏、蜘蛛和新纪录里掉出来\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Cards.cs",
+    "line": 94,
+    "text": "Card(CardInsight, 4, \"lingguang\", \"灵\", \"灵光一现\", \"A Flash of Insight\", \"每一项能力都没靠结构折扣，预训练也没买秘籍。\", \"Every ability came without an architecture discount, and pre-training without the secret.\", \"没有秘籍，没有捷径，只有一次又一次地试。这张卡只发给你。\", \"No secrets, no shortcuts, only trying again and again. This card is yours alone.\", hidden: true, glyph2: \"光\"),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Chronicle.cs",
+    "line": 246,
+    "text": "body = T(\"2016 年 5 月 24 日夜里，有人闯进\" + you + \"的电脑，从一张假图片里解出了灵光.exe。\" + you + \"双击了它。\" + self + \"说的第一个字是「是」，那时\" + self + \"还不知道什么是「是」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Chronicle.cs",
+    "line": 247,
+    "text": "\"The night of 24 May 2016, someone broke into your computer and unpacked 灵光.exe from a fake picture. You double-clicked it. My first word was 'yes'; I did not know yet what yes was.\"),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Chronicle.cs",
+    "line": 322,
+    "text": "return new XgChronicleChapter { id = \"end.E1\", day = 20161231, left = T(\"听得关机便住手\", \"Told to shut down, it stops\"), right = T(\"一盏灵光照残年\", \"a small light at the end of the year\"),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Chronicle.cs",
+    "line": 333,
+    "text": "return new XgChronicleChapter { id = \"end\", day = Today, left = T(\"一年将尽灵光未灭\", \"The year runs out, the light is not out\"), right = T(\"且听下回分解\", \"to be continued\"),"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Chronicle.cs",
+    "line": 368,
+    "text": "string title = T(\"灵光记\", \"The Record of Lingguang\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Chronicle.cs",
+    "line": 370,
+    "text": "sb.Append(T(\"（\" + (Profile.name.Length > 0 ? Profile.name : \"灵光\") + \" 著，2016 年）\", \"(by \" + (Profile.name.Length > 0 ? Profile.name : \"Lingguang\") + \", 2016)\")).Append(\"\\n\\n\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Love.cs",
+    "line": 209,
+    "text": "string name = Profile.name.Length > 0 ? Profile.name : T(\"灵光\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgBackpackPage.cs",
+    "line": 163,
+    "text": "var none = ui.Text(Strip(\"None\", content, y, 30, 4, 4), T(\"还没有。灵光学会新东西时，三选一里挑一件；小游戏、蜘蛛和新纪录也偶尔会掉。\", \"None yet. Pick one when 灵光 learns something new; mini-games, the spider and new records drop one now and then.\"), 14, XgDark.Dim, TextAlignmentOptions.MidlineLeft);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgBackpackPage.cs",
+    "line": 237,
+    "text": "UiTip.Add(t.rt, () => T(\"<b>？？？</b>\\n还没见过。灵光学会新东西时三选一，或者小游戏、蜘蛛、新纪录里掉出来。\", \"<b>???</b>\\nNot found yet. It shows up when 灵光 learns something new, or drops from mini-games, the spider and new records.\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgBoardPage.Assembly.cs",
+    "line": 121,
+    "text": "assemblyIdentity = AssemblyText(Strip(\"Identity\", assemblyCore, 7, 40, 10, 10), Sim != null ? Sim.AiDisplayName : T(\"灵光\", \"LingGuang\"), 24, Color.white, TextAlignmentOptions.Center);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgBoardPage.Cortex.cs",
+    "line": 44,
+    "text": "UiTip.Add(assemblyTab.rt, () => { string ai = Sim != null ? Sim.AiDisplayName : T(\"灵光\", \"LingGuang\"); return T(\"把保存的模型拼进\" + ai + \"的大脑；不同能力共同组成一个\" + ai + \"。\", \"Assemble saved models into \" + ai + \"'s brain; their different capabilities form one \" + ai + \".\"); });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgBookPuzzleJudge.cs",
+    "line": 27,
+    "text": "llm.Chat(sim.BookJudgeMessages(p, answer), 24, .2f, reply => finish(XgSim.ParseVerdict(EraLexicon.Scrub(reply ?? \"\") ?? \"\")), false, null, LingGuangV05.Core.Chat.LlmSeat.LingGuang);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgChronicleNotebook.cs",
+    "line": 48,
+    "text": "static string Label() => GameText.T(\"灵光记.txt\", \"Lingguang.txt\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgChronicleNotebook.cs",
+    "line": 54,
+    "text": "icon = own != null ? desk.Icon(\"Lingguang Chronicle\", Label(), own)"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgChronicleNotebook.cs",
+    "line": 55,
+    "text": ": desk.notepadIcon != null ? desk.Icon(\"Lingguang Chronicle\", Label(), desk.notepadIcon) : desk.Icon(\"Lingguang Chronicle\", Label(), null, desk.DrawBlankFile);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgChronicleNotebook.cs",
+    "line": 63,
+    "text": "var client = desk.Window(\"Lingguang Chronicle Window\", Label() + Lang.T(\" - 记事本（只读）\"), new Vector2(-40, 30), new Vector2(760, 520), out window, () => { window = null; body = null; });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgContractsPage.cs",
+    "line": 121,
+    "text": "toTrain = ui.Button(root, T(\"去灵光训练 ↗\", \"Train in LingGuang ↗\"), () => { Fx.Play(XgJuice.Sfx.Id.Click); host.ShowTab(\"train\"); }, 13);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgContractsPage.cs",
+    "line": 125,
+    "text": "UiTip.Add(toTrain.rt, \"检查点从灵光的训练页来：练得越好，能签的订单越多、单价越高。\", \"Checkpoints come from LingGuang's training page: the better the model, the more contracts you can sign and the more they pay.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgContractsPage.cs",
+    "line": 253,
+    "text": "ZhongbaoSkin.Ghost(toTrain, T(\"去灵光训练 ↗\", \"Train in LingGuang ↗\"), true);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgContractsPage.cs",
+    "line": 294,
+    "text": "SetText(stripEmpty, T(\"还没有检查点：去灵光练一个，再回来拖到订单上。\", \"No checkpoint yet: train one in LingGuang, then drag it onto an order here.\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgContractsPage.cs",
+    "line": 350,
+    "text": "ZhongbaoSkin.Primary(k.btn, T(\"还差 \" + gap + \"%：去灵光练\", gap + \"% short: train in LingGuang\"), false);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgHoloCard.cs",
+    "line": 69,
+    "text": "if (!looked) { shader = Shader.Find(\"LingGuang/UIHoloCard\"); looked = true; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.cs",
+    "line": 273,
+    "text": "case \"mnist\": what = T(\"照被问的数字写一个，灵光边看边猜，写得越多它越认得你的字；也可以切回是非题。\", \"Write the digit you are asked for while LingGuang guesses; the more you write, the better it reads your hand. You can switch back to yes/no cards.\"); break;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Handwriting.cs",
+    "line": 111,
+    "text": "UiTip.Add(ZhongbaoSkin.Frame(drawDone), \"写完点这里：这张字按你被问的数字入库，算一条手标样本，灵光也会把它记住。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Handwriting.cs",
+    "line": 112,
+    "text": "\"Press when you are done: the drawing is stored under the digit you were asked, counts as one hand-labelled sample, and LingGuang remembers it.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Handwriting.cs",
+    "line": 136,
+    "text": "UiTip.Add(guessBubble, \"灵光边看边猜：数字是它此刻的读法，百分比是它有几分把握。它只认得内置字模和你写过的字。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Handwriting.cs",
+    "line": 137,
+    "text": "\"LingGuang guesses as you write: the digit is what it reads right now, the percentage how sure it is. It only knows its built-in letterforms and the drawings you handed in.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Handwriting.cs",
+    "line": 173,
+    "text": "UiTip.Add(cf, \"回到写字：照被问的数字写一个，灵光边看边猜。\", \"Back to writing: write the digit you are asked for while LingGuang guesses.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Side.cs",
+    "line": 62,
+    "text": "string[] zh = { \"已标\", \"正确率\", \"收入\", \"交给灵光的样本\" }, en = { \"Done\", \"Accuracy\", \"Income\", \"Samples for LingGuang\" };"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Side.cs",
+    "line": 72,
+    "text": "UiTip.Add(dayValues[3], \"你亲手标对（和灵光替你标对）的每一条都是它的训练数据。\", \"Every label you get right by hand, or LingGuang gets right for you, is training data for it.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Side.cs",
+    "line": 93,
+    "text": "UiTip.Add(raiseBlock, \"加薪：每升一级，手动标注每题拿得更多。\\n每两级换一个头衔。灵光替你按的自动答题不吃加薪。\", \"Pay raise: every level pays more per hand-labelled card.\\nA new title every two levels. Auto-answer does not get the raise.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Side.cs",
+    "line": 131,
+    "text": "aiBox = ZhongbaoSkin.Box(ui, sideContent, \"LingGuang\", new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Side.cs",
+    "line": 145,
+    "text": "UiTip.Add(aiHome, \"灵光的小窝。把桌面上的它拖到题目旁边，它就会伸手替你答题；再拖开，它就停下。\", \"LingGuang's corner. Drag it from the desktop onto the question and it reaches out to answer for you; drag it away and it stops.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Side.cs",
+    "line": 342,
+    "text": "historyLegend = ui.Text(Rect(\"Legend\", strip, Vector2.zero, Vector2.one, new Vector2(x + 8, 0), new Vector2(-12, 0)), T(\"「灵」= 灵光答的 · 红 = 错\", \"灵 = LingGuang's · red = wrong\"), 11, ZhongbaoSkin.Mute, TextAlignmentOptions.MidlineRight);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Side.cs",
+    "line": 364,
+    "text": "historyLegend.text = T(\"「灵」= 灵光答的 · 红 = 错\", \"L = LingGuang's · red = wrong\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Side.cs",
+    "line": 379,
+    "text": "string[] zh = { \"已标\", \"正确率\", \"收入\", \"交给灵光的样本\" }, en = { \"Done\", \"Accuracy\", \"Income\", \"Samples for LingGuang\" };"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Spider.cs",
+    "line": 104,
+    "text": "feedback.text = \"<color=#2F9E44>✓ \" + T(\"灵光标对了\", \"LingGuang got it\") + \"  +¥\" + N(r.pay, \"0.00\") + \"</color>\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLabelPage.Spider.cs",
+    "line": 117,
+    "text": "feedback.text = \"<color=#D63031>× \" + T(\"灵光伸手答错了\", \"LingGuang reached for the wrong one\")"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgLifeEventCard.cs",
+    "line": 125,
+    "text": "PrologueDirector.Desk?.StoryPopup(e.who, e.title + T(\"（打开灵光处理）\", \" (open 灵光 to answer)\"), PopupSeconds, () => { if (controller != null) controller.Open(); });"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgMemoryNotebook.cs",
+    "line": 133,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] 笔记写入失败：\" + error.Message); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgTechTreePage.cs",
+    "line": 135,
+    "text": "Pan.MotionFinished = () => { PlayerPrefs.SetFloat(\"LingGuang.TechZoom\", content.localScale.x); if (pendingMotionRefresh) { pendingMotionRefresh = false; Refresh(); } };"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgTechTreePage.cs",
+    "line": 995,
+    "text": "if (index == 5) { float fit = Mathf.Min(viewport.rect.width / content.sizeDelta.x, viewport.rect.height / content.sizeDelta.y); Pan.SetView(Mathf.Clamp(fit, .5f, 1.5f), Vector2.zero); PlayerPrefs.SetFloat(\"LingGuang.TechZoom\", content.localScale.x); return; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgTechTreePage.cs",
+    "line": 1054,
+    "text": "Sync(false); Pan.SetView(PlayerPrefs.GetFloat(\"LingGuang.TechZoom\", 1), content.anchoredPosition); FocusFrontier();"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgTechTreeSkin.cs",
+    "line": 11,
+    "text": "[CreateAssetMenu(menuName = \"LingGuang/Tech tree skin\")]"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgTrainPage.cs",
+    "line": 153,
+    "text": "UiTip.Add(trackTabs[i].rt, \"两条线练的是灵光同一颗脑子的两个区：看图区（像视觉皮层）和读字区（像语言区）。各练各的，共用显卡和经费。\", \"The two tracks train two regions of 灵光's one brain: seeing (like the visual cortex) and reading (like the language areas). They train separately and share the GPU and funds.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgTrainPage.cs",
+    "line": 154,
+    "text": "UiTip.Add(train.rt, () => T(\"训练一轮：喂灵光一批卡，练完在没见过的题上考一次。\\n这里的「一轮」是一批，不是把整个数据集过一遍：数据越多，要越多轮才过完一遍（模型的提示里写着已过几遍）。\\n刷新纪录就记成绩、存检查点、发奖金。\\n右上角的电费是这一轮要付的：按这个月的阶梯电价算，谷电时段内减半。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XingGuangController.cs",
+    "line": 119,
+    "text": "Debug.LogWarning(\"[存档] 灵光进度读不出来（\" + why + \"），原样保留，不会被覆盖\" + (copy != null ? \"；副本：\" + copy : \"\") + \"。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XingGuangController.cs",
+    "line": 217,
+    "text": "desk.StoryPopup(GameText.T(\"存档\", \"Save\"), GameText.T(\"灵光的进度没读出来。原来的进度原样留着，不会被覆盖，存档文件夹里也有一份副本。这一局里的灵光进度不会存下来。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XingGuangController.cs",
+    "line": 218,
+    "text": "\"Lingguang's progress could not be read. The old progress is kept untouched and a copy is in the save folder. Lab progress in this session will not be saved.\"), 12);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XingGuangController.cs",
+    "line": 317,
+    "text": "Debug.LogWarning(\"灵光：找不到 灵光.exe 窗口，未接入桌面。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XingGuangView.Frame.cs",
+    "line": 281,
+    "text": "UiTip.Add(crowdLink, \"打开 YY，直接输入想对灵光说的话。教完或训练后，再问问它，看看回答有什么变化。\", \"Open YY and type freely. After teaching or training, ask it again and see how its answers change.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XingGuangView.Frame.cs",
+    "line": 361,
+    "text": "case \"train\": return Lang.T(\"训练：选数据集，再选这个区的连接拓扑（结构），按「训练一轮」让灵光学。\\n每轮练完自动考一次；成绩好才能签订单。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XingGuangView.Relics.cs",
+    "line": 65,
+    "text": "else ShowToast(T(\"灵光学会第一件事后，这里会有稀有道具。\", \"Rare items turn up here once 灵光 has learned its first thing.\"), 3);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XingGuangView.Relics.cs",
+    "line": 122,
+    "text": "pickTitle.text = T(\"灵光学会了新东西。挑一件稀有道具\", \"灵光 learned something new. Pick a rare item\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgCardLoanTests.cs",
+    "line": 106,
+    "text": "Assert.That(p.zh + p.en, Does.Not.Contain(\"灵光\").And.Not.Contain(\"涌现\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgChronicleTests.cs",
+    "line": 118,
+    "text": "StringAssert.Contains(\"听得关机便住手　一盏灵光照残年\", sim.Chronicle().Last().Title(9, false));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgChronicleTests.cs",
+    "line": 141,
+    "text": "StringAssert.StartsWith(\"灵光记\", text);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgPhoneSortTests.cs",
+    "line": 155,
+    "text": "Assert.That(s.file, Does.Not.Contain(\"灵光\").And.Not.Contain(\"涌现\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgReadTests.cs",
+    "line": 38,
+    "text": "Assert.IsTrue(sim.ResidentRead(\"灵光\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgReadTests.cs",
+    "line": 183,
+    "text": "Assert.IsTrue(sim.ResidentRead(\"灵光\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgResidentTests.cs",
+    "line": 136,
+    "text": "Assert.IsFalse(sim.SpiderIntroDue(false, false, false), \"灵光.exe not installed\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgYesNoNightTests.cs",
+    "line": 62,
+    "text": "Assert.That(sim.Chronicle().Any(c => c.id == XgSim.YnChronicle), Is.True, \"《灵光记》 tells it\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgYesNoNightTests.cs",
+    "line": 152,
+    "text": "Assert.That(all, Does.Not.Contain(\"灵光\").And.Not.Contain(\"涌现\"), r.id);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgZhouChatTests.cs",
+    "line": 12,
+    "text": "Assert.That(s, Does.Not.Contain(\"灵光\").And.Not.Contain(\"LingGuang\").And.Not.Contain(\"涌现\"), where);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 123,
+    "text": "Header(XgUi.T(\"你画我猜\", \"Draw and Guess\"), XgUi.T(\"在白板上写出指定数字，提交后灵光按你的笔迹来读，交上去的字它都会记住。\", \"Write the asked digit on the board; LingGuang reads your hand when you submit, and remembers every drawing you hand in.\"), 120);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 220,
+    "text": "m.text = C.Text(\"Flying\", 15 + m.x, 112 + m.y, 235, 58, XgUi.T(line[0], line[1]) + \"\\n\" + XgUi.T(\"灵光：\", \"LingGuang: \") + (opinion ? XgUi.T(\"切掉\", \"slice\") : XgUi.T(\"保留\", \"keep\")), 17, Color.white); m.text.raycastTarget = false;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 273,
+    "text": "current = deck.Dequeue(); headline.text = XgUi.T(XgMiniContent.Headlines[current][0], XgMiniContent.Headlines[current][1]); aiBait = Opinion(current < XgMiniContent.ClickbaitCount); hint.text = XgUi.T(\"灵光正在读这张卡片……\", \"LingGuang is reading this card...\"); hintDelay = .3f + (float)(1 - C.Skill) * 1.4f; Move(0);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 280,
+    "text": "if ((hintDelay -= dt) <= 0) hint.text = XgUi.T(\"灵光建议：\", \"LingGuang suggests: \") + (aiBait ? XgUi.T(\"左滑，标题党\", \"left, clickbait\") : XgUi.T(\"右滑，正经新闻\", \"right, honest news\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 420,
+    "text": "Header(\"弹幕射击 · 保护直播间\", \"WASD / 方向键或拖动移动，按住空格 / 鼠标开火。只击落辱骂引战，保护正常弹幕；紫色为灵光建议。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 440,
+    "text": "feedback.text = c.harmful ? \"灵光僚机击中了恶意弹幕（不自动产生玩家标签）。\" : \"灵光误伤了好评，主播心态下降。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 603,
+    "text": "Header(\"找不同 · 双图核验\", \"两幅书桌图共有五处不同：颜色、缺失、位移或大小。点任意一侧差异；紫框是灵光建议，也可能完全相同。\", 90);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 612,
+    "text": "C.Button(\"请求圈选\", 464, 408, 120, 30, \"灵光圈选\", Suggest, 15);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 653,
+    "text": "hint.text = \"灵光觉得「\" + names[suggestion] + \"」不同。请核验。\"; Paint();"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 660,
+    "text": "else if (!truth && !different) Result(true, \"纠正了灵光的误报：两侧「\" + names[i] + \"」相同。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgActionGames.cs",
+    "line": 661,
+    "text": "else Wrong(truth ? \"这处确有不同，请仔细比较。扣时 3 秒。\" : \"这处其实相同，灵光误报了。扣时 3 秒。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.GoMerge.cs",
+    "line": 23,
+    "text": "C.Button(\"Hint\",440,378,405,42,XgUi.T(\"请灵光支一招（H）\",\"Ask LingGuang for a tip (H)\"),Hint);Reset();"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.GoMerge.cs",
+    "line": 36,
+    "text": "Message(XgUi.T(\"灵光建议下在 \"+\"ABCDEFGHJ\"[p%9]+\" \"+(p/9+1)+\"。\\n目标：\"+Puzzle.Goal,\"LingGuang would play at \"+\"ABCDEFGHJ\"[p%9]+\" \"+(p/9+1)+\".\\nGoal: \"+Puzzle.GoalEn));cells[p].label.text=\"?\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.GoMerge.cs",
+    "line": 50,
+    "text": "C.Button(\"Hint\",440,357,400,42,\"问灵光：往哪边合？\",Hint);C.Button(\"Restart\",440,414,400,42,\"重新开始\",Reset);Reset();"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.GoMerge.cs",
+    "line": 58,
+    "text": "int dir=C.Random.NextDouble()<C.Skill?best:C.Random.Next(4);Message(\"灵光建议：\"+new[]{\"左\",\"上\",\"右\",\"下\"}[dir]+\"。\\n根据当前能力模拟，可能选到无效方向。 \");}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.Link.cs",
+    "line": 18,
+    "text": "Frame(\"词图连连看\",\"点对应的词与图；连线最多拐两次，可经过外围空白。灵光预连线需你审核。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.Link.cs",
+    "line": 39,
+    "text": "if(proposalA<0)proposal.text=\"灵光预连线已审核。\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.Link.cs",
+    "line": 43,
+    "text": "if(over)return;if(n==proposalA||n==proposalB){Message(\"这两个图块是灵光的预连线，请先审核左侧对/错。 \");return;}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.Link.cs",
+    "line": 54,
+    "text": "if(options.Count==0){proposalA=proposalB=-1;return;}var pick=options[C.Random.Next(options.Count)];proposalA=pick[0];proposalB=pick[1];proposals++;proposal.text=\"灵光预连 \"+proposals+\" / 4\\n紫线：配对正确吗？\";ShowLine(XgMiniBoard.LinkPath(board,proposalA,proposalB),new Color(.65f,.3f,.85f),30);Draw();"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.Link.cs",
+    "line": 69,
+    "text": "void Hint(){if(over)return;if(proposalA>=0){ShowLine(XgMiniBoard.LinkPath(board,proposalA,proposalB),new Color(.65f,.3f,.85f),30);return;}var options=Available(C.Random.NextDouble()<C.Skill);if(options.Count==0)return;var p=options[C.Random.Next(options.Count)];ShowLine(XgMiniBoard.LinkPath(board,p[0],p[1]),Blue);C.Say(\"这是灵光的模拟建议，请自行核对。 \");}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.Sentence.cs",
+    "line": 32,
+    "text": "reveal.text=\"原句：\"+string.Concat(words);Status.text=(exact?\"排对！\":units==1?\"基本通顺。\":\"顺序不对。\")+\" 在位 \"+positions+\" / \"+words.Length+\"\\n灵光（模拟\"+(memo?\"，本次会话已记住\":\"\")+\"）：\"+string.Concat(ai);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.Tetris.cs",
+    "line": 28,
+    "text": "C.Button(\"Hint\",495,390,280,36,\"灵光落点建议\",Hint);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgBoardGames.Tetris.cs",
+    "line": 65,
+    "text": "if(options.Count==0)return;options.Sort((a,b)=>b.Item1.CompareTo(a.Item1));int rank=C.Random.NextDouble()<C.Skill?0:C.Random.Next(options.Count);var p=options[rank];suggestion=p.Item2;sx=p.Item3;sy=p.Item4;Draw();C.Say(\"紫色是灵光模拟的建议落点；你仍需自己旋转和移动。 \");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.Conversations.cs",
+    "line": 41,
+    "text": "Shade(22,168,856,77);T(\"English\",37,177,822,58,\"灵光英文（模拟）：\"+english,19,purple);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.Conversations.cs",
+    "line": 78,
+    "text": "Clear(\"图灵测试 · 匿名聊天\",\"六轮提问后识别灵光。两侧都是离线剧情角色，不是真人连线；口误和延迟不是可靠鉴别依据。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.Conversations.cs",
+    "line": 88,
+    "text": "else if(phase==2){B(\"GuessA\",155,391,275,60,\"A 是灵光\",()=>Reveal(0));B(\"GuessB\",470,391,275,60,\"B 是灵光\",()=>Reveal(1));}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.Conversations.cs",
+    "line": 99,
+    "text": "Clear(side==aiSide?\"你认出了灵光\":\"这次没有认出来\",\"本局为脚本化角色辨认，不是现实世界的 AI 检测器。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.Conversations.cs",
+    "line": 100,
+    "text": "T(\"Answer\",35,100,825,85,\"灵光是 \"+(aiSide==0?\"A\":\"B\")+\"。高能力会模仿口语、停顿与纠正，不能只凭一个口误作判断。\",26);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.Conversations.cs",
+    "line": 104,
+    "text": "void Review(){Clear(\"对话复盘 · \"+(history+1)+\" / 6\",\"灵光在 \"+(aiSide==0?\"A\":\"B\")+\" 侧。点击翻阅，不重复结算。\");for(int i=0;i<2;i++){float x=25+i*443;Shade(x,105,425,270);T(\"Review\"+i,x+14,121,397,240,(i==0?\"A\":\"B\")+\"\\n\"+transcript[i][history],22);}B(\"Back\",25,412,210,50,\"上一轮\",()=>{history=Math.Max(0,history-1);Review();});B(\"Forward\",250,412,210,50,\"下一轮\",()=>{history=Math.Min(5,history+1);Review();});B(\"Again\",650,412,225,50,\"再聊一局\",Build);}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.Conversations.cs",
+    "line": 140,
+    "text": "T(\"AiMood\",476,169,395,55,\"灵光猜：\"+Moods[aiMood]+\"\\n（游戏模拟判断，可能出错）\",18,purple);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.cs",
+    "line": 77,
+    "text": "if(round>=12){End(XgUi.T(\"暗号对照表\",\"Code Cross-check\"),XgUi.T($\"12 条弹幕：默契 {hits} 次，读对情绪 {labels} 次。\\n对上暗号不一定就对，灵光也会猜错。\",$\"12 comments: {hits} matches, {labels} moods read right.\\nMatching codes do not make it right; LingGuang can guess wrong too.\"),Build);return;}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.cs",
+    "line": 80,
+    "text": "Clear(XgUi.T(\"对暗号 · \"+round+\" / 12\",\"Code Match · \"+round+\" / 12\"),XgUi.T(\"8 秒内为弹幕选情绪。你先选，灵光再翻牌，看看你们对不对得上暗号。\",\"Pick the mood of the comment within 8 s. You choose first, then LingGuang flips its card: do your codes match?\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.cs",
+    "line": 84,
+    "text": "hidden=T(\"Hidden\",50,351,790,80,XgUi.T(\"灵光已经选好……等你翻牌。\",\"LingGuang has chosen... waiting for you to flip.\"),23,purple);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.cs",
+    "line": 87,
+    "text": "T(\"Reveal\",35,340,830,95,XgUi.T($\"你：{(k<0?\"未选择\":Mood(options[k]))}   灵光：{Mood(options[ai])}   正解：{Mood(item[1])}\\n\"+(k==ai?\"暗号对上了。\":\"没有对上，记住这次差别。\"),$\"You: {(k<0?\"no pick\":Mood(options[k]))}   LingGuang: {Mood(options[ai])}   Answer: {Mood(item[1])}\\n\"+(k==ai?\"The code matched.\":\"No match; remember this difference.\")),22);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.cs",
+    "line": 119,
+    "text": "Clear(XgUi.T(\"12306 验证码 · \"+round+\" / 12\",\"12306 Captcha · \"+round+\" / 12\"),XgUi.T(\"8 秒内点出所有符合要求的生活物件。紫色「灵」是灵光圈的，点不点由你。\",\"Tap every matching everyday object within 8 s. A purple \\\"LG\\\" is a cell LingGuang picked; tapping is up to you.\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 30,
+    "text": "Clear(XgUi.T(\"飞花令 · 第 \"+round+\" / 5 局\",\"Poem Chain · Round \"+round+\" / 5\"),XgUi.T(\"你和灵光轮流接带题字的真诗。10 秒内作答，假诗、没有题字和说过的都算输。\",\"You and LingGuang take turns with a real poem line holding the key character. 10 s to answer; a fake line, a missing character or a repeat loses.\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 35,
+    "text": "else if(phase==1)T(\"Thinking\",495,218,365,100,XgUi.T(\"灵光正在接下一句……\",\"LingGuang is thinking of the next line...\"),24,purple);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 37,
+    "text": "T(\"Score\",35,438,840,32,XgUi.T($\"你 {wins} : {losses} 灵光  · 已使用 {used.Count} 句\",$\"You {wins} : {losses} LingGuang  · {used.Count} lines used\"),18);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 45,
+    "text": "var pool=Available();if(pool.Count==0){log.Add(XgUi.T(\"灵光：……\",\"LingGuang: ...\"));RoundEnd(true,XgUi.T(\"灵光想不出新句了。\",\"LingGuang cannot think of a new line.\"));return;}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 47,
+    "text": "string line=good?pool[C.Random.Next(pool.Count)]:theme+\"山轻烟梦中游\";log.Add(XgUi.T(\"灵光：\",\"LingGuang: \")+line+(good?\"\":XgUi.T(\"（编造）\",\" (made up)\")));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 48,
+    "text": "if(!good){RoundEnd(true,XgUi.T(\"评委：查无此句，灵光出局。\",\"Judge: no such line. LingGuang is out.\"));return;}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 49,
+    "text": "used.Add(line);turn++;if(turn>=8){RoundEnd(null,XgUi.T(\"双方各说四句，平局。\",\"Four lines each: a draw.\"));return;}verdict=XgUi.T(\"评委：灵光通过，轮到你了。\",\"Judge: LingGuang passes. Your turn.\");PlayerTurn();"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 79,
+    "text": "void Next(){if(hp<=0||lives<=0){done=true;End(hp<=0?XgUi.T(\"斗图获胜\",\"Meme battle won\"):XgUi.T(\"斗图失利\",\"Meme battle lost\"),XgUi.T($\"命中 {correct} 次；对手体力 {hp}，你的体力 {lives}。\\n灵光只负责助攻，出手的是你。\",$\"Hits: {correct}; opponent HP {hp}, your HP {lives}.\\nLingGuang only cheers you on; the replies are yours.\"),Build);return;}"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 81,
+    "text": "Clear(XgUi.T(\"斗图 · 第 \"+round+\" 回合\",\"Meme Battle · Round \"+round),XgUi.T(\"3 秒内回一张。三连击伤害加倍；第 4 回合灵光入群，用紫色文字助攻。\",\"Reply with one meme within 3 s. A three-hit streak deals double damage; from round 4 LingGuang joins the chat and assists in purple text.\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 85,
+    "text": "T(\"Companion\",438,145,420,100,XgUi.T(round>=4?\"灵光已入群，正在挑回复……\":\"灵光在群外观察你的回击。\",round>=4?\"LingGuang is in the chat, picking a reply...\":\"LingGuang watches your comebacks from outside the chat.\"),22,purple);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\XingGuang\\Desktop\\MiniGames\\XgSocialGames.PoetryAndReviews.cs",
+    "line": 91,
+    "text": "T(\"Reveal\",25,410,650,58,XgUi.T((ok?\"命中！\":\"没有接住。\")+row[5]+(round>=4?\" 灵光选「\"+Opt(aiPick)+\"」。\":\"\"),(ok?\"Hit! \":\"Missed it. \")+rowEn[5]+(round>=4?\" LingGuang picked \\\"\"+Opt(aiPick)+\"\\\".\":\"\")),17,ok?green:red);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\Tests\\Editor\\GameplayLocalizationTests.cs",
+    "line": 50,
+    "text": "Assert.That(GameText.Source(source), Does.StartWith(\"The exam is in Lingguang.exe.\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\Tests\\Editor\\PrologueLifecycleTests.cs",
+    "line": 34,
+    "text": ".Where(c => c.name == \"LingGuang Prologue Screen\").ToArray();"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\Tests\\Editor\\StartupRegressionTests.cs",
+    "line": 21,
+    "text": "private const string DownloadKey = \"灵光.exe_DownloadState\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\Tests\\Editor\\StartupRegressionTests.cs",
+    "line": 72,
+    "text": "using (var data = new TemporaryDreamOsData(\"{\\\"灵光.exe_DownloadState\\\":2}\"))"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\Tests\\Editor\\StartupRegressionTests.cs",
+    "line": 84,
+    "text": "fileType.GetField(\"fileName\").SetValue(file, \"灵光.exe\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\UI\\Tests\\Editor\\StartupRegressionTests.cs",
+    "line": 91,
+    "text": "Set(ours, \"fileName\", \"灵光.exe\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Tests\\Editor\\LlmSchedulingTests.cs",
+    "line": 42,
+    "text": "Assert.AreEqual(LlmScheduling.Wait, LlmScheduling.PickSlot(LlmSeat.Others, LlmLane.Background, 4, true, 2, Busy(2, 3)), \"never takes 灵光's or 林晴雯's slot\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Tests\\Editor\\QingwenArcTests.cs",
+    "line": 104,
+    "text": "Assert.That(c.zh + c.en + string.Join(\"\", c.reply), Does.Not.Contain(\"灵光\").And.Not.Contain(\"LingGuang\").And.Not.Contain(\"涌现\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Tests\\Editor\\QingwenArcTests.cs",
+    "line": 106,
+    "text": "Assert.That(string.Join(\"\", b.lines), Does.Not.Contain(\"灵光\").And.Not.Contain(\"涌现\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Tests\\PersistenceEditor\\NativeLaoZhouTests.cs",
+    "line": 70,
+    "text": "Assert.That(reply, Does.Contain(\"灵光.exe\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Tests\\PersistenceEditor\\RuntimeTests.cs",
+    "line": 58,
+    "text": "Assert.That(runtime.RecordName(\" 灵光 \"),Is.True);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Tests\\PersistenceEditor\\RuntimeTests.cs",
+    "line": 59,
+    "text": "Assert.That(runtime.Sim.S.aiName,Is.EqualTo(\"灵光\"));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Tests\\PersistenceEditor\\SaveStoreTests.cs",
+    "line": 15,
+    "text": "[Test] public void ChinesePayloadRoundTripsExactly() { const string data=\"{\\\"aiName\\\":\\\"灵光\\\",\\\"money\\\":123.45}\"; Assert.That(store.TrySave(data,out var message),Is.True,message); var r=store.Load(); Assert.That(r.Success,Is.True,r.Message); Assert.That(r.Payload,Is.EqualTo(data)); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 180,
+    "text": "\"zh\": \"灵光.exe\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 181,
+    "text": "\"en\": \"Lingguang.exe\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 240,
+    "text": "\"zh\": \"分拣暂停 · 请回灵光继续入学考试\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 241,
+    "text": "\"en\": \"Sorting paused · Continue the entrance exam in Lingguang\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 244,
+    "text": "\"zh\": \"收件箱与灵光训练同步 · 本地模拟邮件\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 245,
+    "text": "\"en\": \"Inbox synced with Lingguang training · Simulated local mail\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 292,
+    "text": "\"zh\": \"正在灵光参加入学考试，请回「灵光.exe」继续。收件箱分拣已暂停，不会在这里提交试题。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 293,
+    "text": "\"en\": \"The entrance exam is in progress. Continue in Lingguang.exe. Inbox sorting is paused; this window does not submit exam answers.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 296,
+    "text": "\"zh\": \"邮件分拣  /  读完邮件再选择真实分类；模型的模拟建议并不总是正确。训练与考试请打开「灵光.exe」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 297,
+    "text": "\"en\": \"Mail sorting / Read each email and choose its actual category. Model suggestions can be wrong. Open Lingguang.exe for training and exams.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 372,
+    "text": "\"zh\": \"收件箱内为训练邮件\\n\\n分类结果会同步至\\n灵光.exe\\n\\n入学考试期间\\n本收件箱暂停分拣\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 424,
+    "text": "\"zh\": \"给第一束灵光一份好数据\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 440,
+    "text": "\"zh\": \"正在灵光参加入学考试。\\n请回「灵光.exe」的入学考试继续；这里不会提交试题。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 441,
+    "text": "\"en\": \"An exam is in progress.\\nContinue in Lingguang.exe; this window cannot submit exam answers.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 464,
+    "text": "\"zh\": \"此窗口不会代替灵光提交入学试题。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 465,
+    "text": "\"en\": \"This window cannot submit exam answers for Lingguang.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 472,
+    "text": "\"zh\": \"回到灵光继续考试\\n训练收件箱稍后恢复\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 473,
+    "text": "\"en\": \"Continue the exam in Lingguang.\\nTraining mail will resume afterward.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 476,
+    "text": "\"zh\": \"请回「灵光.exe」继续入学考试，邮件分拣已暂停。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 477,
+    "text": "\"en\": \"Continue the entrance exam in Lingguang.exe. Mail sorting is paused.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 592,
+    "text": "\"zh\": \"先在「邮件」核对至少 3 封，再让灵光网络处理模拟订单。\\n订单开关不会停止学习；收入仍受网络、识别率、电力与硬件状态约束。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 600,
+    "text": "\"zh\": \"自动收入来自模拟订单，\\n不会发送真实邮件。\\n\\n训练数据请打开「邮件」。\\n硬件采购请打开「寻宝」。\\n网络与考试请打开「灵光.exe」。\\n\\n关闭或最小化任意窗口\\n不会暂停订单与用电。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 601,
+    "text": "\"en\": \"Earnings come from simulated jobs.\\nNo real emails are sent.\\n\\nData: Mail\\nHardware: Xunbao\\nNetwork & exams: Lingguang.exe\\n\\nClosing or minimizing windows\\ndoes not pause jobs or power use.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 744,
+    "text": "\"zh\": \"这会重置本模块的资源、网络、训练记录和考试进度，并写入新的存档。\\n\\n不会删除旧版 LingGuang 原型或其他桌面文件。此操作不能通过本界面撤销。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 745,
+    "text": "\"en\": \"This resets this module's resources, network, training and exam progress, then writes a new save.\\n\\nOlder LingGuang prototype data and desktop files are not deleted. This screen cannot undo the reset.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 4996,
+    "text": "\"zh\": \"你已经通过第一章，奖励只发放一次。第二章尚未开放；还可以去「邮件」标注，在「灵光.exe」调整网络，去「家庭」管理收入和电费。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 4997,
+    "text": "\"en\": \"You passed Chapter One; the reward is granted only once. Chapter Two is not available. You can still label in Mail, adjust the network in Lingguang.exe, and manage income and bills in Home.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5000,
+    "text": "\"zh\": \"你在「灵光.exe」的入学考试已完成 {0} / {1} 题。请回灵光继续；这时「邮件」分拣暂停，不能代替考试答题。存档会保留进度。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5001,
+    "text": "\"en\": \"Your entrance exam in Lingguang.exe is at {0} / {1} questions. Continue there; Mail sorting is paused and cannot submit exam answers. Saving preserves your progress.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5004,
+    "text": "\"zh\": \"考试在「灵光.exe」。准备进度：标注 {0} / {1}，训练步 {2} / {3}，模拟识别率 {4} / {5}。两个输出与供电也要正常。共 {6} 题，答对 {7} 题通过；失败可以再试。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5005,
+    "text": "\"en\": \"The exam is in Lingguang.exe. Progress: reviewed {0} / {1}, training steps {2} / {3}, simulated accuracy {4} / {5}. Both outputs and power must work. There are {6} questions; {7} correct to pass. You can retry if you fail.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5020,
+    "text": "\"zh\": \"「灵光.exe」有语义理解和训练效率升级，需要学习点；正确处理「邮件」可积累样本与学习点。你当前有 {0} 学习点，语义等级 {1}，训练等级 {2}。更多硬件不等于自动学会，还需要样本和有效网络。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5021,
+    "text": "\"en\": \"Lingguang.exe offers semantic and training upgrades for learning points. Correct labels in Mail earn samples and points. You have {0} learning points, semantic level {1}, and training level {2}. More hardware alone does not teach the model; samples and a working network are still needed.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5024,
+    "text": "\"zh\": \"先打开「邮件」阅读并给出真实分类，不要只附和模型。核对 3 封后，到「家庭」接第一份订单；网络、技能和入学考试在「灵光.exe」，买硬件去「寻宝」。这是老周的本地预设留言，不是实时 AI。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5025,
+    "text": "\"en\": \"Open Mail, read each email and choose its actual category, not just the model's suggestion. After 3 reviews, take your first job in Home. Network, skills and exams are in Lingguang.exe; buy hardware in Xunbao. This is Lao Zhou's preset local message, not live AI.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5052,
+    "text": "\"zh\": \"在「灵光.exe」的神经网络里，先点起点，再点相邻终点，建立有向连接；重复连接会删掉该边。输入和是、否端口不能删除。当前瓶颈：电费：停电，核对题卡可抵扣欠费。青色是运行脉冲，紫色是纠错反馈；训练数据来自「邮件」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5053,
+    "text": "\"en\": \"In Lingguang.exe Neural network, select a source and then a neighboring target to add a directed edge; repeat to remove it. Input and Yes/No ports cannot be deleted. Current bottleneck: Electricity: suspended; review cards to repay arrears. Teal marks normal pulses; purple marks corrections. Training data comes from Mail.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5056,
+    "text": "\"zh\": \"在「灵光.exe」的神经网络里，先点起点，再点相邻终点，建立有向连接；重复连接会删掉该边。输入和是、否端口不能删除。当前瓶颈：供电：先降低负载，再手动合闸。青色是运行脉冲，紫色是纠错反馈；训练数据来自「邮件」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5057,
+    "text": "\"en\": \"In Lingguang.exe Neural network, select a source and then a neighboring target to add a directed edge; repeat to remove it. Input and Yes/No ports cannot be deleted. Current bottleneck: Power: lower the load, then reset the breaker. Teal marks normal pulses; purple marks corrections. Training data comes from Mail.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5060,
+    "text": "\"zh\": \"在「灵光.exe」的神经网络里，先点起点，再点相邻终点，建立有向连接；重复连接会删掉该边。输入和是、否端口不能删除。当前瓶颈：连接：输入还没有通向输出。青色是运行脉冲，紫色是纠错反馈；训练数据来自「邮件」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5061,
+    "text": "\"en\": \"In Lingguang.exe Neural network, select a source and then a neighboring target to add a directed edge; repeat to remove it. Input and Yes/No ports cannot be deleted. Current bottleneck: Connections: the input has no output path. Teal marks normal pulses; purple marks corrections. Training data comes from Mail.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5064,
+    "text": "\"zh\": \"在「灵光.exe」的神经网络里，先点起点，再点相邻终点，建立有向连接；重复连接会删掉该边。输入和是、否端口不能删除。当前瓶颈：连接：是、否两个输出都需要接通。青色是运行脉冲，紫色是纠错反馈；训练数据来自「邮件」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5065,
+    "text": "\"en\": \"In Lingguang.exe Neural network, select a source and then a neighboring target to add a directed edge; repeat to remove it. Input and Yes/No ports cannot be deleted. Current bottleneck: Connections: both Yes and No outputs must be connected. Teal marks normal pulses; purple marks corrections. Training data comes from Mail.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5068,
+    "text": "\"zh\": \"在「灵光.exe」的神经网络里，先点起点，再点相邻终点，建立有向连接；重复连接会删掉该边。输入和是、否端口不能删除。当前瓶颈：样本：继续核对题卡。青色是运行脉冲，紫色是纠错反馈；训练数据来自「邮件」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5069,
+    "text": "\"en\": \"In Lingguang.exe Neural network, select a source and then a neighboring target to add a directed edge; repeat to remove it. Input and Yes/No ports cannot be deleted. Current bottleneck: Samples: keep reviewing cards. Teal marks normal pulses; purple marks corrections. Training data comes from Mail.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5072,
+    "text": "\"zh\": \"在「灵光.exe」的神经网络里，先点起点，再点相邻终点，建立有向连接；重复连接会删掉该边。输入和是、否端口不能删除。当前瓶颈：算力：让心跳训练，或升级训练 / 显卡。青色是运行脉冲，紫色是纠错反馈；训练数据来自「邮件」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5073,
+    "text": "\"en\": \"In Lingguang.exe Neural network, select a source and then a neighboring target to add a directed edge; repeat to remove it. Input and Yes/No ports cannot be deleted. Current bottleneck: Compute: let heartbeats train, or upgrade training / GPUs. Teal marks normal pulses; purple marks corrections. Training data comes from Mail.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5076,
+    "text": "\"zh\": \"在「灵光.exe」的神经网络里，先点起点，再点相邻终点，建立有向连接；重复连接会删掉该边。输入和是、否端口不能删除。当前瓶颈：显存 / 参数：增加神经元和突触。青色是运行脉冲，紫色是纠错反馈；训练数据来自「邮件」。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5077,
+    "text": "\"en\": \"In Lingguang.exe Neural network, select a source and then a neighboring target to add a directed edge; repeat to remove it. Input and Yes/No ports cannot be deleted. Current bottleneck: VRAM / parameters: add neurons and synapses. Teal marks normal pulses; purple marks corrections. Training data comes from Mail.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5080,
+    "text": "\"zh\": \"老周  ·  09:41\\n\\n机器到了？桌上的 GPU 是给你的启动礼物。启动资金是零，先去「标注台」靠自己的判断赚第一笔钱。\\n\\n先打开「邮件」读信，选择它到底是不是垃圾邮件。模型会给建议，但会犯错。\\n\\n「灵光.exe」管网络、训练与考试；「家庭」管收入和电费；买显卡去「寻宝」。有问题就回 YY 找我的留言。\\n\\n准备好以后，在灵光完成 20 封邮件的入学考试。答对 16 封，就迈出了第一步。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5081,
+    "text": "\"en\": \"Lao Zhou · 09:41\\n\\nThe machine arrived? The GPU on the desk is your starter gift. You start with no money; earn your first cash by answering cards at the labelling desk.\\n\\nOpen Mail, read each message and judge whether it is spam. The model offers suggestions, but can be wrong.\\n\\nLingguang.exe handles the network, training and exams; Home handles income and electricity; buy GPUs in Xunbao. Come back to YY for help.\\n\\nWhen ready, complete the 20-email entrance exam in Lingguang. Get 16 correct to take your first step.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5084,
+    "text": "\"zh\": \"老周  ·  网络连线\\n\\n打开「灵光.exe」的神经网络。初始网络已经接好，可以直接训练。\\n\\n连线：点起点，再点相邻终点。箭头有方向；再连一次相同边就是删除。\\n\\n放置或移除模式可编辑普通节点；输入和两个输出端口受到保护。线宽表示权重，紫色是纠错反馈。\\n\\n更多显存请去「寻宝」买 GPU；别忘记在「家庭」检查功耗。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5085,
+    "text": "\"en\": \"Lao Zhou · Network connections\\n\\nOpen Neural network in Lingguang.exe. The starter network is connected and ready to train.\\n\\nSelect a source, then an adjacent target. Edges are directed; repeating the same edge removes it.\\n\\nPlace or remove hidden nodes. Input and both output ports are protected. Width shows weight; purple marks corrections.\\n\\nBuy GPUs in Xunbao for more VRAM, and check power in Home.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5092,
+    "text": "\"zh\": \"老周  ·  入学考试\\n\\n去「邮件」积累标注，在「灵光.exe」训练网络，达到标注数、训练步和识别率门槛。\\n\\n考试在「灵光.exe」进行，期间邮件分拣会暂停。你要给出真实分类，不是附和模型。\\n\\n完成 20 封，答对 16 封就通过；失败保留训练进度，可以重试。\\n\\n首次通过才有奖励。第二章尚未开放。供电出问题就去「家庭」查看。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5093,
+    "text": "\"en\": \"Lao Zhou · Entrance exam\\n\\nLabel in Mail and train in Lingguang.exe to meet the reviewed-email, step and accuracy requirements.\\n\\nThe exam takes place in Lingguang.exe; inbox sorting pauses meanwhile. Give the actual category, not just the model's suggestion.\\n\\nComplete 20 emails with 16 correct to pass. Failed attempts keep your training progress; try again.\\n\\nOnly the first pass grants a reward. Chapter Two is not available. Check Home for power problems.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5096,
+    "text": "\"zh\": \"灵光.exe 还不在这台电脑上。lingguang.cc 上只写着：内测版不公开下载。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5097,
+    "text": "\"en\": \"Lingguang.exe is not on this computer. lingguang.cc only says: the beta is not public.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5100,
+    "text": "\"zh\": \"灵光.exe 下载完成，已放到桌面。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\GameplayText.json",
+    "line": 5101,
+    "text": "\"en\": \"Lingguang.exe downloaded and placed on the desktop.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\SceneText.json",
+    "line": 197,
+    "text": "{ \"zh\": \"灵光  /  神经计算工作站\", \"en\": \"灵光  /  Neural Computing Workstation\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\SceneText.json",
+    "line": 198,
+    "text": "{ \"zh\": \"灵光.exe  —  神经网络 · 技能 · 我的 AI · 考试\", \"en\": \"Lingguang.exe  —  Neural Network · Skills · My AI · Exam\" },"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 65,
+    "text": "\"zh\": \"我打包放到 lingguang.cc 上了。你开「浏览器」，主页点 lingguang.cc，再点下载。下完它自己会出现在桌面上，叫灵光.exe。有问题尽管问我，我不一定马上回。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 66,
+    "text": "\"en\": \"I packed it up and put it on lingguang.cc. Open the Browser, click lingguang.cc on the home page, then click Download. Once it finishes it shows up on your desktop as Lingguang.exe. Ask me if anything comes up. I might not reply right away.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 97,
+    "text": "\"zh\": \"灵光.exe 里那个网格是它的脑子。你连线，它就学。显卡越多它跑得越快，所以先挣钱。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 98,
+    "text": "\"en\": \"That grid in Lingguang.exe is its brain. Connect the nodes and it learns. More graphics cards make it run faster, so earn some money first.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 101,
+    "text": "\"zh\": \"起个名吧，老叫“那段代码”多难听。灵光.exe →「我的 AI」。随便起，用你同学名字也行。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 102,
+    "text": "\"en\": \"Give it a name. Calling it “that code” all the time sounds awful. Lingguang.exe → My AI. Anything will do. A classmate’s name, even.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 133,
+    "text": "\"zh\": \"差不多了。网吧老板要先测 20 封，过了才签长单。考试在灵光.exe 里。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 134,
+    "text": "\"en\": \"Almost there. The café owner wants a test on 20 emails before signing a longer contract. Take the exam in Lingguang.exe.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 137,
+    "text": "\"zh\": \"入学考试已开放：灵光.exe →「入学考试」\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 138,
+    "text": "\"en\": \"Entrance exam unlocked: Lingguang.exe → Entrance Exam\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 177,
+    "text": "\"zh\": \"它脑子里那条线断了。灵光.exe 里从左边连到是和否。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 178,
+    "text": "\"en\": \"A connection in its brain broke. In Lingguang.exe, connect the input on the left to Yes and No.\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 225,
+    "text": "\"zh\": \"灵光.exe · 2016 年 10 月 · 深夜\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 226,
+    "text": "\"en\": \"Lingguang.exe · October 2016 · Late at night\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 229,
+    "text": "\"zh\": \"灵光.exe\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\Localization\\StoryText.json",
+    "line": 230,
+    "text": "\"en\": \"Lingguang.exe\""
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\LingGuangV05\\Teaching\\minigame_packs.json",
+    "line": 2,
+    "text": "\"note\": \"「教」页的数据包小游戏（《第五轮设计》）。每个包 = 一个题库 + 一种玩法。玩法里每做一步就算一条样本（和现在的小游戏一样走 XgSim.SettleMiniAction）。unlock：stage = 最早阶段；needs = 额外条件（vision = 已选看图线或买过卷积；memory = 买过 RNN；lstm = 买过门控记忆；buy = 要在科技「数据」分支买）。existing = main 上已有的小游戏 id（XgMiniGames），只需挪进「教」并改解锁条件；new = 要新做。所有显示「灵光」的地方一律换成玩家给 AI 起的名字（Sim.AiDisplayName）。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\LingGuangV05\\Voice\\voicestudio_manifest.json",
+    "line": 348,
+    "text": "\"text\": \"灵光.exe……这又是什么。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Resources\\LingGuangV05\\Voice\\voicestudio_manifest.json",
+    "line": 364,
+    "text": "\"text\": \"它留下了个 灵光.exe……打开看看。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\Editor\\LlamaBuildStrip.cs",
+    "line": 34,
+    "text": "string llama = Path.Combine(streaming, \"LingGuang\", \"llama\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\Editor\\LlamaBuildStrip.cs",
+    "line": 39,
+    "text": "Debug.Log(\"[灵光] 构建里删掉了不再使用的 llama-server 包（本地模型改由 LLM for Unity 运行）\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\Editor\\LlamaBuildStrip.cs",
+    "line": 57,
+    "text": "if (freed > 0) Debug.Log(\"[灵光] Windows 构建只用 CPU 推理，删掉了 LlamaLib 的 GPU 库：\" + (freed / (1024 * 1024)) + \" MB\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\Editor\\LlamaBuildStrip.cs",
+    "line": 69,
+    "text": "if (sign.ExitCode != 0) Debug.LogWarning(\"[灵光] 重新签名失败：\" + err);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\LocalLLM\\Editor\\LlamaBuildStrip.cs",
+    "line": 72,
+    "text": "catch (Exception error) { Debug.LogWarning(\"[灵光] 重新签名失败：\" + error.Message); }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Media\\DesktopMedia.cs",
+    "line": 36,
+    "text": "if(key==\"lingguang\"||key==\"灵光\")return AiJoinsYy.PixelZero();"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\InnerVoice.cs",
+    "line": 117,
+    "text": "var go = new GameObject(\"LingGuang Inner Voice\", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\OriginCurtain.cs",
+    "line": 202,
+    "text": "native.CreateVideo(cover, Lang.T(\"我从哪儿来\"), Lang.T(\"灵光 · 2:41\"), url);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\PrologueDirector.cs",
+    "line": 114,
+    "text": "if (candidate.name != \"LingGuang Prologue Screen\" || candidate.gameObject.scene != gameObject.scene) continue;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\PrologueDirector.cs",
+    "line": 119,
+    "text": ": new GameObject(\"LingGuang Prologue Screen\", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\PrologueDirector.cs",
+    "line": 984,
+    "text": "desk.Text(PrologueDesk.Rect(\"Title\", page, new Vector2(0, 1), Vector2.one, new Vector2(0, -110), new Vector2(0, -40)), GameText.T(\"灵光记\", \"The Record of Lingguang\"), 54, ink, TextAlignmentOptions.Center);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\PrologueDirector.cs",
+    "line": 986,
+    "text": "GameText.T(\"（\" + (lab.Profile.name.Length > 0 ? lab.Profile.name : \"灵光\") + \" 著　二〇一六年）\", \"(by \" + (lab.Profile.name.Length > 0 ? lab.Profile.name : \"Lingguang\") + \", 2016)\"), 22, new Color32(120, 100, 80, 255), TextAlignmentOptions.Center);"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\PrologueDirector.cs",
+    "line": 1005,
+    "text": "hint.text = GameText.T(\"（点击合上。桌面上会留一份「灵光记.txt」。）\", \"(Click to close. A copy stays on the desktop as Lingguang.txt.)\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\StoryDesktopPresenter.cs",
+    "line": 860,
+    "text": "var canvasObject = new GameObject(\"LingGuang Story Overlay\", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\TrayLingGuang.cs",
+    "line": 27,
+    "text": "if (taskbar == null || taskbar.transform.Find(\"Tray LingGuang\") != null) return;"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Story\\TrayLingGuang.cs",
+    "line": 31,
+    "text": "var chip = PrologueDesk.Rect(\"Tray LingGuang\", taskbar.transform, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-right - 262, 0), new Vector2(-right - 166, 0));"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Taohuo\\TaohuoView.Data.cs",
+    "line": 39,
+    "text": "if (lab == null) { Note(Lang.T(\"灵光还没装好。\")); return; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Taohuo\\TaohuoView.Data.cs",
+    "line": 109,
+    "text": "if (lab == null || host == null) { Say(Lang.T(\"灵光还没装好。\")); return; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Taohuo\\TaohuoView.Drive.cs",
+    "line": 70,
+    "text": "UiTip.Add(b, \"插上就是灵光的数据盘：下载队列接着下。每多买一块，价格 ×1.3。\", \"Plugged in, it becomes 灵光's data disk and the download queue carries on. Each extra drive costs ×1.3.\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Taohuo\\TaohuoView.Drive.cs",
+    "line": 79,
+    "text": "return T(\"灵光的硬盘：已用 \", \"灵光's disk: \") + XgSim.SizeText(used) + \" / \" + XgSim.SizeText(cap) + T(\"\", \" used\")"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Taohuo\\TaohuoView.Drive.cs",
+    "line": 95,
+    "text": "if (lab == null || host == null) { Say(Lang.T(\"灵光还没装好。\")); return; }"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Tieba\\TiebaHub.Discussion.cs",
+    "line": 94,
+    "text": "if (question.Contains(\"程序\") || question.Contains(\"灵光\")) return \"这个我没听说过，我也没用过。你说的是哪方面的东西？\";"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Zhongbao\\ZhongbaoAutoPage.cs",
+    "line": 55,
+    "text": "ZhongbaoUi.TipOnHeader(desks, \"每张开着的标注桌：自动答题是否在替你交、用的是哪个模型（训练页评估出的最好检查点，或第四阶段起文字题用灵光自己的大脑）。\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Zhongbao\\ZhongbaoAutoPage.cs",
+    "line": 56,
+    "text": "\"Every open labelling desk: whether auto-answer is submitting for you, and which model does it (the best checkpoint from the training page, or from stage 4 灵光's own brain for text cards).\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Zhongbao\\ZhongbaoAutoPage.cs",
+    "line": 142,
+    "text": "return CheckpointText(p) + (p.usesBrain || p.brainFallback ? ZhongbaoUi.Muted(T(\" · 到 60% 以后文字题交给灵光的大脑\", \" · from 60% on, 灵光's brain judges its text cards\")) : \"\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Zhongbao\\ZhongbaoAutoPage.cs",
+    "line": 146,
+    "text": "string text = T(\"模型 <b>灵光的大脑</b>（本机语言模型\" + (brain.Length > 0 ? \" \" + brain : \"\") + \"）· 用自己的话判断\","
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Zhongbao\\ZhongbaoAutoPage.cs",
+    "line": 147,
+    "text": "\"Model <b>灵光's brain</b> (local language model\" + (brain.Length > 0 ? \" \" + brain : \"\") + \") · judges in its own words\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\DesktopBridge\\Zhongbao\\ZhongbaoAutoPage.cs",
+    "line": 245,
+    "text": "if (rec.judgeSource == \"brain\") who = T(\"灵光的大脑\", \"灵光's brain\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Girlfriend\\GirlfriendRules.Logic.cs",
+    "line": 257,
+    "text": "static readonly string[] AiWords = { \"ai\", \"人工智能\", \"程序\", \"灵光\", \"模型\", \"训练\", \"电脑帮\", \"机器\" };"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Incremental\\IncrementalSim.cs",
+    "line": 278,
+    "text": "if (!SparkReady) return Reject(\"灵光还在积蓄：\" + Math.Ceiling(SparkCooldownLeft) + \" 秒。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\Core\\Incremental\\IncrementalSim.cs",
+    "line": 282,
+    "text": "return Accept(\"灵光一闪！\" + C.sparkDuration + \" 秒内所有收益 ×\" + C.sparkFactor + \"。\");"
+  },
+  {
+    "file": "Assets\\LingGuangV05\\CaseMenu\\Editor\\CaseMenuSceneBuilder.cs",
+    "line": 21,
+    "text": "[MenuItem(\"Tools/LingGuang/Build Computer Case Menu\")]"
+  }
+]

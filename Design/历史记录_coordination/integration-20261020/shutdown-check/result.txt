@@ -1,0 +1,33 @@
+C:\Users\xomem\Documents\ChatGPT\games\competition-integration-20261020\Assets\LingGuangV05\XingGuang\Core\XgSim.DayStats.cs(33,17): warning CS1718: 对同一变量进行比较；是否希望比较其他变量? [C:\Users\xomem\Documents\ChatGPT\games\.coordination\integration-20261020\shutdown-check\ShutdownCheck.csproj]
+C:\Users\xomem\Documents\ChatGPT\games\competition-integration-20261020\Assets\LingGuangV05\XingGuang\Tests\Editor\XgProgressionTests.cs(16,27): warning CS0649: 从未对字段“XgProgressionTests.Host.blocker”赋值，字段将一直保持其默认值 null [C:\Users\xomem\Documents\ChatGPT\games\.coordination\integration-20261020\shutdown-check\ShutdownCheck.csproj]
+C:\Users\xomem\Documents\ChatGPT\games\competition-integration-20261020\Assets\LingGuangV05\XingGuang\Core\XgSim.cs(67,37): warning CS0067: 从不使用事件“XgSim.CardTimedOut” [C:\Users\xomem\Documents\ChatGPT\games\.coordination\integration-20261020\shutdown-check\ShutdownCheck.csproj]
+C:\Users\xomem\Documents\ChatGPT\games\competition-integration-20261020\Assets\LingGuangV05\XingGuang\Core\XgSim.Quality.cs(79,53): warning CS0067: 从不使用事件“XgSim.QualityReported” [C:\Users\xomem\Documents\ChatGPT\games\.coordination\integration-20261020\shutdown-check\ShutdownCheck.csproj]
+PASS TheShutdownCardIsGuaranteedEarlyInStageOne
+PASS ShutdownCardsHaveNoRightAnswerAndPullTheSeed
+PASS ShutdownRandomDueCardIsPreservedAcrossReload
+PASS BackgroundGenerationDoesNotConsumeTheSingleShutdownQuestion
+PASS PendingStageOneShutdownCannotCatchUpInLaterStage
+PASS PendingShutdownSurvivesReloadWithoutDuplicatingAcrossDesks
+PASS AnsweredOldSaveKeepsEvidenceButNoPendingOrNewShutdownCard
+PASS OldPendingShutdownIsAdoptedAndDiscardingItDoesNotReissue
+PASS AuthoredCatalogHasFifteenUniqueBilingualPromptsAndExactVoteBudget
+PASS LaterPromptsRequireActualStageAndNoAnswerIsInferred
+PASS ManualAnswerPersistsRealClockRecordAndDoesNotTrain
+PASS InvalidGameClockCannotInventSourceDate (0,-1)
+PASS InvalidGameClockCannotInventSourceDate (20161301,0)
+PASS InvalidGameClockCannotInventSourceDate (20170101,0)
+PASS InvalidGameClockCannotInventSourceDate (20161230,86400)
+PASS MissingClockAndWrongOwnerCannotAppendRecord
+PASS FailedSaveRestoresExactLogSerialAndPreparationObjects
+PASS EchoRecordsTheChoiceButNeverPullsShutdownRule
+PASS RouteSelectionLocksBothNarrativeAndExistingRecordVotes
+PASS ShutdownDispatchIsOncePerActualStageWithoutAnswerOrCatchup
+PASS ShutdownWaitIsRandomBoundedSavedAndResetByActualStage
+PASS ShutdownDispatchSurvivesReloadAndSnapshotCopies
+PASS ShutdownLegacyAnswersAndVotesBlockOnlyTheirOwnStageWithoutLosingEvidence
+PASS ShutdownFailedDispatchRollsBackAndCanRetryWithoutInventingAnswer
+PASS ShutdownFailedAnswerPreservesDispatchAndRollsBackEvidenceBeforeRetry
+PASS CorruptOptionsAndDuplicateIdsRejectTheWholeCatalog
+PASS TwelveMemoriesCanAccumulateAcrossSixActualStagesAtTwoPerStage
+PASS IncompleteBooksUnlinkedNotesAndInventedCorrectionsCannotCreateMemories
+RESULT 28 passed, 0 failed

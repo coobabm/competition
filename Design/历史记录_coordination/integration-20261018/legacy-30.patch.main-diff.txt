@@ -1,0 +1,79 @@
+--- old-base
++++ new-main
+@@ -13,9 +13,8 @@
+     public sealed partial class YYGirlfriend
+     {
+-        static readonly Color PacketRed = new Color32(243, 90, 58, 255), AiGreen = new Color32(67, 160, 71, 255);
++        static readonly Color PacketRed = new Color32(243, 90, 58, 255);
+ 
+         /// <summary>
+-        /// Called by the YY view for every bubble: red packets are drawn red (QQ 2016 style), and a line the AI wrote
+-        /// for him is green with a hover note.
++        /// Called by the YY view for every bubble: red packets are drawn red (QQ 2016 style).
+         /// </summary>
+         public static void StyleBubble(YYMessage m, YYRoundRect shape, TMP_Text text)
+@@ -27,11 +26,4 @@
+                 if (text != null) text.color = Color.white;
+             }
+-            else if (m.byAi)
+-            {
+-                shape.color = AiGreen;
+-                if (text != null) text.color = Color.white;
+-                shape.raycastTarget = true;
+-                UiTip.Add(shape, () => GameText.T("这条是 " + (Instance != null ? Instance.AiName : "灵光") + " 代你回的。她以为是你。", "The AI wrote this one for you. She thinks it was you."));
+-            }
+         }
+     }
+@@ -39,6 +31,5 @@
+     /// <summary>
+     /// Her chat's own controls in the YY tool strip, on the right so the face picker keeps the left: the 红包 button
+-    /// (amount buttons over the strip, paid from the game wallet) and, from stage 5, 「让 灵光 代我回」.
+-    /// Shown only while her chat is selected.
++    /// (amount buttons over the strip, paid from the game wallet). Shown only while her chat is selected.
+     /// </summary>
+     public sealed class YYGirlfriendBar : MonoBehaviour
+@@ -46,6 +37,6 @@
+         YYChatView view;
+         RectTransform tools, conversation, panel;
+-        Button packetButton, aiButton;
+-        TMP_Text packetLabel, aiLabel, panelTitle, panelNote;
++        Button packetButton;
++        TMP_Text packetLabel, panelTitle, panelNote;
+         TMP_FontAsset font;
+         bool built;
+@@ -67,16 +58,7 @@
+             bool hers = hub.S.selected == YYChatHub.GirlfriendId && gf.G != null && gf.G.started && view.IsOpen;
+             packetButton.gameObject.SetActive(hers);
+-            bool ai = hers && gf.StandInAvailable;
+-            aiButton.gameObject.SetActive(ai);
+             if (!hers && panel.gameObject.activeSelf) panel.gameObject.SetActive(false);
+             if (!hers) return;
+             packetLabel.text = Lang.T("￥ 红包");
+-            if (ai)
+-            {
+-                bool on = gf.G.aiAuto;
+-                aiLabel.text = GameText.T("让 " + gf.AiName + " 代我回：" + (on ? "开" : "关"), "Let " + gf.AiName + " reply for me: " + (on ? "on" : "off"));
+-                ((YYRoundRect)aiButton.targetGraphic).color = on ? new Color32(67, 160, 71, 255) : new Color32(238, 241, 245, 255);
+-                aiLabel.color = on ? Color.white : new Color32(34, 40, 52, 255);
+-            }
+             if (panel.gameObject.activeSelf)
+                 panelTitle.text = GameText.T("发红包 · 钱包 ¥" + gf.Wallet.ToString("#,0.00", CultureInfo.InvariantCulture), "Send a red packet · wallet ¥" + gf.Wallet.ToString("#,0.00", CultureInfo.InvariantCulture));
+@@ -94,11 +76,4 @@
+             Place((RectTransform)packetButton.transform, new Vector2(1, .5f), new Vector2(-100, -13), new Vector2(-12, 13));
+             UiTip.Add(packetButton, "QQ 红包，用游戏里的钱。钱表达心意，买不来感情：合不合时宜比金额重要。", "A red packet, paid in game money. Money shows you care but cannot buy feelings: timing matters more than the amount.");
+-            aiButton = Button(tools, "GfStandIn", new Color32(238, 241, 245, 255), new Color32(34, 40, 52, 255), out aiLabel, () =>
+-            {
+-                var gf = YYGirlfriend.Instance;
+-                if (gf != null && gf.G != null) gf.SetStandIn(!gf.G.aiAuto);
+-            });
+-            Place((RectTransform)aiButton.transform, new Vector2(1, .5f), new Vector2(-330, -13), new Vector2(-108, 13));
+-            UiTip.Add(aiButton, () => Lang.T("开着的时候，她的消息由 AI 用它自己的语气替你回。她可能会发现。"));
+ 
+             panel = Rect("GfPacketPanel", conversation, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-372, 174), new Vector2(-12, 290));
+@@ -117,5 +92,5 @@
+             var window = YYChatHub.Instance != null && YYChatHub.Instance.router != null ? YYChatHub.Instance.router.Get(YYChatHub.AppId) : null;
+             if (window != null && window.Window != null)
+-                foreach (var s in new Component[] { packetButton, aiButton, panel })
++                foreach (var s in new Component[] { packetButton, panel })
+                     foreach (var sel in s.GetComponentsInChildren<Selectable>(true))
+                     {

@@ -1,0 +1,17 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.cs",
+    "baseline_sha256": "ff1f94dbd029c72c1b34869b35f15ed25fd0e8d6435d6e7209b2b508a6f2bbb3",
+    "candidate_sha256": "af62821ab9b40fae6b028fc68aa2efcb3ad8e72e3b53ce1a50d8becd4f5f67dc"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.Ui.cs",
+    "baseline_sha256": "86a9467eec0fd3e73d809ae9f1c874ae816f4ad29002505882aff4802d21c60f",
+    "candidate_sha256": "6417dfddac7ea438b60d396244654652dfdb383fd6b35a31638d79a480c8a0af"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+    "baseline_sha256": "3211317a6c3c89766d86240e4c129b6e6300ad5f6a8404503cc41706c3bb6ae9",
+    "candidate_sha256": "53363d4d2464af5630d385b5209eeb5f8351aa6698be6f195500c3bf48435087"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "candidateFiles": [
+    {
+      "path": "Assets/LingGuangV05/Mail2016/EndingLetterPresenter.cs",
+      "sha256": "78af1e97f5609dda5b585cd7151a6c722e52c76116d0b7a9dd9f21d9e016359d"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_letters.json",
+      "sha256": "db0d685076ab832ec76d742379bfe0c31dc98347b97ab250883a7d4c41d16946"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingLetterCatalog.cs",
+      "sha256": "9f2ca97d8692473c06f19ee0d0cb402c917779a37f2ce0f82ecd11e0c430a896"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingLetterChecks.cs",
+      "sha256": "61a56cbe383df6e62d5ab44caffd790990e84252b65ab8d3470e450c3b726989"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingLetterUiChecks.cs",
+      "sha256": "65a06c637436aaccef64d0887685c37a27b9cc72c7e2f44a74ca23665eedbddd"
+    }
+  ],
+  "sharedPatchSha256": "ccff1f20fc97a1f52acd2e0ddeb4db935234dc92ee1650ec3f97d44a1d6e1d7b",
+  "sharedBaseSha256": "20063bb037fab083a44272ce63188108311252b0381e0a3bce0260b693d50820"
+}

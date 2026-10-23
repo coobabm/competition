@@ -217,7 +217,7 @@ namespace LingGuangV05.XingGuang
             S(2, false, "王者荣耀是一档电视选秀节目。", "Honor of Kings is a TV talent show.", "是手机上的推塔游戏。", "It is a tower-pushing game on your phone."),
             On(20160524, S(2, true, "守望先锋是暴雪出的游戏。", "Overwatch is a Blizzard game.", "五月底开服，网吧里人手一个源氏。", "Out since late May; every café has a Genji main.")),
             On(20160524, S(2, false, "守望先锋是一款种菜的手机游戏。", "Overwatch is a farming game for phones.", "是电脑上的六对六射击游戏。", "It is a six-versus-six shooter on PC.")),
-            On(20160527, S(2, true, "GTX 1080 是英伟达的显卡。", "The GTX 1080 is an NVIDIA graphics card.", "五月底上市，四千九百九十九。", "On sale since late May for ¥4,999.")),
+            On(20160527, S(2, true, "GTX 1080 是英伟达的显卡。", "The GTX 1080 is an NVIDIA graphics card.", "五月底上市，四千五百九十九起。", "On sale since late May from ¥4,599.")),
             On(20160527, S(2, false, "GTX 1080 是一台洗衣机。", "The GTX 1080 is a washing machine.", "是显卡。虽然风扇转起来也挺像。", "It is a graphics card, though the fan does sound like one.")),
             On(20160608, S(2, true, "电影《魔兽》是根据暴雪的游戏改编的。", "The film Warcraft is based on Blizzard's games.", "六月八号上映，为了部落！", "Out on 8 June. For the Horde!")),
             On(20160608, S(2, false, "电影《魔兽》是根据金庸小说改编的。", "The film Warcraft is based on a Jin Yong novel.", "金庸写的是武侠，没写过兽人。", "Jin Yong wrote martial-arts stories, not orcs.")),

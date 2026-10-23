@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "file": "Assets/LocalBuild/Editor/DailyFeedbackActualUiChecks.cs",
+      "base_sha256": "9faa9fb8ef4e9fca47d1281943e57e741322466a19f1c5f1e6fe32bdc830ba63",
+      "candidate_sha256": "8f10a8ca9de57b0ab07efcc0fbf7bd923639ee56097953c69e2bd73bee848402"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 1,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

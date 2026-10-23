@@ -1,0 +1,12 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgActionGames.cs",
+    "baseline_sha256": "330ae7dd5a44d74b69ceda377a75d45643f7cf6b35f52b86d1489fc840a51910",
+    "candidate_sha256": "bce71dd735811a32c1822f8f9a7bba287d70bb09d755aa490636829198fdfe46"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/MoleReviewUiChecks.cs",
+    "baseline_sha256": "97c944d3138ffd33beb6b80562abc0f3f26b89c5b1a079250f021605f9bc6045",
+    "candidate_sha256": "e6a49ebaeb43009dc5de022b435eab2bfaa275724d10db9b7abc3c93b942c478"
+  }
+]

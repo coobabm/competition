@@ -1,0 +1,5 @@
+Actual CaseMenuHud Chrome + title actions on a neutral dark background. Not the 3D menu or a Player run.
+Full Build/BuildSettings deliberately omitted because they read PlayerPrefs through GamePerformance.
+FAIL: System.InvalidOperationException: Sequence contains no matching element
+  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <101642b95873440bbf9fec45cfcaa487>:0 
+  at TitleMarkPreview.Capture () [0x0024c] in C:\Users\xomem\Documents\ChatGPT\games\competition-integration-20261020\Assets\LocalBuild\Editor\TitleMarkPreview.cs:68 

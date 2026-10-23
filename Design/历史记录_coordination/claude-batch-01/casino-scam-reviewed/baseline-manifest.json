@@ -1,0 +1,154 @@
+{
+  "head": "3533141a406940d571e064f3797328c7d214235a",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/Editor/CasinoJuicePlayQa.cs",
+      "new": false,
+      "baselineSHA256": "38b2539c09af9c1b8b5454b3534f32f11a1308d209f3ae96098ed6f864b22dce",
+      "candidateSHA256": "f37e9b58b596460fb477d06025fd319ea03cdf794565581feb8851b64a893c50",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/Editor/CasinoPlayQa.cs",
+      "new": false,
+      "baselineSHA256": "99275c1dcd0ca8e16fb65b41ab03076a474b8695cc7ea95adc6ec5a3096fc72a",
+      "candidateSHA256": "3024a0fea2dd216505735280e055b488362ce21c241aeeced7797f4d99c2ca70",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBlackjackRules.cs",
+      "new": false,
+      "baselineSHA256": "47c6853e83a1954d630932c96c623542f2a4ae75f94e8da56a6d70cf72f1db2d",
+      "candidateSHA256": "cb4f5b086948562cb56bf7f61545f36e076125d841d957c870bdcb5c2d56896b",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingNarrative.cs",
+      "new": false,
+      "baselineSHA256": "589d8e024b63ec80abaae468532d4a3ddb42fad1b12c12bca672876c874bf576",
+      "candidateSHA256": "ca478eb17e091f5ddb454e0e19901ba13f9771fe57d9e133af69292ca1879e5e",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingPreparation.cs",
+      "new": false,
+      "baselineSHA256": "0c9b6dd4fcdbb17a0b3a8e2d189805917fe10dd2600e7d955c41946d706b12d0",
+      "candidateSHA256": "33f36063d309dc91ac4ccb865505fe7f2d761d19fee56fe0bd9e47c16842a525",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Casino.cs",
+      "new": false,
+      "baselineSHA256": "2898a1473048c6723e8fb9fc9074083cd73d4c931c7720935d568ff7fb445e39",
+      "candidateSHA256": "6efc057958e6f2ad9a406f6fe86ac1bf4d82485734b10d79c6301b8ebedcdf37",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Gambling.cs",
+      "new": true,
+      "baselineSHA256": null,
+      "candidateSHA256": "525b361565227695c1832f74f050e43fca4ae3ebf6cde880196d4735ba09f183",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Gambling.cs.meta",
+      "new": true,
+      "baselineSHA256": null,
+      "candidateSHA256": "538b33e53ff8578406d4ec709a15db0ab237d3b6ed19ea0380748873e282ab92",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs",
+      "new": false,
+      "baselineSHA256": "57a1e6623cc58e068aa8b130f58f1f2111821c5ddc913143722311f58abdfee7",
+      "candidateSHA256": "197519f99e22b1ef393a6225513669b50cc50664f58aff07bf3da62794a3263d",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBlackjackTests.cs",
+      "new": false,
+      "baselineSHA256": "977a56138ba3c04f31de2e525943050b50cafd5b368bcb7cd09859c0615af6f4",
+      "candidateSHA256": "6b31fd387ccfdfe33b78d0a90459fc82bc7d3e097d86e679e44f18ebf3c6956f",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoFairnessTests.cs",
+      "new": false,
+      "baselineSHA256": "4d38d59ae5dbd0778a5c9c29a6d5b8908abf8abb92047ecab9df92397982898d",
+      "candidateSHA256": "d39c875b42cac0ca9867672d846c5e3121e875844d0c0b3a831378212e2a6a46",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoScamTests.cs",
+      "new": true,
+      "baselineSHA256": null,
+      "candidateSHA256": "7269972968599badcbc5fc53eed258bbcfabf232c4351d4266de784357c544d4",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoScamTests.cs.meta",
+      "new": true,
+      "baselineSHA256": null,
+      "candidateSHA256": "c09b70d7b056142cef91046a01caea41d0ebb2353243045dfa1450776e65ce8a",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoTests.cs",
+      "new": false,
+      "baselineSHA256": "a256f0d8733d48bdc551838a11c342bfd2905b9bf73b6681c97910932c2ef5d9",
+      "candidateSHA256": "bd0af7bcbcb12ece5becea21ebb52d5efb804def986af2bd3d2e465fcb836c52",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingNarrativeTests.cs",
+      "new": false,
+      "baselineSHA256": "f6281822ac439ae59999281eac85501cd7b03deb574300dbd5ae20a0ebfb3570",
+      "candidateSHA256": "4973bd1639240b4309088b6b19cb0a9f9cc6c64f3c7816cb3dbf9c7322f1a706",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingPreparationTests.cs",
+      "new": false,
+      "baselineSHA256": "cdadfaff16c9cdce6f3ad88b9d6f2d4ad93f81af12d729fab951dfac5a72d043",
+      "candidateSHA256": "34a9843748e0c01951c6db9df9c4ffde6e93d1242c32dc1c865cb1d994c86341",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoDesktop.cs",
+      "new": false,
+      "baselineSHA256": "05cf1c85fb687fedf556a606d9e1ecd8bf6005aa9dce398841a50a39c150b314",
+      "candidateSHA256": "dfb8f344731d128f02152dbf060446d9fdd2e0cf95056c5fb91bf0f16a92aeb0",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Blackjack.cs",
+      "new": false,
+      "baselineSHA256": "db58d3c51b5db41ea76dde06bd03c42bddf91847e50289bc293903cef2109b87",
+      "candidateSHA256": "81926dd448bd45bd643f654ffb72afc93e8a46d319e82a10136a3b2b0775476a",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.cs",
+      "new": false,
+      "baselineSHA256": "13e0101a65a4f294336f01921e516f540e25a5bf4ca32d117899f461ed457929",
+      "candidateSHA256": "9896e737c4dbe179ef671d4f055df0de8036917862eb56039373a3ffe6a8fcae",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Scam.cs",
+      "new": true,
+      "baselineSHA256": null,
+      "candidateSHA256": "993c342d7ecf236d40dcd75026e03dd7b9e06c68a277c008db8d593642d35b2c",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Scam.cs.meta",
+      "new": true,
+      "baselineSHA256": null,
+      "candidateSHA256": "591293a9f429e6206b5d910b3da7dd307a0151ca76dd2f4adb1e6bd3db3106f2",
+      "productionUnchanged": true
+    }
+  ],
+  "patchSHA256": "e7e1d59eb98b94524f37918313549854e821ab9833bcb9e90288e7f24d929a83",
+  "currentExternalCoreSHA256": "f851d7341deb2be1ded33ec5940b002a37a4811be5c7f3c2a0d3ee7e7da58887"
+}

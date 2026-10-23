@@ -1,0 +1,67 @@
+[
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "baseline": "636ee3faf070fa7580d811f04f2bdbafec406a3745d99570f36cd57cb090c408",
+    "candidate": "39bbc2376fcd419c8f5dfff9bd5c768e1fa10c381f945c48718738ed7e67e261"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "baseline": "cb16b8ff5acbc8028dd92ebe5e02358b7b74cbe9779c29e113a2e5620d9c2e4e",
+    "candidate": "1ea76820a208428b183a48b0ecbb263d2f1de012661266463bcb0b9b15cdc950"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "baseline": "42148c317209f29c1a5f063602c0ba77fb41de264590106f31cc27eb4a0834dd",
+    "candidate": "6bafb1decba0183d65a4327b2526792dff236bddb72276638aff7149a687d106"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "baseline": "82642c064d6e6316f9323add4adf8691c6236f339180e3cb9271ba0390ed60c9",
+    "candidate": "d26b574df19063021d990526954432b6ac36efabf689455eb2b6b2be554cbae4"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "baseline": "ab8ee6e873b372f77157f8e6a4b3c81577fc7e312d38f5518780ca076ecd6477",
+    "candidate": "1f579a573ba396843e1f1f832b22b564d955c48001df4dec52ca2510646e51b7"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "baseline": "c96ae33805c8011a61a4d59fe813c0ddf7d506160db484e5ed79a69ae48acb9c",
+    "candidate": "d94dafedb2e8886a3fed1a603db9198c7ae81827ccf7786f37b20fb94947df01"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "baseline": "0702ccc2d260ef3c4d35a7cce73e0d9d014f4710315cdf921ebd5cec92ca09c2",
+    "candidate": "55cac1608d35b762647f3337250657cdd1b25a20d4f1b749a7c25b330c1edd9e"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "baseline": "96b2450cf940c2fada2ab3322c5cc64b281557b69ee902d70d4b656c1f70be8b",
+    "candidate": "e759e57edd57ddd33999e2990863a83be5e57b08cc9fc3491c524f660c68cc9c"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYGroup.cs",
+    "baseline": "3fdf820b2994b74416023538df96122bf3c0fc1416b2cf6da20387bf2bc93470",
+    "candidate": "c7c110867914a4ba5313f2e56504792ae470114f4b80b65fb462710e6297e0eb"
+  },
+  {
+    "path": "Design/data/browser_news.json",
+    "baseline": "cb16b8ff5acbc8028dd92ebe5e02358b7b74cbe9779c29e113a2e5620d9c2e4e",
+    "candidate": "1ea76820a208428b183a48b0ecbb263d2f1de012661266463bcb0b9b15cdc950"
+  },
+  {
+    "path": "Design/data/chat_unlocks.json",
+    "baseline": "ab8ee6e873b372f77157f8e6a4b3c81577fc7e312d38f5518780ca076ecd6477",
+    "candidate": "1f579a573ba396843e1f1f832b22b564d955c48001df4dec52ca2510646e51b7"
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "baseline": "c45ef4ea3f6f8e1592a8e9d5da9eea3cbd2c8d1317312d7c29fd8749dc638688",
+    "candidate": "a9be900bf183242092648098d7e2512d6d8e73759ed4d2ca67b402a5fe49c879"
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "baseline": "e2fe5098771d1a68407660ee359fc3427d90ca792c7dcc1a8a1260e7eef7dffd",
+    "candidate": "be77925bd758689a595bdddaa601ea916f50a551d018089e9bb1475fbecd42e9"
+  }
+]

@@ -327,8 +327,8 @@
     {
       "id": "gtx-1080-launch",
       "topic": "科技",
-      "zh": "亮影 GTX 1080 于 2016 年 5 月 27 日上市，16 纳米 Pascal 架构，功耗 180W，定价 599 美元起，公版 699 美元。",
-      "en": "The Liangying GTX 1080 went on sale on 27 May 2016: 16nm Pascal architecture, 180W, from US$599, Founders Edition US$699.",
+      "zh": "亮影 GTX 1080 于 2016 年 5 月 27 日上市，16 纳米 Pascal 架构，功耗 180W，定价 599 美元起，公版 699 美元；国行 4599 元起，公版（创始人版）5399 元。",
+      "en": "The Liangying GTX 1080 went on sale on 27 May 2016: 16nm Pascal architecture, 180W, from US$599, Founders Edition US$699; in China from ¥4,599, Founders Edition ¥5,399.",
       "from": "2016-05-27",
       "until": "",
       "importance": 3
@@ -336,9 +336,18 @@
     {
       "id": "gtx-1070-launch",
       "topic": "科技",
-      "zh": "亮影 GTX 1070 于 2016 年 6 月 10 日上市，同样有 8GB 显存，定价 379 美元起，性价比受到关注。",
-      "en": "The Liangying GTX 1070 went on sale on 10 June 2016, also with 8GB of memory, from US$379, and was noted for its value.",
+      "zh": "亮影 GTX 1070 于 2016 年 6 月 10 日上市，同样有 8GB 显存，定价 379 美元起（国行 2899 元起，公版 3499 元），性价比受到关注。",
+      "en": "The Liangying GTX 1070 went on sale on 10 June 2016, also with 8GB of memory, from US$379 (in China from ¥2,899, Founders Edition ¥3,499), and was noted for its value.",
       "from": "2016-06-10",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "gtx-970-launch",
+      "topic": "科技",
+      "zh": "亮影 GTX 970 于 2014 年 9 月发布，国行首发价 2499 元；标称 4GB 显存，其中高速部分只有 3.5GB，后来闹出过风波。",
+      "en": "The Liangying GTX 970 came out in September 2014 at a China launch price of ¥2,499; it is sold as 4GB, but only 3.5GB of that memory is fast, which later caused an uproar.",
+      "from": "2014-09-19",
       "until": "",
       "importance": 2
     },
@@ -1401,6 +1410,15 @@
       "zh": "2016 年很多大学宿舍要办校园网才能上网，按月或按流量收费，晚上熄灯后也常断网。",
       "en": "In 2016 many university dorms needed a campus network account to get online, paid monthly or by data, and the internet often went off after lights-out.",
       "from": "",
+      "until": "",
+      "importance": 2
+    },
+    {
+      "id": "xiaoice-4",
+      "topic": "科技",
+      "zh": "2016 年 8 月 5 日，微软在北京发布第四代小冰，用上「情感计算框架」，第一次能和人类双向通电话。截至 2016 年 7 月，小冰在中国有 4200 万用户。",
+      "en": "On 5 August 2016 Microsoft launched the fourth-generation XiaoIce in Beijing, built on an emotional computing framework and able, for the first time, to hold a two-way phone call with a person. As of July 2016 XiaoIce had 42 million users in China.",
+      "from": "2016-08-05",
       "until": "",
       "importance": 2
     },

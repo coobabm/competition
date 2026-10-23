@@ -1,0 +1,209 @@
+{
+  "status": "existing failed-artifact analysis, not a new Unity pass",
+  "run": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-214800-639",
+  "failure": "System.InvalidOperationException: Zhongbao business UI: actual reload restores order state and balance exactly without paying advances again\r\n  at ZhongbaoBusinessUiChecks.Need (System.Boolean ok, System.String why) [0x00020] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\ZhongbaoBusinessUiChecks.cs:51 \r\n  at ZhongbaoBusinessUiChecks+<Frames>d__44.MoveNext () [0x011e3] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\ZhongbaoBusinessUiChecks.cs:259 \r\n  at SidebarLayoutChecks.Tick () [0x00e34] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\SidebarLayoutChecks.cs:278 ",
+  "report_sha256": "dfaafc521507fc1e1e10d5431333f565b5312141355a6c2c86d4cee34bef3d40",
+  "initial": {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-214800-639\\Save\\slots\\2\\chapter-one.sav",
+    "sha256": "4479337fbdd17a96556c10f9f6a0670681cb4e48554c42b7ef4167d6e23b86a2",
+    "payload_checksum_valid": true,
+    "money": 10000.0,
+    "totalEarned": 0.0,
+    "gameSeconds": 0.0,
+    "totalIncome": 0.0,
+    "contracts": [],
+    "best": [
+      {
+        "dataset": "mnist",
+        "arch": "mlp",
+        "acc": 0.995,
+        "modelId": 1
+      },
+      {
+        "dataset": "poems",
+        "arch": "rnn",
+        "acc": 0.4,
+        "modelId": 2
+      },
+      {
+        "dataset": "danmu",
+        "arch": "mlp",
+        "acc": 0.9,
+        "modelId": 3
+      },
+      {
+        "dataset": "logic",
+        "arch": "mlp",
+        "acc": 0.8,
+        "modelId": 4
+      }
+    ],
+    "wiring": {
+      "version": 1,
+      "pulled": [],
+      "rented": [],
+      "placed": [],
+      "runOff": [],
+      "runOn": [],
+      "idle": [],
+      "rentSeconds": 0.0,
+      "rentPaid": 0.0,
+      "receiptsPaid": 0.0,
+      "ajieMul": 1.0,
+      "ajieClock": 0.0,
+      "ajieAsked": 0,
+      "ajieLies": 0,
+      "ajieTruth": false,
+      "ajieCutoff": false,
+      "ajiePending": false,
+      "ajieJob": false,
+      "ajieLastLie": "",
+      "night": false
+    }
+  },
+  "signed_archive": {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-214800-639\\Save\\slots\\3\\chapter-one.sav",
+    "sha256": "e6c2a36d503a6730bbb8994c38dfe324a279ded2b40dddfb773603c4a47e30c7",
+    "payload_checksum_valid": true,
+    "money": 10290.0,
+    "totalEarned": 290.0,
+    "gameSeconds": 0.0,
+    "totalIncome": 290.0,
+    "contracts": [
+      "cheque",
+      "acrostic",
+      "danmaku"
+    ],
+    "best": [
+      {
+        "dataset": "mnist",
+        "arch": "mlp",
+        "acc": 0.995,
+        "modelId": 1
+      },
+      {
+        "dataset": "poems",
+        "arch": "rnn",
+        "acc": 0.4,
+        "modelId": 2
+      },
+      {
+        "dataset": "danmu",
+        "arch": "mlp",
+        "acc": 0.9,
+        "modelId": 3
+      },
+      {
+        "dataset": "logic",
+        "arch": "mlp",
+        "acc": 0.8,
+        "modelId": 4
+      }
+    ],
+    "wiring": {
+      "version": 1,
+      "pulled": [],
+      "rented": [],
+      "placed": [],
+      "runOff": [],
+      "runOn": [],
+      "idle": [],
+      "rentSeconds": 0.0,
+      "rentPaid": 0.0,
+      "receiptsPaid": 0.0,
+      "ajieMul": 1.0,
+      "ajieClock": 0.0,
+      "ajieAsked": 0,
+      "ajieLies": 0,
+      "ajieTruth": false,
+      "ajieCutoff": false,
+      "ajiePending": false,
+      "ajieJob": false,
+      "ajieLastLie": "",
+      "night": false
+    }
+  },
+  "reloaded_primary": {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-214800-639\\Save\\chapter-one.sav",
+    "sha256": "e6c2a36d503a6730bbb8994c38dfe324a279ded2b40dddfb773603c4a47e30c7",
+    "payload_checksum_valid": true,
+    "money": 10290.0,
+    "totalEarned": 290.0,
+    "gameSeconds": 0.0,
+    "totalIncome": 290.0,
+    "contracts": [
+      "cheque",
+      "acrostic",
+      "danmaku"
+    ],
+    "best": [
+      {
+        "dataset": "mnist",
+        "arch": "mlp",
+        "acc": 0.995,
+        "modelId": 1
+      },
+      {
+        "dataset": "poems",
+        "arch": "rnn",
+        "acc": 0.4,
+        "modelId": 2
+      },
+      {
+        "dataset": "danmu",
+        "arch": "mlp",
+        "acc": 0.9,
+        "modelId": 3
+      },
+      {
+        "dataset": "logic",
+        "arch": "mlp",
+        "acc": 0.8,
+        "modelId": 4
+      }
+    ],
+    "wiring": {
+      "version": 1,
+      "pulled": [],
+      "rented": [],
+      "placed": [],
+      "runOff": [],
+      "runOn": [],
+      "idle": [],
+      "rentSeconds": 0.0,
+      "rentPaid": 0.0,
+      "receiptsPaid": 0.0,
+      "ajieMul": 1.0,
+      "ajieClock": 0.0,
+      "ajieAsked": 0,
+      "ajieLies": 0,
+      "ajieTruth": false,
+      "ajieCutoff": false,
+      "ajiePending": false,
+      "ajieJob": false,
+      "ajieLastLie": "",
+      "night": false
+    }
+  },
+  "entire_household_payload_equal_after_reload": true,
+  "entire_nested_lab_payload_equal_after_reload": true,
+  "advance_sum": 290,
+  "money_increase": 290.0,
+  "no_powered_model_placements_in_original_fixture": true,
+  "screenshots": [
+    {
+      "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-214800-639\\zhongbao-business-zh-960x600-02-signed-danmaku.png",
+      "sha256": "94a1052425a58fe12b39732464685c1562a477b1136dfd9f78894fc7b8a935fb"
+    },
+    {
+      "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-214800-639\\zhongbao-business-failure.png",
+      "sha256": "4fa90c390fd39049dd4b03d42e14cd03d2151d865bb5ddeba237fa282bb7d078"
+    }
+  ],
+  "formula_at_factor_1": {
+    "cheque": 0.7333333333333334,
+    "acrostic": 0.5384615384615385,
+    "danmaku": 1.0
+  },
+  "limits": "Original failure captures contain no live graph dump. Cached-graph factor asymmetry is supported by visible card rates, empty saved placements and the source lifecycle; the candidate adds before/after live graph probes for root runtime verification."
+}

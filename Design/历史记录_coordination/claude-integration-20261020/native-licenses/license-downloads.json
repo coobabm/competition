@@ -1,0 +1,18 @@
+[
+  {
+    "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/872646b30c342c5fa98efec002f94fdb4f1f1ea5/LICENSE",
+    "file": "llama.cpp-LICENSE"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/872646b30c342c5fa98efec002f94fdb4f1f1ea5/licenses/LICENSE-jsonhpp",
+    "file": "jsonhpp-LICENSE"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/872646b30c342c5fa98efec002f94fdb4f1f1ea5/vendor/cpp-httplib/LICENSE",
+    "file": "cpp-httplib-LICENSE"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/Mysticial/FeatureDetector/077393260d5e0e19938582a33b9dd0e74baa8ff2/LICENSE",
+    "file": "FeatureDetector-LICENSE"
+  }
+]

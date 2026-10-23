@@ -1,0 +1,38 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.LifeEvents.cs",
+    "sha256": "A880E32E0C192EF3A3FA52D9412E6436FAB4F4F339B8B6E1E2ABD451C7B82E69"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.LifeData.cs",
+    "sha256": "4A01A24D043EA21A7A4F3B7C15F2E4C768044FE76C21EB2B018C9D6EAEE14F1A"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLifeEventCard.cs",
+    "sha256": "97B7DDCF7255430536EC2F5B8D7B42252149F11E8CC70B4D4C48C4759226329C"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLifeHostActivity.cs",
+    "sha256": "A4040060CDDBB87F1B6E961894E3DC1E9D35B804A030E793A87AE07A6DBFF599"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+    "sha256": "78AB96F7F841D379A626BABF003F104836E54B8E21177B671CEE97325CF7D71C"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/PlayerWindowState.cs",
+    "sha256": "D765E7DF62C8F2F99532B51E7B8ED9E29B4635EACC2264675838B1AAE0191EEC"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "sha256": "96B2450CF940C2FADA2AB3322C5CC64B281557B69EE902D70D4B656C1F70BE8B"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+    "sha256": "4E298F3324691063C9DE24D80503B5026AEDAFE809D744E391139616301D1D90"
+  },
+  {
+    "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+    "sha256": "A87E77445E7E026DBB71043F016772370A8D75EFFF9A3118A03C40745FC61D97"
+  }
+]

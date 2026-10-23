@@ -1,0 +1,56 @@
+{
+  "patch": "patch/read-news-rag.patch",
+  "sha256": "51eb016b618766c60a428f02fcdd16f930cdd0cb51411cdbf91627fc861901a0",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+      "baselineSHA256": "3b56e8f90bc23e1c3587eb72f73684e639a0f2442a3d506007847fbc24dd3741",
+      "candidateSHA256": "99599dcaf1201ea1b381fae1e42c92481187239d38efb77c643cb223a124aa1e"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+      "baselineSHA256": "6e2f9569de33361d51b49b7fed70e2dd829e6510ddd04c75dbf37c06b3e283f7",
+      "candidateSHA256": "29e60a90a77c8a7eff44e70f591c1968ab3339c11b0062aae5fd02a8e6dfdbd9"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyLife.cs",
+      "baselineSHA256": "d6f5eb3a18c19ad71383ae9cfce8c94d6f5da820c054214e09103ebc9f89c6e6",
+      "candidateSHA256": "53300d5235b80d45b09036f48fea96fdb3cb33ef1c264fef7147710219b5236b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.ReadNews.cs",
+      "baselineSHA256": null,
+      "candidateSHA256": "8785518988b56395eb7ab4e1c62e808e172121096ebc470d15792841697e86d7"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.ReadNews.cs.meta",
+      "baselineSHA256": null,
+      "candidateSHA256": "688962eb665626fd519d5e9db796549b83622abc00f957409c2506cea080b6ba"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs",
+      "baselineSHA256": "15655ef508b60d5d79a070686b230b1024cb1454f57d3b5bb0a1ea3923064f7d",
+      "candidateSHA256": "c7b1e6d072ec130828fc207f878ed32bda369ba1b531f0d7924944c225e17372"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgReadNewsTests.cs",
+      "baselineSHA256": null,
+      "candidateSHA256": "44c0957ab210cc5a75708eb485c7d311ec618b95b21b4444c9a70980f24a09d5"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgReadNewsTests.cs.meta",
+      "baselineSHA256": null,
+      "candidateSHA256": "41e36340ffded0946ebbcaed2e5eb0c573d2ffadb41f404c3301dde51cdfb268"
+    }
+  ],
+  "compiled": [
+    "LingGuangV05.XingGuang.Core",
+    "Assembly-CSharp",
+    "LingGuangV05.XingGuang.Tests"
+  ],
+  "expandedTestCases": 17,
+  "testsExecuted": false,
+  "unityStarted": false,
+  "productionModified": false,
+  "applyCheck": "passed"
+}

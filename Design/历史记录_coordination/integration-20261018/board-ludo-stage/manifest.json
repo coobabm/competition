@@ -1,0 +1,139 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/Games/LudoGame.cs",
+      "base_sha256": null,
+      "candidate_sha256": "e195f7642499f7195b36293033e9d08fd821c1fa62a92f746a4565939879d725"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/LudoGame.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "b4fe6305b0aaadff6f939e516723ebeb0af45410af567f5b12de12423b8f6b42"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/ChessPanel.cs",
+      "base_sha256": "26a326c05821e2272430eca004205984529352cf75be9d246194d9d00b7746cb",
+      "candidate_sha256": "b4017e41c9d5889df89f5786f7825b82db9887da0a37e15cc920959d0c44aab7"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "base_sha256": "0fb12ba125d152b84e2c4cdb2767f2b30052770d284b6d2caae6285bf5eaa110",
+      "candidate_sha256": "d3947e85131ddf2d122bcc38092feece06765988a416f54f567fc07515177da5"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameReactions.cs",
+      "base_sha256": "67d1b95481a33399911ae17f926015233a451f3ee374460b8a641fed1bdc9460",
+      "candidate_sha256": "804badbf95ad4446c99e04827ba2a90a7310aec627b7bfbc889dd408f0c5afcc"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GomokuPanel.cs",
+      "base_sha256": "f9f685dee7e5b53b20c209d0f8e75aee0c147f5c8d4f65e951344a2078b235f3",
+      "candidate_sha256": "9275bf4556670d2609869451f0be7f1f7d89f8b6230a3ae98e780206ee99d71f"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GoPanel.cs",
+      "base_sha256": "a4be209559c5147c795a66c41914a0a49eda56877a6de3d3d0545009dcd83b79",
+      "candidate_sha256": "243bbaa1e04b43d3174aae49da1b2ff1f55d91db3b1d45a54a561e60e2adb25b"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/HubGame.BoardSessions.cs",
+      "base_sha256": null,
+      "candidate_sha256": "eaf7489710d2adf998ee37aa15944ccdd3a3482410725aa9d9438a880d019277"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/HubGame.BoardSessions.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "80c66c771881faa612c7bf0be7246d4b8e50f284c8f593c39e765779fe5dc057"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/LudoPanel.cs",
+      "base_sha256": null,
+      "candidate_sha256": "220d66a2f953f2fce9e2278f65ec800ada0c0e8385f8804de97cffd8b9125eb7"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/LudoPanel.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "1fece3dfcef798e09b3a8916145739f1ff1aa117cfd53f1a2f1b43fc836a3729"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/LudoGameTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "38ddee1e9901967ea3f43a4e7b88fd91127a0e2239470ca6a9d7ebddcd871d12"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/LudoGameTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "84e3bc943cd1742565bb16623d99e5aa4757704974c4d7240bd4476baa3910d1"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+      "base_sha256": "614daf5a9e204d70e3ecdeb91dcec49035767c143729970d3d801deaf88eebf8",
+      "candidate_sha256": "be1f39a42bfba723d22c0b69e0c8375df1af0f3c3af91cdf1e876e6f8e1dbde4"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardRecords.cs",
+      "base_sha256": null,
+      "candidate_sha256": "7901b8a71095ee3c9310d6c07fa38e238d2cf04117570b551dc51170cdd6694a"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardRecords.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "58535819eee37c5bc556cfb4dd051de62bb53067e981af987a6edc5d9c0db8d9"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "base_sha256": "e9a639aaaf66eedb84780df83b19fba3c99bb94c89becacaffac8e896fe0b1c4",
+      "candidate_sha256": "df4de27f07273c01bc163a9a939c271eef64c3dcb177f2fa1715ee7b3992f306"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataFiles.cs",
+      "base_sha256": "d5c95fc26a0bd56bf87334cff64bfaeaf5f6fb11557dc617ca073ef048cecd64",
+      "candidate_sha256": "b11bf104f6b5d3156f3caa23d19145537ff6fc6305feb9efbe9b3f6260a254c3"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.Games.cs",
+      "base_sha256": "a85f52dea717c8c0f12f882cd37ebf00373e7dba630bf61a6e6dd171ec523ad8",
+      "candidate_sha256": "efa5a9065c72bbc2ff27352a104ec66ac0f782b6e018e489433b0f84d1cdf713"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "base_sha256": "b46bddeebb875b23f7db294dbe9304e9eb8f88118d3397c31913e281752a3414",
+      "candidate_sha256": "bfe06fdc87b4e02e053e88d0eb1d251c81603845f08e3e0096c5440cecb88f36"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.cs",
+      "base_sha256": "d5ce90d97f8ce01f9b83b3a9e4b01273483bcb8d80ef28046d2b8e6f2c97e9a4",
+      "candidate_sha256": "4551b9458826428e1a37b37e8d8b85e181af58cfb795624b42d0f95ec8cfa71f"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+      "base_sha256": "ef3596bf16c3d23f420d9a5f52c580ed4cf43fa1aafad209882ab6359027dc7c",
+      "candidate_sha256": "653b6ac5a2766d825580aee3f754eb1d5c8ad34a18b516afc8edb922fba8820f"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs",
+      "base_sha256": "a4f965b45dd732472f843a65f2216d1b27f52f88e8d521751a0634dcc9f5e51f",
+      "candidate_sha256": "e3c41fd64fa5d62cbbc78241dc69c14700d106004da9c2decadfb58ec2a8ddfa"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardRecordsTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "99cc658072e8c5b1a943ef4dc139ddfaf2ecbea7351abe6db42a7e10c35533b4"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardRecordsTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "59b3f107c928137f0d161860f74f5634112c78684c8f0a6e0bc9a3fb7584be60"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGamesTests.cs",
+      "base_sha256": "fb24d9063312b2f4caf630e9fdea38c71707876950f8dc9df6aea0d64c73eff9",
+      "candidate_sha256": "052afab71f666069a29135b48003718a434107c6a2ff4fb1bdd50b89303858f6"
+    }
+  ],
+  "new_tests": 14,
+  "updated_legacy_tests": 3,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

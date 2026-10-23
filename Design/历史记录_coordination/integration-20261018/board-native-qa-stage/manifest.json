@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "file": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs",
+      "base_sha256": null,
+      "candidate_sha256": "ebe474feaf577bb77f92e38524f40cd53fcd2dc3d57f747c8be7e38ee66de099"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "de75ae954b7ff048b679d3bd7ea326acb8d3761992e77ec151a177686775135b"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

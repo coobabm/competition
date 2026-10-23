@@ -1,0 +1,31 @@
+{
+  "minigame_packs.json": {
+    "packs": 19
+  },
+  "stage_quiz.json": {
+    "quizzes": 21
+  },
+  "persona_packs.json": {
+    "tags": 9,
+    "packs": 8
+  },
+  "chat_unlocks.json": {
+    "unlocks": 12
+  },
+  "life_events_100.json": {
+    "events": 100
+  },
+  "yy_group_presets.json": {
+    "presets": 30
+  },
+  "browser_news.json": {
+    "articles": 43
+  },
+  "chess_mates.json": {
+    "puzzles": 7
+  },
+  "chess_mates_lichess.json": {
+    "mateIn1": 25,
+    "mateIn2": 25
+  }
+}

@@ -1,0 +1,5072 @@
+[
+  {
+    "kind": "news",
+    "id": "n0601",
+    "title": "震惊！这三种水果晚上吃等于吃砒霜",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-06-01\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "虚构水文，不作为真实历史来源。"
+  },
+  {
+    "kind": "news",
+    "id": "n0607",
+    "title": "940 万考生今日走进高考考场",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-06-07\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0608",
+    "title": "《魔兽》首日票房破 3 亿，影院凌晨场爆满",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-06-08\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0616",
+    "title": "上海迪士尼今日开园，排队最长 3 小时",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-06-16\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0620",
+    "title": "1 比 3 落后翻盘！骑士夺得 NBA 总冠军",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-06-20\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0624",
+    "title": "英国公投决定脱离欧盟",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-06-24\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0628",
+    "title": "程序员为什么都穿格子衫？真相让人泪目",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-06-28\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "虚构水文，不作为真实历史来源。"
+  },
+  {
+    "kind": "news",
+    "id": "n0702",
+    "title": "武汉连日暴雨，市民「出门看海」",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-07-02\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0707",
+    "title": "Pokémon GO 全球爆红，国内玩家只能看",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-07-07\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "GPS封号具体时间/一日爆红范围需来源核验，未篡改历史事实。 未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0708",
+    "title": "《大鱼海棠》上映，十二年终于等到了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-07-08\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0711",
+    "title": "Prisma 刷屏：一键把自拍变成油画",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-07-11\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0718",
+    "title": "你的颈椎还好吗？每天坚持这 5 个动作",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-07-18\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "虚构水文，不作为真实历史来源。"
+  },
+  {
+    "kind": "news",
+    "id": "n0725",
+    "title": "「葛优躺」火了：二十年前的剧照成了今年最红表情包",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-07-25\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0729",
+    "title": "今天是 Win10 免费升级最后一天",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-07-29\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0801",
+    "title": "滴滴宣布收购优步中国",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-08-01\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0808",
+    "title": "「我已经用了洪荒之力！」傅园慧采访爆红",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-08-08\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0816",
+    "title": "我国成功发射世界首颗量子科学实验卫星「墨子号」",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-08-16\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0821",
+    "title": "中国女排时隔 12 年再夺奥运金牌",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-08-21\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "决赛日期有本地交叉依据；“凌晨四点”直播时区待核验。 未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0825",
+    "title": "月薪三千和月薪三万的人，差在哪里？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-08-25\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "虚构水文，不作为真实历史来源。"
+  },
+  {
+    "kind": "news",
+    "id": "n0830",
+    "title": "「先定一个小目标，比方说先挣它一个亿」",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-08-30\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0902",
+    "title": "三星宣布召回 Note7：电池可能起火",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-09-02\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "召回与多国禁飞表述同日，禁飞实际发布日期待核验。 未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0904",
+    "title": "G20 峰会在杭州开幕",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-09-04\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0908",
+    "title": "iPhone 7 发布：取消耳机孔，新增亮黑色",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-09-08\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0915",
+    "title": "中秋夜，天宫二号发射成功",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-09-15\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0920",
+    "title": "这 10 个习惯，正在悄悄毁掉你的电脑",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-09-20\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "虚构水文，不作为真实历史来源。"
+  },
+  {
+    "kind": "news",
+    "id": "n0922",
+    "title": "谷歌公开图像描述模型：让电脑看图写一句话",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-09-22\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "来源字段已列但未联网核验。"
+  },
+  {
+    "kind": "news",
+    "id": "n0925",
+    "title": "世界最大单口径射电望远镜 FAST 落成",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-09-25\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n0928",
+    "title": "谷歌翻译换成神经网络，错误少了六成",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-09-28\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1002",
+    "title": "美剧《西部世界》首播：机器人开始做梦",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-10-02\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1010",
+    "title": "「蓝瘦，香菇」是什么梗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-10-10\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1013",
+    "title": "鲍勃·迪伦获诺贝尔文学奖",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-10-13\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": "候选移除“好几天未回应”未来事实及“首次给歌手”断言，正文只陈述获奖。 未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1017",
+    "title": "神舟十一号发射，两名航天员将在太空住一个月",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-10-17\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1021",
+    "title": "《文明 6》发售：「再来一回合」又害了一批人",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-10-21\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1027",
+    "title": "PPAP 洗脑神曲：一支笔一个苹果，播放量破亿",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-10-27\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "虚构水文，不作为真实历史来源。"
+  },
+  {
+    "kind": "news",
+    "id": "n1109",
+    "title": "美国大选结果揭晓",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-11-09\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1112",
+    "title": "双十一全天成交 1207 亿元",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-11-12\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1116",
+    "title": "乌镇街头跑起无人车",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-11-16\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1122",
+    "title": "隔夜菜到底能不能吃？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-11-22\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "虚构水文，不作为真实历史来源。"
+  },
+  {
+    "kind": "news",
+    "id": "n1122tech",
+    "title": "同一套神经网络，试着翻译多种语言",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-11-22\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "来源字段已列但未联网核验。"
+  },
+  {
+    "kind": "news",
+    "id": "n1129",
+    "title": "《最终幻想 15》发售：玩家等了十年",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-11-29\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1202",
+    "title": "《你的名字。》内地上映，首日票房七千多万",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-12-02\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1215",
+    "title": "人民币兑美元跌破 6.9",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-12-15\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1220",
+    "title": "王菲演唱会最贵票 7800，比一张显卡还贵",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-12-20\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "跨年夜/幻乐一场演出日期疑点，待可靠历史来源核验。 未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "news",
+    "id": "n1226",
+    "title": "2016 年度十大网络流行语，你用过几个？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-12-26\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "虚构水文，不作为真实历史来源。"
+  },
+  {
+    "kind": "news",
+    "id": "n1230",
+    "title": "神秘棋手 Master 网上连胜中日韩高手",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "consumer": "Bodu/BoduView.News.cs → XgNewsCatalog.Load/Available/Home; XgTeachingHeadlines.cs",
+    "gate": "{\"date\": \"2016-12-30\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "未附来源URL，历史细节待来源补齐。"
+  },
+  {
+    "kind": "events",
+    "id": "e001",
+    "title": "房租怎么转",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6], \"when\": \"bills\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e002",
+    "title": "周六加班",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 3], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e003",
+    "title": "楼下来敲门",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6], \"when\": \"training\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e004",
+    "title": "Win10 强制更新",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 3], \"month\": [201606, 201607]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e005",
+    "title": "妈打来电话",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e006",
+    "title": "小区停电",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 4], \"month\": [201606, 201608], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e007",
+    "title": "360 要清理",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e008",
+    "title": "老同学来蹭饭",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 3]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e009",
+    "title": "显卡 89°C",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6], \"when\": \"training\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e010",
+    "title": "包邮的硅脂",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 2]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e011",
+    "title": "凌晨两点",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6], \"when\": \"night\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e012",
+    "title": "表姐要拼单",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 4]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e013",
+    "title": "迅雷离线",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e014",
+    "title": "同事问你周末干嘛",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 3], \"when\": \"day\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": "候选移除“卷王”及英文对应称呼，保留现有笑着离开的叙述；无新增对白。"
+  },
+  {
+    "kind": "events",
+    "id": "e015",
+    "title": "花呗账单",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "账单1286但全还只扣300；需经济/文案协调，未自行改金额。 flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e016",
+    "title": "高考作文题刷屏",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 2], \"month\": [201606, 201606], \"minDate\": 20160607}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e017",
+    "title": "1060 预售",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 3], \"month\": [201607, 201607], \"minDate\": 20160707}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "定金100抵150/“便宜150”与实际优惠可能不一致；preorder_1060只记flag，未找到下单结算消费。 flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e018",
+    "title": "38 度",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6], \"month\": [201607, 201608], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e019",
+    "title": "网吧淘汰卡",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 4]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e020",
+    "title": "翻到一篇论文",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e021",
+    "title": "宽带推销",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e022",
+    "title": "Pokémon GO 锁区",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 4], \"month\": [201607, 201607], \"minDate\": 20160706}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e023",
+    "title": "电表跳了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6], \"when\": \"bills\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e024",
+    "title": "借钱",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "结果声称下月归还，但effects只有扣500/flag；未建立还款计时器。 flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e025",
+    "title": "要不要发帖晒一下",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 5]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e026",
+    "title": "团建",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 4], \"month\": [201607, 201608]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e027",
+    "title": "蓝屏",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6], \"when\": \"night\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e028",
+    "title": "表姐的微商",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e029",
+    "title": "同事借 U 盘",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e030",
+    "title": "大鱼海棠",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 3], \"month\": [201607, 201607], \"minDate\": 20160708}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e031",
+    "title": "电源啸叫",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e032",
+    "title": "她问你在干嘛",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [2, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e033",
+    "title": "奥运凌晨",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 4], \"month\": [201608, 201608], \"minDate\": 20160821}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": "候选最早日期改为8月21日；移除无法与门槛对应的“凌晨四点”。"
+  },
+  {
+    "kind": "events",
+    "id": "e034",
+    "title": "有人收你的旧卡",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "卖旧卡只加800/暂停，未移除玩家真实卡；不能称设备交易闭环。"
+  },
+  {
+    "kind": "events",
+    "id": "e035",
+    "title": "老王查电表",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6], \"when\": \"bills\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e036",
+    "title": "要出差一周",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 5], \"month\": [201608, 201609]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e037",
+    "title": "硬盘咔哒响",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e038",
+    "title": "老周问能不能借卡",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "借卡只暂停/flag；未接真实接线卡借出/归还。 flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e039",
+    "title": "小目标",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 5], \"month\": [201608, 201608], \"minDate\": 20160829}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e040",
+    "title": "年中考评",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e041",
+    "title": "表姐被骗了？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e042",
+    "title": "宽带断了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e043",
+    "title": "Titan X 上架",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 4], \"month\": [201608, 201609], \"minDate\": 20160802}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "购物车仅flag；不是淘货真实购物车。 flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e044",
+    "title": "风扇卡住",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6], \"when\": \"night\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e045",
+    "title": "她要来你城市",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e046",
+    "title": "电信诈骗新闻",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e047",
+    "title": "同事想跳槽",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e048",
+    "title": "驱动更新",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [3, 6]}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": "候选去掉未按日期门控的372.70版本号，保留通用驱动更新通知和原效果。"
+  },
+  {
+    "kind": "events",
+    "id": "e049",
+    "title": "iPhone 7 首发",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 5], \"month\": [201609, 201609], \"minDate\": 20160916}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e050",
+    "title": "组里要做个分类功能",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e051",
+    "title": "要涨房租",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6], \"when\": \"bills\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e052",
+    "title": "他要结婚了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "十月婚礼无月份上限；重复抽中后同一朋友婚礼可能再发生。需日期/复现内容协调。"
+  },
+  {
+    "kind": "events",
+    "id": "e053",
+    "title": "机箱漏电",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e054",
+    "title": "谷歌翻译换了神经网络",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6], \"month\": [201609, 201610], \"minDate\": 20160927}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e055",
+    "title": "雷暴",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6], \"when\": \"night\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e056",
+    "title": "表姐要来借住",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e057",
+    "title": "年假",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e058",
+    "title": "她生病了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e059",
+    "title": "一条公开求助帖",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e060",
+    "title": "内存条松了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e061",
+    "title": "阴阳师",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6], \"month\": [201609, 201610], \"minDate\": 20160902}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e062",
+    "title": "帖子下有人想买笔记",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6], \"requires\": \"posted_progress\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "requires=posted_progress已消费；此标记来自事件e025，不等于任意真实贴吧帖子。"
+  },
+  {
+    "kind": "events",
+    "id": "e063",
+    "title": "同事看到你的屏保",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e064",
+    "title": "信用卡提额",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [4, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "card_debt只记flag；没有下一月还款消费。 flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e065",
+    "title": "国庆堵车",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6], \"month\": [201610, 201610], \"minDate\": 20161001}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e066",
+    "title": "要不要转岗",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e067",
+    "title": "显卡花屏",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e068",
+    "title": "表姐开店了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "文案称进翻译库，通用ApplyLifeDataChoice实际给当前Selected或ForumDataset；需数据目标契约。"
+  },
+  {
+    "kind": "events",
+    "id": "e069",
+    "title": "蓝瘦香菇",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6], \"month\": [201610, 201610], \"minDate\": 20161008}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e070",
+    "title": "阶梯电价第三档",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6], \"when\": \"bills\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e071",
+    "title": "有人公开征集翻译材料",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e072",
+    "title": "硬盘满了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e073",
+    "title": "饭局",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e074",
+    "title": "她想见你家人",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "见家长/关系文案缺独立晴雯关系门槛；阶段不应替代真实关系。 flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e075",
+    "title": "双十一零点",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6], \"month\": [201611, 201611], \"minDate\": 20161111}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e076",
+    "title": "光纤入户",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e077",
+    "title": "失眠",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6], \"when\": \"night\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e078",
+    "title": "语音识别追平人类",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6], \"minDate\": 20161018}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e079",
+    "title": "相亲",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "“我有对象”选项不检查关系状态；不能按阶段推定。"
+  },
+  {
+    "kind": "events",
+    "id": "e080",
+    "title": "电源炸了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [5, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e081",
+    "title": "你的名字。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6], \"month\": [201612, 201612], \"minDate\": 20161202}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e082",
+    "title": "年终奖",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e083",
+    "title": "老王来送饺子",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6], \"when\": \"bills\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "Core另检查按时租金>=5期和>=20161221，JSON单独看会漏条件。"
+  },
+  {
+    "kind": "events",
+    "id": "e084",
+    "title": "整栋楼跳闸",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e085",
+    "title": "Steam 冬促",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6], \"month\": [201612, 201612], \"minDate\": 20161222}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e086",
+    "title": "少一点循环，多一点注意力？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e087",
+    "title": "年底了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6], \"when\": \"night\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e088",
+    "title": "跨年计划",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "flag持久化不自动等于对应后续行动已实现。"
+  },
+  {
+    "kind": "events",
+    "id": "e089",
+    "title": "人民币跌破 6.9",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6], \"month\": [201612, 201612]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e090",
+    "title": "同学聚会",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [6, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e091",
+    "title": "键盘进水",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e092",
+    "title": "快递放门口",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e093",
+    "title": "公司断网",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6], \"when\": \"day\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e094",
+    "title": "物业查违规电器",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e095",
+    "title": "家里寄来特产",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e096",
+    "title": "鼠标双击",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": "候选修正标注错字/去掉全年事件里的特定鼠标型号。"
+  },
+  {
+    "kind": "events",
+    "id": "e097",
+    "title": "楼下装修",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6], \"when\": \"night\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e098",
+    "title": "工资到账",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e099",
+    "title": "系统时间错了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "events",
+    "id": "e100",
+    "title": "它在等你",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "consumer": "XgLifeEventCard.Bind → XgSim.LoadLifeData → LifeDataEligible/View/ApplyLifeDataChoice",
+    "gate": "{\"stage\": [1, 6], \"when\": \"night\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": "候选中英二十题与samples20一致；仍是事件抽象效果，不等于真实题目教学日志。"
+  },
+  {
+    "kind": "group",
+    "id": "g01",
+    "title": "今晚屁股车还有位置吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"after\": \"ow_launch\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g02",
+    "title": "1070 和 1080 差多少，值得多掏两千吗",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201606, 201612]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g03",
+    "title": "今天又加班到九点，心好累",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g04",
+    "title": "有人看昨晚的球吗",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g05",
+    "title": "机箱风扇吵死了，你们用什么散热",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g06",
+    "title": "周末有什么好电影",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g07",
+    "title": "这个月工资又不够花",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g08",
+    "title": "电源 650W 够带一张 1080 吗",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g09",
+    "title": "老板又说要拥抱互联网+",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g10",
+    "title": "公司那台电脑又蓝屏了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g11",
+    "title": "魔兽电影看了没",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201606, 201607], \"after\": \"warcraft\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g12",
+    "title": "欧洲杯今晚谁对谁",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201606, 201607], \"after\": \"iceland\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": "after=iceland防提前；“今晚”及冰岛出局后的上限仍未限制。"
+  },
+  {
+    "kind": "group",
+    "id": "g13",
+    "title": "Win10 那个升级弹窗怎么关",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201606, 201607]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g14",
+    "title": "Pokémon GO 国内能玩吗",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201607, 201608], \"minDate\": 20160707}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g15",
+    "title": "葛优躺.jpg",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201607, 201609], \"after\": \"ge_you\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g16",
+    "title": "女排！！！",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201608, 201608], \"after\": \"volley_wake\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g17",
+    "title": "洪荒之力哈哈哈",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201608, 201609], \"after\": \"fu_yuanhui\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g18",
+    "title": "Wings 牛逼！",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201608, 201608], \"after\": \"ti6_wings\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g19",
+    "title": "先定一个小目标",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201608, 201610], \"minDate\": 20160830}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g20",
+    "title": "iPhone 7 没耳机孔了怎么听歌",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201609, 201612], \"minDate\": 20160908}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g21",
+    "title": "阴阳师十连又全是 R",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201609, 201612], \"after\": \"onmyoji\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g22",
+    "title": "国庆去哪儿玩",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201609, 201610], \"after\": \"lili_westlake\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g23",
+    "title": "蓝瘦，香菇",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201610, 201611], \"after\": \"lanshou\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g24",
+    "title": "文明 6 再来一回合",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201610, 201612], \"after\": \"civ6_gone\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": "after=civ6_gone保留“一周没出现”的真实日期前置。"
+  },
+  {
+    "kind": "group",
+    "id": "g25",
+    "title": "双十一买了啥",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201611, 201611], \"after\": \"photo_lili_cart\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g26",
+    "title": "Steam 冬促买了吗",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201612, 201612], \"after\": \"steam_winter\"}",
+    "status": "候选已修；结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g27",
+    "title": "跨年怎么过",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{\"month\": [201612, 201612]}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g28",
+    "title": "（发个表情包）",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g29",
+    "title": "AlphaGo 那事你们怎么看",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "group",
+    "id": "g30",
+    "title": "晚安各位",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "consumer": "YYChatHub.GroupPresets.AvailableGroupPresets/SendGroupPreset/DeliverPresetReplies",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "daily/1",
+    "title": "今天下雨了，你开心吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "1",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "daily/2",
+    "title": "我加班到十点，你觉得我该辞职吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "1",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "daily/3",
+    "title": "外卖和自己做饭，选一个？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "2",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": "早期开放问句是否适配是/否能力需逐题玩法确认。"
+  },
+  {
+    "kind": "persona-question",
+    "id": "daily/4",
+    "title": "周末你想让我陪你，还是出去玩？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "2",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": "早期开放问句是否适配是/否能力需逐题玩法确认。"
+  },
+  {
+    "kind": "persona-question",
+    "id": "daily/5",
+    "title": "我今天被老板骂了。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "3",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "daily/6",
+    "title": "你觉得我是个怎样的人？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "daily/7",
+    "title": "要是我明天不来了，你会怎么样？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "daily/8",
+    "title": "给我讲个笑话。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona",
+    "id": "daily",
+    "title": "日常",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.EnsureLearningData → XgSim.LoadYyLearning → AskPersona → YYChatView.Learning",
+    "gate": "{\"stage\": 1}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xiangsheng/1",
+    "title": "你会说绕口令吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "3",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xiangsheng/2",
+    "title": "抽烟喝酒烫头，你选哪个？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "3",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xiangsheng/3",
+    "title": "用一句话损我一下。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xiangsheng/4",
+    "title": "你知道「于谦的父亲」是谁吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xiangsheng/5",
+    "title": "我胖了五斤，你怎么看？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xiangsheng/6",
+    "title": "说个冷笑话。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona",
+    "id": "xiangsheng",
+    "title": "相声段子集",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.EnsureLearningData → XgSim.LoadYyLearning → AskPersona → YYChatView.Learning",
+    "gate": "{\"stage\": 3}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "现有标题/描述提真人作品，问题只是原创短问；未提供作品全文/许可，不宣称已许可。"
+  },
+  {
+    "kind": "persona-question",
+    "id": "zhihu/1",
+    "title": "人工智能会取代人吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "zhihu/2",
+    "title": "在北上广打拼值不值？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "zhihu/3",
+    "title": "你怎么看待加班文化？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "zhihu/4",
+    "title": "如何评价 AlphaGo？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "zhihu/5",
+    "title": "买房还是租房？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "zhihu/6",
+    "title": "有哪些相见恨晚的道理？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona",
+    "id": "zhihu",
+    "title": "知乎高赞回答",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.EnsureLearningData → XgSim.LoadYyLearning → AskPersona → YYChatView.Learning",
+    "gate": "{\"stage\": 4}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "包名不等于已授权高赞回答全文；当前只有问题列表。"
+  },
+  {
+    "kind": "persona-question",
+    "id": "qiongyao/1",
+    "title": "你会想我吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "qiongyao/2",
+    "title": "我和显卡掉水里，你先救谁？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "qiongyao/3",
+    "title": "说一句好听的。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "qiongyao/4",
+    "title": "晴雯生气了，我该怎么哄？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "qiongyao/5",
+    "title": "你知道什么是喜欢吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "qiongyao/6",
+    "title": "下雪了，你想说什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona",
+    "id": "qiongyao",
+    "title": "琼瑶台词大全",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.EnsureLearningData → XgSim.LoadYyLearning → AskPersona → YYChatView.Learning",
+    "gate": "{\"stage\": 4}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "现有台词与作品名需许可范围审核；本轮未新增引文。"
+  },
+  {
+    "kind": "persona-question",
+    "id": "luxun/1",
+    "title": "你怎么看那些标题党？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "luxun/2",
+    "title": "我是不是太懒了？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "luxun/3",
+    "title": "朋友圈晒娃的，你怎么看？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "luxun/4",
+    "title": "世上本没有路……",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "luxun/5",
+    "title": "说说看客。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "luxun/6",
+    "title": "你会说假话吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona",
+    "id": "luxun",
+    "title": "鲁迅杂文选",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.EnsureLearningData → XgSim.LoadYyLearning → AskPersona → YYChatView.Learning",
+    "gate": "{\"stage\": 4}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xinwen/1",
+    "title": "今天有什么新闻？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "3",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xinwen/2",
+    "title": "用一句话总结今天。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xinwen/3",
+    "title": "给我播个天气预报。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xinwen/4",
+    "title": "怎么评价今天的我？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "xinwen/5",
+    "title": "年终总结怎么写？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona",
+    "id": "xinwen",
+    "title": "新闻联播文稿",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.EnsureLearningData → XgSim.LoadYyLearning → AskPersona → YYChatView.Learning",
+    "gate": "{\"stage\": 3}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "tieba/1",
+    "title": "A 卡还是 N 卡？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "3",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "tieba/2",
+    "title": "楼上说得对吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "3",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "tieba/3",
+    "title": "有人骂你，你怎么回？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "tieba/4",
+    "title": "你服不服？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "tieba/5",
+    "title": "说说你的观点，别和稀泥。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona",
+    "id": "tieba",
+    "title": "贴吧吵架合集",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.EnsureLearningData → XgSim.LoadYyLearning → AskPersona → YYChatView.Learning",
+    "gate": "{\"stage\": 3}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "jitang/1",
+    "title": "我好累，说点什么。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "3",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "jitang/2",
+    "title": "我失败了。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "jitang/3",
+    "title": "什么是幸福？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "4",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "jitang/4",
+    "title": "我还要坚持吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona-question",
+    "id": "jitang/5",
+    "title": "给明天的我留一句话。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.AskPersona",
+    "gate": "5",
+    "status": "结构/双语字段通过；实际模型回答待验",
+    "notes": ""
+  },
+  {
+    "kind": "persona",
+    "id": "jitang",
+    "title": "心灵鸡汤三百篇",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgYyTalk.EnsureLearningData → XgSim.LoadYyLearning → AskPersona → YYChatView.Learning",
+    "gate": "{\"stage\": 3}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "warm",
+    "title": "暖",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "cold",
+    "title": "冷",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "funny",
+    "title": "好笑",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "serious",
+    "title": "正经",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "own",
+    "title": "有主见",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "agree",
+    "title": "随和",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "honest",
+    "title": "说实话",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "flatter",
+    "title": "顺着我说",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "tags",
+    "id": "wrong",
+    "title": "答歪了",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json",
+    "consumer": "XgSim.LoadYyLearning → TagYyReply → talkSamples/personality axes",
+    "gate": "{}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "unlock",
+    "id": "bias",
+    "title": "多少分才算是？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 1}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "mlp",
+    "title": "异或怎么分？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 1}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "dropout",
+    "title": "换一道题你还会吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 3}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "lstm",
+    "title": "你还记得我刚才说了什么吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 3}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "wordvec",
+    "title": "国王减男人加女人等于什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 4}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "position",
+    "title": "狗咬人和人咬狗一样吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 5}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "attention",
+    "title": "这句话里哪个词最重要？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 4}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "transfer",
+    "title": "你还记得以前学的吗？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 3}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "lrschedule",
+    "title": "慢一点。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 3}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "cot",
+    "title": "一步一步想：3 加 5 再乘 2 是多少？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 6}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "sft",
+    "title": "请你回答，不要接着出题。",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 6}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "unlock",
+    "id": "attention_only",
+    "title": "如果只用注意力呢？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "consumer": "XgYyTalk.EnsureLearningData/LearningDelivered → RegisterYyReply → ChatNodeReady/Hint/Answer",
+    "gate": "{\"stage\": 5}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "hint已消费；指定来源位置中完整原句未逐一找到。answer/answerEn已加载但未找到自动回复消费。"
+  },
+  {
+    "kind": "quiz",
+    "id": "q1a",
+    "title": "它现在能学会什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 1, \"trigger\": \"stage_enter\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q1b",
+    "title": "分数为什么卡在 50% 不动？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 1, \"trigger\": \"plateau\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q1c",
+    "title": "练过的题全对，新题却错，为什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 1, \"trigger\": \"gap\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q1d",
+    "title": "步子开到最大，会怎样？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 1, \"trigger\": \"nan\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q2a",
+    "title": "多加几层有什么用？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 2, \"trigger\": \"stage_enter\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q2b",
+    "title": "层加到 5 层以上，为什么不涨了？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 2, \"trigger\": \"deep_flat\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q2c",
+    "title": "数字挪一格它就不认识了，为什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 2, \"trigger\": \"shift\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "shift现已由XgTeachingAugmentation实际调用，不沿用旧“未接线”状态。"
+  },
+  {
+    "kind": "quiz",
+    "id": "q3a",
+    "title": "看图和读句子，为什么要两种脑型？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 3, \"trigger\": \"stage_enter\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q3b",
+    "title": "七言诗它总忘前面的字，怎么办？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 3, \"trigger\": \"long_fail\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q3c",
+    "title": "屏幕一串 NaN，是什么意思？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 3, \"trigger\": \"nan\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q3d",
+    "title": "题只有几十道，怎么防它背答案？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 3, \"trigger\": \"gap\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q4a",
+    "title": "它能说短句了，靠的是什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 4, \"trigger\": \"stage_enter\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q4b",
+    "title": "看图的脑子越深越差，为什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 4, \"trigger\": \"deep_worse\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q4c",
+    "title": "为什么它翻译不了？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 4, \"trigger\": \"translate_fail\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q5a",
+    "title": "长句一翻就乱，为什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 5, \"trigger\": \"stage_enter\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q5b",
+    "title": "八张卡只有一张在忙，为什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 5, \"trigger\": \"serial\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "2016玩家自行推想的attention-only路线；不是宣称2017 Transformer论文在2016已发布。"
+  },
+  {
+    "kind": "quiz",
+    "id": "q5c",
+    "title": "便宜数据包让分数变低了，为什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 5, \"trigger\": \"noise\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q6a",
+    "title": "通读有什么不一样？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 6, \"trigger\": \"stage_enter\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q6b",
+    "title": "难度降到一半就停了，缺什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 6, \"trigger\": \"plateau\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "quiz",
+    "id": "q6c",
+    "title": "问它问题，它接着出题，为什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 6, \"trigger\": \"continues\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "continues现已由NoteNotebookReply实际调用，不沿用旧“未接线”状态。"
+  },
+  {
+    "kind": "quiz",
+    "id": "q6d",
+    "title": "它总顺着你说，为什么？",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Training/stage_quiz.json",
+    "consumer": "XgTrainingLessonResources.Load → XgTrainingLessons.Quizzes → NoteTrainingPhenomenon → XgTrainPage.Lessons",
+    "gate": "{\"stage\": 6, \"trigger\": \"flatter\"}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": ""
+  },
+  {
+    "kind": "pack",
+    "id": "spam_swipe",
+    "title": "划短信",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 1, \"needs\": \"\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "arith_mole",
+    "title": "算术打地鼠",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 1, \"needs\": \"\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "minesweeper_yn",
+    "title": "扫雷判官",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 1, \"needs\": \"\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "make24",
+    "title": "算 24",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 1, \"needs\": \"\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "headline_swipe",
+    "title": "左滑右滑 · 标题党",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 2, \"needs\": \"\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "odd_one",
+    "title": "找不同",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 2, \"needs\": \"\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "sequence",
+    "title": "找规律",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 2, \"needs\": \"\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "danmu_mood",
+    "title": "弹幕夸还是骂",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 2, \"needs\": \"\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "mnist_write",
+    "title": "手写数字",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 2, \"needs\": \"vision\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "chess_mate1",
+    "title": "国际象棋 · 一步杀",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 2, \"needs\": \"\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "gomoku_win",
+    "title": "五子棋 · 一步连五",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 2, \"needs\": \"\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "captcha",
+    "title": "验证码",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 3, \"needs\": \"vision\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "meme_word",
+    "title": "表情包配字",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 3, \"needs\": \"vision\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "poem_next",
+    "title": "唐诗 · 下一个字",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 3, \"needs\": \"memory\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "idiom_chain",
+    "title": "成语接龙",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 3, \"needs\": \"memory\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "chess_mate2",
+    "title": "国际象棋 · 两步杀",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 4, \"needs\": \"lstm\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "spy",
+    "title": "谁是卧底",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 4, \"needs\": \"\", \"buy\": false}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "play/playEn含{名字}/{name}；XgLabelPage.Packs tooltip直接T，未替换，交UI消费端。 fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "review_swipe",
+    "title": "刷单评论",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 4, \"needs\": \"\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "pack",
+    "id": "chinglish",
+    "title": "中式英语改错",
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/minigame_packs.json",
+    "consumer": "XgTeachingResources.Load → XgTeachingPacks.All → XgLabelPage.Packs → XgPackGames.Create",
+    "gate": "{\"stage\": 5, \"needs\": \"\", \"buy\": true}",
+    "status": "结构/双语字段通过；实际运行待验",
+    "notes": "fun字段仅设计元数据，类无fun字段，不把其承诺当已实现。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/1",
+    "title": "太阳从东边升起。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/2",
+    "title": "水在 0°C 会结冰。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "题意及解释的科学例外/逐句翻译仍需内容复核。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/3",
+    "title": "一年有十二个月。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/4",
+    "title": "猫会喵喵叫。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/5",
+    "title": "鱼生活在水里。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/6",
+    "title": "冰是凉的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/7",
+    "title": "一个星期有七天。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/8",
+    "title": "鸟有翅膀。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/9",
+    "title": "夏天比冬天热。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/10",
+    "title": "苹果是一种水果。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/11",
+    "title": "人用眼睛看东西。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/12",
+    "title": "火是烫的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/13",
+    "title": "狗是一种动物。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/14",
+    "title": "汽车有轮子。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/15",
+    "title": "北京是中国的首都。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/16",
+    "title": "雨天，路面会变湿。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/17",
+    "title": "牛会产奶。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/18",
+    "title": "手机可以用来打电话。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/19",
+    "title": "鱼会爬树。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "题意及解释的科学例外/逐句翻译仍需内容复核。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/20",
+    "title": "一年有 13 个月。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/21",
+    "title": "冰是烫的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/22",
+    "title": "狗会下蛋。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/23",
+    "title": "一个星期有十天。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/24",
+    "title": "鸟没有翅膀。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/25",
+    "title": "冬天比夏天热。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/26",
+    "title": "西瓜是一种动物。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/27",
+    "title": "人用耳朵看东西。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/28",
+    "title": "猫会汪汪叫。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/29",
+    "title": "水会自己往高处流。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "题意及解释的科学例外/逐句翻译仍需内容复核。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/30",
+    "title": "上海是中国的首都。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/31",
+    "title": "兔子有三只耳朵。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/32",
+    "title": "雪是热的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/33",
+    "title": "一天有四十八个小时。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/34",
+    "title": "自行车有六个轮子。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/35",
+    "title": "太阳每天从西边升起。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/36",
+    "title": "手机没电了也能一直用。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/37",
+    "title": "地球绕着太阳转。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/38",
+    "title": "水烧开了会冒热气。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/39",
+    "title": "蜘蛛有八条腿。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/40",
+    "title": "植物需要阳光才能长得好。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/41",
+    "title": "一小时有六十分钟。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/42",
+    "title": "铁放在潮湿的地方会生锈。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/43",
+    "title": "长江是中国最长的河。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/44",
+    "title": "冰块放进热水里会化掉。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/45",
+    "title": "一米等于一百厘米。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/46",
+    "title": "磁铁能吸住铁钉。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/47",
+    "title": "春节在冬天。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/48",
+    "title": "蜜蜂会采花蜜。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/49",
+    "title": "月亮绕着地球转。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/50",
+    "title": "红色和黄色颜料混在一起会变成橙色。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/51",
+    "title": "声音可以在空气中传播。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/52",
+    "title": "高铁比自行车快得多。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/53",
+    "title": "手机要充电才有电。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/54",
+    "title": "微信是一种聊天软件。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/55",
+    "title": "太阳绕着地球转。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/56",
+    "title": "黄河是中国最长的河。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/57",
+    "title": "一小时有一百分钟。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/58",
+    "title": "铁永远不会生锈。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/59",
+    "title": "一米等于十厘米。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/60",
+    "title": "磁铁能吸住木头。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/61",
+    "title": "植物不要水也能长得很好。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/62",
+    "title": "冰块放进热水里会越变越大。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/63",
+    "title": "春节在夏天。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/64",
+    "title": "老虎只吃草。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/65",
+    "title": "兔子主要吃肉。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/66",
+    "title": "蜜蜂生活在海底。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/67",
+    "title": "地球是一个正方体。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/68",
+    "title": "水是由铁组成的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/69",
+    "title": "北京在海南岛上。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/70",
+    "title": "三角形有四条边。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/71",
+    "title": "月亮比太阳大得多。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/72",
+    "title": "冰淇淋放在太阳底下会越来越硬。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/73",
+    "title": "光比声音传得快。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/74",
+    "title": "地球表面大部分被海洋覆盖。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/75",
+    "title": "黄金不容易生锈。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/76",
+    "title": "企鹅是鸟，但是不会飞。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/77",
+    "title": "月亮自己不发光，我们看到的是它反射的太阳光。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/78",
+    "title": "水是由氢和氧组成的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/79",
+    "title": "北半球的夏天在六月到八月。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/80",
+    "title": "珠穆朗玛峰是世界最高的山峰。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/81",
+    "title": "大熊猫主要吃竹子。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/82",
+    "title": "闰年的二月有二十九天。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/83",
+    "title": "沙漠里很少下雨。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/84",
+    "title": "海水是咸的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/85",
+    "title": "电脑运行需要用电。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/86",
+    "title": "圆没有角。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/87",
+    "title": "鸡蛋掉在水泥地上容易碎。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/88",
+    "title": "蝴蝶小时候是毛毛虫。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/89",
+    "title": "声音比光传得快。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/90",
+    "title": "地球表面大部分是沙漠。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/91",
+    "title": "金子放久了会长满铁锈。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/92",
+    "title": "企鹅能飞到很高的地方。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/93",
+    "title": "月亮是一个自己发光的火球。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/94",
+    "title": "北半球的夏天在十二月到二月。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/95",
+    "title": "珠穆朗玛峰是世界上最矮的山。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/96",
+    "title": "大熊猫主要吃肉。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/97",
+    "title": "平年的二月有三十天。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/98",
+    "title": "沙漠里天天下大雨。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/99",
+    "title": "海水是甜的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/100",
+    "title": "台式电脑拔掉电源还能一直运行。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/101",
+    "title": "圆有四个直角。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/102",
+    "title": "鸡蛋掉在地上会弹起来。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/103",
+    "title": "毛毛虫长大后变成青蛙。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/104",
+    "title": "网吧里没有电脑。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/105",
+    "title": "AlphaGo 下围棋赢了李世石。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160316",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/106",
+    "title": "李世石五盘全赢了 AlphaGo。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160316",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/107",
+    "title": "2016 年奥运会在里约热内卢举办。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160806",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/108",
+    "title": "2016 年奥运会在北京举办。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160806",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/109",
+    "title": "中国女排拿了里约奥运会金牌。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160822",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/110",
+    "title": "中国女排在里约第一轮就被淘汰了。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160822",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/111",
+    "title": "科比打完最后一场就退役了。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160415",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/112",
+    "title": "科比是踢足球的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160415",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/113",
+    "title": "三星 Note7 因为电池会着火被召回了。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160912",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/114",
+    "title": "三星 Note7 召回是因为屏幕太大。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160912",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/115",
+    "title": "天宫二号是中国的空间实验室。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160917",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/116",
+    "title": "天宫二号是一部宫廷剧。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160917",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/117",
+    "title": "西红柿炒鸡蛋是一道菜。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/118",
+    "title": "熊猫身上是黑白两种颜色。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/119",
+    "title": "刚泡好的方便面是烫的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/120",
+    "title": "长颈鹿的脖子很长。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "题意及解释的科学例外/逐句翻译仍需内容复核。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/121",
+    "title": "柠檬是酸的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/122",
+    "title": "牙刷是用来刷牙的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/123",
+    "title": "人的血是红色的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/124",
+    "title": "很多中国人吃饭用筷子。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/125",
+    "title": "下雪天要穿厚衣服。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/126",
+    "title": "蚂蚁能搬动比自己重的东西。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/127",
+    "title": "章鱼有八条腕足。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/128",
+    "title": "骆驼可以很多天不喝水。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/129",
+    "title": "大多数西瓜切开是红瓤的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/130",
+    "title": "电脑键盘上有空格键。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/131",
+    "title": "冰箱的冷冻室比冷藏室更冷。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/132",
+    "title": "熬夜之后，第二天容易犯困。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/133",
+    "title": "秋天很多树的叶子会变黄。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/134",
+    "title": "仙人掌在很干的地方也能活。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/135",
+    "title": "鲸鱼不是鱼，是哺乳动物。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/136",
+    "title": "蝙蝠是会飞的哺乳动物。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/137",
+    "title": "用放大镜可以把阳光聚成一个很烫的小点。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/138",
+    "title": "一公斤棉花和一公斤铁一样重。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/139",
+    "title": "早上的影子比中午的长。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/140",
+    "title": "电脑死机了，重启经常能解决。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/141",
+    "title": "蚯蚓身体里没有骨头。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/142",
+    "title": "鸭子会说普通话。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/143",
+    "title": "冰淇淋是用石头做的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/144",
+    "title": "狗有五条腿。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/145",
+    "title": "鸡蛋是方的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/146",
+    "title": "鱼会骑自行车。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/147",
+    "title": "柠檬是甜的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/148",
+    "title": "牙膏可以当饭吃。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/149",
+    "title": "下雨的时候，天上掉下来的是糖。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/150",
+    "title": "刚从冰箱拿出来的冰棍是热的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=1; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/151",
+    "title": "蚊子是吃竹子长大的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/152",
+    "title": "西瓜长在树上。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/153",
+    "title": "冰箱是用来把东西加热的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/154",
+    "title": "蜗牛跑得比兔子快。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/155",
+    "title": "一只蚂蚁比一头大象重。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/156",
+    "title": "仙人掌要每天泡在水里才能活。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/157",
+    "title": "文件扔进回收站，就彻底删掉了。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/158",
+    "title": "用手机打电话不需要信号。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/159",
+    "title": "企鹅住在沙漠里。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "题意及解释的科学例外/逐句翻译仍需内容复核。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/160",
+    "title": "骆驼的驼峰里装的是水。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/161",
+    "title": "鲸鱼是用鳃呼吸的鱼。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/162",
+    "title": "蝙蝠是一种鸟。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/163",
+    "title": "一公斤铁比一公斤棉花重。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/164",
+    "title": "中午的影子是一天里最长的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/165",
+    "title": "人的大脑平时只用了百分之十。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/166",
+    "title": "电脑死机了，键盘敲得越用力好得越快。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/167",
+    "title": "2016 年是猴年。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/168",
+    "title": "2016 年是羊年。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/169",
+    "title": "《太阳的后裔》的男主角是宋仲基。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/170",
+    "title": "《太阳的后裔》是一部国产武侠剧。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/171",
+    "title": "电影《美人鱼》是周星驰导演的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/172",
+    "title": "电影《美人鱼》是迪士尼的动画片。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/173",
+    "title": "小李子今年终于拿到了奥斯卡影帝。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/174",
+    "title": "小李子今年又没拿到奥斯卡。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/175",
+    "title": "王者荣耀是一款手机游戏。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/176",
+    "title": "王者荣耀是一档电视选秀节目。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=0",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/177",
+    "title": "守望先锋是暴雪出的游戏。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160524",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/178",
+    "title": "守望先锋是一款种菜的手机游戏。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160524",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/179",
+    "title": "GTX 1080 是英伟达的显卡。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160527",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/180",
+    "title": "GTX 1080 是一台洗衣机。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160527",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/181",
+    "title": "电影《魔兽》是根据暴雪的游戏改编的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160608",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/182",
+    "title": "电影《魔兽》是根据金庸小说改编的。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160608",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/183",
+    "title": "2016 年欧洲杯在法国举办。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160611",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/184",
+    "title": "2016 年欧洲杯在中国举办。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160611",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/185",
+    "title": "Win10 免费升级 7 月 29 日截止。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160701",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/186",
+    "title": "Win10 免费升级永远不会截止。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160701",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/187",
+    "title": "Pokémon GO 是要走出门去抓精灵的手机游戏。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160707",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/188",
+    "title": "Pokémon GO 在国内可以正常玩。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160707",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/189",
+    "title": "「葛优躺」说的是整个人瘫在沙发上。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160725",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/190",
+    "title": "「葛优躺」是站着睡觉。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160725",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/191",
+    "title": "傅园慧说自己「已经用了洪荒之力」。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160808",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/192",
+    "title": "「洪荒之力」是一种新出的洗衣粉。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160808",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/193",
+    "title": "孙杨在里约拿了 200 米自由泳金牌。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160809",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/194",
+    "title": "孙杨是中国女排的队员。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160809",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/195",
+    "title": "中国战队 Wings 拿了 TI6 冠军。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160814",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/196",
+    "title": "TI6 是一场围棋比赛。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20160814",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/197",
+    "title": "博尔特在里约又拿了百米冠军。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160815",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/198",
+    "title": "博尔特是游泳运动员。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160815",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/199",
+    "title": "王健林说过「先定一个小目标，比方说我先挣它一个亿」。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160830",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/200",
+    "title": "王健林的小目标是先挣一百块。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160830",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/201",
+    "title": "阴阳师是网易出的手机游戏。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160902",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/202",
+    "title": "阴阳师是一档电视选秀节目。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160902",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/203",
+    "title": "iPhone 7 取消了耳机插孔。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160908",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/204",
+    "title": "iPhone 7 多加了一个耳机孔。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20160908",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/205",
+    "title": "「蓝瘦，香菇」的意思是「难受，想哭」。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20161010",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/206",
+    "title": "「蓝瘦香菇」是一种蓝色的蘑菇。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20161010",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/207",
+    "title": "鲍勃·迪伦拿了今年的诺贝尔文学奖。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20161013",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/208",
+    "title": "今年的诺贝尔文学奖颁给了一位厨师。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20161013",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/209",
+    "title": "神舟十一号载着两名航天员上了太空。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20161017",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/210",
+    "title": "神舟十一号是一列高铁。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20161017",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/211",
+    "title": "今年双十一一天卖了一千多亿元。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20161112",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/212",
+    "title": "双十一是国庆节。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20161112",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/213",
+    "title": "《你的名字。》是新海诚的动画电影。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20161202",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/214",
+    "title": "《你的名字。》是一部国产谍战剧。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=2; since=20161202",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/215",
+    "title": "网上有个叫 Master 的棋手，连赢了好多围棋高手。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20161230",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  },
+  {
+    "kind": "sense",
+    "id": "sense/216",
+    "title": "Master 把所有围棋高手都输了一遍。",
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "consumer": "XgMemes.Bank(SenseDesk) → Pick(since/level) → XgSim.PickTeachingPhrase",
+    "gate": "level=3; since=20161230",
+    "status": "双语字段通过；2016或自然题意；运行待验",
+    "notes": "静态识别已有题目与双语，不是新增题。"
+  }
+]

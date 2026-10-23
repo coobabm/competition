@@ -1,0 +1,14 @@
+{
+  "powershellParseErrors": 0,
+  "wrapperExecuted": false,
+  "requiredNoticesExisting": 9,
+  "oxygenPngExisting": 13,
+  "oxygenSourceReferencesExisting": 16,
+  "fontManifestMissingAtReview": [
+    "MiSans-Medium.ttf",
+    "MiSans-Semibold.ttf"
+  ],
+  "modelHashed": false,
+  "unityStarted": false,
+  "patchApplyCheck": "passed (no production mutation)"
+}

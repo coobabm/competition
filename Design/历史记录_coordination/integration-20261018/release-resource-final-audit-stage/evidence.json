@@ -1,0 +1,94 @@
+{
+  "scope": "source/script checks only; no final release archive inspected",
+  "assets": [
+    {
+      "asset": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg",
+      "bytes": 132630,
+      "creditFile": "ENDING_TRIAL_PHOTO_CREDITS.txt",
+      "idInCredits": true,
+      "assetHash": "not read"
+    },
+    {
+      "asset": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg",
+      "bytes": 90285,
+      "creditFile": "ENDING_TRIAL_PHOTO_CREDITS.txt",
+      "idInCredits": true,
+      "assetHash": "not read"
+    },
+    {
+      "asset": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg",
+      "bytes": 74001,
+      "creditFile": "ENDING_TRIAL_PHOTO_CREDITS.txt",
+      "idInCredits": true,
+      "assetHash": "not read"
+    },
+    {
+      "asset": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png",
+      "bytes": 659611,
+      "creditFile": "ENDING_TRIAL_PHOTO_CREDITS.txt",
+      "idInCredits": true,
+      "assetHash": "not read"
+    },
+    {
+      "asset": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg",
+      "bytes": 227888,
+      "creditFile": "ENDING_TRIAL_PHOTO_CREDITS.txt",
+      "idInCredits": true,
+      "assetHash": "not read"
+    },
+    {
+      "asset": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg",
+      "bytes": 104573,
+      "creditFile": "GROUP_CHAT_PHOTO_CREDITS.txt",
+      "idInCredits": true,
+      "assetHash": "not read"
+    },
+    {
+      "asset": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg",
+      "bytes": 99897,
+      "creditFile": "GROUP_CHAT_PHOTO_CREDITS.txt",
+      "idInCredits": true,
+      "assetHash": "not read"
+    },
+    {
+      "asset": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg",
+      "bytes": 94053,
+      "creditFile": "GROUP_CHAT_PHOTO_CREDITS.txt",
+      "idInCredits": true,
+      "assetHash": "not read"
+    }
+  ],
+  "lowLoadChecksAndCopiesAllThreePhotoCredits": true,
+  "oldHelperMissingNewCreditNames": true,
+  "publicSourceEntriesWithBilingualAuthorsPublicationUrl": 10,
+  "originAndShippedSerifLicenseNormalizedEqual": true,
+  "productModified": false,
+  "GGUFRead": false,
+  "runtimeLaunched": false,
+  "evidence": [
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/Package-VerifiedRelease-LowLoad.ps1",
+      "sha256": "7aec53b8a5fa1ed9030314f5a6b739346c2561a1625bbf0485712eefadda8599"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/Package-VerifiedRelease.ps1",
+      "sha256": "7fc2642830c79842d593208bfcfc97130f39eb01312392835e71b8a796da02c8"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_public_discourse.json",
+      "sha256": "901baf3c1d4f9a25e24a5377c460676cfd3a948addecdfd73a7c4032e12c15b7"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/Resources/LingGuangV05/Media/PHOTO_CREDITS.txt",
+      "sha256": "000e4e398584c41e3aaefce47acee1f3bcb0bfe8c8c8f5b58ca00f904c02b827"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt",
+      "sha256": "b52f7153f026ed5474c8d53147cac2f903cf8b9fc3f8744e24637f9ed81239df"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/Resources/LingGuangV05/Media/ENDING_TRIAL_PHOTO_CREDITS.txt",
+      "sha256": "f9e5f6762138d437872b4b53adfc119a484fcea3493682295bbfde1a74ba6389"
+    }
+  ]
+}

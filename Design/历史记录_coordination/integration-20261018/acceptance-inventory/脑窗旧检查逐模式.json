@@ -1,0 +1,233 @@
+[
+  {
+    "mode": "concepts",
+    "entry": "DesignWallpaperSmoke.RunConcepts",
+    "status": "实现待实测",
+    "purpose": "真实概念颜色/位置/几何与只读数据",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "links",
+    "entry": "DesignWallpaperSmoke.RunLinks",
+    "status": "实现待实测",
+    "purpose": "真实已学关系连线，不捏造边",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "regions",
+    "entry": "DesignWallpaperSmoke.RunRegions",
+    "status": "实现待实测",
+    "purpose": "当前区域结构图形",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "outputs",
+    "entry": "DesignWallpaperSmoke.RunOutputs",
+    "status": "实现待实测",
+    "purpose": "六阶段端口与文本/回退/旧档隐藏",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "persona",
+    "entry": "DesignWallpaperSmoke.RunPersona",
+    "status": "实现待实测",
+    "purpose": "真实学习轴/温暖玩心主见/反馈/重置",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "family",
+    "entry": "DesignWallpaperSmoke.RunFamily",
+    "status": "实现待实测",
+    "purpose": "三次家庭偏好星标/混合选择消退/新档隐藏",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "rules",
+    "entry": "DesignWallpaperSmoke.RunRules",
+    "status": "实现待实测",
+    "purpose": "钉住规则铆钉/重置保留/容量保护",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "seed",
+    "entry": "DesignWallpaperSmoke.RunSeed",
+    "status": "实现待实测",
+    "purpose": "真实保护种子/数据不可变/替换已拥有档重绑",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "hover",
+    "entry": "DesignWallpaperSmoke.RunHover",
+    "status": "实现待实测",
+    "purpose": "真实LCD悬停/学习计数刷新/遮挡/富文本安全/删概念",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "readonly",
+    "entry": "DesignWallpaperSmoke.RunReadOnly",
+    "status": "实现待实测",
+    "purpose": "拖概念不改学习/区域详情/窗体可拖",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "abilities",
+    "entry": "DesignWallpaperSmoke.RunAbilities",
+    "status": "实现待实测",
+    "purpose": "实际对数条/门槛资格/确认后亮灯/无第七项",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "region-cards",
+    "entry": "DesignWallpaperSmoke.RunRegionCards",
+    "status": "实现待实测",
+    "purpose": "区域真实点击/现架构科普/布局夹边/关闭/更新/旧档清理",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "answer-path",
+    "entry": "DesignWallpaperSmoke.RunAnswerPaths",
+    "status": "实现待实测",
+    "purpose": "实际预测路线/有效概念/0.4秒/有界4条/旧源断开",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "answer-correction",
+    "entry": "DesignWallpaperSmoke.RunAnswerCorrections",
+    "status": "实现待实测",
+    "purpose": "实际真值纠正/回光0.6秒/错误不奖/暂停自然结束",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "growth",
+    "entry": "DesignWallpaperSmoke.RunGrowth",
+    "status": "实现待实测",
+    "purpose": "合并科技别名/六能力中英布局/真实支付/禁止重复扣",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "lesson",
+    "entry": "DesignWallpaperSmoke.RunLesson",
+    "status": "实现待实测",
+    "purpose": "每次教题脉冲/错不成功/暂停自然结束/订阅重绑",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "sense-start",
+    "entry": "DesignWallpaperSmoke.RunSenseStart",
+    "status": "实现待实测",
+    "purpose": "真实12题和付费曲线/常识答卷源/算术和旧档选择",
+    "evidence": "已迁移并静态编译；未找到该模式独立最新运行PASS，不能以BrainWindowPerformance旧41项替代。"
+  },
+  {
+    "mode": "lesson-goal",
+    "entry": "DesignWallpaperSmoke.RunLessonGoal",
+    "status": "实现待实测",
+    "purpose": "12题可见进度/首错样本0/科技付款/断点存档/英语",
+    "evidence": "真实指针已验证反投影往返<1px，但严格receiver发现旧检查点在DeskGame覆盖下的经典按钮。新版检查改读实际game.statement并点击True/False，Core/UI/Editor编译通过；真实12题→付费科技链仍待重跑，不能算PASS。"
+  },
+  {
+    "mode": "all",
+    "entry": "DesignWallpaperSmoke.Run",
+    "status": "规则替代",
+    "purpose": "旧自动壁纸全流程",
+    "evidence": "用户明确普通壁纸+购买脑窗+不透明app取代旧规则；原测试保留追溯，不把旧模式算PASS。脑窗生命周期另有41项；普通原生桌面菜单保留仍需独立验。"
+  },
+  {
+    "mode": "pin",
+    "entry": "DesignWallpaperSmoke.RunPin",
+    "status": "规则替代",
+    "purpose": "旧30%壁纸透过不透明app",
+    "evidence": "用户明确普通壁纸+购买脑窗+不透明app取代旧规则；原测试保留追溯，不把旧模式算PASS。脑窗生命周期另有41项；普通原生桌面菜单保留仍需独立验。"
+  },
+  {
+    "mode": "desktop-fade",
+    "entry": "DesignWallpaperSmoke.RunDesktopFade",
+    "status": "规则替代",
+    "purpose": "旧开局自动壁纸淡入",
+    "evidence": "用户明确普通壁纸+购买脑窗+不透明app取代旧规则；原测试保留追溯，不把旧模式算PASS。脑窗生命周期另有41项；普通原生桌面菜单保留仍需独立验。"
+  },
+  {
+    "mode": "menu",
+    "entry": "DesignWallpaperSmoke.RunMenu",
+    "status": "规则替代",
+    "purpose": "旧壁纸查看/安静桌面菜单",
+    "evidence": "用户明确普通壁纸+购买脑窗+不透明app取代旧规则；原测试保留追溯，不把旧模式算PASS。脑窗生命周期另有41项；普通原生桌面菜单保留仍需独立验。"
+  },
+  {
+    "mode": "region-cards-visual",
+    "entry": "DesignWallpaperSmoke.RunRegionVisual",
+    "status": "待确认",
+    "purpose": "180帧真实渲染稳定，需改采样区域到脑窗",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "tech",
+    "entry": "DesignWallpaperSmoke.RunTech",
+    "status": "待确认",
+    "purpose": "旧详细科技场景，和新TechTreeUI逐条映射",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "first-minute",
+    "entry": "DesignWallpaperSmoke.RunFirstMinute",
+    "status": "待确认",
+    "purpose": "正常首次教学时序",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "first-minute-idle",
+    "entry": "DesignWallpaperSmoke.RunFirstMinuteIdle",
+    "status": "待确认",
+    "purpose": "不操作不凭空进度",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "first-minute-correction",
+    "entry": "DesignWallpaperSmoke.RunFirstMinuteCorrection",
+    "status": "待确认",
+    "purpose": "真实纠正流程",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "first-minute-english-correction",
+    "entry": "DesignWallpaperSmoke.RunFirstMinuteEnglishCorrection",
+    "status": "待确认",
+    "purpose": "英语实际纠正",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "first-minute-pending-chat",
+    "entry": "DesignWallpaperSmoke.RunFirstMinutePendingChat",
+    "status": "待确认",
+    "purpose": "等待对话的初期状态",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "wiring-scene",
+    "entry": "DesignWallpaperSmoke.RunWiringScene",
+    "status": "待确认",
+    "purpose": "接线场景效果",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "training-scene",
+    "entry": "DesignWallpaperSmoke.RunTrainingScene",
+    "status": "待确认",
+    "purpose": "训练场景视觉结构",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "motion",
+    "entry": "DesignWallpaperSmoke.RunMotion",
+    "status": "待确认",
+    "purpose": "独立空场景动效",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  },
+  {
+    "mode": "wiring-motion",
+    "entry": "DesignWallpaperSmoke.RunWiringMotion",
+    "status": "待确认",
+    "purpose": "独立接线动效",
+    "evidence": "有效目的保留；当前夹具/旧规则混合，未完成独立迁移或当前执行证据。不得因类存在或其它模式通过一并PASS。"
+  }
+]

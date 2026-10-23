@@ -1,0 +1,54 @@
+[
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\IntegrationProfilerCapture.cs",
+    "sha256": "3f1ca1cf2378c4e140d25132fcca20e7f9cb6d92a99b1d09f15af41aecb068c9"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\ProfilerRawAudit.cs",
+    "sha256": "7fb05120c02dcda9c61c5aca75a05aefca69f4541fb3bedde65446d55cb40281"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BrainWindowPerformanceQa.cs",
+    "sha256": "a20a1cbcc1b6c948f409fc4ed723220f39e09adce05b2c229a2e8a2c812fd8cf"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\IntegratedReleaseBuild.cs",
+    "sha256": "609de0e6067fae78c54d1efd94ac113c2439315399cf0af3f66ec4be94235a69"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\LocalLLM\\LocalLlm.cs",
+    "sha256": "888169b4284a93a03f6fc5c22c601136e888c8f724d570d59d04031c218da2b8"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\DesktopBridge\\GameMusic.cs",
+    "sha256": "0040f74c7ae5c527f613683c116ed3f1044c29d21d424e1b251aa1dbf6e783e3"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\YY2016\\YYChatView.cs",
+    "sha256": "d61ead6cde6f447a139d2a0bfad3b8b529c99e44d978b59e7e1d1c7bf5831750"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\DesktopBridge\\Tieba\\TiebaView.cs",
+    "sha256": "a6cb1a284143e2f230fba310934f3e1e628a58d699ca7addab585f5a98464d7d"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Desktop\\XgBrainWindow.cs",
+    "sha256": "50366aaf9b4279879c9caf718348cde133959db4b70f5e60bdf448c920d407fd"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\integration-20261018\\release-smoke-current-stage\\Player-WindowQa.ps1",
+    "sha256": "6a4b771556330697f3de4c05c52819afcc3ce100652d98ea671fe8b31bdf67d8"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\integration-20261018\\release-smoke-current-stage\\PlayerPrefs-Guard.ps1",
+    "sha256": "f69414815ecb2c62336ae08adced7e5a67d1ab6bf180dc1a93a772ee6fbd8f55"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\integration-20261018\\release-smoke-current-stage\\record_loopback.py",
+    "sha256": "eacab3029b5c05c59938c69e2814988a60b61ef9d7459d57271e40149321497e"
+  },
+  {
+    "path": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\integration-20261018\\release-smoke-current-stage\\Summarize-NativeTrace.ps1",
+    "sha256": "1fd04e409536ae571b393bfdcaf7b485c8e407142132a1e7f221519a59c70eb8"
+  }
+]

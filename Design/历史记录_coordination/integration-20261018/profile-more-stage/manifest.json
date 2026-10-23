@@ -1,0 +1,8 @@
+{
+  "base_commit": "bf354fdbce3745a81056fec6d17452ca91b15f21",
+  "working_basis": "main plus integrated life-cadence/core/host working changes; Profile unchanged by those changes",
+  "file": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Profile.cs",
+  "base_sha256": "9fd3ad4a5b70de4114725cc516cf65bc85512318d38d886100e67364c30b3e5a",
+  "candidate_sha256": "07770ab68129b8b9966ff1f254887c919ab3f8739da028c9d23a0df63d6e9a04",
+  "patch_sha256": "62adc8cc2e72bd6650e7edfd03d5ef4867c90b5c9e418d49190c91152eabc3a3"
+}

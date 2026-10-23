@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgNextMoveQuestions.cs",
+      "base_sha256": "3d0821ec15a1234100bb6049b7fe4c54964104ff9b453ef14e387f21b30a73a1",
+      "candidate_sha256": "65357f00a70e83a0c9c605467c32a2d3e9110eb2f72d5374ff2203dd22e75f9d"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackChess.cs",
+      "base_sha256": "178c21d14dd75ea4e3e85648cd172aabf2533c62071ed8c6bfbe5036a6d77884",
+      "candidate_sha256": "79d5380f15c620fcb3cbc988ed296f1510f1ba71767f708fc926e2b754840c02"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackContentGames.cs",
+      "base_sha256": "ad1b93f6f43444d94778077b3cf8ca98053f054b6e5f95eff16145442f3b4934",
+      "candidate_sha256": "17c56e2fc18952259c611c2f3c79e7155c022591f549256401a26d2b0bc81547"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackPuzzles.cs",
+      "base_sha256": "c954f1b1442853749e7a544fd354fa6ec7892e09e2270e3d4565b9ad5dbd72f9",
+      "candidate_sha256": "96b088838535c057f726af2d590caa420af3c47e433ff2b9c75b536e074e1d12"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgStageLessonGames.cs",
+      "base_sha256": "b3c90e7a9e75330d8015db53f27bd2e92f99e05502ce9b6ae9c3e5e21dd28fdb",
+      "candidate_sha256": "900cc2e9a4763028c2dfb0a01633e79803c98170cf504b3854677bed7cd41765"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "file": "MiSans.zip",
+    "url": "https://hyperos.mi.com/font-download/MiSans.zip",
+    "bytes": 227880072,
+    "sha256": "b6aa1fc827035922612df8edf36e5609bca1c5441e25cd57572204569b7b81d9"
+  },
+  {
+    "file": "MiSans-license.pdf",
+    "url": "https://hyperos.mi.com/font-download/MiSans%E5%AD%97%E4%BD%93%E7%9F%A5%E8%AF%86%E4%BA%A7%E6%9D%83%E8%AE%B8%E5%8F%AF%E5%8D%8F%E8%AE%AE.pdf",
+    "bytes": 79535,
+    "sha256": "4a93a27cd2bd81b3b5ecfd0a853144a876fa26938a93a68443c67d74172fcb86"
+  },
+  {
+    "file": "Inter-4.1.zip",
+    "url": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+    "bytes": 33707794,
+    "sha256": "9883fdd4a49d4fb66bd8177ba6625ef9a64aa45899767dde3d36aa425756b11e"
+  },
+  {
+    "file": "SourceHanSerifSC-Regular.otf",
+    "url": "https://raw.githubusercontent.com/adobe-fonts/source-han-serif/2.003R/OTF/SimplifiedChinese/SourceHanSerifSC-Regular.otf",
+    "bytes": 24543332,
+    "sha256": "78aa7a328fd974df2d688c8a9fd74a33d8334dfa84ab24d9d11efb2ffc464117"
+  }
+]

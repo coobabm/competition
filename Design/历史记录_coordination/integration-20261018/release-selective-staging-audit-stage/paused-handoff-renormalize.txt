@@ -1,0 +1,8 @@
+Design/Claude交接_20261019/未合入候选/.gitattributes
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock.patch
+Design/Claude交接_20261019/未合入候选/board-menu-glyph-stage.md
+Design/Claude交接_20261019/未合入候选/board-menu-glyph.patch
+Design/Claude交接_20261019/未合入候选/SHA256SUMS.txt
+Design/Claude交接_20261019/未合入候选/teaching-install-fixture-stage.md
+Design/Claude交接_20261019/未合入候选/teaching-install-fixture.patch

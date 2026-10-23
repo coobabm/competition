@@ -1,0 +1,36 @@
+{
+  "checkedAtUTC": "2026-10-19T11:06:49.523411+00:00",
+  "reportPresent": false,
+  "files": [
+    {
+      "path": "files/Assets/LocalBuild/Editor/EndingPrivateRemainingUiChecks.cs",
+      "snapshotSHA256": "3855829bb32ff22d5be2609267371c18e2305dae7f7724ea5c695f95ef65a7c6",
+      "sourceSHA256": "3855829bb32ff22d5be2609267371c18e2305dae7f7724ea5c695f95ef65a7c6",
+      "matches": true
+    },
+    {
+      "path": "files/Assets/LocalBuild/Editor/EndingPrivateRemainingUiChecks.cs.meta",
+      "snapshotSHA256": "37859ddb926f70f5c7aec8850db78261ecf4c9258f4ce074f7d387586dcf7ee2",
+      "sourceSHA256": "37859ddb926f70f5c7aec8850db78261ecf4c9258f4ce074f7d387586dcf7ee2",
+      "matches": true
+    },
+    {
+      "path": "files/Assets/LocalBuild/Editor/EndingPrivateRemainingUiRunner.cs",
+      "snapshotSHA256": "ae807ee648236637c0dbf184331b6770730b6d85a9e404f33644d44fbd5e14ec",
+      "sourceSHA256": "ae807ee648236637c0dbf184331b6770730b6d85a9e404f33644d44fbd5e14ec",
+      "matches": true
+    },
+    {
+      "path": "files/Assets/LocalBuild/Editor/EndingPrivateRemainingUiRunner.cs.meta",
+      "snapshotSHA256": "f9db0a0f9bb8ebafaa86e1cf07fc10ac2c673afc3abba39927d9a6f4f5972f9c",
+      "sourceSHA256": "f9db0a0f9bb8ebafaa86e1cf07fc10ac2c673afc3abba39927d9a6f4f5972f9c",
+      "matches": true
+    },
+    {
+      "path": "QUESTIONS.md",
+      "snapshotSHA256": "3775cd625e6cbdc48b52fad78b33dd282242c1609baed3013deb69ce9e8bdcf6",
+      "sourceSHA256": "3775cd625e6cbdc48b52fad78b33dd282242c1609baed3013deb69ce9e8bdcf6",
+      "matches": true
+    }
+  ]
+}

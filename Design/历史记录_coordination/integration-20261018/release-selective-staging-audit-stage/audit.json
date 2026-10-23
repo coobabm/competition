@@ -1,0 +1,33 @@
+{
+  "createdUtc": "2026-10-18T23:26:14.064234+00:00",
+  "project": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016",
+  "HEAD": "2041e21d97709c8d7f72bc9e0596b002c6653058",
+  "originMainCached": "2041e21d97709c8d7f72bc9e0596b002c6653058",
+  "branch": "main",
+  "ahead": 0,
+  "behind": 0,
+  "fetchPerformedByThisAgent": false,
+  "parentReportedFetch": "Parent reports fetch at 07:23 local; unchanged",
+  "counts": {
+    "stage-source-paths": 531,
+    "stage-tracked-paths": 131,
+    "stage-untracked-source-paths": 400,
+    "exclude-tracked-generated": 6,
+    "exclude-tracked-line-endings": 6,
+    "exclude-untracked-local": 1,
+    "ignored-existing-paths": 36
+  },
+  "sourceSelectionPolicy": "Preserve earlier integrated code, tests, editor tooling, resources, metadata, design and source records; exclude only reverified generated/no-content assets and local IDE config. Inclusion is not an independent code review of every previous change.",
+  "assetMetaPairs": "All selected new non-meta Assets files have .meta siblings",
+  "sourceListSha256": "d7fb18a96c26256f58a7383788000564771519aaed9b173982b5e8aca8882f9c",
+  "indexMutated": false,
+  "productWritten": false,
+  "commitPerformed": false,
+  "runtimeLaunched": false,
+  "groupCounts": {
+    "Assets": 504,
+    "Design": 25,
+    "Packages": 2
+  },
+  "trackedPackageState": "Public Git URLs with fixed SHA; local file override described in earlier audit no longer applies"
+}

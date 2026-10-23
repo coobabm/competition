@@ -1,0 +1,123 @@
+{
+  "runtime": ".NET 10, not Unity; System.Text.Json",
+  "assertions": 2103,
+  "legacyTests": 23,
+  "failed": 0,
+  "results": [
+    {
+      "test": "XgBooksTests.TheShelfHoldsTheEightBooksInOrder",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.BooksOpenWithTheirAbility",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.AChapterRunsOnTheCardBooksItsCharactersAndBillsPower",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.NoPowerNoReading",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.ABookFinishedAddsItsParametersOutsideTheGradeRule",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.ItsReactionGrowsWithAbility",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.ItsNoteFillsInWithAbility",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.TheQuizGetsRightAsItReadsAndLearns",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.ItQuotesOnlyBooksItFinished",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.ThePromptListsWhatItRead",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBooksTests.AfterTheEightiethChapterItAsksWhatComesNext",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.EveryBookHasQuestionsOnChaptersItHas",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.ItAsksOnlyFromStageFourAboutChaptersItRead",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.ItAsksOneThingAtATimeAndNeverTwice",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.TheOfflineJudgeReadsKeyWords",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.AModelVerdictIsParsed",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.TheModelVerdictCanRaiseButNotLowerOrJudgeASkip",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.TheReplyIsColdShortAndTellsTheTruthWhenWrong",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.TheAnswerIsRememberedInTheRecordTheNoteAndThePrompt",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.FromStageFiveTheMemoryBookKeepsIt",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.ABrokenSaveIsRepaired",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.CoolDropsTheWarmthAndCutsAtASentence",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "XgBookPuzzleTests.RepliesGetLongerOnlySlowly",
+      "status": "passed",
+      "error": ""
+    }
+  ]
+}

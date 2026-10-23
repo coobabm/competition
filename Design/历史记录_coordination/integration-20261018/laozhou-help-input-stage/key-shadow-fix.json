@@ -1,0 +1,12 @@
+{
+  "scope": "lightweight const/value qualifier audit of specified QA only",
+  "fix": "Key session constant renamed RunKey; InputSystem Key.Escape retained",
+  "constants": [
+    "DesktopKey",
+    "OverrideKey",
+    "RunKey",
+    "SetupKey"
+  ],
+  "collisions": [],
+  "unityRun": false
+}

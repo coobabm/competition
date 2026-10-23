@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-19T09:45:40.678449+00:00",
+  "head": "3533141a406940d571e064f3797328c7d214235a",
+  "patch_sha256": "74f4217972978dc205a61ebdf184127d8fc34ed74950c4105cf4ddcbb54c495a",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingPresentation.cs",
+      "baseline_sha256": "0ab1205d3bbae6a985f10c9a88f1825cbe6e45b242e03724710a46e49b55534a",
+      "candidate_sha256": "30461dba521e44c33c6ad81b6805faed9ce689be8d3d5d660374b28a94ef6156",
+      "current_baseline_match": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs",
+      "baseline_sha256": "bbe6cfff2caa02d377225a75c3e007bb3f80e5a2889ff0c5c240e683db07af3b",
+      "candidate_sha256": "e6e86c1572de9b441e4b90b9fc8312450abcb8e753bccad0a4eccbfbc3615d27",
+      "current_baseline_match": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Narrative.cs",
+      "baseline_sha256": "3bc30616ee4ad38782615932e41b19f2a6ed9d2de721d17762e65625e1bcf6e7",
+      "candidate_sha256": "666cc076810da565a7bd2385d8866b83526d89ff8f4f0238ab627d9282289450",
+      "current_baseline_match": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoSourceLocalizationTests.cs",
+      "baseline_sha256": null,
+      "candidate_sha256": "19418ef090ccb9b70f41cb3a2f10c6230160a713269a53cff4d0c6f0f54580b5",
+      "current_baseline_match": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoSourceLocalizationTests.cs.meta",
+      "baseline_sha256": null,
+      "candidate_sha256": "ccd770729e8415bb5619505219041938f9bc58f0e537086cff6de0226f25d5e3",
+      "current_baseline_match": true
+    }
+  ],
+  "apply_check_exit": 0,
+  "production_modified_by_this_task": false
+}

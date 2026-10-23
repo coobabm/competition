@@ -1,0 +1,13 @@
+{
+  "status": "candidate-ready",
+  "patch": "delivery.patch",
+  "sha256": "49d61fbfe2ae8cbc65dd1a3d2202ab1874e4f7b7c30ca0aba7ca0e192dc1fdcb",
+  "preparedTests": 10,
+  "newUiTextPairs": 87,
+  "jointGitApplyCheck": "pass with ending-text-guard-stage/delivery.patch",
+  "productionEdited": false,
+  "unityExecuted": false,
+  "dotnetExecuted": false,
+  "modelExecuted": false,
+  "remaining": ["E-D host adapter integration", "single-instance compile", "NUnit execution", "real LCD UI and natural playthrough"]
+}

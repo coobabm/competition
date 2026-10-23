@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "file": "Assets/LocalBuild/Editor/EndingArchiveActualUiChecks.cs",
+      "base_sha256": null,
+      "candidate_sha256": "126339187bc71a4dfd91a9ad89462760d3e369c27fb3a94c0abc38a3dbf077f2"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/EndingArchiveActualUiChecks.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "d177fd70452a606d3db4be2bb20723613fa71700d37291d0797b6d153f9a8676"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/EndingArchiveActualUiRunner.cs",
+      "base_sha256": null,
+      "candidate_sha256": "e7c5889c29907f4465ecf30269f5e69dd244db79539e84b4ff8fd5504836959b"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/EndingArchiveActualUiRunner.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "1b0e4fa95cd9e18443ad00aa1aa754eafaf7a2387559a7f59adeec6401abf468"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/EndingFinalRouteUiRunner.cs",
+      "base_sha256": "046892e61985c36235cc26bc9c296ce5f829eb0a2363ae9144e5cd9c3ff543c6",
+      "candidate_sha256": "ccafb1ae4d49939e4b6d40755d4a0b5a6d292c9e0a21c1a5c292dbfbe88fedb9"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

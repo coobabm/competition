@@ -1,0 +1,4 @@
+cffi==1.17.1
+numpy==1.26.4
+pycparser==2.22
+SoundCard==0.4.5

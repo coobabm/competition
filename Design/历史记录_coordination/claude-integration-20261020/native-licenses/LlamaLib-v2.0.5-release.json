@@ -1,0 +1,31 @@
+{
+  "url": "https://github.com/undreamai/LlamaLib/releases/tag/v2.0.5",
+  "tag": "v2.0.5",
+  "published": "2026-03-04T21:39:53Z",
+  "assets": [
+    {
+      "name": "LlamaLib-v2.0.5.zip",
+      "size": 1818284209,
+      "browser_download_url": "https://github.com/undreamai/LlamaLib/releases/download/v2.0.5/LlamaLib-v2.0.5.zip",
+      "digest": "sha256:f3d85b2d6fbaa12839173f4438a7a2c7124bf6b25708d8be23348de2dec1156b"
+    },
+    {
+      "name": "LlamaLib-v2.0.5.zip.sha256",
+      "size": 65,
+      "browser_download_url": "https://github.com/undreamai/LlamaLib/releases/download/v2.0.5/LlamaLib-v2.0.5.zip.sha256",
+      "digest": "sha256:b231bbef014f162323a4f31547962e975a0afa5a8fb4004a88126be855c1ae1b"
+    },
+    {
+      "name": "LlamaLib.2.0.5.nupkg",
+      "size": 94833,
+      "browser_download_url": "https://github.com/undreamai/LlamaLib/releases/download/v2.0.5/LlamaLib.2.0.5.nupkg",
+      "digest": "sha256:f1c0ef35232ffd0a412d334e897b094392ca501a18fa68ee5e1b808446b499af"
+    },
+    {
+      "name": "LlamaLib.2.0.5.snupkg",
+      "size": 40642,
+      "browser_download_url": "https://github.com/undreamai/LlamaLib/releases/download/v2.0.5/LlamaLib.2.0.5.snupkg",
+      "digest": "sha256:5316979a9f64c151aa8cd59bffd4ba6715cf449cd16478e3c7b365ab471ee022"
+    }
+  ]
+}

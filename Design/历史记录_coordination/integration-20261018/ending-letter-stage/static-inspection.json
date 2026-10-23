@@ -1,0 +1,12 @@
+{
+  "scope": "Static file checks only; no Unity, .NET, model, runtime, save or UI test executed.",
+  "letters": 3,
+  "bilingualParagraphPairs": 27,
+  "uiCopyPairs": 30,
+  "appendices": 3,
+  "exactAuthoredParagraphMatches": 54,
+  "balancedCSharpFiles": 4,
+  "forbiddenOwnershipWrites": 0,
+  "resourcePath": "LingGuangV05/Epilogue/ending_letters",
+  "resourceSHA256": "db0d685076ab832ec76d742379bfe0c31dc98347b97ab250883a7d4c41d16946"
+}

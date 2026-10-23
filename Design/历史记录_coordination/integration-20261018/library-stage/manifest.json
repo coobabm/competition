@@ -1,0 +1,163 @@
+{
+  "base_head": "d3540147b032596b745b40df47878c9b8f0c158c",
+  "base_files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.cs",
+      "sha256_normalized": "95f7e42a72c0c4177dd4d277d98061c76821e2a90c84bc6b10f38cd6975b58e9"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Data.cs",
+      "sha256_normalized": "712f53fba73e0c50454f6890849362bf4e88ebd1ca0d9feda59f0924a1b1e550"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Puzzles.cs",
+      "sha256_normalized": "41c8ed4a2c3e1e3fe5c717fcecb65e1602b4705084f30a896e50418e020dc6cd"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Books.cs",
+      "sha256_normalized": "5786dd8ae726f1ad9c210a10210f899698de644c83cebd9fd8edd0aaf736bc6b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BookPuzzles.cs",
+      "sha256_normalized": "fcc73a80bf99b6f787f3733a09390c197b1850b67764be091ef7375facbb003e"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "sha256_normalized": "a4c309e7f8f4ed3b6e2537741ab3974a0df1f65c60b0a3e54528fd6795039dbc"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+      "sha256_normalized": "005ed28d159349ac8c0d2f6ea0e9623559771f01b98c2375b6cecba8c8842bc1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "sha256_normalized": "9ca8e5221c4024196f491e72e227a9c642ece3fcee0aea823df47610ddbbcc51"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+      "sha256_normalized": "d87f0241e3675e9b9e1012a3a3ce1fc2deadce5e2e9b5cca2c2544c3c05d1177"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Cards.cs",
+      "sha256_normalized": "5b236a74e91a1888384cd4aa3f9d1844740875b18c735174b370ee6f6ae66e43"
+    }
+  ],
+  "candidate_files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.cs",
+      "group": "library-core",
+      "candidate_sha256_normalized": "65c8f6ec13a043897055319a22b0a65dc2b1e9c267131b47a28a43579587616d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Data.cs",
+      "group": "library-core",
+      "candidate_sha256_normalized": "e9182615636bc50a0836cda9446f2d3a5b77077e978174fae78cfb9cad93319f"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Library.cs",
+      "group": "library-core",
+      "candidate_sha256_normalized": "b50ab32b5af24caeed828f726d94d3c771953a851ae482e7793cd6c122180669"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Library.cs.meta",
+      "group": "library-core",
+      "candidate_sha256_normalized": "fd36704086ad44e14a843c1e9b0e9502b254c11b8ef0c3a42fee5fc3ac51d851"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Library.Data.cs",
+      "group": "library-core",
+      "candidate_sha256_normalized": "42596184ae4bf2f5a4668809ff7a1afc5a017403ea30c3095da99ca04a142b66"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Library.Data.cs.meta",
+      "group": "library-core",
+      "candidate_sha256_normalized": "3559b5f597d77bbbb3e991b510ac9efba3298c56adaa70b43a1328df086fc271"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Puzzles.cs",
+      "group": "library-core",
+      "candidate_sha256_normalized": "76f4f282cf7cebb2e7712f58bd251f03b1156fad68d57ec4489c6690f4c38646"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BookLibrary.cs",
+      "group": "library-core",
+      "candidate_sha256_normalized": "6a143f8e5f3e2e5e22cd29a400f30a1fbc376f1388bbf042665ee62b4090c599"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BookLibrary.cs.meta",
+      "group": "library-core",
+      "candidate_sha256_normalized": "3bd363373b2621004ca879054fd2a9c868909f8be62d3e632e3216e13039226a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BookPuzzles.cs",
+      "group": "library-core",
+      "candidate_sha256_normalized": "49de350699d0c549d3c20f95e1ffc7211dd49357fab61293cb9f29cd24cabd87"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Books.cs",
+      "group": "library-core",
+      "candidate_sha256_normalized": "0e68ce5351b4eba420c148664e87315c9bdfd7f8e58cf17fce554334a63341d0"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Cards.cs",
+      "group": "shared",
+      "candidate_sha256_normalized": "62a79232c0a62be1d39e7480bac176cbcf470d8ced02518984c5916662f1c825"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "group": "shared",
+      "candidate_sha256_normalized": "c5799f2cef0b854da8d1d86d87215ccc38531240d3d43ae1371742b00743e63d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "group": "shared",
+      "candidate_sha256_normalized": "674b0da01edd9ca9507f853fa0172e099852aa3c0e442d127934bb5e615297b6"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+      "group": "shared",
+      "candidate_sha256_normalized": "98954477d026dc42c11880c47b35abd72c5ddd7f5e7e29d31c3aa2c578c4eaf3"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+      "group": "shared",
+      "candidate_sha256_normalized": "3f07e02e873a9f80da9a09e6be26b2f3036499460bb7d443742e4e59594837a7"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBookPuzzleTests.cs",
+      "group": "checks",
+      "candidate_sha256_normalized": "9d6936a51ff98ee9ccc2f72f46022f3f284876649ea3f6409cfffa818a151fe3"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBooksTests.cs",
+      "group": "checks",
+      "candidate_sha256_normalized": "1d9dae35a0f630c43d2441154e031e52d6fe3fb1f6efcfa31e496b3fd0e2a564"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BookLibraryChecks.cs",
+      "group": "checks",
+      "candidate_sha256_normalized": "5e8c8a647b48b6daff316ef5eb51c0fc9ec901854417b58072a03612739691cd"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BookLibraryChecks.cs.meta",
+      "group": "checks",
+      "candidate_sha256_normalized": "e3ae1448a319310ffd9a1e074c51f141952d3929c99ea7b06efdd889f70dd16c"
+    }
+  ],
+  "dependency_files": [
+    {
+      "path": "XgSim.DataPacks.cs",
+      "sha256_normalized": "b83f27303b9740c8d49f180459cabb225608d19f95907a5381ea05bf069a8cb7"
+    },
+    {
+      "path": "XgSim.LearningRecords.cs",
+      "sha256_normalized": "205ea2a3110fca1e46e425f4f11971778850a04c7d64f1da0acc23568f2d30c1"
+    },
+    {
+      "path": "XgSim.YyLearning.cs",
+      "sha256_normalized": "122208020ebb00d9c05cb0bce07bd6b98308af15ba42689f59ff130db75cbc6a"
+    }
+  ],
+  "verified_against_head": "0f27ab17cc3aac6ded22bf7436506ac1c781ea57",
+  "patch_sha256": "ca85aa6c2ffdeab5155a48ef90ca48110645ba0539c3da0496b78de4f12cfdf9"
+}

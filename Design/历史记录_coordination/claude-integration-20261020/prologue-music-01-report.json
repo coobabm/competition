@@ -1,0 +1,35 @@
+{
+    "status": "passed",
+    "failure": "",
+    "scope": "Isolated empty-scene production prologue coroutine and UI. Original title/boot iterator skipped; no Main scene, save owner, model or real music app. Verifies event order, no icon click dispatched, cursor/input ownership cleanup, missing-icon fallback and interruption. Full LCD input relay, actual music player and new/load menu integration require scene QA.",
+    "checks": [
+        "No real save owner exists",
+        "Production Run first yields original title/boot",
+        "Production Run has a post-boot sequence",
+        "Music approach finishes before virus creation",
+        "Simulated cursor reaches actual music shortcut center",
+        "Approach never clicks or opens music shortcut",
+        "Approach owns the simulated cursor until alert construction",
+        "Production Run immediately continues into virus alert",
+        "Production virus alert is constructed and awaits player answer",
+        "Virus window exists before input is released",
+        "Virus restores cursor and relinquishes input ownership",
+        "Exact production music-intent -> music-approach -> music-interrupted -> virus order",
+        "Unavailable music shortcut returns control without hanging",
+        "Interruption fixture starts while cursor is owned",
+        "Disabling director restores cursor and input ownership",
+        "Disabling director cancels outstanding opening thought",
+        "Normal, fallback and interrupted paths dispatch zero music-open events"
+    ],
+    "steps": [
+        "title",
+        "music-intent",
+        "music-approach",
+        "music-interrupted",
+        "virus",
+        "music-intent",
+        "Music shortcut unavailable; continuing to the virus alert",
+        "music-intent"
+    ],
+    "errors": []
+}

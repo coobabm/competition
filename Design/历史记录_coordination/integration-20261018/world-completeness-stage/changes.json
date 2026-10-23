@@ -1,0 +1,10 @@
+[
+  "Assets/LingGuangV05/XingGuang/Core/XgSim.LifeEvents.cs",
+  "Assets/LingGuangV05/XingGuang/Core/XgSim.LifeData.cs",
+  "Design/data/life_events_100.json",
+  "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+  "Design/data/browser_news.json",
+  "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+  "Assets/LingGuangV05/XingGuang/Core/XgNewsCatalog.cs",
+  "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs"
+]

@@ -1,0 +1,16 @@
+[
+  "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgActionGames.cs",
+  "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgDeskGamePage.cs",
+  "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackChess.cs",
+  "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackContentGames.cs",
+  "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackGames.cs",
+  "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackPuzzles.cs",
+  "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackTwentyFour.cs",
+  "Assets/LingGuangV05/XingGuang/Core/XgSim.DataPacks.cs",
+  "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgSocialGames.Deduction.cs",
+  "Assets/LingGuangV05/XingGuang/Core/XgTeachingImageModels.cs",
+  "Assets/LingGuangV05/XingGuang/Desktop/XgTeachingPictures.cs",
+  "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/chess_mates.json",
+  "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/chess_mates_lichess.json",
+  "Assets/LingGuangV05/Resources/LingGuangV05/Teaching/chess_mates_verified.json"
+]

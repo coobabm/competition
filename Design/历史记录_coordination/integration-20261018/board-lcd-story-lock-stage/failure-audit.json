@@ -1,0 +1,46 @@
+{
+  "status": "failed",
+  "detail": "System.InvalidOperationException: Actual Main LCD input is unavailable\r\n  at BoardGamesUiPlayQa.LcdSurface () [0x0003f] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs:307 \r\n  at BoardGamesUiPlayQa.TryLcdPoint (UnityEngine.RectTransform rect, UnityEngine.Vector2 local, UnityEngine.Vector2& point) [0x0000b] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs:317 \r\n  at BoardGamesUiPlayQa.LcdPoint (UnityEngine.RectTransform rect, UnityEngine.Vector2 local) [0x00000] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs:311 \r\n  at BoardGamesUiPlayQa.Pointer (UnityEngine.RectTransform rect, System.Int32 count) [0x00005] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs:300 \r\n  at BoardGamesUiPlayQa.ClickRect (UnityEngine.RectTransform rect, System.Int32 count) [0x0003a] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs:370 \r\n  at BoardGamesUiPlayQa.ClickNamed (UnityEngine.Transform root, System.String name) [0x00041] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs:296 \r\n  at BoardGamesUiPlayQa+<Checks>d__67.MoveNext () [0x00c98] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs:237 \r\n  at BoardGamesUiPlayQa+<SelectedChecks>d__4.MoveNext () [0x00061] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.LogicTools.cs:31 \r\n  at BoardGamesUiPlayQa.Tick () [0x00065] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs:407 ",
+  "passed_entries": 429,
+  "errors": [],
+  "infrastructure": [],
+  "evidence_hashes": {
+    "checkers-real-complete.png": "750f6ca387707d7279eb2cc57d1d8cfbdc56c6fe4118733f3f11c71993d213c0",
+    "checkers-start.png": "3c193b6ca692ea3693b1bac555a47ebe4207bb25a891b360b594aea5b1ad03e9",
+    "game-hub-start.png": "996322f20bd53503bb10cb54833144e4a939fd7944384f946cc0e363a35d48d3",
+    "ludo-real-complete.png": "a16e042a0f99baba9a9bf572e3f134ac83a0402814832880482bbc5d843f9488",
+    "ludo-rules-zh.png": "80022bd93cf329bbf8d3f7e60d42c72a3ecd2d6779a9c478b2247a731cb2e64d",
+    "result.json": "ab691909b020c750b58d59ad0c95b062dcca060a3365d1098ecc511fd52fe8e1",
+    "DesktopProfile/Apps.json": "34eed5543c9d603e5763ffb69a0d3762c1bfa67d2786ed1e0c44777496ca373b",
+    "DesktopProfile/DateAndTime.json": "76901b72bbac8f26b2d05541c842c30b69904e0d84bc42b54b938dcb3b32f511",
+    "DesktopProfile/Network.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "DesktopProfile/System.json": "ceba6ef62822fd0e653c19cbd7ef7ea5894e5f4113c480ca076f8acd24131e03",
+    "DesktopProfile/User.json": "803a8e98294fd5b3d115b108611873161154b07121f5e58787c53c05bf35314b",
+    "Save/chapter-one.sav": "ec89a7648521d872c91a4abe88c9fd0b95a10504779a0513c3eb724d1c70657a",
+    "Save/chapter-one.sav.bak": "ec89a7648521d872c91a4abe88c9fd0b95a10504779a0513c3eb724d1c70657a"
+  },
+  "post_failure_save": {
+    "payload_digest_valid": true,
+    "stage": 2,
+    "prologue": 2,
+    "appInstallState": 2,
+    "epiphany": false,
+    "lingguangUnlocked": false,
+    "completed_board_rounds": [
+      [
+        "ludo",
+        30
+      ],
+      [
+        "checkers_cn",
+        80
+      ],
+      [
+        "monopoly",
+        16
+      ]
+    ]
+  },
+  "historical_lock_owner": "not recorded; AiJoinsYy is the leading source-supported hypothesis, not retrospectively proven",
+  "runtime_run": false
+}

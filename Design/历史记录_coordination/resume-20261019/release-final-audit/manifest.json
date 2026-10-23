@@ -1,0 +1,9 @@
+{
+  "patch": "patch/release-smoke-current-integration.patch",
+  "sha256": "a5555779455770727c85d2f2b4487be262d27959963bdfa13c1f66715a3cfd54",
+  "appliesRelativeTo": "C:/Users/xomem/Documents/ChatGPT/games/.coordination/integration-20261018/release-smoke-consistency-stage",
+  "productionChanges": 0,
+  "newProductionBlockers": 0,
+  "checklistVersionMismatch": true,
+  "validation": "git apply --check passed; no build/runtime/package execution"
+}

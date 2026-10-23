@@ -1,0 +1,70 @@
+[
+  {
+    "path": "Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDownloadsTests.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Zhongbao\\ZhongbaoPages.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\Runtime\\ChapterOneRuntime.Slots.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\Runtime\\ChapterOneRuntime.ArchivePresentation.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\XingGuang\\Desktop\\XgDataUi.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Games\\MonopolyPanel.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Games\\LudoPanel.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Games\\HubGame.BoardSessions.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Games\\GoPanel.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Games\\GomokuPanel.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Games\\ChineseCheckersPanel.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Games\\ChessPanel.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\DesktopBridge\\Story\\StudyDesktopGates.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\XingGuang\\Core\\XgCatalog.DataPacks.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\XingGuang\\Core\\XgAppAcquisition.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.StoryPacing.cs",
+    "canonicalExists": true
+  },
+  {
+    "path": "Assets\\LingGuangV05\\XingGuang\\Core\\XgSim.Features.cs",
+    "canonicalExists": true
+  }
+]

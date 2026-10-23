@@ -309,7 +309,7 @@ MonoBehaviour:
       audioValue: {fileID: 0}
       spriteValue: {fileID: 0}
     - key: SetupWelcomeDesc
-      value: 'I''m here to assist you while initializing your <b>hongmengos</b>.
+      value: 'I''m here to assist you while initializing your <b>Aurora 7</b>.
 
         Are
         you ready?'
@@ -519,7 +519,7 @@ MonoBehaviour:
     - key: SetupFinalDescSimple
       value: 'Almost done!
 
-        You can now reboot the system and enjoy <b>hongmengos</b>.'
+        You can now reboot the system and enjoy <b>Aurora 7</b>.'
       audioValue: {fileID: 0}
       spriteValue: {fileID: 0}
   - table: {fileID: 11400000, guid: 0eb7e7ab93f454510aac812a1eb2dc34, type: 2}

@@ -1,0 +1,487 @@
+{
+  "capture": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a",
+  "rawExport": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187",
+  "scope": "Historical Editor workload, model disabled. Raw main-thread time differs from sampled rendered-frame delta. No Player, inference or audible-continuity pass.",
+  "phases": [
+    {
+      "scenario": "teach-continuous",
+      "sourceCommit": "c67a7db50ace0b9df6356b7c3b79b75c404e95e0",
+      "unityVersion": "6000.4.5f1",
+      "scope": "Unity Editor PlayMode; actual visible quiz control callbacks (not physical Aero pointer input); one capture tick per rendered frame; isolated save; local LLM disabled; scheduled BeginEpoch requests are automation workload, not purchased automation",
+      "renderedFrames": 1741,
+      "actionAttempts": 81,
+      "completedActions": 81,
+      "frameMeanMs": 17.223086532404338,
+      "frameP95Ms": 22.955102920532227,
+      "frameMaxMs": 44.819698333740234,
+      "wallSeconds": 30.1807024,
+      "rawMainThreadFrameCount": 1745,
+      "rawMainThreadTopFrames": [
+        {
+          "Frame": "307",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "44.590401",
+          "Samples": "6267",
+          "MaxSampleMs": "44.590401",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        },
+        {
+          "Frame": "1292",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "44.068401",
+          "Samples": "11594",
+          "MaxSampleMs": "44.068401",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        },
+        {
+          "Frame": "525",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "39.899300",
+          "Samples": "3804",
+          "MaxSampleMs": "39.899300",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        }
+      ],
+      "invalidRecorderAggregates": [],
+      "selectedMainThreadMarkers": [
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "Xg.Controller.SimTick",
+          "Calls": "1743",
+          "InclusiveMeanMsPerThreadFrame": "0.194490",
+          "MaxSingleSampleMs": "2.921900",
+          "MaxSampleFrame": "1082",
+          "SelfMeanMsPerThreadFrame": "0.007710",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.SimTick"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "Xg.Controller.CalendarProfile",
+          "Calls": "1743",
+          "InclusiveMeanMsPerThreadFrame": "0.054522",
+          "MaxSingleSampleMs": "1.034200",
+          "MaxSampleFrame": "1267",
+          "SelfMeanMsPerThreadFrame": "0.053680",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.CalendarProfile"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "Xg.Controller.ChapterCaptureSave",
+          "Calls": "1743",
+          "InclusiveMeanMsPerThreadFrame": "0.054103",
+          "MaxSingleSampleMs": "3.175000",
+          "MaxSampleFrame": "1291",
+          "SelfMeanMsPerThreadFrame": "0.051372",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.ChapterCaptureSave"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "GC.Collect",
+          "Calls": "2",
+          "InclusiveMeanMsPerThreadFrame": "0.009755",
+          "MaxSingleSampleMs": "13.957800",
+          "MaxSampleFrame": "525",
+          "SelfMeanMsPerThreadFrame": "0.009755",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > GarbageCollector.CollectIncremental > GC.Collect"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "Xg.Controller.BrainTick",
+          "Calls": "1743",
+          "InclusiveMeanMsPerThreadFrame": "0.008519",
+          "MaxSingleSampleMs": "0.074800",
+          "MaxSampleFrame": "226",
+          "SelfMeanMsPerThreadFrame": "0.008470",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.BrainTick"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "Xg.Controller.ProgressEvents",
+          "Calls": "1743",
+          "InclusiveMeanMsPerThreadFrame": "0.001497",
+          "MaxSingleSampleMs": "0.041200",
+          "MaxSampleFrame": "1082",
+          "SelfMeanMsPerThreadFrame": "0.001497",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.ProgressEvents"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "AsyncReadManager.SyncRequest",
+          "Calls": "10",
+          "InclusiveMeanMsPerThreadFrame": "0.000524",
+          "MaxSingleSampleMs": "0.449900",
+          "MaxSampleFrame": "61",
+          "SelfMeanMsPerThreadFrame": "0.000083",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > Loading.ReadObject > Loading.LoadFileHeaders > AsyncReadManager.SyncRequest"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "File.Read",
+          "Calls": "10",
+          "InclusiveMeanMsPerThreadFrame": "0.000129",
+          "MaxSingleSampleMs": "0.052100",
+          "MaxSampleFrame": "61",
+          "SelfMeanMsPerThreadFrame": "0.000129",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > Loading.ReadObject > Loading.LoadFileHeaders > AsyncReadManager.SyncRequest > File.Read"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1745",
+          "Marker": "SoundManager.LoadFMODSound",
+          "Calls": "10",
+          "InclusiveMeanMsPerThreadFrame": "0.000029",
+          "MaxSingleSampleMs": "0.017600",
+          "MaxSampleFrame": "61",
+          "SelfMeanMsPerThreadFrame": "0.000029",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > Loading.ReadObject > Loading.ReadObjectThreaded > AwakeFromLoad Threaded > SoundManager.LoadFMODSound"
+        }
+      ]
+    },
+    {
+      "scenario": "train-auto",
+      "sourceCommit": "c67a7db50ace0b9df6356b7c3b79b75c404e95e0",
+      "unityVersion": "6000.4.5f1",
+      "scope": "Unity Editor PlayMode; actual visible quiz control callbacks (not physical Aero pointer input); one capture tick per rendered frame; isolated save; local LLM disabled; scheduled BeginEpoch requests are automation workload, not purchased automation",
+      "renderedFrames": 1758,
+      "actionAttempts": 29,
+      "completedActions": 16,
+      "frameMeanMs": 17.052129931010484,
+      "frameP95Ms": 21.527402877807617,
+      "frameMaxMs": 59.38540267944336,
+      "wallSeconds": 30.158991,
+      "rawMainThreadFrameCount": 1761,
+      "rawMainThreadTopFrames": [
+        {
+          "Frame": "1204",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "58.978802",
+          "Samples": "14936",
+          "MaxSampleMs": "58.978802",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        },
+        {
+          "Frame": "126",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "55.387901",
+          "Samples": "25263",
+          "MaxSampleMs": "55.387901",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        },
+        {
+          "Frame": "1210",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "44.282299",
+          "Samples": "6301",
+          "MaxSampleMs": "44.282299",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        }
+      ],
+      "invalidRecorderAggregates": [
+        {
+          "Category": "invalid_recorder_aggregate",
+          "Frame": "NA",
+          "Thread": "NA",
+          "Marker": "Flush DSP connections",
+          "Value": "mean=-15739542725007200.000000,max=67600.000000",
+          "Note": "Original JSON retained; do not treat this counter as timing evidence"
+        }
+      ],
+      "selectedMainThreadMarkers": [
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1761",
+          "Marker": "Xg.Controller.SimTick",
+          "Calls": "1760",
+          "InclusiveMeanMsPerThreadFrame": "0.320361",
+          "MaxSingleSampleMs": "38.588501",
+          "MaxSampleFrame": "126",
+          "SelfMeanMsPerThreadFrame": "0.007611",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.SimTick"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1761",
+          "Marker": "Xg.Controller.ChapterCaptureSave",
+          "Calls": "1760",
+          "InclusiveMeanMsPerThreadFrame": "0.047200",
+          "MaxSingleSampleMs": "0.977900",
+          "MaxSampleFrame": "1635",
+          "SelfMeanMsPerThreadFrame": "0.045831",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.ChapterCaptureSave"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1761",
+          "Marker": "Xg.Controller.CalendarProfile",
+          "Calls": "1760",
+          "InclusiveMeanMsPerThreadFrame": "0.039833",
+          "MaxSingleSampleMs": "0.153700",
+          "MaxSampleFrame": "372",
+          "SelfMeanMsPerThreadFrame": "0.039042",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.CalendarProfile"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1761",
+          "Marker": "Xg.Controller.ProgressEvents",
+          "Calls": "1760",
+          "InclusiveMeanMsPerThreadFrame": "0.038444",
+          "MaxSingleSampleMs": "0.212900",
+          "MaxSampleFrame": "10",
+          "SelfMeanMsPerThreadFrame": "0.035834",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.ProgressEvents"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1761",
+          "Marker": "AsyncReadManager.SyncRequest",
+          "Calls": "6",
+          "InclusiveMeanMsPerThreadFrame": "0.010670",
+          "MaxSingleSampleMs": "17.023600",
+          "MaxSampleFrame": "1204",
+          "SelfMeanMsPerThreadFrame": "0.000057",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangView.Update() [Invoke] > Loading.ReadObject > Loading.LoadFileHeaders > AsyncReadManager.SyncRequest"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1761",
+          "Marker": "File.Read",
+          "Calls": "6",
+          "InclusiveMeanMsPerThreadFrame": "0.010421",
+          "MaxSingleSampleMs": "16.894800",
+          "MaxSampleFrame": "1204",
+          "SelfMeanMsPerThreadFrame": "0.010421",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangView.Update() [Invoke] > Loading.ReadObject > Loading.LoadFileHeaders > AsyncReadManager.SyncRequest > File.Read"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1761",
+          "Marker": "GC.Collect",
+          "Calls": "2",
+          "InclusiveMeanMsPerThreadFrame": "0.010006",
+          "MaxSingleSampleMs": "16.566299",
+          "MaxSampleFrame": "59",
+          "SelfMeanMsPerThreadFrame": "0.010006",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > GarbageCollector.CollectIncremental > GC.Collect"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1761",
+          "Marker": "Xg.Controller.BrainTick",
+          "Calls": "1760",
+          "InclusiveMeanMsPerThreadFrame": "0.008666",
+          "MaxSingleSampleMs": "0.136200",
+          "MaxSampleFrame": "1562",
+          "SelfMeanMsPerThreadFrame": "0.008623",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.BrainTick"
+        }
+      ]
+    },
+    {
+      "scenario": "yy-tieba-switch",
+      "sourceCommit": "c67a7db50ace0b9df6356b7c3b79b75c404e95e0",
+      "unityVersion": "6000.4.5f1",
+      "scope": "Unity Editor PlayMode; actual visible quiz control callbacks (not physical Aero pointer input); one capture tick per rendered frame; isolated save; local LLM disabled; scheduled BeginEpoch requests are automation workload, not purchased automation",
+      "renderedFrames": 1610,
+      "actionAttempts": 20,
+      "completedActions": 20,
+      "frameMeanMs": 18.62590869524464,
+      "frameP95Ms": 29.2842960357666,
+      "frameMaxMs": 80.44129943847656,
+      "wallSeconds": 30.212033700000006,
+      "rawMainThreadFrameCount": 1613,
+      "rawMainThreadTopFrames": [
+        {
+          "Frame": "1288",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "100.528000",
+          "Samples": "38199",
+          "MaxSampleMs": "100.528000",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        },
+        {
+          "Frame": "982",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "94.808899",
+          "Samples": "38247",
+          "MaxSampleMs": "94.808899",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        },
+        {
+          "Frame": "1473",
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "FrameMs": "71.238403",
+          "Samples": "28742",
+          "MaxSampleMs": "71.238403",
+          "MaxSample": "Main Thread",
+          "MaxSamplePath": "Main Thread"
+        }
+      ],
+      "invalidRecorderAggregates": [
+        {
+          "Category": "invalid_recorder_aggregate",
+          "Frame": "NA",
+          "Thread": "NA",
+          "Marker": "Audio.Thread",
+          "Value": "mean=-5728802507217470.000000,max=1276100.000000",
+          "Note": "Original JSON retained; do not treat this counter as timing evidence"
+        }
+      ],
+      "selectedMainThreadMarkers": [
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1613",
+          "Marker": "Xg.Controller.SimTick",
+          "Calls": "1612",
+          "InclusiveMeanMsPerThreadFrame": "0.286846",
+          "MaxSingleSampleMs": "1.319000",
+          "MaxSampleFrame": "939",
+          "SelfMeanMsPerThreadFrame": "0.008538",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.SimTick"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1613",
+          "Marker": "Xg.Controller.ChapterCaptureSave",
+          "Calls": "1612",
+          "InclusiveMeanMsPerThreadFrame": "0.052844",
+          "MaxSingleSampleMs": "0.216000",
+          "MaxSampleFrame": "441",
+          "SelfMeanMsPerThreadFrame": "0.051211",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.ChapterCaptureSave"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1613",
+          "Marker": "Xg.Controller.ProgressEvents",
+          "Calls": "1612",
+          "InclusiveMeanMsPerThreadFrame": "0.050154",
+          "MaxSingleSampleMs": "0.641600",
+          "MaxSampleFrame": "862",
+          "SelfMeanMsPerThreadFrame": "0.046391",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.ProgressEvents"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1613",
+          "Marker": "Xg.Controller.CalendarProfile",
+          "Calls": "1612",
+          "InclusiveMeanMsPerThreadFrame": "0.048277",
+          "MaxSingleSampleMs": "0.439600",
+          "MaxSampleFrame": "1037",
+          "SelfMeanMsPerThreadFrame": "0.047267",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.CalendarProfile"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1613",
+          "Marker": "Xg.Controller.BrainTick",
+          "Calls": "1612",
+          "InclusiveMeanMsPerThreadFrame": "0.009803",
+          "MaxSingleSampleMs": "0.248400",
+          "MaxSampleFrame": "576",
+          "SelfMeanMsPerThreadFrame": "0.009740",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.XingGuang::XingGuangController.Update() [Invoke] > Xg.Controller.BrainTick"
+        },
+        {
+          "ThreadId": "30972",
+          "Thread": "/Main Thread",
+          "ValidThreadFrames": "1613",
+          "Marker": "GC.Collect",
+          "Calls": "2",
+          "InclusiveMeanMsPerThreadFrame": "0.009587",
+          "MaxSingleSampleMs": "12.379900",
+          "MaxSampleFrame": "254",
+          "SelfMeanMsPerThreadFrame": "0.009587",
+          "InvalidSelfSamples": "0",
+          "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > GarbageCollector.CollectIncremental > GC.Collect"
+        }
+      ]
+    }
+  ],
+  "inputSha256": {
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\complete.txt": "c251ec6b7dc229ab7fe0b5725ba9da380a3bc87d2ff33bb9a1bef1d0c12a582b",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\complete.txt": "c256986aa85f981dd648d1829cbb9f65e477e1c5ef2fc4a494694fb83c99ce89",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\teach-continuous.json": "12707b93ac159de37b625e4073f351670dc3f48e24091b96aefcb384cc349084",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\teach-continuous-frames.tsv": "f42cd09700fed1879772033f2d27445433808931c8149d6558b157d68be2fa41",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\teach-continuous-anomalies.tsv": "9a3458e8e255f236c5b0990a3c09a5f7eff75e0040228da0015a217952e1c9b3",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\teach-continuous-markers.tsv": "bc23cf4d67ff9302a6ff5c6e2dfa6d09f6d677d22715030a4334afef3cc0b5c6",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\train-auto.json": "62e9be79c895e117350e6c288e61efc0e7f62e73761e74fbb54775fe61c595db",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\train-auto-frames.tsv": "9c24d749f372e2e2fb6db0bc571c39f01abe97d77329f1afd0a742e5adcb5e13",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\train-auto-anomalies.tsv": "155fc4031c66bd6948a0cf0f8a05f2189888949c848d09625ac890dcc3cc78bd",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\train-auto-markers.tsv": "1c961146bdb09913715d3c7762148d33f5e192897d86e6fad86fc9da720cd66d",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\yy-tieba-switch.json": "012adb95467d1c35551724c241e6b08adb45dee8ff479968f9974a37e3b2f28f",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\yy-tieba-switch-frames.tsv": "3cbd8e216bb9b41c1727f366ab1effe3f980922ece26b8401001d0199f41af1a",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\yy-tieba-switch-anomalies.tsv": "e4003cc79a4eb45b09742b7ea892061c582253c1aa86a9add5c0d04393189387",
+    "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261018-160520-537-47187a\\raw-analysis-20261018-160826-187\\yy-tieba-switch-markers.tsv": "0e1ca3f5cf5a9ddaaa2127aec0c875eab74ce3ebfdb4fdc341a283c9cf29c41c"
+  }
+}

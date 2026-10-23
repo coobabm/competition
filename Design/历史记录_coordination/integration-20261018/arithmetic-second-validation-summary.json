@@ -1,0 +1,34 @@
+{
+  "FrozenUnseenClaimsBeforeAndAfterRealBoardTraining": {
+    "result": "Passed",
+    "mean_balanced": {
+      "existing-generator-unseen:0": 0.545112,
+      "basic-mole-unseen:0": 0.612986,
+      "mole-transfer-including-untrained-calculus:0": 0.612689,
+      "existing-generator-unseen:640": 0.747472,
+      "final:640": 0.747472,
+      "mole-transfer-including-untrained-calculus:640": 0.662782,
+      "basic-mole-unseen:640": 0.787031
+    },
+    "growth": [
+      "mean_balanced_accuracy_gain=0.202360",
+      "basic_mole_mean_balanced_accuracy_gain=0.174044"
+    ]
+  },
+  "PreregisteredSecondUnseenSetBeforeAndAfterRealBoardTraining": {
+    "result": "Passed",
+    "mean_balanced": {
+      "existing-generator-unseen:0": 0.557662,
+      "basic-mole-unseen:0": 0.553207,
+      "mole-transfer-including-untrained-calculus:0": 0.526069,
+      "existing-generator-unseen:640": 0.743644,
+      "final:640": 0.743644,
+      "mole-transfer-including-untrained-calculus:640": 0.60335,
+      "basic-mole-unseen:640": 0.712922
+    },
+    "growth": [
+      "mean_balanced_accuracy_gain=0.185982",
+      "basic_mole_mean_balanced_accuracy_gain=0.159715"
+    ]
+  }
+}

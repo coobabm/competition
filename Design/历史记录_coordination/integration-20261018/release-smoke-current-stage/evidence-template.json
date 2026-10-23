@@ -1,0 +1,11 @@
+{
+  "status": "not_run",
+  "build": {"path":"","exe_sha256":"","source_digest":"","company":"","product":"","ordinary_release":null},
+  "isolation": {"cli_root":"","root_log":"","marker_valid":null,"user_save_manifest_before":"","user_save_manifest_after":"","user_save_hashes_unchanged":null,"prefs_backup":"","prefs_changed_during_run":null,"prefs_restored_and_compared":null},
+  "player": {"pid":null,"start_utc":"","hwnd":null,"client_size":"","title_boot":"not_run","prologue_no_click_utc":"","setup_choices":{},"prologue_done_log":"","screenshots":[],"player_log":"","exit_code":null},
+  "model": {"boot_ready_line":"","configured_default":"CPU; 3 context slots x4096; chat threads/batch min(6, logical cores/2), minimum1; Pump serial guard","deliberate_smoke_messages":0,"prompt":"","sent_utc":"","reply":"","received_utc":"","ui_response":"not_run","native_origin":"unverified","native_success_callback_evidence":"","runtime_peak_native_calls":null,"runtime_cancel_order":"unverified","embedding_note":"Normal bundled embedder may start automatically; separate native service, no explicit threads bound in current source; no extra test model loaded"},
+  "music": {"first_open_title":"","first_open_clip_source_expectation":"emergency_1","shuffle_off":null,"repeat_off":null,"playing_interval":"not_run","closed_window_interval":"not_run","sequence_boundary":"not_run","boundary_seek_assisted":null,"expected_successor":"","observed_successor":"","action_timeline":[]},
+  "audio": {"endpoint_report":"","other_audio_quiet":null,"takes":[],"listened_to_original_wavs":null,"review_notes":"","inference_overlap_seconds":null},
+  "errors":[],
+  "gaps":["Preparation only; scripts not executed","Normal Player currently lacks per-request native successful callback provenance","Runtime native cancellation/dispatch ordering not measured","Cross-service chat/embedding overlap not measured"]
+}

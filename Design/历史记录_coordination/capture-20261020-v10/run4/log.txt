@@ -1,0 +1,39 @@
+fixture bound
+[Exception] ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+System.Collections.Generic.List`1[T].get_Item (System.Int32 index) (at <f713e1c3c5f545ce9b1df47230f4f853>:0)
+UnityEditor.Search.SearchDatabase+<EnumerateAll>d__80.MoveNext () (at <7c2ffc61e6954a57ab9283f483f825e2>:0)
+System.Linq.Enumerable.TryGetFirst[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Boolean& found) (at <101642b95873440bbf9fec45cfcaa487>:0)
+System.Linq.Enumerable.First[TSource] (System.Collections.Generic.IEnumerable`1[T] source) (at <101642b95873440bbf9fec45cfcaa487>:0)
+UnityEditor.Search.SearchDatabase.GetDefaultSearchDatabase () (at <7c2ffc61e6954a57ab9283f483f825e2>:0)
+UnityEditor.Search.SearchInit.IndexationOnStartup () (at <7c2ffc61e6954a57ab9283f483f825e2>:0)
+UnityEditor.EditorApplication.Internal_CallDelayFunctions () (at <5cd1e59afb2c420d8621a96062f56dea>:0)
+
+testmode False
+driver started
+hires src was 1280x720 screen 640x480
+quiet YYGirlfriend
+quiet DesktopNotifications
+quiet ShopNotices
+quiet XgPublicDiscourseNotifier
+quiet ZhouCardLoan
+quiet XgPlatformPopups
+quiet XgLifeEventCard
+quiet XgDailyUnlockNotifier
+quiet XgHoloCard
+quiet XgEndingPreparationHost
+shot d_desktop 2560x1440
+== part tree
+fit Container parent 1920x1030 -> (1651.20, 919.79)
+tree geo content=(8080.00, 3560.00) scale=0.5 viewport=(1192.43, 490.00) nodes=169
+tree refreshed nodes=169 content=(8080.00, 3560.00)
+shot k_tree_p0 2560x1440
+shot k_tree_p1 2560x1440
+shot k_tree_p2 2560x1440
+zoom now 0.5 viewport=(1192.43, 490.00)
+shot k_tree_p3 2560x1440
+shot k_tree_p4 2560x1440
+shot k_tree_g1 2560x1440
+shot k_tree_g2 2560x1440
+shot k_tree_g3 2560x1440
+DONE PASS

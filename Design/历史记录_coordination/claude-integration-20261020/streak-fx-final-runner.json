@@ -1,0 +1,10 @@
+{
+    "status": "passed",
+    "failure": "",
+    "unityVersion": "6000.4.5f1",
+    "detailReport": "C:\\Users\\xomem\\AppData\\Local\\Temp\\LingGuang-StreakFeedbackBatch-QA-46d6307524084aafa1fe238fc3109fce\\details.json",
+    "enterPlayModeOptionsEnabled": true,
+    "enterPlayModeOptions": 1,
+    "errors": [],
+    "scope": "Batch-only empty scene; actual streak sounds, reduced motion and hidden-window coroutine. No game runtime or Main scene is loaded. Editor play-mode settings are observed, never modified."
+}

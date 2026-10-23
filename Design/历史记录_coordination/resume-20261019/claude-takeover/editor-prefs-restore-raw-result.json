@@ -1,0 +1,10 @@
+{
+  "action": "Restore",
+  "subkey": "Software\\Unity\\UnityEditor\\DefaultCompany\\competition",
+  "restored": true,
+  "changedDuringRun": true,
+  "valuesWritten": 5,
+  "testValuesRemoved": 0,
+  "comparison": "raw type, byte length, bytes, names and key existence",
+  "utc": "2026-10-19T13:50:14.1798822Z"
+}

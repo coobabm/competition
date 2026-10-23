@@ -1,0 +1,22 @@
+{
+  "reused_shell": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\UnifiedAtlasActualUiRunner.cs",
+  "patch_sha256": "725ee08f65b4931621b12fbad4df06a33755d0fa912fb1071da808870d86ff7a",
+  "files": [
+    {
+      "path": "Assets/LocalBuild/Editor/EndingSmallAActualUiChecks.cs",
+      "sha256": "162649092268e447104746ba31ca5a794be843be285bbb117f147cd12bc6d245"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingSmallAActualUiChecks.cs.meta",
+      "sha256": "145dd6946cf05fec1fa45eebe94f0db32e8f8079d7261b516b83061c3f88ef65"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingSmallAActualUiRunner.cs",
+      "sha256": "280407fe7e36ecb703652f6b82a5b02afd786e2945efdc81b61cec4b5a694788"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingSmallAActualUiRunner.cs.meta",
+      "sha256": "8f35d413161cf9abb971ce07ef2fb1e672963ce55f218b75f7b37eb412410029"
+    }
+  ]
+}

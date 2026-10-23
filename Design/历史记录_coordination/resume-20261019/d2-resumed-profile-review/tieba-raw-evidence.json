@@ -1,0 +1,606 @@
+{
+  "old": {
+    "capture": "20261019-092802-102-66ee98",
+    "raw": "raw-analysis-20261019-093254-815",
+    "mainFrameCount": 1554,
+    "mainFrameMeanMs": 19.312172523166023,
+    "markerTable": [
+      {
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1554",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "Calls": "1552",
+        "InclusiveMeanMsPerThreadFrame": "0.227706",
+        "MaxSingleSampleMs": "47.745201",
+        "MaxSampleFrame": "1041",
+        "SelfMeanMsPerThreadFrame": "0.039828",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "approxTotalMsFromRoundedMean": 353.855124,
+        "approxMeanMsPerCall": 0.2279994355670103
+      }
+    ],
+    "tiebaUpdatePeaks": [
+      {
+        "Frame": "74",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "25.851400",
+        "SelfMs": "3.769400",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "230",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "19.110001",
+        "SelfMs": "2.581701",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "399",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "23.482901",
+        "SelfMs": "3.039801",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "542",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "23.567699",
+        "SelfMs": "3.046400",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "595",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "18.881001",
+        "SelfMs": "2.516201",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "705",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "19.319700",
+        "SelfMs": "2.485500",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "876",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "18.731899",
+        "SelfMs": "2.494799",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "1041",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "47.745201",
+        "SelfMs": "5.900101",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "1186",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "39.695900",
+        "SelfMs": "5.314100",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "1338",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "28.777500",
+        "SelfMs": "3.568800",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "1434",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "39.972698",
+        "SelfMs": "4.876898",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "1480",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "30.128099",
+        "SelfMs": "3.807800",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      }
+    ],
+    "topMainFrames": [
+      {
+        "Frame": "1406",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "108.744499",
+        "Samples": "40918",
+        "MaxSampleMs": "108.744499",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1041",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "100.735504",
+        "Samples": "34446",
+        "MaxSampleMs": "100.735504",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1108",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "93.125694",
+        "Samples": "41017",
+        "MaxSampleMs": "93.125694",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1186",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "81.296097",
+        "Samples": "34617",
+        "MaxSampleMs": "81.296097",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "871",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "75.629196",
+        "Samples": "37779",
+        "MaxSampleMs": "75.629196",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "703",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "74.808304",
+        "Samples": "34833",
+        "MaxSampleMs": "74.808304",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1434",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "73.868797",
+        "Samples": "35957",
+        "MaxSampleMs": "73.868797",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1179",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "70.370300",
+        "Samples": "37251",
+        "MaxSampleMs": "70.370300",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1543",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "70.119102",
+        "Samples": "39379",
+        "MaxSampleMs": "70.119102",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1338",
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "FrameMs": "68.280197",
+        "Samples": "35373",
+        "MaxSampleMs": "68.280197",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      }
+    ],
+    "otherUiMarkers": [
+      {
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1554",
+        "Marker": "GameObject.AddComponent",
+        "Calls": "13448",
+        "InclusiveMeanMsPerThreadFrame": "0.301445",
+        "MaxSingleSampleMs": "1.313300",
+        "MaxSampleFrame": "1108",
+        "SelfMeanMsPerThreadFrame": "0.160114",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > GameObject.AddComponent"
+      },
+      {
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1554",
+        "Marker": "TransformHandle.SetParent",
+        "Calls": "3888",
+        "InclusiveMeanMsPerThreadFrame": "0.194259",
+        "MaxSingleSampleMs": "1.065500",
+        "MaxSampleFrame": "871",
+        "SelfMeanMsPerThreadFrame": "0.018077",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > TransformHandle.SetParent"
+      },
+      {
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1554",
+        "Marker": "GC.Collect",
+        "Calls": "2",
+        "InclusiveMeanMsPerThreadFrame": "0.021089",
+        "MaxSingleSampleMs": "29.684401",
+        "MaxSampleFrame": "200",
+        "SelfMeanMsPerThreadFrame": "0.021089",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > GarbageCollector.CollectIncremental > GC.Collect"
+      },
+      {
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1554",
+        "Marker": "Unity.TextMeshPro.dll!TMPro::TextMeshProUGUI..ctor() [Invoke]",
+        "Calls": "1332",
+        "InclusiveMeanMsPerThreadFrame": "0.012434",
+        "MaxSingleSampleMs": "0.092200",
+        "MaxSampleFrame": "1338",
+        "SelfMeanMsPerThreadFrame": "0.010994",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke] > GameObject.AddComponent > Unity.TextMeshPro.dll!TMPro::TextMeshProUGUI..ctor() [Invoke]"
+      },
+      {
+        "ThreadId": "28688",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1554",
+        "Marker": "UnityEngine.UI.dll!UnityEngine.UI::ScrollRect..ctor() [Invoke]",
+        "Calls": "22",
+        "InclusiveMeanMsPerThreadFrame": "0.000070",
+        "MaxSingleSampleMs": "0.010200",
+        "MaxSampleFrame": "703",
+        "SelfMeanMsPerThreadFrame": "0.000065",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > GameObject.AddComponent > UnityEngine.UI.dll!UnityEngine.UI::ScrollRect..ctor() [Invoke]"
+      }
+    ]
+  },
+  "new": {
+    "capture": "20261019-112234-894-8d0eff",
+    "raw": "raw-analysis-20261019-112800-020",
+    "mainFrameCount": 1497,
+    "mainFrameMeanMs": 20.044849386105543,
+    "markerTable": [
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "TiebaView.Redraw(Go)",
+        "Calls": "10",
+        "InclusiveMeanMsPerThreadFrame": "0.242959",
+        "MaxSingleSampleMs": "48.694698",
+        "MaxSampleFrame": "784",
+        "SelfMeanMsPerThreadFrame": "0.000199",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > TiebaView.Redraw(Go)",
+        "approxTotalMsFromRoundedMean": 363.709623,
+        "approxMeanMsPerCall": 36.3709623
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "TiebaView.Redraw.Page",
+        "Calls": "12",
+        "InclusiveMeanMsPerThreadFrame": "0.241204",
+        "MaxSingleSampleMs": "44.578999",
+        "MaxSampleFrame": "784",
+        "SelfMeanMsPerThreadFrame": "0.027496",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > TiebaView.Redraw(Go) > TiebaView.Redraw.Page",
+        "approxTotalMsFromRoundedMean": 361.082388,
+        "approxMeanMsPerCall": 30.090199
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "Calls": "1495",
+        "InclusiveMeanMsPerThreadFrame": "0.054957",
+        "MaxSingleSampleMs": "40.295101",
+        "MaxSampleFrame": "1376",
+        "SelfMeanMsPerThreadFrame": "0.010722",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "approxTotalMsFromRoundedMean": 82.270629,
+        "approxMeanMsPerCall": 0.055030521070234116
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "TiebaView.Redraw(KeyChanged)",
+        "Calls": "2",
+        "InclusiveMeanMsPerThreadFrame": "0.041939",
+        "MaxSingleSampleMs": "40.212200",
+        "MaxSampleFrame": "1376",
+        "SelfMeanMsPerThreadFrame": "0.000024",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke] > TiebaView.Redraw(KeyChanged)",
+        "approxTotalMsFromRoundedMean": 62.782683,
+        "approxMeanMsPerCall": 31.3913415
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "TiebaView.Redraw.Side",
+        "Calls": "12",
+        "InclusiveMeanMsPerThreadFrame": "0.034642",
+        "MaxSingleSampleMs": "6.166900",
+        "MaxSampleFrame": "1128",
+        "SelfMeanMsPerThreadFrame": "0.003761",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > TiebaView.Redraw(Go) > TiebaView.Redraw.Side",
+        "approxTotalMsFromRoundedMean": 51.859074,
+        "approxMeanMsPerCall": 4.3215895
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "TiebaView.Redraw.Clear",
+        "Calls": "12",
+        "InclusiveMeanMsPerThreadFrame": "0.008826",
+        "MaxSingleSampleMs": "1.796600",
+        "MaxSampleFrame": "1128",
+        "SelfMeanMsPerThreadFrame": "0.001565",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > TiebaView.Redraw(Go) > TiebaView.Redraw.Clear",
+        "approxTotalMsFromRoundedMean": 13.212522,
+        "approxMeanMsPerCall": 1.1010435
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "TiebaView.RefreshKey",
+        "Calls": "68",
+        "InclusiveMeanMsPerThreadFrame": "0.002976",
+        "MaxSingleSampleMs": "0.215900",
+        "MaxSampleFrame": "421",
+        "SelfMeanMsPerThreadFrame": "0.002872",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke] > TiebaView.RefreshKey",
+        "approxTotalMsFromRoundedMean": 4.4550719999999995,
+        "approxMeanMsPerCall": 0.06551576470588234
+      }
+    ],
+    "tiebaUpdatePeaks": [
+      {
+        "Frame": "496",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "22.625200",
+        "SelfMs": "0.010401",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      },
+      {
+        "Frame": "1376",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "Marker": "Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]",
+        "InclusiveMs": "40.295101",
+        "SelfMs": "0.015401",
+        "Path": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke]"
+      }
+    ],
+    "topMainFrames": [
+      {
+        "Frame": "270",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "235.679703",
+        "Samples": "41464",
+        "MaxSampleMs": "235.679703",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "784",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "109.595001",
+        "Samples": "39118",
+        "MaxSampleMs": "109.595001",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "204",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "94.349800",
+        "Samples": "34897",
+        "MaxSampleMs": "94.349800",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "398",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "94.005295",
+        "Samples": "40916",
+        "MaxSampleMs": "94.005295",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "495",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "92.889397",
+        "Samples": "11522",
+        "MaxSampleMs": "92.889397",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1348",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "90.757202",
+        "Samples": "39676",
+        "MaxSampleMs": "90.757202",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "332",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "90.531693",
+        "Samples": "34162",
+        "MaxSampleMs": "90.531693",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "772",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "88.664894",
+        "Samples": "2212",
+        "MaxSampleMs": "88.664894",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "1409",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "85.138603",
+        "Samples": "35001",
+        "MaxSampleMs": "85.138603",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      },
+      {
+        "Frame": "627",
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "FrameMs": "81.441902",
+        "Samples": "34971",
+        "MaxSampleMs": "81.441902",
+        "MaxSample": "Main Thread",
+        "MaxSamplePath": "Main Thread"
+      }
+    ],
+    "otherUiMarkers": [
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "GameObject.AddComponent",
+        "Calls": "9492",
+        "InclusiveMeanMsPerThreadFrame": "0.307455",
+        "MaxSingleSampleMs": "14.055300",
+        "MaxSampleFrame": "784",
+        "SelfMeanMsPerThreadFrame": "0.159265",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > TiebaView.Redraw(Go) > TiebaView.Redraw.Page > GameObject.AddComponent"
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "TransformHandle.SetParent",
+        "Calls": "2750",
+        "InclusiveMeanMsPerThreadFrame": "0.150761",
+        "MaxSingleSampleMs": "1.104700",
+        "MaxSampleFrame": "53",
+        "SelfMeanMsPerThreadFrame": "0.014438",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > TiebaView.Redraw(Go) > TiebaView.Redraw.Page > TransformHandle.SetParent"
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "GC.Collect",
+        "Calls": "2",
+        "InclusiveMeanMsPerThreadFrame": "0.023722",
+        "MaxSingleSampleMs": "32.333698",
+        "MaxSampleFrame": "270",
+        "SelfMeanMsPerThreadFrame": "0.023722",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > FixedUpdate.ScriptRunDelayedFixedFrameRate > CoroutinesDelayedCalls > Destroy > Unity.TextMeshPro.dll!TMPro::TextMeshProUGUI.OnDestroy() [Invoke] > GC.Collect"
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "Unity.TextMeshPro.dll!TMPro::TextMeshProUGUI..ctor() [Invoke]",
+        "Calls": "910",
+        "InclusiveMeanMsPerThreadFrame": "0.011948",
+        "MaxSingleSampleMs": "0.242100",
+        "MaxSampleFrame": "1376",
+        "SelfMeanMsPerThreadFrame": "0.010831",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Assembly-CSharp.dll!LingGuangV05.Desktop.Tieba::TiebaView.Update() [Invoke] > TiebaView.Redraw(KeyChanged) > TiebaView.Redraw.Page > GameObject.AddComponent > Unity.TextMeshPro.dll!TMPro::TextMeshProUGUI..ctor() [Invoke]"
+      },
+      {
+        "ThreadId": "46900",
+        "Thread": "/Main Thread",
+        "ValidThreadFrames": "1497",
+        "Marker": "UnityEngine.UI.dll!UnityEngine.UI::ScrollRect..ctor() [Invoke]",
+        "Calls": "12",
+        "InclusiveMeanMsPerThreadFrame": "0.000047",
+        "MaxSingleSampleMs": "0.015600",
+        "MaxSampleFrame": "1128",
+        "SelfMeanMsPerThreadFrame": "0.000042",
+        "InvalidSelfSamples": "0",
+        "MaxSamplePath": "Main Thread > Application.Tick > Application.TickSceneTracker > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: IntegrationProfilerCapture.Tick > TiebaView.Redraw(Go) > TiebaView.Redraw.Page > GameObject.AddComponent > UnityEngine.UI.dll!UnityEngine.UI::ScrollRect..ctor() [Invoke]"
+      }
+    ]
+  }
+}

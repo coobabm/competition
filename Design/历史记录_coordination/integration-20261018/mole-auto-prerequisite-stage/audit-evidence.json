@@ -1,0 +1,26 @@
+[
+  {
+    "path": ".coordination\\integration-20261018\\mole-review-token-ui-20261019.log",
+    "sha256": "b567d173e926c919496815427c3a1e417c03f6341ea140187c7b2bd6928cf7ed"
+  },
+  {
+    "path": "competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-223030-024\\report.json",
+    "sha256": "8dcd29cc3b75affb7d426c34a5f45c1fd8ddb40924924c2a862abf9c9904971f"
+  },
+  {
+    "path": "competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-223030-024\\mole-en-reduced-live.png",
+    "sha256": "bdc41d7e2d9ec46df703d2b7881d998fa1594a162bc694edcce787cec42a8382"
+  },
+  {
+    "path": "competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-223030-024\\mole-en-reduced-taught.png",
+    "sha256": "8fadbedf2bb328fe5bea5108c24fb08af7e48c4f72b9f50206d2a774f5bd4d8d"
+  },
+  {
+    "path": "competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-223030-024\\mole-zh-live.png",
+    "sha256": "b36c79fc2029dc99ae3fb6a0ef4cd1b26d6086d4167f7ce8c15b2fb230772841"
+  },
+  {
+    "path": "competition-latest-20261016\\LocalVerification\\SidebarLayout\\20261018-223030-024\\mole-zh-taught.png",
+    "sha256": "cb3897fbfca1e37f65637b98f4d77ab35b5ffa55f02826a0ba1011045b8d07bd"
+  }
+]

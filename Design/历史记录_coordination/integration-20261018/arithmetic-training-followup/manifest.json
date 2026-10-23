@@ -1,0 +1,66 @@
+{
+  "status": "source_only_not_compiled_not_executed",
+  "requires": "arithmetic-stage/production.patch first",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgArithmeticInput.cs",
+      "patch": "training.patch",
+      "baseline": "new",
+      "base_sha256": null,
+      "candidate_sha256": "f3e95109b703a128056614a9b7b83c2998f17dea963f6e2f912d954ca77e2cc9"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgArithmeticInput.cs.meta",
+      "patch": "training.patch",
+      "baseline": "new",
+      "base_sha256": null,
+      "candidate_sha256": "38d850f0bef98df944695cb9a1ea99c0b6b6e0584796e16547ee9e203573bf72"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardData.cs",
+      "patch": "training.patch",
+      "baseline": "production",
+      "base_sha256": "1ec10214c9fc7cfedb1d50d8904499d33584ad7049d1cc36adf384b8679bb29f",
+      "candidate_sha256": "426eaedcb00e67437a84d643edb11e4c107fb17085381eedfab5467022f5e2e5"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.MoleArithmetic.cs",
+      "patch": "training.patch",
+      "baseline": "arithmetic-stage candidate",
+      "base_sha256": "10296ee67aee9421b8928f555621d9158d82ab4f9484c7914900cd822743cf05",
+      "candidate_sha256": "fa72f403e214a1a92a23a056e44d3fb99bce33c7662912cafeafebac8ea09699"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticInputTests.cs",
+      "patch": "validation.patch",
+      "baseline": "new",
+      "base_sha256": null,
+      "candidate_sha256": "82a3516823cf61dde97cd14cebb3d3c4318bc890609e945e50488cafa082111d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticInputTests.cs.meta",
+      "patch": "validation.patch",
+      "baseline": "new",
+      "base_sha256": null,
+      "candidate_sha256": "668823108f6ad25d0a0745da7c8508139160b8f63a3dabd8ef278154dcccdbb8"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticLearningExperiment.cs",
+      "patch": "validation.patch",
+      "baseline": "new",
+      "base_sha256": null,
+      "candidate_sha256": "d8555dcce08564a48cbf59785eb2257c7ed9b19510fd005aa586ae273efc9298"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticLearningExperiment.cs.meta",
+      "patch": "validation.patch",
+      "baseline": "new",
+      "base_sha256": null,
+      "candidate_sha256": "6cae783648f083b63c40987436b72c7abdbb52f322520aa468cd2894a8d02cdd"
+    }
+  ],
+  "patch_sha256": {
+    "training.patch": "61567632b69a88001f6e3acd2d0bfaaf88062035ba87225f939a07c296b96836",
+    "validation.patch": "a8edc633187e4663c9a3225ea13549ad722e4997b130d570bd767e40c540301e"
+  }
+}

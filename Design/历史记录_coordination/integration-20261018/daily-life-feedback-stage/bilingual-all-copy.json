@@ -1,0 +1,162 @@
+[
+  {
+    "id": "daily.dice.name",
+    "zh": "概率直觉",
+    "en": "Probability intuition"
+  },
+  {
+    "id": "daily.dice.summary",
+    "zh": "从几种可能里数机会",
+    "en": "Count equally likely outcomes"
+  },
+  {
+    "id": "daily.dice.effect",
+    "zh": "开放概率小题",
+    "en": "Opens probability questions"
+  },
+  {
+    "id": "daily.news.name",
+    "zh": "时事",
+    "en": "Current affairs"
+  },
+  {
+    "id": "daily.news.summary",
+    "zh": "再想想读过的新闻",
+    "en": "Recall news you have read"
+  },
+  {
+    "id": "daily.news.effect",
+    "zh": "开放新闻回顾",
+    "en": "Opens news review"
+  },
+  {
+    "id": "daily.surf.name",
+    "zh": "冲浪",
+    "en": "Surfing"
+  },
+  {
+    "id": "daily.surf.summary",
+    "zh": "在帖子里找到资料",
+    "en": "Find learning links in posts"
+  },
+  {
+    "id": "daily.surf.effect",
+    "zh": "高亮手写数字资料链接",
+    "en": "Highlights the digit-data link"
+  },
+  {
+    "id": "daily.bargain.name",
+    "zh": "砍价",
+    "en": "Bargaining"
+  },
+  {
+    "id": "daily.bargain.summary",
+    "zh": "买二手显卡少花一点",
+    "en": "Spend less on used GPUs"
+  },
+  {
+    "id": "daily.bargain.effect",
+    "zh": "启用喵鱼二手显卡折扣",
+    "en": "Discounts Miaoyu used GPUs"
+  },
+  {
+    "id": "daily.care.name",
+    "zh": "体贴",
+    "en": "Considerate"
+  },
+  {
+    "id": "daily.care.summary",
+    "zh": "记得对方说过的话",
+    "en": "Remember what others told you"
+  },
+  {
+    "id": "daily.care.effect",
+    "zh": "体贴表达与已知生日提醒",
+    "en": "Considerate cues and known birthdays"
+  },
+  {
+    "id": "daily.slang.name",
+    "zh": "网络用语",
+    "en": "Internet slang"
+  },
+  {
+    "id": "daily.slang.summary",
+    "zh": "读懂群里的梗",
+    "en": "Understand the group slang"
+  },
+  {
+    "id": "daily.slang.effect",
+    "zh": "加入用语解释与斗图建议",
+    "en": "Adds slang and sticker tips"
+  },
+  {
+    "id": "daily.rhythm.name",
+    "zh": "节奏",
+    "en": "Rhythm"
+  },
+  {
+    "id": "daily.rhythm.summary",
+    "zh": "让完成提示跟上音乐",
+    "en": "Let completion cues follow music"
+  },
+  {
+    "id": "daily.rhythm.effect",
+    "zh": "完成提示跟随音乐重音",
+    "en": "Completion cues follow music accents"
+  },
+  {
+    "id": "daily.dice.detail",
+    "zh": "开放概率小题题桌，练习等可能结果。",
+    "en": "Opens Probability questions. Practise equally likely outcomes on its question desk."
+  },
+  {
+    "id": "daily.news.detail",
+    "zh": "开放新闻回顾题桌，题目来自你实际读完的新闻。",
+    "en": "Opens News review using articles you have actually finished reading."
+  },
+  {
+    "id": "daily.surf.detail",
+    "zh": "在贴吧帖子里高亮已有的手写数字资料链接，方便找到它。",
+    "en": "Highlights the existing handwritten-digit data link in forum posts so it is easier to find."
+  },
+  {
+    "id": "daily.bargain.detail",
+    "zh": "在喵鱼启用现有二手显卡折扣，购买前可查看实际价格。",
+    "en": "Enables the existing used-card discount on Miaoyu. Check the displayed price before buying."
+  },
+  {
+    "id": "daily.care.detail",
+    "zh": "加入体贴表达提示。晴雯生日提醒只在她已于聊天中明确说出日期后出现。",
+    "en": "Adds a considerate expression cue. Qingwen's birthday reminder appears only after she has stated the date in your saved chat."
+  },
+  {
+    "id": "daily.slang.detail",
+    "zh": "在 YY 表情选择器里加入现有网络用语解释和斗图建议。",
+    "en": "Adds the existing slang explanations and sticker suggestions to the YY sticker picker."
+  },
+  {
+    "id": "daily.rhythm.detail",
+    "zh": "训练完成提示可跟随正在播放的音乐重音。没有可辨认的重音时，使用普通完成提示；训练结果立即记入。",
+    "en": "A completed training round can pulse with an audible accent in the music that is playing. Without a clear accent, it uses the normal completion cue. Training results are saved immediately."
+  },
+  {
+    "id": "XgDailyUnlockNotifier.cs:0",
+    "zh": "日常发现",
+    "en": "Daily discovery"
+  },
+  {
+    "id": "XgDailyUnlockNotifier.cs:1",
+    "zh": "条件已完成，可以去科技页看看。是否购买由你决定。",
+    "en": "The condition is complete. Take a look in Tech whenever you like; buying is optional."
+  },
+  {
+    "id": "XgTrainPage.Rhythm.cs:0",
+    "zh": "本轮完成 · 随音乐重音",
+    "en": "Round complete · music accent"
+  },
+  {
+    "id": "XgTrainPage.Rhythm.cs:1",
+    "zh": "本轮完成 · 无清晰重音，使用普通提示",
+    "en": "Round complete · no clear accent; normal cue"
+  }
+]

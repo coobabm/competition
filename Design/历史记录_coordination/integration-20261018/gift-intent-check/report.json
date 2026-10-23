@@ -1,0 +1,9 @@
+{
+  "behaviorAssertions": 139,
+  "behaviorResult": "passed",
+  "applyCheck": 0,
+  "aiGuardInAtomicPath": true,
+  "upstreamArcGuardPreserved": true,
+  "unityRuntimeRun": false,
+  "scope": "Core behavior executed; Unity runtime not launched"
+}

@@ -1,0 +1,22 @@
+{
+  "productionUntouched": true,
+  "baselineHead": "3533141a406940d571e064f3797328c7d214235a",
+  "fileCount": 14,
+  "applyChecks": {
+    "ending-small-A-reviewed.patch": "passed",
+    "01-A145-presentation-guide.patch": "passed",
+    "sequential split patches": "applied successfully to isolated baseline copy"
+  },
+  "splitProducesIdenticalText": true,
+  "lineEndingNote": "Git preserves CRLF in existing files; equality verified after normalizing line endings. candidateSha256 hashes the delivered candidate bytes.",
+  "patches": {
+    "ending-small-A-reviewed.patch": "e903ecfa2fd34e3143734543f761bc7def4cec619ada91bb470b6e88a164958d",
+    "01-A145-presentation-guide.patch": "e1d5da3cdd11f822572c4c95c6f980e45789f5c48e68893da43de5897de40512",
+    "02-A23-final-contact.patch": "ace9702cebb97b27cb567353130697c66eb4f9874db3f8ff96fb5316e896872a"
+  },
+  "coreAssertions": 46,
+  "targetedGuideTests": 1,
+  "unityRun": false,
+  "actualDiskFailureTests": false,
+  "broadGuideBaselineFailure": "TheDataStepNamesTheSmsPackThenTheLabelsThatCountInFull"
+}

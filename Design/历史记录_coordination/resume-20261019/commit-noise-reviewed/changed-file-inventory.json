@@ -1,0 +1,761 @@
+{
+  "head": "3533141a406940d571e064f3797328c7d214235a",
+  "scope": "Content-changing git diff plus untracked files; no reset/checkout/write performed. Independent source work can continue after this snapshot.",
+  "entries": [
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouQuestions.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoDesktop.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Blackjack.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardReader.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/LudoPanel.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/MonopolyPanel.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouQuestions.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Editor/CasinoJuicePlayQa.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Editor/CasinoPlayQa.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/LocalLLM/LocalLlm.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Mail2016/EndingLetterPresenter.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset",
+      "recommendation": "restore baseline cache after Unity exit"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset",
+      "recommendation": "restore baseline cache after Unity exit"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset",
+      "recommendation": "restore baseline cache after Unity exit"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/PHOTO_CREDITS.txt",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingLetterCatalog.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBlackjackRules.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingNarrative.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingPreparation.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgGuide.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Casino.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyLife.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/EndingLaunchNightPanel.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/EndingTrialPanel.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Narrative.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueMailBridge.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgIcons.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgStageSequenceDemo.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Profile.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBlackjackTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoFairnessTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingNarrativeTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingPreparationTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGuideTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LocalBuild/Editor/LaoZhouNewsChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LocalBuild/Editor/TeachingFullRoundChecks.Actions.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Assets/LocalBuild/Editor/WorldYyGiftRoutingChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Design/六小时整合决策记录_20261019.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "modified",
+      "path": "Design/整合记录.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": ".vsconfig",
+      "recommendation": "exclude local IDE configuration without deleting"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Core/GroupPresetLifecycle.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Core/GroupPresetLifecycle.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Scam.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Scam.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Tests/Editor/GroupPresetLifecycleTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Tests/Editor/GroupPresetLifecycleTests.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingPresentation.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingPresentation.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Gambling.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Gambling.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.ReadNews.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.ReadNews.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgUnifiedAtlasCatalog.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgUnifiedAtlasCatalog.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAtlasTinyDemo.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAtlasTinyDemo.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUnifiedAtlas.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUnifiedAtlas.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Atlas.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Atlas.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoScamTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoScamTests.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingSmallAReviewedChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingSmallAReviewedChecks.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgReadNewsTests.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgReadNewsTests.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgUnifiedAtlasChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgUnifiedAtlasChecks.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupLifecycle.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupLifecycle.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.EndingPrivate.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.EndingPrivate.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/GroupPresetActualUiRunner.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/GroupPresetActualUiRunner.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/GroupPresetRuntimeChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/GroupPresetRuntimeChecks.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/LaoZhouNewsCommentsUiChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/LaoZhouNewsCommentsUiChecks.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/ReadNewsRagActualUiChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/ReadNewsRagActualUiChecks.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.Boundaries.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.Boundaries.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiRunner.cs",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiRunner.cs.meta",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/Claude主导协作交接_20261019.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/Claude协作交接_20261019_暂停后最新版.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/Claude环境限制与整合纠偏记录_20261019.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/Codex收尾与退出存档核对_20261019.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/协作当前状态_20261019.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/发布材料/开发日志01_电脑里的朋友_待发布.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/发布材料/开发日志02_每次点击都有回应_待发布.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/并行恢复整合记录_20261019.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/素材源码/group-chat/draw_chat_scenes.py",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/素材源码/group-chat/manifest.json",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    },
+    {
+      "status": "untracked",
+      "path": "Design/老周公共资讯短评_新增对白_20261019.md",
+      "recommendation": "retain for normal feature review; not identified as noise"
+    }
+  ]
+}

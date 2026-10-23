@@ -1,0 +1,27 @@
+Checking patch Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs...
+Checking patch Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs...
+Checking patch Assets/LingGuangV05/YY2016/YYChatHub.cs...
+error: while searching for:
+            if (AnswerQuiz(id, text)) return;
+            if (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Heard(line)) return;
+            if (id == GirlfriendId) { if (Girlfriend != null) Girlfriend.OnPlayerLine(text); return; }
+            // Everyone answers in their own time; the group only sometimes. Several quick lines get one answer.
+            if (id == "netbar" && UnityEngine.Random.value > .7f) return;
+            float pause = id == "cousin" ? 5f : id == "netbar" ? 3f : id == LingGuangId ? 1.2f : 1.5f;
+
+error: patch failed: Assets/LingGuangV05/YY2016/YYChatHub.cs:305
+Hunk #3 succeeded at 348 (offset 4 lines).
+Checking patch Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs...
+Checking patch Assets/LingGuangV05/YY2016/YYChatView.cs...
+Checking patch Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json...
+Checking patch Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json...
+Applied patch Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs cleanly.
+Applied patch Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs cleanly.
+Applying patch Assets/LingGuangV05/YY2016/YYChatHub.cs with 1 reject...
+Hunk #1 applied cleanly.
+Rejected hunk #2.
+Hunk #3 applied cleanly.
+Applied patch Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs cleanly.
+Applied patch Assets/LingGuangV05/YY2016/YYChatView.cs cleanly.
+Applied patch Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json cleanly.
+Applied patch Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json cleanly.

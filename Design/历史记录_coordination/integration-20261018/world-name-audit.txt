@@ -1,0 +1,426 @@
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriendUi.cs:4:using LingGuangV05.Core.Girlfriend;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriendUi.cs:5:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriendUi.cs:10:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriendUi.cs:11:namespace LingGuangV05.Desktop.YY
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:4:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:5:using LingGuangV05.Desktop.Media;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:6:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:7:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:8:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:10:using AppNames = LingGuangV05.Core.AppNames;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:12:namespace LingGuangV05.Desktop.YY
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:38:        /// <summary>灵光's replies: 1 赞, -1 踩, 0 not rated (the lab keeps the tone card; this is what YY shows).</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:60:        /// <summary>An open question in chat: 老周 asks about a scam SMS, the group about a danmaku (labels for 灵光).</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:68:        public LingGuangV05.Core.Girlfriend.GirlfriendState girlfriend = new LingGuangV05.Core.Girlfriend.GirlfriendState();
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:75:        /// <summary>Not in the session list until unlocked (灵光).</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:81:    /// The lab's side of the 灵光 conversation (XgYyTalk). The 对话 page moved into YY: the AI's replies, its suggested
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:84:    public interface ILingGuangTalk
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:113:        public const string LingGuangId = "lingguang";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:128:            new YYContact { id = LingGuangId, name = AppNames.AiZh, nameEn = AppNames.AiEn, signature = "是。否。……", signatureEn = "Yes. No. …", online = true, hidden = true, color = new Color32(64, 84, 196, 255) },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:140:            || (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Thinking);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:141:        /// <summary>The lab answers in 灵光's conversation (XgYyTalk registers itself); without it the generic replies below run.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:142:        public ILingGuangTalk LingGuangTalk { get; set; }
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:154:        public bool IsVisible(YYContact c) => c != null && (!c.hidden || (c.id == LingGuangId && S.lingguangUnlocked))
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:183:        /// <summary>Chat history lives inside the 灵光 save (GameState.chatState), so it always matches the game it belongs to.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:233:        /// <summary>Persist now (e.g. right after 灵光.exe is received) through the one 灵光 save.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:310:            if (id == LingGuangId && LingGuangTalk != null && LingGuangTalk.Heard(line)) return;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:316:            float pause = id == "cousin" ? 5f : id == "netbar" ? 3f : id == LingGuangId ? 1.2f : 1.5f;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:336:        /// Choices a conversation keeps offering by itself (灵光's suggested questions, XgYyTalk), shown there whenever
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:398:            var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:401:                var messages = LingGuangV05.Desktop.LLM.LlmPersonas.Conversation(id, conv, runtime.Sim, lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:405:                llm.Chat(messages, LingGuangV05.Desktop.LLM.LlmPersonas.MaxTokens(id, lab), LingGuangV05.Desktop.LLM.LlmPersonas.Temperature(id), text =>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:408:                    if (text == null) { done(Fallback(id, conv, lab)); if (id == LingGuangId && userMessage != null && lab != null) lab.RememberOffline(userMessage.text); return; }
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:409:                    text = LingGuangV05.Core.Era.EraLexicon.Scrub(text); // it is 2016: no later memes
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:410:                    if (id == LingGuangId)
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:412:                        int stage = LingGuangV05.Desktop.LLM.LlmPersonas.LingGuangStage(lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:423:                    if (id != LingGuangId && RepeatsInYY(conv, text)) text = Fallback(id, conv, lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:425:                    if (id == LingGuangId && userMessage != null) LingGuangV05.Desktop.LLM.LlmMemory.AfterExchange(lab, userMessage.text, text);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:426:                }, false, LingGuangV05.Desktop.LLM.LlmPersonas.Sampling(id, lab),
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:427:                    id == LingGuangId ? LingGuangV05.Core.Chat.LlmSeat.LingGuang : LingGuangV05.Core.Chat.LlmSeat.Others);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:431:            if (id == LingGuangId && lab != null && conv != null) for (int i = conv.messages.Count - 1; i >= 0; i--) if (conv.messages[i].from == Me) { lab.RememberOffline(conv.messages[i].text); break; }
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:452:                case LaoZhou: return lab != null ? lab.ZhouSteerNow(LingGuangV05.Desktop.Story.GuideNote.TopStep, GameText.IsEnglish) : XgSim.ZhouSteer(LingGuangV05.Desktop.Story.GuideNote.TopStep, GameText.IsEnglish);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:475:                    int stage = LingGuangV05.Desktop.LLM.LlmPersonas.LingGuangStage(lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:492:        /// <summary>Whether a 灵光 line matches one of its last few lines in this YY conversation.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:506:        // ───────────── questions from chat (labels for 灵光) ─────────────
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:561:        // ───────────── 灵光 learns to talk ─────────────
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:570:        void CheckLingGuangUnlock()
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:578:            var conv = Conversation(LingGuangId);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:581:            pending[LingGuangId] = Time.unscaledTime + 1f;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:582:            var presenter = FindAnyObjectByType<LingGuangV05.Desktop.Story.StoryDesktopPresenter>();
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:583:            if (presenter != null) presenter.ShowToast(GameText.T(AppNames.AiZh + "：……是。", AppNames.AiEn + ": … yes."), () => { if (router != null) router.Open(AppId, LingGuangId); });
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:603:        // ───────────── 灵光.exe file transfer ─────────────
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:606:        /// Legacy: 灵光.exe is no longer sent over YY (it reaches the PC by itself in the prologue, from the intruder).
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:660:            CheckLingGuangUnlock();
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:694:                    var tieba = LingGuangV05.Desktop.Tieba.TiebaHub.Instance;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:695:                    if (tieba != null) tieba.Receive(LingGuangV05.Core.Forum.ForumLibrary.LaoZhou, Lang.T("你还在一张一张手标啊？标到最后手都是麻的，这么标得标到猴年马月去。"));
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:717:            var e = EraContent.TakeDue(runtime.Sim.S, LingGuangV05.Core.Era.EraEvents.YY);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:750:    /// <summary>老周's local, rule-based help for the 灵光 lab. Not a live AI; it only reads the current numbers.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:804:                return T("先去「摆渡众包」的「标注台」，标「常识判断」：看句子点「是」或「否」。答对给钱、多一条样本。攒够 " + XgCatalog.SamplesToTrain + " 条就能回灵光训练，练到它分得清对错，别的桌和页面就都开了。你现在 " + lab.Samples("sense").ToString("0") + " 条。",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.cs:805:                         "Open the labelling desk in Bodu Crowd and label Common sense: read the sentence and press Yes or No. Right answers pay and add a sample. " + XgCatalog.SamplesToTrain + " samples unlock training in LingGuang; train until it can tell right from wrong and the other desks and pages open. You have " + lab.Samples("sense").ToString("0") + ".");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:2:using DesktopArt = LingGuangV05.Desktop.Media.DesktopMedia;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:4:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:11:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:12:namespace LingGuangV05.Desktop.YY
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:55:        public bool IsOpen => LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:73:            LingGuangV05.Desktop.XingGuang.XingGuangController.KeepOpenOnFirstStart(window);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:145:            LingGuangV05.Desktop.XingGuang.XingGuangController.EnsureShown(hub, window);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:189:            // 灵光 only: 「它记得」 (stage 5+) at the bottom right, its persona on its name; both explain themselves on hover.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:192:            UiTip.Add(memoryLine, () => LingGuangShown ? hub.LingGuangTalk.MemoryTip() : "");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:193:            UiTip.Add(peerName, () => LingGuangShown ? hub.LingGuangTalk.PersonaTip() : "");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:221:                if (LingGuangV05.Desktop.XingGuang.XgIcons.Place(rt, "yy", id.ToLowerInvariant(), 16, 14, 22) != null)
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:315:            for (int i = 0; i < tools.Length; i++) SetButton("Tool" + tools[i], LingGuangV05.Desktop.XingGuang.XgIcons.Has("yy", tools[i].ToLowerInvariant()) ? StripGlyph(toolText[i]) : toolText[i]);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:362:            if (LingGuangShown) { string axes = hub.LingGuangTalk.AxisLine(); if (axes.Length > 0) peerSign.text = axes; }
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:364:            string remembers = contact.id == YYChatHub.LingGuangId && hub.LingGuangTalk != null ? hub.LingGuangTalk.MemoryLine() : "";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:420:            if (focusMarkup) body = LingGuangV05.XingGuang.XgSpeechPolicy.Underline(body, m.attentionWord);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:453:            if (!mine && m.from == YYChatHub.LingGuangId) Rating(m, left + bw + 8, -y - nameH - bh);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:458:        // ───────────── 灵光: 赞 / 踩 and its notes ─────────────
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:460:        bool LingGuangShown => hub != null && hub.S != null && hub.S.selected == YYChatHub.LingGuangId && hub.LingGuangTalk != null;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:462:        /// <summary>Redraws 灵光's messages when a rating is given or its latest reply becomes rateable.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:465:            if (id != YYChatHub.LingGuangId || hub.LingGuangTalk == null) return "";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:467:            foreach (var m in conv.messages) { if (m.rating != 0) rated++; else if (m.from == id && !open && hub.LingGuangTalk.CanRate(m)) open = true; }
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:471:        /// <summary>赞 / 踩 beside 灵光's latest reply (each is a tone card in the lab), or what was given before.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:474:            var talk = hub.LingGuangTalk;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:520:            // (Resources/LingGuangV05/Media/Photos/<key>). A missing file falls back to the plain text line.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:704:                var img = rt.gameObject.AddComponent<Image>(); img.sprite = LingGuangV05.Desktop.Story.PrologueDesk.Circle(); img.color = fill; img.raycastTarget = false;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:716:            LingGuangV05.Desktop.UiTip.Add(levelRow, () => GameText.T("等级 " + Level(hub.runtime.Sim.S.gameSeconds) + " · 在线越久等级越高（4 星 = 1 月亮，4 月亮 = 1 太阳）",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.cs:745:            if (c.id == YYChatHub.LingGuangId) return LingGuangV05.Desktop.Story.AiJoinsYy.PixelZero();
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:5:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:6:using LingGuangV05.Core.Girlfriend;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:7:using LingGuangV05.Desktop.LLM;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:8:using LingGuangV05.Desktop.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:9:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:10:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:11:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:14:namespace LingGuangV05.Desktop.YY
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYGirlfriend.cs:407:            }, false, GirlfriendPrompt.Sampling(), LingGuangV05.Core.Chat.LlmSeat.Girlfriend, proactive ? LingGuangV05.Core.Chat.LlmLane.Background : LingGuangV05.Core.Chat.LlmLane.Visible);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:5:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:6:using LingGuangV05.Desktop.YY;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:7:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:8:using AppNames = LingGuangV05.Core.AppNames;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:10:namespace LingGuangV05.Desktop.LLM
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:13:    /// Prompts for the local model: 老周, 表姐, the net café group and 灵光 itself. Humans live in late May 2016 and
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:15:    /// 灵光's speech grows with training: fragments → short sentences → fluent.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:28:            if (contact == "lingguang") return XgSpeechPolicy.TokenLimit(LingGuangStage(lab), lab != null ? lab.SpeechGrade : 0);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:35:        /// Sampler settings for a YY reply. 灵光 gets its stage's settings: a GBNF grammar over the plain
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:42:            int stage = LingGuangStage(lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:43:            return XgSpeechPolicy.Sampling(stage, XgSpeechPolicy.Grammar("", stage, LingGuangV05.Runtime.GameText.IsEnglish));
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:47:        public static int LingGuangStage(XgSim lab)
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:57:        /// the group's topic, 灵光's sample counts, recalled memories and its recent replies) ride in front of the
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:62:            bool english = LingGuangV05.Runtime.GameText.IsEnglish;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:63:            var list = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("system", System(contact, lab) + "\n" + LingGuangV05.Core.Era.EraLexicon.PromptRule(english) + (english ? "\nThe game UI is English. Reply in English while following the stage limits." : "")) };
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:67:            int limit = contact == "lingguang" ? XgSpeechPolicy.ContextLimit(LingGuangStage(lab)) : 14;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:68:            int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(history.Count, limit);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:71:            int step = LingGuangV05.Core.Chat.LlmPromptLayout.Step(Math.Max(4, limit));
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:107:            // 灵光 must not loop: from stage 3 on it sees its own last replies and is told not to say them again.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:108:            if (contact == "lingguang" && LingGuangStage(lab) >= 3) state.Append(NoRepeat(history));
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:109:            LingGuangV05.Core.Chat.LlmPromptLayout.AddState(list, state.ToString(), english);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:125:            if (contact == "lingguang") return date + LingGuangFacts(lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:133:        /// specific respect later. It never says the contact knows 灵光 or his training; what they respect is what they can
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:143:                    return "\n你们只按群里真实发过的消息接话。对方工作了两年、独自租房；没有室友。别从游戏阶段推断他的收入、经历或私生活，只聊游戏、配置、显卡、看球、上班吐槽。";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:160:        /// <summary>灵光's last few YY replies, quoted, with the instruction to say something new and talk like a person.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:166:            bool english = LingGuangV05.Runtime.GameText.IsEnglish;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:179:        /// <summary>灵光 explains its own guess on a labelling card, in its current voice.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:184:                new KeyValuePair<string, string>("system", LingGuang(lab, true) + "\n这是外部给你的游戏预测，不是你亲自看图的结论。你没有收到原始图片；不要编造视觉特征，只简短表达判断或求助。\n" + LingGuangV05.Core.Era.EraLexicon.PromptRule(LingGuangV05.Runtime.GameText.IsEnglish) + (LingGuangV05.Runtime.GameText.IsEnglish ? " Reply in English." : "")),
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:200:                    return Era + "你是对方的大学室友兼死党，YY 昵称咸鱼本鱼，不设定性别。你正在准备考研，泡图书馆、占座、报了考研班，满嘴复习、咖啡和「还剩多少天」，会互相损但关心对方。用一两句接对方刚才的话，可以分享近况，不假装见过对方正在做的事。别重复最近说过的话。";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:211:                        "群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。训练包、样本数量、科技升级、模型能力和训练结果都是私密信息，不能猜测或声称知道。不要提摆渡众包、标注兼职、接单、房租。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。" +
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:213:                case "lingguang": return LingGuangRules(lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:218:        static string LingGuang(XgSim lab, bool cardComment = false) => LingGuangRules(lab, cardComment) + LingGuangFacts(lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:221:        static string LingGuangFacts(XgSim lab)
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:227:        /// <summary>灵光's identity and its stage's speech rules.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:228:        static string LingGuangRules(XgSim lab, bool cardComment = false)
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\LocalLLM\LlmPersonas.cs:230:            int stage = LingGuangStage(lab);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.Rent.cs:2:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.Rent.cs:7:namespace LingGuangV05.Desktop.YY
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Models.cs:4:namespace LingGuangV05.Core
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Models.cs:24:        /// <summary>灵光.exe install: 0 = save from before the download flow (treated as installed), 1 = not yet downloaded, 2 = downloaded.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Models.cs:33:        public LingGuangV05.Core.Story.StoryState story = new LingGuangV05.Core.Story.StoryState();
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Models.cs:34:        /// <summary>灵光 lab progress (XgState as JSON). Additive: older saves load with an empty lab.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Tests\Editor\XgZhouChatTests.cs:4:namespace LingGuangV05.XingGuang.Tests
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Tests\Editor\XgZhouChatTests.cs:12:            Assert.That(s, Does.Not.Contain("灵光").And.Not.Contain("LingGuang").And.Not.Contain("涌现"), where);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Tests\Editor\XgPhoneSortTests.cs:4:namespace LingGuangV05.XingGuang.Tests
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Tests\Editor\XgPhoneSortTests.cs:155:                Assert.That(s.file, Does.Not.Contain("灵光").And.Not.Contain("涌现"));
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.Learning.cs:3:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.Learning.cs:4:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.Learning.cs:5:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.Learning.cs:10:namespace LingGuangV05.Desktop.YY
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.Learning.cs:31:            bool show=LingGuangShown&&XgYyTalk.LearningSim!=null;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatView.Learning.cs:126:            if(message.from!=YYChatHub.LingGuangId)return 0;float used=0;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.Bills.cs:3:using LingGuangV05.Core.Hardware;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.Bills.cs:5:namespace LingGuangV05.Core
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.Bills.cs:34:        /// other household charges) and the landlord never counts debt days. Electricity is always paid. The lab sets it (free until 灵光 learns its third
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:3:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:4:using LingGuangV05.Core.Era;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:5:using LingGuangV05.Core.Forum;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:6:using LingGuangV05.Desktop.Media;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:7:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:8:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:9:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:12:namespace LingGuangV05.Desktop.Tieba
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:18:        public const string ResourcePath = "LingGuangV05/Forum/forum";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaHub.cs:270:            var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:3:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:4:using LingGuangV05.Desktop.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:5:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:6:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:7:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:12:using static LingGuangV05.Desktop.XingGuang.XgUi;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:14:namespace LingGuangV05.Desktop.Zhongbao
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:21:    /// It takes over the desktop's spare native Calculator window: until 灵光.exe is installed that window stays an
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:179:            // A 灵光 page (去训练 on the labelling and orders pages): open the lab on it.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:213:        /// <summary>企业订单 opens with the first checkpoint, as the 订单 tab did in 灵光; the other pages are always there.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:322:            LingGuangV05.Desktop.Taohuo.ShopView.SetOxygenIcons(NativeWindow, sprite);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:334:        /// <summary>Before 灵光.exe is installed (or after a new game starts) the window is the plain calculator again.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:343:            LingGuangV05.Desktop.Taohuo.ShopView.SetOxygenIcons(NativeWindow, null);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:468:            // 打开灵光 ↗: an outlined link (a pale rim around a header-blue button).
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:469:            var linkRim = Rect("LingGuangLinkRim", hud, new Vector2(1, .5f), new Vector2(1, .5f), new Vector2(-x - 104, -14), new Vector2(-x, 14));
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:473:            lingguangLink.rt.gameObject.name = "LingGuangLink";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:477:            // The shared combo, as on 灵光's HUD: a white pill with the number, the multiplier, the tier name and the decay bar.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:575:        /// <summary>While 灵光's first setup is unfinished, the platform waits for it.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoView.cs:615:            // 灵光 plays the unlock sound when it is the window in view.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.ManualRent.cs:3:namespace LingGuangV05.Core
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Forum\Forum.cs:4:using LingGuangV05.Core.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Forum\Forum.cs:6:namespace LingGuangV05.Core.Forum
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.DataSources.cs:4:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.DataSources.cs:551:        /// <summary>Every source of one dataset with live state, for the 灵光 pages (public, junk, story, crowd).</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.CardLoan.cs:4:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.CardLoan.cs:179:        /// <summary>For 《灵光记》, when the card stayed (a loan is told by 「laozhou.card」).</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.cs:5:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.cs:8:    /// 灵光: an incremental game about training CNNs and RNNs. Pure rules, no Unity.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.cs:45:        /// <summary>The 灵光 window is open: card timers only run then.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.cs:47:        /// <summary>灵光 game clock (seconds) for model timestamps.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.cs:183:        string T(string zh) { return English ? LingGuangV05.Core.Lang.En(zh) : zh; }
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\StageOneTutor.cs:1:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\StageOneTutor.cs:2:using LingGuangV05.Core.Forum;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\StageOneTutor.cs:3:using LingGuangV05.Desktop.Tieba;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\StageOneTutor.cs:4:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\StageOneTutor.cs:5:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\StageOneTutor.cs:8:namespace LingGuangV05.Desktop.Story
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgMemes.Sense.cs:1:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgMemes.Sense.cs:4:    /// The 常识判断 desk: short plain statements with a definite 是 / 否 answer, the first thing a blank 灵光 can be taught
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\LaoZhouYY.cs:2:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\LaoZhouYY.cs:3:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\LaoZhouYY.cs:4:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\LaoZhouYY.cs:8:namespace LingGuangV05.Desktop.Story
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\GirlfriendRules.Logic.cs:4:namespace LingGuangV05.Core.Girlfriend
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\GirlfriendRules.Logic.cs:257:        static readonly string[] AiWords = { "ai", "人工智能", "程序", "灵光", "模型", "训练", "电脑帮", "机器" };
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\GirlfriendRules.Logic.cs:414:            "奶茶", "手机壳", "欢乐颂", "微微一笑", "你的名字", "鼓浪屿", "厦门", "西湖", "杭州", "北京", "上海", "成都", "重庆", "迪士尼", "室友", "感冒", "发烧",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:5:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:93:        /// <summary>Its YY conversation (YYChatHub.LingGuangId, used as the YY tab): the chat with it moved there from the lab.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:112:                list.Add(Step("install", XgGuideKind.Setup, "解压刚下载的文件，打开" + LingGuangV05.Core.AppNames.ExeZh, "Extract the downloaded file and open " + LingGuangV05.Core.AppNames.ExeEn,
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:288:            => Step("open.exe", XgGuideKind.Setup, "双击桌面上的「" + LingGuangV05.Core.AppNames.ExeZh + "」", "Double-click " + LingGuangV05.Core.AppNames.ExeEn + " on the desktop",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:321:                list.Add(Step("gpu.none", XgGuideKind.Blocker, "去" + LingGuangV05.Core.AppNames.ShopZh + "买张显卡", "Buy a graphics card on " + LingGuangV05.Core.AppNames.ShopEn,
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:324:                list.Add(Step("disk.full", XgGuideKind.Blocker, "硬盘满了：去" + LingGuangV05.Core.AppNames.ShopZh + "买一块（¥" + Money(sim.NextDrivePrice) + "）", "Disk full: buy a drive on " + LingGuangV05.Core.AppNames.ShopEn + " (¥" + Money(sim.NextDrivePrice) + ")",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:339:                    list.Add(Step("vram", XgGuideKind.Blocker, "显存装不下最小的模型（" + VramBar(XgSim.VramNeedMB(sim.Run(track)), house.vramMB, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Even the smallest model does not fit (" + VramBar(XgSim.VramNeedMB(sim.Run(track)), house.vramMB, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:523:                        "显存放不下够大的模型（" + VramBar(needMB, cardMB, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:524:                        "Not enough VRAM for a big enough model (" + VramBar(needMB, cardMB, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:580:                list.Add(Step("ability.card", XgGuideKind.Ability, "显存放不下够大的模型（" + VramBar(bigMB, cardNow, false) + "）：去" + LingGuangV05.Core.AppNames.ShopZh + "加显卡", "Not enough VRAM for a big enough model (" + VramBar(bigMB, cardNow, true) + "): buy a card on " + LingGuangV05.Core.AppNames.ShopEn,
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgGuide.cs:1289:        /// Whether a step's page can be shown: 灵光's tabs open with progress (XingGuangView.FeatureOpen mirrors this),
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:3:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:4:using LingGuangV05.Desktop.Miaoyu;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:5:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:6:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:7:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:12:namespace LingGuangV05.Desktop.Story
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:88:                LingGuangV05.Desktop.YY.YYChatHub.Instance?.Receive("landlord", runtime.Sim.LastMessage);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:89:            if (name == "rent.due") LingGuangV05.Desktop.YY.YYChatHub.Instance?.ReceiveRentRequest();
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:93:                    LingGuangV05.Desktop.YY.YYChatHub.Instance?.Offer("landlord", GameText.IsEnglish ? new[] { "Keep earning", "Confirm selling the computer" } : new[] { "继续挣钱还债", "确认卖电脑" });
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:94:                    desk.StoryPopup(Landlord, runtime.Sim.LastMessage, 12, () => { var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance; if (hub != null) { hub.Select("landlord"); hub.router?.Open("yy"); } });
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:97:                    desk.StoryPopup(Landlord, runtime.Sim.LastMessage, 10, () => { var hub = LingGuangV05.Desktop.YY.YYChatHub.Instance; if (hub != null) { hub.Select("landlord"); hub.router?.Open("yy"); } });
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\BankruptcyEnding.cs:109:                        int rank = LingGuangV05.Desktop.Tieba.TiebaHub.Lab()?.S.stage ?? 1;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\GirlfriendRules.Money.cs:4:namespace LingGuangV05.Core.Girlfriend
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\GirlfriendRules.Money.cs:197:        public static readonly string[] MoneyAnswersZh = { "接了点私活", "我训练了一个 AI 帮我挣钱" };
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\AjiePhoneSort.cs:3:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\AjiePhoneSort.cs:4:using LingGuangV05.Desktop.Media;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\AjiePhoneSort.cs:5:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\AjiePhoneSort.cs:6:using LingGuangV05.Desktop.YY;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\AjiePhoneSort.cs:7:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\AjiePhoneSort.cs:8:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Story\AjiePhoneSort.cs:13:namespace LingGuangV05.Desktop.Story
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.ZhouChat.cs:2:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\GirlfriendState.cs:4:namespace LingGuangV05.Core.Girlfriend
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.YyLearning.cs:4:using LingGuangV05.Core.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.YyLearning.cs:6:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\QingwenArc.cs:3:namespace LingGuangV05.Core.Girlfriend
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\QingwenArc.cs:70:                lines = new[] { "你最近天天在电脑前 到底在弄啥", "You're at that computer every day. What are you doing?", "室友都问我你是不是在挖矿[疑问]", "My roommates think you're mining bitcoin [疑问]" },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\QingwenArc.cs:116:                askedZh = "宿舍飞进来一只会飞的蟑螂，你吓得站到桌子上，室友何佳拿拖鞋在追，你让他说点什么转移注意力。", askedEn = "A flying cockroach got into the dorm; you're standing on your desk while He Jia chases it, and you asked him to distract you.",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\QingwenArc.cs:131:                askedZh = "你下周期末考，财务管理一章都没看完，室友陈雨桐都看第二遍了，你很慌，想要他安慰。", askedEn = "Finals are next week and you haven't finished a chapter of Financial Management. You're panicking and want comfort.",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\QingwenArc.cs:205:                lines = new[] { "我室友问我", "My roommate asked me", "你男朋友整天对着电脑 你们以后怎么办", "\"Your boyfriend's glued to a computer. What's your future?\"", "我没答上来", "I didn't know what to say", "你说呢", "What would you say?" },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Girlfriend\QingwenArc.cs:222:                askedZh = "你室友陈雨桐决定考研，劝你一起考，你怕考不上，拿不准，问他的意见。", askedEn = "Your roommate Chen Yutong is sitting the postgrad exam and wants you to join; you're afraid you won't get in and asked what he thinks.",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.LifeEvents.cs:4:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.LifeEvents.cs:601:                    e.body = T("最近积攒了一点经验。要不要在人工智能吧发帖，问问哪里有数据，或者分享自己的训练心得？", "You have learned a few things. Post on the AI forum to ask for data, or share your training notes?");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoPages.cs:3:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoPages.cs:4:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoPages.cs:5:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoPages.cs:9:using static LingGuangV05.Desktop.XingGuang.XgUi;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoPages.cs:10:using Row = LingGuangV05.Desktop.Zhongbao.ZhongbaoRows;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Zhongbao\ZhongbaoPages.cs:12:namespace LingGuangV05.Desktop.Zhongbao
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.Rent.cs:4:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.Rent.cs:6:namespace LingGuangV05.Desktop.YY
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.LifeData.cs:3:using LingGuangV05.Core.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.LifeData.cs:5:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.QualityTraps.cs:4:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:65:      "zh": "我打包放到 lingguang.cc 上了。你开「浏览器」，主页点 lingguang.cc，再点下载。下完它自己会出现在桌面上，叫灵光.exe。有问题尽管问我，我不一定马上回。",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:97:      "zh": "灵光.exe 里那个网格是它的脑子。你连线，它就学。显卡越多它跑得越快，所以先挣钱。",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:101:      "zh": "起个名吧，老叫“那段代码”多难听。灵光.exe →「我的 AI」。随便起，用你同学名字也行。",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:133:      "zh": "差不多了。网吧老板要先测 20 封，过了才签长单。考试在灵光.exe 里。",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:137:      "zh": "入学考试已开放：灵光.exe →「入学考试」",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:177:      "zh": "它脑子里那条线断了。灵光.exe 里从左边连到是和否。",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:225:      "zh": "灵光.exe · 2016 年 10 月 · 深夜",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:229:      "zh": "灵光.exe",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\Localization\StoryText.json:640:    { "zh": "听说你那台电脑现在能做翻译了？我这儿正好有一批商品介绍。先拿一小批试试，行不行你看完再说。", "en": "I hear your computer can translate now? I happen to have a batch of product descriptions. Try a small batch first; see how it goes." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.GroupPresets.cs:4:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.GroupPresets.cs:5:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.GroupPresets.cs:8:namespace LingGuangV05.Desktop.YY
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.GroupPresets.cs:27:                var asset = Resources.Load<TextAsset>("LingGuangV05/YY/yy_group_presets");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\YY2016\YYChatHub.GroupPresets.cs:80:                while (LingGuangV05.Core.StoryFocus.Active) yield return null;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:2:using DesktopArt = LingGuangV05.Desktop.Media.DesktopMedia;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:5:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:6:using LingGuangV05.Core.Era;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:7:using LingGuangV05.Core.Forum;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:8:using LingGuangV05.Desktop.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:9:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:15:namespace LingGuangV05.Desktop.Tieba
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:83:            var tex = Resources.Load<Texture2D>("LingGuangV05/Forum/tieba_icon");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:85:            sprite = LingGuangV05.Desktop.XingGuang.XgIcons.Get("desktop", "tieba") ?? sprite;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:91:            LingGuangV05.Desktop.Taohuo.ShopView.RebrandStartRow(window, name, sprite, "贴吧 Tieba 摆渡贴吧 forum");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:158:            hub.Showing = where == "chat" && LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this) ? arg : null;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:171:                LingGuangV05.Desktop.XingGuang.XingGuangController.KeepOpenOnFirstStart(window);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:173:                LingGuangV05.Desktop.XingGuang.XingGuangController.EnsureShown(hub, window);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:183:            if (!LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this)) { hub.Showing = null; return; }
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:258:                var boardIcon = LingGuangV05.Desktop.XingGuang.XgIcons.Place(row, "tieba", board.id, 26, 20, 30);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Tieba\TiebaView.cs:480:            if (LingGuangV05.Desktop.Media.DesktopNotifications.IsWindowVisible(this)) hub.MarkSeen(id);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.PhoneSort.cs:4:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.PhoneSort.cs:250:        /// <summary>For 《灵光记》.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.EpochAction.cs:3:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.News.cs:3:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.News.cs:6:namespace LingGuangV05.Desktop.Bodu
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.News.cs:23:                var asset = Resources.Load<TextAsset>("LingGuangV05/Browser/browser_news");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:2:using DesktopArt = LingGuangV05.Desktop.Media.DesktopMedia;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:6:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:7:using LingGuangV05.Core.Era;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:8:using LingGuangV05.Desktop.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:9:using LingGuangV05.Desktop.Tieba;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:10:using LingGuangV05.Desktop.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:11:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:12:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:18:namespace LingGuangV05.Desktop.Bodu
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:69:            var tex = Resources.Load<Texture2D>("LingGuangV05/Forum/bodu_icon");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:73:            LingGuangV05.Desktop.Taohuo.ShopView.RebrandStartRow(window, name, sprite, "摆渡 Bodu search browser");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:148:            if (LingGuangV05.Desktop.Casino.CasinoDesktop.OpenAddress(query)) return;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:155:            if (LingGuangV05.Desktop.Casino.CasinoDesktop.OpenAddress(q)) return;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:267:            if (shop.Count > 0 && lab != null && lab.S.stage >= LingGuangV05.Desktop.Taohuo.TaohuoView.OpenStage)
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Bodu\BoduView.cs:278:            var credits = Resources.Load<TextAsset>("LingGuangV05/Media/PHOTO_CREDITS");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Taohuo\TaohuoView.Gifts.cs:4:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Taohuo\TaohuoView.Gifts.cs:5:using LingGuangV05.Core.Girlfriend;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Taohuo\TaohuoView.Gifts.cs:6:using LingGuangV05.Desktop.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Taohuo\TaohuoView.Gifts.cs:7:using LingGuangV05.Desktop.YY;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Taohuo\TaohuoView.Gifts.cs:8:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\DesktopBridge\Taohuo\TaohuoView.Gifts.cs:12:namespace LingGuangV05.Desktop.Taohuo
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.YesNoNight.cs:4:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.YesNoNight.cs:70:        /// <summary>Its YY conversation (YYChatHub.LingGuangId), for the guide.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.YesNoNight.cs:306:        /// <summary>For 《灵光记》: the night it was first tested, told from what it answered.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:1:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:2:using LingGuangV05.Desktop.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:3:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:4:using LingGuangV05.Runtime.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:5:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:9:using static LingGuangV05.Desktop.XingGuang.XgUi;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:11:namespace LingGuangV05.Desktop.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:15:    /// keeps its gate and the house's numbers while the 灵光 window is closed. When an event opens it raises a tray popup
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:16:    /// (the same as 摆渡众包's notices; a click opens 灵光), and while the window is up it shows the event as a card over it,
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:95:                var data = Resources.Load<TextAsset>("LingGuangV05/Life/life_events_100");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:125:            PrologueDirector.Desk?.StoryPopup(e.who, e.title + T("（打开灵光处理）", " (open 灵光 to answer)"), PopupSeconds, () => { if (controller != null) controller.Open(); });
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgLifeEventCard.cs:138:            if (LingGuangV05.Core.StoryFocus.Active) return true;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.cs:4:namespace LingGuangV05.Core
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.cs:31:            if (S.story == null) S.story = new LingGuangV05.Core.Story.StoryState();
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.cs:56:        /// Watts of owned cards unplugged on 灵光's 接线 page: the house neither draws nor bills them. Set by the lab every
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.cs:126:        /// <summary>False only on a new game until 灵光.exe has been downloaded through the browser.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\ChapterOneSim.cs:128:        /// <summary>The browser download finished: 灵光.exe appears on the desktop. Idempotent.</summary>
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgDataUi.cs:4:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgDataUi.cs:5:using static LingGuangV05.Desktop.XingGuang.XgUi;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgDataUi.cs:7:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgDataUi.cs:8:namespace LingGuangV05.Desktop.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:3:using LingGuangV05.Core.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:4:using LingGuangV05.Runtime.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:5:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:8:namespace LingGuangV05.Desktop.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:108:            if (bound != null && signal == "gpu.bought" && arg == LingGuangV05.Core.Hardware.HardwareCatalog.TitanXp) bound.EarnSecret("life.hw.titan");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:180:                        if (arch != null && controller.Sim.Has(id)) owned.Add((LingGuangV05.Runtime.GameText.IsEnglish ? arch.nameEn : arch.name) + " · " + arch.year);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:182:                    return (LingGuangV05.Runtime.GameText.IsEnglish ? "Preserved: " : "已保留：") + string.Join(" / ", owned) +
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:183:                        (LingGuangV05.Runtime.GameText.IsEnglish ? "\nNo duplicate fees or story replay." : "\n没有重复收费，也不会重播旧剧情。");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:189:            var yy = LingGuangV05.Desktop.YY.YYChatHub.Instance;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:193:                    if (message.from == LingGuangV05.Desktop.YY.YYChatHub.Me && !string.IsNullOrWhiteSpace(message.text))
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:196:                        return LingGuangV05.Runtime.GameText.IsEnglish ? "You said: “" + quote + "”. I remember." : "你之前说：“" + quote + "”。我记得。";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:198:            return LingGuangV05.Runtime.GameText.IsEnglish ? "We have not talked much yet. I can remember more now." : "我们还没说过几句话。现在，我能记住更多了。";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:207:                case "aiName": return sim.Profile.name.Length > 0 ? sim.Profile.name : LingGuangV05.Core.AppNames.AiZh;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:209:                    if (LingGuangV05.Runtime.GameText.IsEnglish) return sim.FirstTrack == "vision" ? "It picked A: pictures first." : "It picked B: sentences first.";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:213:                    if (LingGuangV05.Runtime.GameText.IsEnglish) return answer > 0 ? "You taught me: yes." : answer < 0 ? "You taught me: no." : "You didn't teach me. I lit up “no” on my own.";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:217:                    if (wish.Length == 0) return LingGuangV05.Runtime.GameText.IsEnglish ? "You wrote nothing." : "你什么都没写。";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:218:                    return LingGuangV05.Runtime.GameText.IsEnglish ? "“" + (wish.Length > 30 ? wish.Substring(0, 30) + "…" : wish) + "”" : "「" + (wish.Length > 18 ? wish.Substring(0, 18) + "……" : wish) + "」";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgStoryBridge.cs:220:                    if (LingGuangV05.Runtime.GameText.IsEnglish) return sim.Profile.personality.Length == 0 ? "Then I'll grow into whatever you feed me." : sim.WishDrifted ? "Not quite. I was fed crooked." : "I'm learning.";
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.Finale.cs:4:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringRelay.cs:2:using LingGuangV05.Desktop.YY;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringRelay.cs:3:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringRelay.cs:4:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringRelay.cs:7:namespace LingGuangV05.Desktop.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringRelay.cs:12:    /// the 接线 log, which has the same buttons. Attaches itself next to the 灵光 controller at scene load.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgMarketRelay.cs:2:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgMarketRelay.cs:3:using LingGuangV05.Desktop.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgMarketRelay.cs:4:using LingGuangV05.Desktop.YY;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgMarketRelay.cs:5:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgMarketRelay.cs:6:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgMarketRelay.cs:9:namespace LingGuangV05.Desktop.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgMarketRelay.cs:15:    /// 灵光 controller at scene load, so neither the controller nor the scene needs editing. Presentation only.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Core\XgSim.Subcontract.cs:4:namespace LingGuangV05.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:4:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:5:using LingGuangV05.Core.Era;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:6:using LingGuangV05.Desktop.Media;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:7:using LingGuangV05.Desktop.Story;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:8:using LingGuangV05.Desktop.YY;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:9:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:10:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:12:using static LingGuangV05.Desktop.XingGuang.XgUi;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:14:namespace LingGuangV05.Desktop.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:27:    /// 「它刚说」 card. Attaches itself next to the 灵光 controller at scene load.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:29:    public sealed partial class XgYyTalk : MonoBehaviour, ILingGuangTalk
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:31:        const string Id = YYChatHub.LingGuangId;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:74:            if (hooked != null && ReferenceEquals(hooked.LingGuangTalk, this)) hooked.LingGuangTalk = null;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:140:            hub.LingGuangTalk = this;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:321:                LingGuangV05.Desktop.LLM.LlmMemory.AfterExchange(sim, r.question, r.text);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:370:            LingGuangV05.Desktop.LLM.LocalEmbedder.Prepare(sim.RecallQueries(), () => { if (this == null) { done(null); return; } AskNow(sim, question, stale, done); });
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:375:            var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:384:            int start = LingGuangV05.Core.Chat.LlmPromptLayout.WindowStart(chat.Count, limits.contextMessages);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:402:            LingGuangV05.Core.Chat.LlmPromptLayout.AddState(messages, state.ToString(), GameText.IsEnglish);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:407:            llm.Chat(messages, Math.Max(2, limits.tokens), temperature, reply => { if (delivered) return; delivered = true; done(reply); }, limits.thinking, sampling, LingGuangV05.Core.Chat.LlmSeat.LingGuang);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.cs:520:            var llm = LingGuangV05.Desktop.LLM.LocalLlm.Instance;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:3:namespace LingGuangV05.Core
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:536:            { "分拣暂停 · 请回灵光继续入学考试", "Sorting paused · Continue the entrance exam in Lingguang" },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:636:            { "回到灵光继续考试\n训练收件箱稍后恢复", "Continue the exam in Lingguang.\nTraining mail will resume afterward." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:669:            { "大脑：灵光只有这一颗脑子，分成几个区，像人的大脑皮层：看图区像视觉皮层，读字区像语言区，推理区像前额叶。\n训练页选的 LeNet、LSTM、Transformer 不是别的 AI，是给某个区换一种接线；两条训练线练的是这颗脑子的两个区。\n它记概念，不记数字，学得省；可整颗脑子一起亮，跑起来极吃显卡。", "Brain: 灵光 has this one brain, in regions like a human cortex: seeing like the visual cortex, reading like the language areas, reasoning like the prefrontal cortex.\nLeNet, LSTM or Transformer on the training page are not other AIs but ways of wiring a region; the two training tracks train two regions of this brain.\nIt keeps concepts, not numbers, so it learns cheaply; but the whole brain lights at once, and running it eats GPUs." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:902:            { "收件箱与灵光训练同步 · 本地模拟邮件", "Inbox synced with Lingguang training · Simulated local mail" },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1054:            { "检测到操作过快，请在 30 秒内完成人机验证：打开灵光的标注台输入验证码。自动标注已暂停。", "Unusually fast activity. Complete the captcha within 30 s: open the labelling page in 灵光. Auto labelling is paused." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1085:            { "正在灵光参加入学考试。\n请回「灵光.exe」的入学考试继续；这里不会提交试题。", "An exam is in progress.\nContinue in Lingguang.exe; this window cannot submit exam answers." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1086:            { "正在灵光参加入学考试，请回「灵光.exe」继续。收件箱分拣已暂停，不会在这里提交试题。", "The entrance exam is in progress. Continue in Lingguang.exe. Inbox sorting is paused; this window does not submit exam answers." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1094:            { "此窗口不会代替灵光提交入学试题。", "This window cannot submit exam answers for Lingguang." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1106:            { "没找到模型文件（.gguf）。放到 StreamingAssets/LingGuang/Models 或项目根目录 Models/。", "No .gguf model found (StreamingAssets/LingGuang/Models or <project>/Models)." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1138:            { "灵光 · 2:41", "LingGuang · 2:41" },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1139:            { "灵光", "LingGuang" },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1140:            { "灵光还没装好。", "LingGuang is not installed yet." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1363:            { "训练：选数据集，再选这个区的接法（结构），按「训练一轮」让灵光学。\n每轮练完自动考一次；成绩好才能签订单。", "Train: pick a dataset and how that region is wired (the structure), press Train epoch and 灵光 learns.\nEvery epoch ends with an exam; good scores unlock contracts." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Core\Lang.En.cs:1493:            { "邮件分拣  /  读完邮件再选择真实分类；模型的模拟建议并不总是正确。训练与考试请打开「灵光.exe」。", "Mail sorting / Read each email and choose its actual category. Model suggestions can be wrong. Open Lingguang.exe for training and exams." },
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.Learning.cs:3:using LingGuangV05.Desktop.YY;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.Learning.cs:4:using LingGuangV05.Runtime;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.Learning.cs:5:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.Learning.cs:8:namespace LingGuangV05.Desktop.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.Learning.cs:20:            var packs=Resources.Load<TextAsset>("LingGuangV05/YY/persona_packs");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.Learning.cs:21:            var unlocks=Resources.Load<TextAsset>("LingGuangV05/YY/chat_unlocks");
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgYyTalk.Learning.cs:68:            LingGuangV05.Desktop.Story.PrologueDirector.Desk?.StoryPopup(sim.AiDisplayName,GameText.T("对上了 · 科技节点可以购买了","Matched · a tech node is now available"),5);
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringPage.cs:5:using LingGuangV05.Core;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringPage.cs:6:using LingGuangV05.Core.Hardware;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringPage.cs:7:using LingGuangV05.XingGuang;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringPage.cs:13:using static LingGuangV05.Desktop.XingGuang.XgUi;
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringPage.cs:15:namespace LingGuangV05.Desktop.XingGuang
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\XingGuang\Desktop\XgWiringPage.cs:20:        // The redesign's dark scanner palette (XgDark), shared by every 灵光 page.
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\LingGuangV05\YY\yy_group_presets.json:2:  "note": "下班屁股群的预设发言（《第三轮设计》第五节）。群里聊游戏、电脑配置、显卡、看球、上班吐槽；没人知道玩家在练 AI，也不找他单聊。输入框上方一次显示 3 条可点的预设（按当前月份和最近群话题挑），点一下就发出去，群友按 replies 依次回（每条间隔 2–4 秒）。玩家仍可自由打字（自由打字走本地模型，按 LlmPersonas 里的群规则回复）。month = 可用月份范围（省略=全年）；after = 群里最近出现过这个 era 事件 id 才显示。",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\LingGuangV05\Life\life_events_100.json:2:  "note": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率：每个阶段最多弹 2 个，第一个在进入阶段后 3–8 分钟随机出现，两个之间至少隔 6 分钟；过场、考试、验证码、升阶界面期间不弹。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。每条只出现一次。",
+.coordination/integration-20261018/world-cf2cbc46-overlay/Assets/LingGuangV05\Resources\LingGuangV05\Life\life_events_100.json:2971:          "result": "她和室友去了。",

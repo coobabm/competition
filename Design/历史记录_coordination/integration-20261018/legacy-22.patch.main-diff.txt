@@ -1,0 +1,40 @@
+--- old-base
++++ new-main
+@@ -35,5 +35,5 @@
+             sb.Append(o.SourceLabel(En)).Append(" · ");
+             if (o.source == XgDataSource.Crowd) sb.Append(N(o.samples, "0")).Append(Lang.T(" 条/秒 · 每条 ¥")).Append(N(o.price, "0.00")).Append(T("", " each"));
+-            else if (o.source == XgDataSource.Crawl) sb.Append(T("每次最多 " + N(o.samples, "0") + " 个词 · 1 词 = 1 样本 · ¥" + N(o.price, "0"), "up to " + N(o.samples, "0") + " words a run · 1 word = 1 sample · ¥" + N(o.price, "0")));
++            else if (o.source == XgDataSource.Crawl) sb.Append(T("每次最多 " + N(o.samples, "0") + " 个词 · 1 词 = 1–3 样本（越往后越多）· ¥" + N(o.price, "0"), "up to " + N(o.samples, "0") + " words a run · 1 word = 1–3 samples (more later on) · ¥" + N(o.price, "0")));
+             else sb.Append(Samples(o.samples));
+             sb.Append(Lang.T(" · 标错 ")).Append(NoiseText(o));
+@@ -66,6 +66,6 @@
+                 case XgDataSource.Story: sb.Append(Lang.T("要靠关系才拿得到的干净数据。")); break;
+                 case XgDataSource.Crawl:
+-                    sb.Append(T("按次付钱：爬虫在页面上踩到一个词就抓回一条，时间到或抓满为止；中途收工也留下已经抓到的。1 个词 = 1 条样本，计入数据总量，少量广告和错字算标错。桌面上那只蜘蛛读到的新词也这样算，不用花钱。",
+-                        "Paid per run: every word the crawler steps on comes back as a sample (1 word = 1 sample) until time is up or the run is full; stopping early keeps what it grabbed. The samples count toward the data total; a few adverts and typos count as wrong labels. The resident spider's reads on the desktop count the same way, for free."));
++                    sb.Append(T("按次付钱：爬虫在页面上踩到一个词就抓回来，时间到或抓满为止；中途收工也留下已经抓到的。" + sim.ReadRuleText() + "（越往后的阶段越多），计入数据总量，少量广告和错字算标错。桌面上那只蜘蛛走到的词也这样算，不用花钱；书架上读的书，一个字也这样算。",
++                        "Paid per run: every word the crawler steps on comes back until time is up or the run is full; stopping early keeps what it grabbed. " + sim.ReadRuleText() + " (more in the later stages), toward the data total; a few adverts and typos count as wrong labels. Words the resident spider walks over count the same way, for free, and so does every character of a book on the shelf."));
+                     break;
+             }
+@@ -147,4 +147,21 @@
+         }
+ 
++        /// <summary>
++        /// 「众包订单 · 第 3 档 +¥14/秒」 (节奏重做 §2.4): the 摆渡众包 order tier its abilities opened and what it pays per
++        /// second (before relics); before the first tier, which ability opens it.
++        /// </summary>
++        public static string CrowdTierLine(XgSim sim)
++        {
++            if (sim == null) return "";
++            int reached = Math.Max(0, Math.Min(XgSim.AbilityCount, sim.S.crowdTier));
++            if (reached < 2 || sim.CrowdOrderIncome <= 0)
++                return T("众包订单 · 还没开档（学会「" + XgSim.AbilityName(2, false) + "」开第 1 档 +¥" + N(XgSim.CrowdTierIncome[2], "0") + "/秒）",
++                         "Crowd orders · no tier yet (learning '" + XgSim.AbilityName(2, true) + "' opens tier 1, +¥" + N(XgSim.CrowdTierIncome[2], "0") + "/s)");
++            string line = T("众包订单 · 第 " + (reached - 1) + " 档 +¥", "Crowd orders · tier " + (reached - 1) + " +¥") + N(sim.CrowdOrderIncome, "0") + T("/秒", "/s");
++            if (reached < XgSim.AbilityCount && reached + 1 < XgSim.CrowdTierIncome.Length)
++                line += T("（下一档 +¥" + N(XgSim.CrowdTierIncome[reached + 1], "0") + "/秒）", " (next +¥" + N(XgSim.CrowdTierIncome[reached + 1], "0") + "/s)");
++            return line;
++        }
++
+         /// <summary>The live download for a dataset (public, junk or story pack), or null.</summary>
+         public static XgDataOffer ActiveDownload(XgSim sim, string dataset)

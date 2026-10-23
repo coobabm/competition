@@ -1,0 +1,25 @@
+Integrate Ripple lingguang-v05 3df48181 with model-answered Forget Night
+
+Merge ripple-review/lingguang-v05 (d371a2b7, 3df48181) onto the 497d9acd
+integration checkpoint.
+
+- XgYyTalk.cs: keep our book completion / Red Mansion / independent reading
+  wiring, and take the upstream Forget Night rewrite on top of it. A round now
+  asks the real local model and shows its answer; the authored "third round
+  always forgets" lines are gone.
+- Memory evidence is committed only after YY actually displayed the reply and
+  registered its learningReplyId receipt; model offline or failed cancels the
+  round with a retry hint instead of inventing a remembered/forgot verdict.
+- Keep marketing SMS (mass promotions, unsubscribe footers) as spam; bills,
+  spending and pickup notices stay normal. Keep the 216-entry common-sense bank.
+- Rent memory question becomes a fictional colleague's 1350-per-month rent so it
+  no longer contradicts the simulated billing; order hint says chapter 3, which
+  is when orders actually open.
+- XgForgetNightTests: the fixture now marks abilities 1-4 emerged, matching a
+  real stage-4 save, so a JsonUtility round trip no longer changes NextAbility
+  and ExamReady.
+
+Verification (separate scopes, not one combined run):
+- full EditMode after the merge: 2469 total, 2462 passed, 0 failed, 6 skipped
+- targeted 5 classes after the two copy edits: 61/61 passed
+- XgForgetNightTests after the fixture fix: 21/21 passed

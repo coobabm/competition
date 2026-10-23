@@ -1,0 +1,76 @@
+{
+  "status": "failed",
+  "exe": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-model-integration-20261021\\Build\\MyComputerAlive-2026.10.21.2-20261020-200654\\MyComputerAlive.exe",
+  "exeSha256": "a5aadb439e9ca46257b87106fc36794a2896b1ec76da729585cccfc78f667aad",
+  "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\发布材料\\封面与宣传视频_20261019\\游戏图标V3_极简\\D_AB融合_屏中活字",
+  "method": "Windows RT_GROUP_ICON + RT_ICON extraction; compare decoded alpha and premultiplied RGB pixels",
+  "tolerance": "mean channel difference <= 2.5 / 255; >= 98% pixels all channels within 8 / 255; fully transparent RGB ignored",
+  "icons": [
+    {
+      "group": "103",
+      "resourceId": 1,
+      "size": 16,
+      "bitDepth": 32,
+      "extractedPng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\model-integration-20261021\\exe-icon-final\\group-103-id-1-16.png",
+      "referencePng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\发布材料\\封面与宣传视频_20261019\\游戏图标V3_极简\\D_AB融合_屏中活字\\D_AB融合_屏中活字_16.png",
+      "exactPixelRatio": 1.0,
+      "pixelsWithinTolerance": 1.0,
+      "meanChannelDifference": 0.0,
+      "maxChannelDifference": 0.0,
+      "matches": true
+    },
+    {
+      "group": "103",
+      "resourceId": 2,
+      "size": 24,
+      "bitDepth": 32,
+      "extractedPng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\model-integration-20261021\\exe-icon-final\\group-103-id-2-24.png",
+      "referencePng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\发布材料\\封面与宣传视频_20261019\\游戏图标V3_极简\\D_AB融合_屏中活字\\D_AB融合_屏中活字_24.png",
+      "exactPixelRatio": 0.08854166666666667,
+      "pixelsWithinTolerance": 0.40625,
+      "meanChannelDifference": 35.96284722222225,
+      "maxChannelDifference": 217.0,
+      "matches": false
+    },
+    {
+      "group": "103",
+      "resourceId": 3,
+      "size": 32,
+      "bitDepth": 32,
+      "extractedPng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\model-integration-20261021\\exe-icon-final\\group-103-id-3-32.png",
+      "referencePng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\发布材料\\封面与宣传视频_20261019\\游戏图标V3_极简\\D_AB融合_屏中活字\\D_AB融合_屏中活字_32.png",
+      "exactPixelRatio": 1.0,
+      "pixelsWithinTolerance": 1.0,
+      "meanChannelDifference": 0.0,
+      "maxChannelDifference": 0.0,
+      "matches": true
+    },
+    {
+      "group": "103",
+      "resourceId": 4,
+      "size": 48,
+      "bitDepth": 32,
+      "extractedPng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\model-integration-20261021\\exe-icon-final\\group-103-id-4-48.png",
+      "referencePng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\发布材料\\封面与宣传视频_20261019\\游戏图标V3_极简\\D_AB融合_屏中活字\\D_AB融合_屏中活字_48.png",
+      "exactPixelRatio": 1.0,
+      "pixelsWithinTolerance": 1.0,
+      "meanChannelDifference": 0.0,
+      "maxChannelDifference": 0.0,
+      "matches": true
+    },
+    {
+      "group": "103",
+      "resourceId": 5,
+      "size": 64,
+      "bitDepth": 32,
+      "extractedPng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\model-integration-20261021\\exe-icon-final\\group-103-id-5-64.png",
+      "referencePng": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\发布材料\\封面与宣传视频_20261019\\游戏图标V3_极简\\D_AB融合_屏中活字\\D_AB融合_屏中活字_64.png",
+      "exactPixelRatio": 1.0,
+      "pixelsWithinTolerance": 1.0,
+      "meanChannelDifference": 0.0,
+      "maxChannelDifference": 0.0,
+      "matches": true
+    }
+  ],
+  "error": "System.Management.Automation.RuntimeException: No exact-size reference PNG for 96px"
+}

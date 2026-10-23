@@ -1,0 +1,99 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.BoardClub.cs",
+      "base_sha256": null,
+      "candidate_sha256": "f31505e2cf7959729789bec25b59fbc95baeaa50490c12576068170981498ce0"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.BoardClub.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "6dd638a3ed9899a84032b2eebfbd4acc389ca735edda94d8458ad14ed51a0594"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs",
+      "base_sha256": "e33c77999fcfab385c5bd639eccd1146f419cbd2ad8d5d141484fb5aeb91a223",
+      "candidate_sha256": "de0b5d6d898245aaea55177cb02922ee0840d354477cdf55e913abd3bdcc4cc2"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardReader.cs",
+      "base_sha256": null,
+      "candidate_sha256": "078828d64e99ec1a112af46de4fbf32b0dc1375d9164cf3393a7046f2946504c"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardReader.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "915e446b806e71dda2c6b844a97bf88f3b9df98978b132cc846d1e57cb5ad571"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "base_sha256": "38fd49ea668edd07e08e7745519d55820614c3de5b74e7a878fa3595dd995210",
+      "candidate_sha256": "193585567f3c3441bee13b00f2a5d68147b68d0eda85887b405633892b8e7e6a"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Media/BoardClubPicture.cs",
+      "base_sha256": null,
+      "candidate_sha256": "9902d8901c19daca0faf5bf7d1e472b01aedc2d33f4e33de7a3615a4f4db83ac"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Media/BoardClubPicture.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "0d66a75c25715bbc33588f78adfe11a640ee798f202200fb558a0562dfa0f473"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Media/DesktopMedia.cs",
+      "base_sha256": "9ecf545fba512cf9548506d73f0ba8b5a7d8e49d2ef99d2960f468fc8522cf12",
+      "candidate_sha256": "c10491b0fb65d7f30d0aedf7549c81423fba2921946218a4fbaacbcf562edba7"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.BoardClub.cs",
+      "base_sha256": null,
+      "candidate_sha256": "f1d7034cab579d7e652a8311e891938b9b0598a1ef6af1d01864358ed018f444"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.BoardClub.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "5b54a13d0377e31e1729bbe29016c97434aa574615f1e101a2a335e14b708ae0"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs",
+      "base_sha256": "4a18d1093bbdf09f8c8c2bd8a899f44b426db82ee50a5c3b795dca63aae5a7d3",
+      "candidate_sha256": "a6cb1a284143e2f230fba310934f3e1e628a58d699ca7addab585f5a98464d7d"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardLogic.cs",
+      "base_sha256": "11483a2ecb7518aec79b191e20fe85176ede0f41119b45f0406acae0ed31144d",
+      "candidate_sha256": "43fb081120f6cd580875ea3be003fc62b2e6015fbfefadba6561871dcb29b4cd"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgBoardPictureDrag.cs",
+      "base_sha256": null,
+      "candidate_sha256": "a43eb2234e5a41520fed920f6c7fda0df56101a7e04db07ea3c958215ee7f00d"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgBoardPictureDrag.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "f794cde77e905f795a92c70024615df2201572e118229af14247f3d2856220c1"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgNextMoveQuestions.cs",
+      "base_sha256": "b7e5bb40aecfb5d9d9bb507c8bfbadfddc5dddfd698d66a358252b671c7c7ff9",
+      "candidate_sha256": "3d0821ec15a1234100bb6049b7fe4c54964104ff9b453ef14e387f21b30a73a1"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/BoardPictureDropQa.cs",
+      "base_sha256": null,
+      "candidate_sha256": "bab9c53b0841705f5f5faf1d4d36808c599c9da5906c872be0151ea054018d40"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/BoardPictureDropQa.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "8e3a1e41fa762de4536b7d3dfb886601685f17090110bfa8ee414b208731b49c"
+    }
+  ],
+  "editor_qa_entry": "BoardPictureDropQa.Run",
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

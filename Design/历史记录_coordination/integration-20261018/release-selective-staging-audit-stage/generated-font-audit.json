@@ -1,0 +1,50 @@
+[
+  {
+    "path": "Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset",
+    "changedFontFields": [
+      "m_FontFeatureTable"
+    ],
+    "unexpectedFontFields": [],
+    "intentionalSettingChange": false
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset",
+    "changedFontFields": [
+      "m_FallbackFontAssetTable",
+      "m_FontFeatureTable"
+    ],
+    "unexpectedFontFields": [],
+    "intentionalSettingChange": false
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset",
+    "changedFontFields": [
+      "m_FallbackFontAssetTable"
+    ],
+    "unexpectedFontFields": [],
+    "intentionalSettingChange": false
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/ReadingSerif.asset",
+    "changedFontFields": [
+      "m_CharacterTable",
+      "m_FreeGlyphRects",
+      "m_GlyphTable",
+      "m_UsedGlyphRects"
+    ],
+    "unexpectedFontFields": [],
+    "intentionalSettingChange": false
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset",
+    "changedFontFields": [
+      "m_CharacterTable",
+      "m_FontFeatureTable",
+      "m_FreeGlyphRects",
+      "m_GlyphTable",
+      "m_UsedGlyphRects"
+    ],
+    "unexpectedFontFields": [],
+    "intentionalSettingChange": false
+  }
+]

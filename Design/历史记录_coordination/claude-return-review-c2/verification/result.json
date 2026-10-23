@@ -1,0 +1,8 @@
+{
+  "applyCheckExitCode": 0,
+  "isolatedCompileExitCode": 0,
+  "compileScope": "Three candidate source files only, existing Unity/Bee references and previous guide review assemblies; not Unity import or current full-project compilation.",
+  "productionSHA256After": "e586828c4d7ad0c6441064116420327b01b3d4ca8b56d99a4772664164a7f451",
+  "preservedHeldAssertions": true,
+  "conditionalFixAbsent": true
+}

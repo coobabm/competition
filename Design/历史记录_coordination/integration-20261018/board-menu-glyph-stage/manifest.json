@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgIcons.cs",
+      "baseline_lf_sha256": "668bc2e0ae1d2b492db57d0da4dda9aa5dde84260136d86c3ffca8d41bf61cea",
+      "candidate_lf_sha256": "1b86328b2c3230a4cfccda9be1db5b6e6f87d321c8a8238a36799c0f85c7325f"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "baseline_lf_sha256": "617a067b6d45ab5c7a158208269664715fe92e296039721869b8bbb86c03b27f",
+      "candidate_lf_sha256": "8db6668463aecc386551d01e72641c42cddfa78ba742e9f31055bdd582dc8480"
+    }
+  ],
+  "patch_sha256": "932d4698750f72e8777ecd627f5f73e5ddb99c3ec16f165a4a8a4753aacc4057",
+  "git_apply_check_exit_code": 0,
+  "git_apply_check_output": "",
+  "runtime_executed": false
+}

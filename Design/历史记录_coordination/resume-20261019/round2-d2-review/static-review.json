@@ -1,0 +1,15 @@
+{
+  "production_sha256": "a6cb1a284143e2f230fba310934f3e1e628a58d699ca7addab585f5a98464d7d",
+  "baseline_sha256": "a6cb1a284143e2f230fba310934f3e1e628a58d699ca7addab585f5a98464d7d",
+  "submitted_sha256": "8e49e7a6484a91c64f41993322b288d3af427f7a35ca579c459963e7347caa44",
+  "reviewed_sha256": "43c2c184a73bd083a205f43f5071bad457c531c14373606c07967d05878d1371",
+  "original_key_retained": true,
+  "original_open_retained": true,
+  "original_drawside_and_later_methods_retained": true,
+  "lifecycle_event_binding_visibility_and_poll_interval_retained": true,
+  "compiled": false,
+  "unity_started": false,
+  "performance_tested": false,
+  "d2_report_present": false,
+  "d2_questions_present": false
+}

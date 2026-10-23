@@ -1,0 +1,35 @@
+{
+  "runtime_execution": "NOT RUN",
+  "production_modified": false,
+  "baseline_matches_current_production": true,
+  "utf8_lf_no_bom": true,
+  "runtime_patch_apply_check": "passed: plain git apply --check",
+  "test_patch_apply_check": "passed: plain git apply --check",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/GameEraClock.cs",
+      "candidateSha256": "998deec5e54d5f998b230829015cf2dfb14bb007682401263935bc7c5ee01ecf",
+      "baselineSha256": "aec9e7bc7d2f9126e0a103d984e5f3e18197c99bdb8d91dd3fe710f84cc38a7b"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs",
+      "candidateSha256": "58d0e915d940cfe59d2c7122d5359b4a8607231786148d8f4ca11977c095f11c",
+      "baselineSha256": "ce5599be70f8d24e0666ca4251f3456505c5035e4facfdb3a5027656d5dc2b88"
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/EpilogueDesktopClockTests.cs",
+      "candidateSha256": "ab0644ebc2c3f2ccdac67bc00f0b50946a21f586b1f30a3ecb7cdcdcc7e73c79",
+      "baselineSha256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/EpilogueDesktopClockTests.cs.meta",
+      "candidateSha256": "723ee76a99c71e33a79f32aaefd8c6581e14d39026284f404d81321c180f9692",
+      "baselineSha256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueDirector.cs",
+      "candidateSha256": "9a09b99e8508c743c9be867837c5e7d1ef36726f5abf5a42d2caeb3d6d4cf63f",
+      "baselineSha256": "3c74267095a6e6d03f5e4c53faf91682952c25836194b07a99d802e7cd3f7a73"
+    }
+  ]
+}

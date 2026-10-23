@@ -7,7 +7,7 @@ namespace LingGuangV05.CaseMenu
 {
     /// <summary>
     /// Fictional OS boot presentation confined to the native LCD, not a loading-screen camera.
-    /// 2016 hongmengos firmware look: BIOS self-test log, a "primordial ring" emblem with a teal spark
+    /// 2016 Aurora 7 firmware look (name from EraSafeBranding): BIOS self-test log, a "primordial ring" emblem with a teal spark
     /// (the program that is about to arrive), segmented progress, four pixel stage icons and the
     /// desktop's dolphin. Every animated detail is driven by boot progress, never by time, so the
     /// sequence is deterministic for captures and identical with reduced motion.
@@ -32,7 +32,7 @@ namespace LingGuangV05.CaseMenu
         // Self-test lines appear as the bar passes each threshold. ASCII only: the mono face has no CJK.
         static readonly string[] Post =
         {
-            "HONGMENG BIOS v2.16   (C) 2016 LG/16",
+            "LG/16 BIOS v2.16   (C) 2016 LG/16",
             "CPU   x86-64  4C/8T ......... OK",
             "MEM   8192 MB ............... OK",
             "GPU   2048 MB ............... OK",
@@ -100,7 +100,7 @@ namespace LingGuangV05.CaseMenu
                 postLines[i] = line;
             }
 
-            // Emblem: the primordial ring of "hongmeng" with a teal spark orbiting on its rim.
+            // Emblem: the primordial ring with a teal spark orbiting on its rim.
             var emblem = Rect("Boot Emblem", body);
             emblem.anchorMin = emblem.anchorMax = new Vector2(.5f, .675f);
             emblem.sizeDelta = new Vector2(h * .15f, h * .15f);
@@ -112,7 +112,7 @@ namespace LingGuangV05.CaseMenu
             sparkImage = spark.gameObject.AddComponent<Image>();
             sparkImage.sprite = dot; sparkImage.color = Teal; sparkImage.raycastTarget = false;
 
-            Label("Boot Logo", body, "hongmengos", heavy, h * .068f, new Vector2(.5f, .525f), new Vector2(.85f, .12f), Ink)
+            Label("Boot Logo", body, LingGuangV05.Desktop.EraSafeBranding.Os, heavy, h * .068f, new Vector2(.5f, .525f), new Vector2(.85f, .12f), Ink)
                 .characterSpacing = 3f;
             var sub = Label("Boot Subtitle", body, "PERSONAL WORKSTATION  ·  2016", sans, h * .018f, new Vector2(.5f, .462f), new Vector2(.8f, .05f), Dim);
             sub.characterSpacing = 8f;

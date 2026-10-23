@@ -1,0 +1,1426 @@
+[
+  {
+    "path": "Assets/DreamOS - Complete OS UI/Scripts/Data/DreamOSDataManager.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 8021,
+    "afterBytes": 8240,
+    "numstat": [
+      "2",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/DreamOS - Complete OS UI/Scripts/Window/WindowManager.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 17189,
+    "afterBytes": 17277,
+    "numstat": [
+      "1",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/Emergence/VisualDemos/NeuronLife/SparkNeuronDemoFont.asset",
+    "lineEndingOnly": true,
+    "beforeBytes": 22890,
+    "afterBytes": 22890,
+    "numstat": [
+      ""
+    ]
+  },
+  {
+    "path": "Assets/HolenderGames/UpgradesTreePro/Fonts/Hardpixel-nn51 SDF.asset",
+    "lineEndingOnly": true,
+    "beforeBytes": 44706,
+    "afterBytes": 44706,
+    "numstat": [
+      ""
+    ]
+  },
+  {
+    "path": "Assets/HongmengOS/Aero2010/Scripts/AeroStartMenu.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 6239,
+    "afterBytes": 6314,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/CaseMenu/Art/Materials/Decor_Ivory Ceramic.mat",
+    "lineEndingOnly": false,
+    "beforeBytes": 3864,
+    "afterBytes": 3863,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/CaseMenu/CaseMenuController.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 19725,
+    "afterBytes": 20052,
+    "numstat": [
+      "5",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.Archives.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 6780,
+    "afterBytes": 6989,
+    "numstat": [
+      "4",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 24381,
+    "afterBytes": 24616,
+    "numstat": [
+      "8",
+      "3"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/AiNamePolicy.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 4416,
+    "afterBytes": 4636,
+    "numstat": [
+      "14",
+      "8"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/ChapterOneSim.Hardware.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 10336,
+    "afterBytes": 10578,
+    "numstat": [
+      "4",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Era/EraLexicon.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 3217,
+    "afterBytes": 3373,
+    "numstat": [
+      "3",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Forum/Forum.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 11858,
+    "afterBytes": 11922,
+    "numstat": [
+      "1",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Forum/LaoZhou.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 24960,
+    "afterBytes": 20765,
+    "numstat": [
+      "19",
+      "62"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Games/Gomoku.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 5162,
+    "afterBytes": 5370,
+    "numstat": [
+      "4",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Models.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 12197,
+    "afterBytes": 12370,
+    "numstat": [
+      "2",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Story/ChapterOneStoryVars.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 7214,
+    "afterBytes": 7315,
+    "numstat": [
+      "1",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 4644,
+    "afterBytes": 5864,
+    "numstat": [
+      "13",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 23042,
+    "afterBytes": 24043,
+    "numstat": [
+      "11",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneDesktopRouter.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 1476,
+    "afterBytes": 1539,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/GameExit.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 1729,
+    "afterBytes": 2786,
+    "numstat": [
+      "19",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/GameMusic.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 9632,
+    "afterBytes": 12042,
+    "numstat": [
+      "28",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Games/ChessPanel.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 16793,
+    "afterBytes": 16848,
+    "numstat": [
+      "6",
+      "4"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 15870,
+    "afterBytes": 16953,
+    "numstat": [
+      "39",
+      "30"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Games/GameReactions.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 13028,
+    "afterBytes": 13142,
+    "numstat": [
+      "4",
+      "3"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Games/GoPanel.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 9922,
+    "afterBytes": 9854,
+    "numstat": [
+      "6",
+      "7"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Games/GomokuPanel.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 7475,
+    "afterBytes": 7586,
+    "numstat": [
+      "11",
+      "9"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Media/DesktopMedia.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 4916,
+    "afterBytes": 4989,
+    "numstat": [
+      "1",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 29969,
+    "afterBytes": 31546,
+    "numstat": [
+      "26",
+      "10"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Music2016.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 7109,
+    "afterBytes": 7182,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/GameEraClock.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 2105,
+    "afterBytes": 2617,
+    "numstat": [
+      "15",
+      "4"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 24565,
+    "afterBytes": 24790,
+    "numstat": [
+      "4",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/StudyDesktopGates.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 9047,
+    "afterBytes": 10162,
+    "numstat": [
+      "25",
+      "7"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/ZhouCardLoan.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 17251,
+    "afterBytes": 17393,
+    "numstat": [
+      "4",
+      "3"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.Discussion.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 9553,
+    "afterBytes": 6330,
+    "numstat": [
+      "18",
+      "43"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 15199,
+    "afterBytes": 16285,
+    "numstat": [
+      "16",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 33992,
+    "afterBytes": 35810,
+    "numstat": [
+      "38",
+      "12"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoView.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 52641,
+    "afterBytes": 50634,
+    "numstat": [
+      "29",
+      "54"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 19620,
+    "afterBytes": 20672,
+    "numstat": [
+      "15",
+      "19"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LocalEmbedder.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 16810,
+    "afterBytes": 16902,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LocalLlm.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 57120,
+    "afterBytes": 59434,
+    "numstat": [
+      "28",
+      "6"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset",
+    "lineEndingOnly": false,
+    "beforeBytes": 2066511,
+    "afterBytes": 2139788,
+    "numstat": [
+      "2659",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Mail2016/MailInboxView.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 14859,
+    "afterBytes": 17823,
+    "numstat": [
+      "57",
+      "16"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 19597,
+    "afterBytes": 26175,
+    "numstat": [
+      "9",
+      "12"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 30537,
+    "afterBytes": 32711,
+    "numstat": [
+      "9",
+      "7"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset",
+    "lineEndingOnly": false,
+    "beforeBytes": 6503,
+    "afterBytes": 21450,
+    "numstat": [
+      "543",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset",
+    "lineEndingOnly": false,
+    "beforeBytes": 37773592,
+    "afterBytes": 37773605,
+    "numstat": [
+      "2",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/ReadingSerif.asset",
+    "lineEndingOnly": false,
+    "beforeBytes": 8450202,
+    "afterBytes": 8551529,
+    "numstat": [
+      "5931",
+      "860"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset",
+    "lineEndingOnly": false,
+    "beforeBytes": 9061067,
+    "afterBytes": 9178089,
+    "numstat": [
+      "6598",
+      "805"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 103079,
+    "afterBytes": 103244,
+    "numstat": [
+      "13",
+      "13"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/PHOTO_CREDITS.txt",
+    "lineEndingOnly": false,
+    "beforeBytes": 101360,
+    "afterBytes": 103669,
+    "numstat": [
+      "8",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_lines.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 5368,
+    "afterBytes": 4554,
+    "numstat": [
+      "2",
+      "11"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 8887,
+    "afterBytes": 8845,
+    "numstat": [
+      "0",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 20945,
+    "afterBytes": 20979,
+    "numstat": [
+      "1",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 4787,
+    "afterBytes": 4839,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 9444,
+    "afterBytes": 12031,
+    "numstat": [
+      "22",
+      "19"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/Localization/StoryText.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 46841,
+    "afterBytes": 47558,
+    "numstat": [
+      "2",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Slots.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 4988,
+    "afterBytes": 5051,
+    "numstat": [
+      "3",
+      "3"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 19769,
+    "afterBytes": 20516,
+    "numstat": [
+      "10",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Tests/Editor/EraCalendarTests.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 10801,
+    "afterBytes": 12192,
+    "numstat": [
+      "24",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Tests/Editor/ForumTests.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 11850,
+    "afterBytes": 11911,
+    "numstat": [
+      "34",
+      "28"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBoard.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 52222,
+    "afterBytes": 52319,
+    "numstat": [
+      "1",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardData.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 25980,
+    "afterBytes": 26480,
+    "numstat": [
+      "8",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Data.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 59454,
+    "afterBytes": 59462,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Puzzles.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 10804,
+    "afterBytes": 10807,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 6968,
+    "afterBytes": 7286,
+    "numstat": [
+      "8",
+      "3"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 75905,
+    "afterBytes": 76052,
+    "numstat": [
+      "4",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 41107,
+    "afterBytes": 41354,
+    "numstat": [
+      "2",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 35269,
+    "afterBytes": 35382,
+    "numstat": [
+      "3",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BookPuzzles.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 13245,
+    "afterBytes": 13643,
+    "numstat": [
+      "5",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Books.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 22866,
+    "afterBytes": 25289,
+    "numstat": [
+      "53",
+      "19"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.CardLoan.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 12414,
+    "afterBytes": 12562,
+    "numstat": [
+      "2",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Cards.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 32659,
+    "afterBytes": 33048,
+    "numstat": [
+      "5",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataFiles.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 8871,
+    "afterBytes": 8966,
+    "numstat": [
+      "2",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataPacks.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 4575,
+    "afterBytes": 5128,
+    "numstat": [
+      "6",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 3296,
+    "afterBytes": 3240,
+    "numstat": [
+      "2",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Games.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 27236,
+    "afterBytes": 26626,
+    "numstat": [
+      "4",
+      "14"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningRecords.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 14820,
+    "afterBytes": 14966,
+    "numstat": [
+      "4",
+      "4"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Persona.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 61800,
+    "afterBytes": 62086,
+    "numstat": [
+      "1",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 43614,
+    "afterBytes": 44236,
+    "numstat": [
+      "8",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Wiring.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 78809,
+    "afterBytes": 78875,
+    "numstat": [
+      "2",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 11919,
+    "afterBytes": 12096,
+    "numstat": [
+      "2",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 86948,
+    "afterBytes": 87867,
+    "numstat": [
+      "16",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgStageLessons.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 1631,
+    "afterBytes": 2448,
+    "numstat": [
+      "3",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 8010,
+    "afterBytes": 8233,
+    "numstat": [
+      "6",
+      "3"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 32546,
+    "afterBytes": 34168,
+    "numstat": [
+      "9",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 4887,
+    "afterBytes": 6621,
+    "numstat": [
+      "13",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgActionGames.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 48226,
+    "afterBytes": 60949,
+    "numstat": [
+      "224",
+      "28"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgDeskGamePage.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 13970,
+    "afterBytes": 13994,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgMoleGraphic.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 9805,
+    "afterBytes": 10910,
+    "numstat": [
+      "21",
+      "6"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackChess.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 8153,
+    "afterBytes": 8980,
+    "numstat": [
+      "14",
+      "3"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackContentGames.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 26392,
+    "afterBytes": 27076,
+    "numstat": [
+      "12",
+      "8"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackGames.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 1577,
+    "afterBytes": 1747,
+    "numstat": [
+      "2",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackPuzzles.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 13940,
+    "afterBytes": 16523,
+    "numstat": [
+      "43",
+      "5"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgStageLessonGames.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 6664,
+    "afterBytes": 6731,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBookPuzzleJudge.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 1494,
+    "afterBytes": 1866,
+    "numstat": [
+      "6",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 21931,
+    "afterBytes": 22371,
+    "numstat": [
+      "11",
+      "6"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.Records.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 11965,
+    "afterBytes": 11972,
+    "numstat": [
+      "5",
+      "6"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 19030,
+    "afterBytes": 19066,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFinalePage.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 35110,
+    "afterBytes": 35684,
+    "numstat": [
+      "9",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgGradFlow.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 18812,
+    "afterBytes": 18971,
+    "numstat": [
+      "2",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.DeskGame.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 5755,
+    "afterBytes": 5858,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 69359,
+    "afterBytes": 69595,
+    "numstat": [
+      "5",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgStageCurtain.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 9112,
+    "afterBytes": 9149,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgStoryBridge.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 16455,
+    "afterBytes": 16566,
+    "numstat": [
+      "1",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTeachingPictures.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 12880,
+    "afterBytes": 13881,
+    "numstat": [
+      "12",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 76329,
+    "afterBytes": 76486,
+    "numstat": [
+      "3",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Books.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 20504,
+    "afterBytes": 2744,
+    "numstat": [
+      "11",
+      "281"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 52872,
+    "afterBytes": 52599,
+    "numstat": [
+      "8",
+      "9"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 45145,
+    "afterBytes": 45489,
+    "numstat": [
+      "4",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Learning.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 5444,
+    "afterBytes": 5475,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 32501,
+    "afterBytes": 33016,
+    "numstat": [
+      "8",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 25849,
+    "afterBytes": 27382,
+    "numstat": [
+      "24",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticTests.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 15331,
+    "afterBytes": 15375,
+    "numstat": [
+      "4",
+      "4"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBookPuzzleTests.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 12147,
+    "afterBytes": 12267,
+    "numstat": [
+      "3",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBooksTests.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 13385,
+    "afterBytes": 13532,
+    "numstat": [
+      "8",
+      "6"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCardLoanTests.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 8568,
+    "afterBytes": 9093,
+    "numstat": [
+      "20",
+      "7"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGamesTests.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 9423,
+    "afterBytes": 8435,
+    "numstat": [
+      "12",
+      "29"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 5492,
+    "afterBytes": 5666,
+    "numstat": [
+      "5",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 55692,
+    "afterBytes": 58404,
+    "numstat": [
+      "57",
+      "33"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.Faces.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 6017,
+    "afterBytes": 5622,
+    "numstat": [
+      "1",
+      "10"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.Learning.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 13763,
+    "afterBytes": 13644,
+    "numstat": [
+      "1",
+      "2"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 56173,
+    "afterBytes": 59182,
+    "numstat": [
+      "48",
+      "5"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYFacePicker.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 12330,
+    "afterBytes": 14516,
+    "numstat": [
+      "29",
+      "4"
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYGroup.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 13570,
+    "afterBytes": 10822,
+    "numstat": [
+      "2",
+      "31"
+    ]
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/IntegratedReleaseBuild.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 6735,
+    "afterBytes": 6735,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/LearningRecordsUiChecks.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 21298,
+    "afterBytes": 24887,
+    "numstat": [
+      "34",
+      "0"
+    ]
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 29194,
+    "afterBytes": 43276,
+    "numstat": [
+      "185",
+      "4"
+    ]
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs",
+    "lineEndingOnly": false,
+    "beforeBytes": 13693,
+    "afterBytes": 23679,
+    "numstat": [
+      "112",
+      "13"
+    ]
+  },
+  {
+    "path": "Assets/Settings/PC_RPAsset.asset",
+    "lineEndingOnly": true,
+    "beforeBytes": 4669,
+    "afterBytes": 4669,
+    "numstat": [
+      ""
+    ]
+  },
+  {
+    "path": "Assets/Settings/UniversalRenderPipelineGlobalSettings.asset",
+    "lineEndingOnly": true,
+    "beforeBytes": 26893,
+    "afterBytes": 26893,
+    "numstat": [
+      ""
+    ]
+  },
+  {
+    "path": "Assets/StreamingAssets/LingGuang/llama/THIRD_PARTY.txt",
+    "lineEndingOnly": false,
+    "beforeBytes": 544,
+    "afterBytes": 2718,
+    "numstat": [
+      "30",
+      "1"
+    ]
+  },
+  {
+    "path": "Design/Codex接管协作队列_20261019.md",
+    "lineEndingOnly": false,
+    "beforeBytes": 4720,
+    "afterBytes": 12137,
+    "numstat": [
+      "63",
+      "7"
+    ]
+  },
+  {
+    "path": "Design/data/browser_news.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 19597,
+    "afterBytes": 26175,
+    "numstat": [
+      "9",
+      "12"
+    ]
+  },
+  {
+    "path": "Design/data/chat_unlocks.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 4787,
+    "afterBytes": 4839,
+    "numstat": [
+      "1",
+      "1"
+    ]
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 102407,
+    "afterBytes": 102600,
+    "numstat": [
+      "14",
+      "13"
+    ]
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 9358,
+    "afterBytes": 11945,
+    "numstat": [
+      "22",
+      "19"
+    ]
+  },
+  {
+    "path": "Design/整合记录.md",
+    "lineEndingOnly": false,
+    "beforeBytes": 98525,
+    "afterBytes": 124688,
+    "numstat": [
+      "149",
+      "0"
+    ]
+  },
+  {
+    "path": "Design/老周问答与科技资讯_实施与对白清单_20261019.md",
+    "lineEndingOnly": false,
+    "beforeBytes": 5198,
+    "afterBytes": 8166,
+    "numstat": [
+      "20",
+      "4"
+    ]
+  },
+  {
+    "path": "Packages/Aura/.gitignore",
+    "lineEndingOnly": true,
+    "beforeBytes": 75,
+    "afterBytes": 75,
+    "numstat": [
+      ""
+    ]
+  },
+  {
+    "path": "Packages/manifest.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 2488,
+    "afterBytes": 2566,
+    "numstat": [
+      "2",
+      "2"
+    ]
+  },
+  {
+    "path": "Packages/packages-lock.json",
+    "lineEndingOnly": false,
+    "beforeBytes": 16312,
+    "afterBytes": 16402,
+    "numstat": [
+      "2",
+      "2"
+    ]
+  },
+  {
+    "path": "ProjectSettings/GraphicsSettings.asset",
+    "lineEndingOnly": true,
+    "beforeBytes": 2615,
+    "afterBytes": 2615,
+    "numstat": [
+      ""
+    ]
+  }
+]

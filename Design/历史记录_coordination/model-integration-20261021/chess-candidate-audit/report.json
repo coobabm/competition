@@ -1,0 +1,243 @@
+{
+  "chess_version": "1.11.2",
+  "runtime_count": 87,
+  "mate_counts": {
+    "1": 60,
+    "2": 27
+  },
+  "errors": [],
+  "non_unique_existing": [],
+  "new_puzzles": [
+    {
+      "id": "kn2km",
+      "rating": 659,
+      "url": "https://lichess.org/training/kn2km",
+      "unique_mate": "e8e1",
+      "piece": "rook"
+    },
+    {
+      "id": "jR4pI",
+      "rating": 665,
+      "url": "https://lichess.org/training/jR4pI",
+      "unique_mate": "f6f8",
+      "piece": "rook"
+    },
+    {
+      "id": "s6rMc",
+      "rating": 670,
+      "url": "https://lichess.org/training/s6rMc",
+      "unique_mate": "d6c5",
+      "piece": "bishop"
+    },
+    {
+      "id": "CNkFX",
+      "rating": 677,
+      "url": "https://lichess.org/training/CNkFX",
+      "unique_mate": "h3h7",
+      "piece": "queen"
+    },
+    {
+      "id": "35tmT",
+      "rating": 773,
+      "url": "https://lichess.org/training/35tmT",
+      "unique_mate": "e8e1",
+      "piece": "rook"
+    },
+    {
+      "id": "D2qfe",
+      "rating": 805,
+      "url": "https://lichess.org/training/D2qfe",
+      "unique_mate": "h3f2",
+      "piece": "knight"
+    },
+    {
+      "id": "fOTqo",
+      "rating": 808,
+      "url": "https://lichess.org/training/fOTqo",
+      "unique_mate": "d1h5",
+      "piece": "queen"
+    },
+    {
+      "id": "MXmcr",
+      "rating": 833,
+      "url": "https://lichess.org/training/MXmcr",
+      "unique_mate": "h5g3",
+      "piece": "knight"
+    },
+    {
+      "id": "0b7Vl",
+      "rating": 834,
+      "url": "https://lichess.org/training/0b7Vl",
+      "unique_mate": "g5f7",
+      "piece": "knight"
+    },
+    {
+      "id": "l2y0s",
+      "rating": 887,
+      "url": "https://lichess.org/training/l2y0s",
+      "unique_mate": "d8h8",
+      "piece": "queen"
+    },
+    {
+      "id": "2eb10",
+      "rating": 907,
+      "url": "https://lichess.org/training/2eb10",
+      "unique_mate": "a8h8",
+      "piece": "rook"
+    },
+    {
+      "id": "ZhRAz",
+      "rating": 970,
+      "url": "https://lichess.org/training/ZhRAz",
+      "unique_mate": "h4g6",
+      "piece": "knight"
+    },
+    {
+      "id": "19MCg",
+      "rating": 1025,
+      "url": "https://lichess.org/training/19MCg",
+      "unique_mate": "g4g6",
+      "piece": "queen"
+    },
+    {
+      "id": "c69xy",
+      "rating": 1068,
+      "url": "https://lichess.org/training/c69xy",
+      "unique_mate": "b6b4",
+      "piece": "queen"
+    },
+    {
+      "id": "1qEx4",
+      "rating": 1090,
+      "url": "https://lichess.org/training/1qEx4",
+      "unique_mate": "b5b7",
+      "piece": "queen"
+    },
+    {
+      "id": "uFVGr",
+      "rating": 1107,
+      "url": "https://lichess.org/training/uFVGr",
+      "unique_mate": "d6h6",
+      "piece": "rook"
+    },
+    {
+      "id": "hUm95",
+      "rating": 1189,
+      "url": "https://lichess.org/training/hUm95",
+      "unique_mate": "f5e6",
+      "piece": "queen"
+    },
+    {
+      "id": "b64cY",
+      "rating": 1204,
+      "url": "https://lichess.org/training/b64cY",
+      "unique_mate": "f3f7",
+      "piece": "queen"
+    },
+    {
+      "id": "uWy4g",
+      "rating": 1254,
+      "url": "https://lichess.org/training/uWy4g",
+      "unique_mate": "f6e6",
+      "piece": "rook"
+    },
+    {
+      "id": "t7IKm",
+      "rating": 1278,
+      "url": "https://lichess.org/training/t7IKm",
+      "unique_mate": "g5h6",
+      "piece": "bishop"
+    },
+    {
+      "id": "h52U0",
+      "rating": 1302,
+      "url": "https://lichess.org/training/h52U0",
+      "unique_mate": "g2g4",
+      "piece": "rook"
+    },
+    {
+      "id": "Kobq8",
+      "rating": 1312,
+      "url": "https://lichess.org/training/Kobq8",
+      "unique_mate": "e7e8",
+      "piece": "rook"
+    },
+    {
+      "id": "qUncb",
+      "rating": 1316,
+      "url": "https://lichess.org/training/qUncb",
+      "unique_mate": "g3g8",
+      "piece": "queen"
+    },
+    {
+      "id": "0Xnnq",
+      "rating": 1317,
+      "url": "https://lichess.org/training/0Xnnq",
+      "unique_mate": "f3e5",
+      "piece": "knight"
+    },
+    {
+      "id": "KIPaJ",
+      "rating": 1322,
+      "url": "https://lichess.org/training/KIPaJ",
+      "unique_mate": "f1f6",
+      "piece": "rook"
+    },
+    {
+      "id": "Jv4ip",
+      "rating": 1339,
+      "url": "https://lichess.org/training/Jv4ip",
+      "unique_mate": "g5f7",
+      "piece": "knight"
+    },
+    {
+      "id": "rTPqR",
+      "rating": 1350,
+      "url": "https://lichess.org/training/rTPqR",
+      "unique_mate": "e3g4",
+      "piece": "knight"
+    },
+    {
+      "id": "bM4Qr",
+      "rating": 1497,
+      "url": "https://lichess.org/training/bM4Qr",
+      "unique_mate": "e5e7",
+      "piece": "queen"
+    },
+    {
+      "id": "dVQtd",
+      "rating": 1581,
+      "url": "https://lichess.org/training/dVQtd",
+      "unique_mate": "f4h5",
+      "piece": "knight"
+    },
+    {
+      "id": "xCOMZ",
+      "rating": 1692,
+      "url": "https://lichess.org/training/xCOMZ",
+      "unique_mate": "g2g6",
+      "piece": "rook"
+    }
+  ],
+  "duplicates": [],
+  "source_scope": "Delivery claims Lichess CC0; URLs, source PGN replay and recorded solution verified locally. Remote API provenance not independently retrieved.",
+  "all_existing_runtime_entries_unchanged": true,
+  "all_existing_design_entries_unchanged": true,
+  "baseline_count": 57,
+  "handoff_count_correction": "Actual 57 -> 87 total (30 -> 60 mate-in-one; 27 mate-in-two unchanged), not 87 -> 117.",
+  "new_count": 30,
+  "new_piece_counts": {
+    "rook": 10,
+    "bishop": 2,
+    "queen": 10,
+    "knight": 8
+  },
+  "new_rating_range": [
+    659,
+    1692
+  ],
+  "baseline_hashes": {
+    "Assets\\LingGuangV05\\Resources\\LingGuangV05\\Teaching\\chess_mates_verified.json": "d765d0edc43fbeb85240928f354de8add2922d82ec54d48202d42afe7a5898e6",
+    "Design\\data\\chess_mates_lichess.json": "927611ce9745068a0058b99cebe613b0641c6bae00aa90cf8a34dc75f8c47162"
+  }
+}

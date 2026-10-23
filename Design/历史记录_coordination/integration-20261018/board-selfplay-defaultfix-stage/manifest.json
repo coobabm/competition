@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/Games/LudoGame.cs",
+      "base_sha256": "b023550a3a3d1723481e0cb93073a1564a20d497ee2eea8bfe623580ec6c3ba3",
+      "candidate_sha256": "7fe3714a1213d5e1c179b7bed9b047e04373728577f4ceeb79e685b1efdcbe57"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardSelfPlay.cs",
+      "base_sha256": "914fb54368b27e9780dded53e701afa8be9f1544ff8073c829c3bad265a7579f",
+      "candidate_sha256": "52f4d85a2335f8ee5c4fcd609f9419d7aba1b865a20a97cdcdd43bf0337a41b3"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardSelfPlayVarietyTests.cs",
+      "base_sha256": "541b873b7a969d30d3da8515ee2148ac1fb2a16309d9bb9829b87cd32578fe88",
+      "candidate_sha256": "05ce308efc7d9183238d5b7b55ed54152aed887edf5b30a4bba837dfdffa1b11"
+    }
+  ],
+  "new_tests": 14,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

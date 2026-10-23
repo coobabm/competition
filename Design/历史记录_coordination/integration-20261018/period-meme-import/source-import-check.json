@@ -1,0 +1,22 @@
+[
+  {
+    "file": "teach_meme_couch_original",
+    "pngSize": [
+      384,
+      256
+    ],
+    "before": "NPOT ToNearest(1), mipmaps on, compression1",
+    "after": "NPOT None(0), mipmaps off, Clamp wrap, Default and Standalone uncompressed",
+    "guidPreserved": true
+  },
+  {
+    "file": "teach_meme_power_original",
+    "pngSize": [
+      384,
+      256
+    ],
+    "before": "NPOT ToNearest(1), mipmaps on, compression1",
+    "after": "NPOT None(0), mipmaps off, Clamp wrap, Default and Standalone uncompressed",
+    "guidPreserved": true
+  }
+]

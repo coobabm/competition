@@ -1,0 +1,45 @@
+{
+  "status": "candidate; core 70 checks passed; desktop candidates not compiled or run in Unity",
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/GameMusic.cs",
+      "base_sha256": "1b4cd34dab20bb6198b53bf8c624bf0d8b90e2940a27ada1f8880d69c37c633c",
+      "candidate_sha256": "0a89cd175a81758adf979fc1ad8731a8ed809d04c670233686dcefe7382ecaf6"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "base_sha256": "50e131becd6308e8aae95a82fdfe604fdf0e90dacedf82a9be6468f5dc681134",
+      "candidate_sha256": "5c0339350cb9905101fb5cf180c2211c3d54853f223dc7d9fb3d3221f65be8b4"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.cs",
+      "base_sha256": "2b0b52612a4b7ee13a1d77fcdf0547d180a3687473853be6dc1d22cb3ed3e747",
+      "candidate_sha256": "73f084a673f746e01fbca88d0a4a92ab2142da5f014bb6ecdde658d708f274eb"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+      "base_sha256": "7a6fd08296a8181c628751a6e5518ca93a12168434aaad3a9798725a63331d53",
+      "candidate_sha256": "92e55878414699a616166e5e7ee213ff3cf8c81c49ec13c9dc8cd40cae89e203"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgDailyPlayback.cs",
+      "base_sha256": null,
+      "candidate_sha256": "a25741c7605b7a52ac2a2b6d35895b7a2923de49575683ca95d9bbc22335c6ea"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyLife.cs",
+      "base_sha256": null,
+      "candidate_sha256": "dae7c3a13d40482107b180130cd8ae114c2ea233de17ba56e040dffef582d9b2"
+    },
+    {
+      "file": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "base_sha256": "4e298f3324691063c9de24d80503b5026aedafe809d744e391139616301d1d90",
+      "candidate_sha256": "0b64e37f3d4f8ea9896681004ab4037ec1abcb2d3b12a2898a1d8b4613d03371"
+    },
+    {
+      "file": "Assets/LingGuangV05/YY2016/YYChatView.Faces.cs",
+      "base_sha256": "f03852d3b815fe43e12463bb5506d96439bd1d8fb0a2a76b36ecbe615143f668",
+      "candidate_sha256": "3413a280fa567b683632592d5bf9cb4deaecabc155319c6882e3c39e999cb0a6"
+    }
+  ]
+}

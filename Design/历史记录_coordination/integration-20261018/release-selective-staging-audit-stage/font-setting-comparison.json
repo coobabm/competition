@@ -1,0 +1,387 @@
+[
+  {
+    "path": "Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset",
+    "settings": [
+      {
+        "key": "m_SourceFontFileGUID",
+        "before": "m_SourceFontFileGUID: bcefe69df9a2240f1841ef848779f9ac",
+        "after": "m_SourceFontFileGUID: bcefe69df9a2240f1841ef848779f9ac",
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile_EditorRef",
+        "before": null,
+        "after": null,
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile",
+        "before": "m_SourceFontFile: {fileID: 12800000, guid: bcefe69df9a2240f1841ef848779f9ac, type: 3}",
+        "after": "m_SourceFontFile: {fileID: 12800000, guid: bcefe69df9a2240f1841ef848779f9ac, type: 3}",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPopulationMode",
+        "before": "m_AtlasPopulationMode: 1",
+        "after": "m_AtlasPopulationMode: 1",
+        "changed": false
+      },
+      {
+        "key": "m_IsMultiAtlasTexturesEnabled",
+        "before": "m_IsMultiAtlasTexturesEnabled: 1",
+        "after": "m_IsMultiAtlasTexturesEnabled: 1",
+        "changed": false
+      },
+      {
+        "key": "m_GetFontFeatures",
+        "before": "m_GetFontFeatures: 1",
+        "after": "m_GetFontFeatures: 1",
+        "changed": false
+      },
+      {
+        "key": "m_ClearDynamicDataOnBuild",
+        "before": "m_ClearDynamicDataOnBuild: 1",
+        "after": "m_ClearDynamicDataOnBuild: 1",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasWidth",
+        "before": "m_AtlasWidth: 2048",
+        "after": "m_AtlasWidth: 2048",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasHeight",
+        "before": "m_AtlasHeight: 2048",
+        "after": "m_AtlasHeight: 2048",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPadding",
+        "before": "m_AtlasPadding: 5",
+        "after": "m_AtlasPadding: 5",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasRenderMode",
+        "before": "m_AtlasRenderMode: 4165",
+        "after": "m_AtlasRenderMode: 4165",
+        "changed": false
+      },
+      {
+        "key": "m_FallbackFontAssetTable",
+        "before": "m_FallbackFontAssetTable: []",
+        "after": "m_FallbackFontAssetTable: []",
+        "changed": false
+      }
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset",
+    "settings": [
+      {
+        "key": "m_SourceFontFileGUID",
+        "before": "m_SourceFontFileGUID: 6c4b3165b37dc7046901fc3d4a0fcce5",
+        "after": "m_SourceFontFileGUID: 6c4b3165b37dc7046901fc3d4a0fcce5",
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile_EditorRef",
+        "before": null,
+        "after": null,
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile",
+        "before": "m_SourceFontFile: {fileID: 12800000, guid: 6c4b3165b37dc7046901fc3d4a0fcce5, type: 3}",
+        "after": "m_SourceFontFile: {fileID: 12800000, guid: 6c4b3165b37dc7046901fc3d4a0fcce5, type: 3}",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPopulationMode",
+        "before": "m_AtlasPopulationMode: 1",
+        "after": "m_AtlasPopulationMode: 1",
+        "changed": false
+      },
+      {
+        "key": "m_IsMultiAtlasTexturesEnabled",
+        "before": "m_IsMultiAtlasTexturesEnabled: 1",
+        "after": "m_IsMultiAtlasTexturesEnabled: 1",
+        "changed": false
+      },
+      {
+        "key": "m_GetFontFeatures",
+        "before": "m_GetFontFeatures: 1",
+        "after": "m_GetFontFeatures: 1",
+        "changed": false
+      },
+      {
+        "key": "m_ClearDynamicDataOnBuild",
+        "before": "m_ClearDynamicDataOnBuild: 1",
+        "after": "m_ClearDynamicDataOnBuild: 1",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasWidth",
+        "before": "m_AtlasWidth: 1024",
+        "after": "m_AtlasWidth: 1024",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasHeight",
+        "before": "m_AtlasHeight: 1024",
+        "after": "m_AtlasHeight: 1024",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPadding",
+        "before": "m_AtlasPadding: 20",
+        "after": "m_AtlasPadding: 20",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasRenderMode",
+        "before": "m_AtlasRenderMode: 4165",
+        "after": "m_AtlasRenderMode: 4165",
+        "changed": false
+      },
+      {
+        "key": "m_FallbackFontAssetTable",
+        "before": "m_FallbackFontAssetTable: []",
+        "after": "m_FallbackFontAssetTable:\n  - {fileID: 0}",
+        "changed": true
+      }
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset",
+    "settings": [
+      {
+        "key": "m_SourceFontFileGUID",
+        "before": "m_SourceFontFileGUID: 3881b5ed647c149b5a05af8df9312901",
+        "after": "m_SourceFontFileGUID: 3881b5ed647c149b5a05af8df9312901",
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile_EditorRef",
+        "before": null,
+        "after": null,
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile",
+        "before": "m_SourceFontFile: {fileID: 12800000, guid: 3881b5ed647c149b5a05af8df9312901, type: 3}",
+        "after": "m_SourceFontFile: {fileID: 12800000, guid: 3881b5ed647c149b5a05af8df9312901, type: 3}",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPopulationMode",
+        "before": "m_AtlasPopulationMode: 1",
+        "after": "m_AtlasPopulationMode: 1",
+        "changed": false
+      },
+      {
+        "key": "m_IsMultiAtlasTexturesEnabled",
+        "before": "m_IsMultiAtlasTexturesEnabled: 1",
+        "after": "m_IsMultiAtlasTexturesEnabled: 1",
+        "changed": false
+      },
+      {
+        "key": "m_GetFontFeatures",
+        "before": "m_GetFontFeatures: 1",
+        "after": "m_GetFontFeatures: 1",
+        "changed": false
+      },
+      {
+        "key": "m_ClearDynamicDataOnBuild",
+        "before": "m_ClearDynamicDataOnBuild: 1",
+        "after": "m_ClearDynamicDataOnBuild: 1",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasWidth",
+        "before": "m_AtlasWidth: 1024",
+        "after": "m_AtlasWidth: 1024",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasHeight",
+        "before": "m_AtlasHeight: 1024",
+        "after": "m_AtlasHeight: 1024",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPadding",
+        "before": "m_AtlasPadding: 20",
+        "after": "m_AtlasPadding: 20",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasRenderMode",
+        "before": "m_AtlasRenderMode: 4165",
+        "after": "m_AtlasRenderMode: 4165",
+        "changed": false
+      },
+      {
+        "key": "m_FallbackFontAssetTable",
+        "before": "m_FallbackFontAssetTable: []",
+        "after": "m_FallbackFontAssetTable:\n  - {fileID: 0}",
+        "changed": true
+      }
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/ReadingSerif.asset",
+    "settings": [
+      {
+        "key": "m_SourceFontFileGUID",
+        "before": "m_SourceFontFileGUID: 2e500f7a66539444285631615a8bd119",
+        "after": "m_SourceFontFileGUID: 2e500f7a66539444285631615a8bd119",
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile_EditorRef",
+        "before": null,
+        "after": null,
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile",
+        "before": "m_SourceFontFile: {fileID: 12800000, guid: 2e500f7a66539444285631615a8bd119, type: 3}",
+        "after": "m_SourceFontFile: {fileID: 12800000, guid: 2e500f7a66539444285631615a8bd119, type: 3}",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPopulationMode",
+        "before": "m_AtlasPopulationMode: 1",
+        "after": "m_AtlasPopulationMode: 1",
+        "changed": false
+      },
+      {
+        "key": "m_IsMultiAtlasTexturesEnabled",
+        "before": "m_IsMultiAtlasTexturesEnabled: 1",
+        "after": "m_IsMultiAtlasTexturesEnabled: 1",
+        "changed": false
+      },
+      {
+        "key": "m_GetFontFeatures",
+        "before": "m_GetFontFeatures: 1",
+        "after": "m_GetFontFeatures: 1",
+        "changed": false
+      },
+      {
+        "key": "m_ClearDynamicDataOnBuild",
+        "before": "m_ClearDynamicDataOnBuild: 0",
+        "after": "m_ClearDynamicDataOnBuild: 0",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasWidth",
+        "before": "m_AtlasWidth: 2048",
+        "after": "m_AtlasWidth: 2048",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasHeight",
+        "before": "m_AtlasHeight: 2048",
+        "after": "m_AtlasHeight: 2048",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPadding",
+        "before": "m_AtlasPadding: 5",
+        "after": "m_AtlasPadding: 5",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasRenderMode",
+        "before": "m_AtlasRenderMode: 4165",
+        "after": "m_AtlasRenderMode: 4165",
+        "changed": false
+      },
+      {
+        "key": "m_FallbackFontAssetTable",
+        "before": "m_FallbackFontAssetTable:\n  - {fileID: 11400000, guid: 1694ab11bc676334bb1690dc2e18f80b, type: 2}",
+        "after": "m_FallbackFontAssetTable:\n  - {fileID: 11400000, guid: 1694ab11bc676334bb1690dc2e18f80b, type: 2}",
+        "changed": false
+      }
+    ]
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset",
+    "settings": [
+      {
+        "key": "m_SourceFontFileGUID",
+        "before": "m_SourceFontFileGUID: 75f62267335fcdb4daa0aff166dca296",
+        "after": "m_SourceFontFileGUID: 75f62267335fcdb4daa0aff166dca296",
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile_EditorRef",
+        "before": null,
+        "after": null,
+        "changed": false
+      },
+      {
+        "key": "m_SourceFontFile",
+        "before": "m_SourceFontFile: {fileID: 12800000, guid: 75f62267335fcdb4daa0aff166dca296, type: 3}",
+        "after": "m_SourceFontFile: {fileID: 12800000, guid: 75f62267335fcdb4daa0aff166dca296, type: 3}",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPopulationMode",
+        "before": "m_AtlasPopulationMode: 1",
+        "after": "m_AtlasPopulationMode: 1",
+        "changed": false
+      },
+      {
+        "key": "m_IsMultiAtlasTexturesEnabled",
+        "before": "m_IsMultiAtlasTexturesEnabled: 1",
+        "after": "m_IsMultiAtlasTexturesEnabled: 1",
+        "changed": false
+      },
+      {
+        "key": "m_GetFontFeatures",
+        "before": "m_GetFontFeatures: 1",
+        "after": "m_GetFontFeatures: 1",
+        "changed": false
+      },
+      {
+        "key": "m_ClearDynamicDataOnBuild",
+        "before": "m_ClearDynamicDataOnBuild: 0",
+        "after": "m_ClearDynamicDataOnBuild: 0",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasWidth",
+        "before": "m_AtlasWidth: 2048",
+        "after": "m_AtlasWidth: 2048",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasHeight",
+        "before": "m_AtlasHeight: 2048",
+        "after": "m_AtlasHeight: 2048",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasPadding",
+        "before": "m_AtlasPadding: 5",
+        "after": "m_AtlasPadding: 5",
+        "changed": false
+      },
+      {
+        "key": "m_AtlasRenderMode",
+        "before": "m_AtlasRenderMode: 4165",
+        "after": "m_AtlasRenderMode: 4165",
+        "changed": false
+      },
+      {
+        "key": "m_FallbackFontAssetTable",
+        "before": "m_FallbackFontAssetTable:\n  - {fileID: 11400000, guid: 71ded2e539f874a4188d383d44f10375, type: 2}",
+        "after": "m_FallbackFontAssetTable:\n  - {fileID: 11400000, guid: 71ded2e539f874a4188d383d44f10375, type: 2}",
+        "changed": false
+      }
+    ]
+  }
+]

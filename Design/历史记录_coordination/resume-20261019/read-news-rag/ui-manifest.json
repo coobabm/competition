@@ -1,0 +1,18 @@
+{
+  "patch": "patch/read-news-rag-ui.patch",
+  "sha256": "dac4add07e6cd529321ea648234a8d36ffb3ac23d34a39f6b66a817bc5d4f81a",
+  "files": [
+    "Assets/LocalBuild/Editor/ReadNewsRagActualUiChecks.cs",
+    "Assets/LocalBuild/Editor/ReadNewsRagActualUiChecks.cs.meta"
+  ],
+  "dependsOnFeaturePatchSHA256": "51eb016b618766c60a428f02fcdd16f930cdd0cb51411cdbf91627fc861901a0",
+  "cscExitCode": 0,
+  "warnings": 4,
+  "unityRun": false,
+  "productionWritten": false,
+  "sidebarWired": false,
+  "actualUiPassed": false,
+  "applyCheck": "passed",
+  "endingPrivateInspectedSHA256": "692068b393e7a88b2a8c37b0aa7840ece97e5c3d532fdba8edb5b3f6c79779a6",
+  "pausedForHandoff": true
+}

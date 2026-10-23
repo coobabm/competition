@@ -1,0 +1,153 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/ChapterOneSim.Hardware.cs",
+      "base_sha256": "7dc0057941d90fd935da77ac08692b5104855decd8c48bf5c60cff0b330094a6",
+      "candidate_sha256": "bdc1f95d86ace802ee6c1ffd7364ddb8f2ac0b01eef21d63d8574227e057f2c4"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+      "base_sha256": "d49a7349edc8fddd24675695ccb7fb7771735836f50fb98b6df2794c7a31e529",
+      "candidate_sha256": "ac6aacbdf91f67179d08fe7be5512b9cc342eea8a4c7356028e88be619a703c2"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/GameMusic.cs",
+      "base_sha256": "1b4cd34dab20bb6198b53bf8c624bf0d8b90e2940a27ada1f8880d69c37c633c",
+      "candidate_sha256": "276a6f18da6bd625f434fd5fee52593852abbbce5bffa1b750a81e06e32b2ac1"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "base_sha256": "50e131becd6308e8aae95a82fdfe604fdf0e90dacedf82a9be6468f5dc681134",
+      "candidate_sha256": "0fb12ba125d152b84e2c4cdb2767f2b30052770d284b6d2caae6285bf5eaa110"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.cs",
+      "base_sha256": "7838340ac4451b92aa65ae00ebc168b3d717a51d9f05fbc5e13aa351b094e419",
+      "candidate_sha256": "ecfdc85a5d7444c67d6f1ce4591fce3aff9c322479a8d7a33ad6c0b296b2bb96"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+      "base_sha256": "16aa0caf821ff1420ac019fbb596f11e70f8af00e3ac38e75ee9b0c1f9e126ae",
+      "candidate_sha256": "e06d50ac62f2072019387c0bb158d5c301ba82781f4ad354bdaa249ebc48379e"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs",
+      "base_sha256": "f8dc4d8e2bc8489194850c6169ae313cfcafc2a588c264bedab0617a6a793461",
+      "candidate_sha256": "4a18d1093bbdf09f8c8c2bd8a899f44b426db82ee50a5c3b795dca63aae5a7d3"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/DailyBargainingTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "864140b91d00e7e108abf76f3c6730ddf7a3b8449e8cc96a88915889bedfff0d"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/DailyBargainingTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "6cb516ff8cf6c62296c91e108869aecc9593ac64fd9cf21f21fccce8ed5a9a56"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+      "base_sha256": "939ff4427a4be38047b3c1d4c7ec19607166b7ba1372498737483eea0fb633be",
+      "candidate_sha256": "614daf5a9e204d70e3ecdeb91dcec49035767c143729970d3d801deaf88eebf8"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgDailyPlayback.cs",
+      "base_sha256": null,
+      "candidate_sha256": "a25741c7605b7a52ac2a2b6d35895b7a2923de49575683ca95d9bbc22335c6ea"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgDailyPlayback.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "7d23d85a5b1dd497812e4c47d4bbb0ca25f61c7478bb1b4f6361bee4d270d3f7"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "base_sha256": "c5799f2cef0b854da8d1d86d87215ccc38531240d3d43ae1371742b00743e63d",
+      "candidate_sha256": "e9a639aaaf66eedb84780df83b19fba3c99bb94c89becacaffac8e896fe0b1c4"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyLife.cs",
+      "base_sha256": null,
+      "candidate_sha256": "88b1f0373c3df632d818b52eeb6aec81efe1fecfdb5850460128c70a5183a6ff"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyLife.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "813f808c741a087462e1f2693d56130dd41c6e9b4c5cbfb8ad0892fe6c544ae3"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataPacks.cs",
+      "base_sha256": "b83f27303b9740c8d49f180459cabb225608d19f95907a5381ea05bf069a8cb7",
+      "candidate_sha256": "8bba364e5e1f84d8facd4dc1013a65c1f1a0c219c5c3ffe9125884e002fc6df7"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.Persona.cs",
+      "base_sha256": "5545ffb547578a65d2e71e4d5fc75c33a35b68171a83a8d6ec45983227ae7e68",
+      "candidate_sha256": "fcf2837819e876c6b81660fa959b5047aa6c1d0124f4c9ae20d0c3ea8514370f"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "base_sha256": "6a1aa918f4416539e3afbc3df77e31ab8e80ecc45be6fb5f59a5374ff3db0939",
+      "candidate_sha256": "b46bddeebb875b23f7db294dbe9304e9eb8f88118d3397c31913e281752a3414"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgStageLessons.cs",
+      "base_sha256": "8cb2b573fa1d549f655ce3d64c27c009391ffc027211c882d5ac38893033f504",
+      "candidate_sha256": "9849af790386f4efebfd82c910335f36dc4a87cedf77029d5571952059105b15"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgDailyQuestions.cs",
+      "base_sha256": null,
+      "candidate_sha256": "8464d7b6395203d250c02f0127f328fe3febc063a58c6d875d1a791b53f585db"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgDailyQuestions.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "b4502106aa753d782bf60b06c8225ce7c19207e821621dcada714fbadad9332f"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackGames.cs",
+      "base_sha256": "70688b9f9740ce3c93689e32a0fbbbc5f473f93bbeaba7ae012c02450f3d490d",
+      "candidate_sha256": "a3910010d3ad3ff5aa310ee0187d1c4e666952a3613ea9504c0f746b35e3d8fc"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs",
+      "base_sha256": "848991a562fca3df8ded7972d39d544d2a2497ae1ef75a4bd9c50367e397a3fd",
+      "candidate_sha256": "a4f965b45dd732472f843a65f2216d1b27f52f88e8d521751a0634dcc9f5e51f"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDailyLifeIntegrationTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "37adf710eb1061aa5a84aa572c3a4aa0a9c23d3510b111faa277bcf5a5bb1308"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDailyLifeIntegrationTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "8b7a5be1378d97f40b5b89e74672d7e6e282db618ba93f23507c347114a39251"
+    },
+    {
+      "file": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "base_sha256": "4eecc8d45ad3508308e7ff088d887f64bd2c4d8c0554c4e36bf11e4118c94e6a",
+      "candidate_sha256": "0933bc1a8fcbf93410f5cc95c5d9f1a2ef6b75e3a4059acde46839d698ea151a"
+    },
+    {
+      "file": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+      "base_sha256": "3481dd708acfdac329ae30697539980b873f329110bd3d5b31c1ccdae6870213",
+      "candidate_sha256": "07ac648fdebe13b475c556d4f55a34183af57dde136f7910fbef48e9659e07a8"
+    },
+    {
+      "file": "Assets/LingGuangV05/YY2016/YYChatView.Faces.cs",
+      "base_sha256": "f03852d3b815fe43e12463bb5506d96439bd1d8fb0a2a76b36ecbe615143f668",
+      "candidate_sha256": "987b53aa9e602c001d9a49464f27e58b7427ad28a5e8cbea30e8c08f48e7cc3d"
+    },
+    {
+      "file": "Assets/LingGuangV05/YY2016/YYFacePicker.cs",
+      "base_sha256": "e0bb6eaf44f4f0e3e5e4abda2ada06f2d0ab382a0252acf6c7a2d5420f070d33",
+      "candidate_sha256": "374237ba0f49de53f4b93c28621e1e6de34c630f8dde5640a71e06cacc35d2f8"
+    }
+  ],
+  "nunit_cases_authored": 13,
+  "tests_run": false,
+  "unity_run": false,
+  "validation": "Static delimiter audit + git apply --check only"
+}

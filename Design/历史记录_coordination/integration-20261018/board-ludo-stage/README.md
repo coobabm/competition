@@ -1,0 +1,30 @@
+# Native board games package 1: aeroplane chess + shared real-record flow
+
+Candidate only; no production writes, Unity, compiler, tests, model runs or gameplay claims. Depends on root's imported C7 receipt APIs. `board-ludo.patch` is the first sequential board-game package; do not overwrite full production files. `baseline/`, `candidate/`, manifest and one-shot construction scripts make all changes reviewable.
+
+## Implemented
+
+* New pure `LudoGame` + native `LudoPanel`, preserving Game Hub style and original Gomoku/Go/Chess. Launcher uses a two-row grid so added games do not overflow horizontally. Two players, two planes each, 28-cell loop, fair 1–6 rolls, 5/6 takeoff, same-colour jump, capture back to base, another roll on 6, exact-home bounce, victory only when both planes are home. Player explicitly rolls and chooses a legal plane. The computer uses local capture/advance rules; unupgraded private AI picks randomly. No dice outcome is adjusted for AI.
+* Shared native first-open rules with bilingual goal/rules/short setting, Start/Continue, saved “Don't show next time”, and `?`. New-game rules text comes from board_games.json. Existing Go/Chess rules are drawn from their actual engines; existing Gomoku remains untimed (the JSON's unimplemented 20-second rule is not advertised as active).
+* Shared explicit Computer / personal-AI selection; private AI available from stage 2 for all actual games, no gamedata circular prerequisite. Changing opponent restarts the current board and abandons its active record. Save swap resets pending sessions/boards; hidden page, closed native window and rules overlay do not advance AI turns.
+* `gamedata`, ordinary ¥500, stage2 and a real AI-completed game1 receipt. Added active `XgTechTreePage` boardlogic band/title plus catalog band and legacy tree title, preserving root's existing daily band.
+* Live owner-bound sessions capture private-AI and recorder ownership at the first actual action. Completion consumes that session once. A foreign, abandoned, replayed, empty or unfinished record is rejected. C7 game1/games3 receipts come from these genuine terminal callbacks.
+* **All original GameMove/GamePlayed immediate training-sample grants removed prospectively.** Score counters and previously saved samples remain. Existing reactions get the actual selected opponent; computer games cannot pretend to be AI games.
+* Three newly started and completed AI games after purchase produce a distinct virtual batch file through existing `dataFiles`; files are never host filesystem archives. Stable batch IDs mean repeated drops/reloads cannot pay twice. Only real InstallDataFile adds samples, then adds a C3 learning-history item (`sourceKind=game`), and emits existing Files tray feedback. Each batch is a new numbered archive so already-installed content is never granted again.
+* Each source trace is retained. Per-game sample counts are conservatively capped by both the JSON allowance and the genuine trace length. This avoids advertising more recorded items than exist. For a normal ludo game with ≥30 logged events, three games yield 90 records; shorter traces yield fewer. The two existing unlisted full games (Go/full Chess) use an explicit provisional cap of 30, retaining all traces. No claim of learned self-play policy is made.
+
+## Decisions for rules omitted by original text
+
+The requested default A uses original written settings. Small mechanics needed to make them concrete: red launches at loop cell0, blue opposite at14; colour cycle period4; launch consumes its 5/6 and lands at the start cell; same-colour jump is one +4 jump and cannot skip into home; passing home enters personal home at progress28; overshoot reflects; own planes may share a cell, and a landing captures all opposing planes there. No extra home lane, shortcut, forced time-out, cash reward or mainline dependency was invented. Approximate 5-minute duration is the design target, **not measured**; randomness and player pace affect duration.
+
+## Deliberately separate remaining packages
+
+2. Chinese checkers engine/native panel, six pieces each, 40 turns each, chain-jump paths and real win/draw.
+3. Monopoly engine/native panel, 20 named squares, eight turns each, play-money only, dated chance filtering.
+4. Actual four-level board-logic technology/next-move desk and Lv4 self-play. `BoardLogicLevel` is an isolated new consumer keyed `board.logic1..4`, default0; no such nodes are sold by this package. This is deliberately separate from the preexisting `LogicLevel` labelled-desk difficulty. Final approved prices are 800/2500/6000/15000, fourth-level real-game requirement **3**, not old10. This package does not claim screenshot recognition, memory-dependent planning or autonomous self-play are implemented.
+
+## Validation for root
+
+14 new NUnit cases authored, not run: LudoGameTests (6) for launch/pass/repeat-six, single colour jump, home bounce, captures, win lock, illegal action and tactical choice; XgBoardRecordsTests (8) for stage/opponent/record gate, purchase during game, foreign/abandoned/duplicate sessions, computer exclusion, batch+install once, save round-trip, old aggregates and trace caps. Three superseded tests in existing XgGamesTests now assert no immediate samples and stage2 AI availability; other reaction tests stay.
+
+Required serial Unity checks: compile all desktop scripts; run new+existing core/game/file tests; both languages native first-open/reopen/rules toggle; select computer and AI stage1/2; actual ludo full game and completion count; physical roll/plane clicks; six repeat, jumps, captures, bounce; no background turn under rules/page/window hiding; restart while pending; save switch with same stage/cards; existing Gomoku/Go/Chess actual finishes after new opponent selection; a purchased recorder's three new games creates a ready file and no samples until real drag/drop; repeated drop and reload no duplicates; active boardlogic lane visibility; file tray and YY data history; actual runtime duration and clipping. These are unverified until root runs them.

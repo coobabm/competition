@@ -1,0 +1,209 @@
+    const string Scope="Independent Main fixture at casino unlock stage, fixed calendar and 29 historical watched rounds. Actual LCD final bet triggers freeze. Both languages cover paid/refused/ignored, isolated slot6 freeze/closed roundtrip and stale captured pay/quit UnityEvents. Ignored uses an explicitly advanced game date and live CasinoDesktop.Update. Accepted blackjack uses a declared legacy frozen-active-hand state, real disk restore and LCD Stand. Real 40-second gossip delivery is checked against exact public text and persisted receipts; old-owner pending gossip is checked across a save switch. No natural progression, physical input, model inference, auto-save success or save-failure recovery claim.";
+    static T Field<T>(object target,string name)=>(T)target.GetType().GetField(name,F|BindingFlags.Static).GetValue(target);
+    static YYConversation Group=>YYChatHub.Instance.Conversation(YYChatHub.EraGroup);
+    static CasinoPage Page=>Object.FindObjectsByType<CasinoPage>(FindObjectsInactive.Exclude).FirstOrDefault(p=>p.isActiveAndEnabled);
+    static Button Button(string name)=>Page?.GetComponentsInChildren<Button>(true).FirstOrDefault(b=>b.name==name);
+    static bool Layer(string name)=>Page!=null&&Page.GetComponentsInChildren<RectTransform>(true).Any(x=>x.name==name&&x.gameObject.activeInHierarchy);
+    static bool ReadyButton(string name){var b=Button(name);return b!=null&&b.gameObject.activeInHierarchy&&b.IsInteractable();}
+    static void Click(string name){Need(ReadyButton(name),"visible interactable casino button: "+name);CaptureClick((RectTransform)Button(name).transform);}
+    static bool WindowReady(WindowManager w)
+    {
+        if(w==null||!w.isOn||!w.gameObject.activeInHierarchy)return false;
+        foreach(var g in w.GetComponentsInParent<CanvasGroup>(true))if(g.alpha<.95f||!g.blocksRaycasts||!g.interactable)return false;
+        var a=w.windowAnimator;return a==null||!a.isActiveAndEnabled||!a.IsInTransition(0)&&a.GetCurrentAnimatorStateInfo(0).normalizedTime>=1;
+    }
+    static IEnumerator Foreground(){yield return Until(()=>Application.isFocused&&!PlayerWindowState.IsMinimized,"actual foreground required; never fabricate focus",60);}
+    static IEnumerator WaitSeconds(double seconds)
+    {
+        double end=Time.realtimeSinceStartupAsDouble+seconds;
+        while(Time.realtimeSinceStartupAsDouble<end){Need(Application.isFocused&&!PlayerWindowState.IsMinimized,"actual foreground retained during timed observation");yield return null;}
+    }
+    static IEnumerator VisibleUntil(Func<bool> condition,string message,double seconds=25)
+    {
+        double end=Time.realtimeSinceStartupAsDouble+seconds;
+        while(!condition()){Need(Application.isFocused&&!PlayerWindowState.IsMinimized,"foreground retained: "+message);Need(Time.realtimeSinceStartupAsDouble<end,message);yield return null;}
+    }
+    static ChapterOneSim Fixture(bool english)
+    {
+        var lab=new XgSim();lab.BeginOpening();lab.English=english;
+        int stage=XgSim.FeatureUnlock["casino"];
+        lab.S.stage=lab.S.stageVision=lab.S.stageSequence=stage;lab.S.abilitiesEmerged=Enumerable.Range(1,stage).ToList();
+        lab.S.openingFocus=false;lab.S.teachingFlow=false;lab.S.spiderIntroDone=lab.S.firstWordsSaid=true;
+        lab.S.teachIntroSaid=lab.S.teachThirdSaid=lab.S.teachTreeSaid=lab.S.teachTrainSaid=true;lab.MarkAfterthought("first.drift");
+        var yy=new YYState{selected=YYChatHub.EraGroup,seedZhouHand=true,seedJieAsk=true};
+        foreach(var c in YYChatHub.Contacts)yy.conversations.Add(new YYConversation{id=c.id});
+        var house=new ChapterOneSim();house.S.prologue=2;house.S.appInstallState=2;house.S.money=913579;house.S.aiName="PRIVATE_AI_7391";
+        house.S.labState=JsonUtility.ToJson(lab.S);house.S.chatState=JsonUtility.ToJson(yy);
+        GameCalendar.Advance(house.S,GameCalendar.DayIndex(new DateTime(2016,6,6)));house.S.rentDay=GameCalendar.CurrentDay(house.S);house.S.broadbandMonth=201612;
+        return house;
+    }
+    static void Bind(XingGuangController ctl,bool english)
+    {
+        SetLanguage(english);var house=Fixture(english);ctl.runtime.SetSimulationForTests(house);
+        typeof(XingGuangController).GetMethod("BindSave",F).Invoke(ctl,new object[]{house});
+        IsolateTicks(ctl,false);QuietDrivers();ctl.Sim.Clock=100;
+        Need(ctl.BoundTo(house)&&YYChatHub.Instance.BoundTo(house),"lab and YY share exact isolated house owner");
+        YYChatHub.Instance.enabled=true;Need(CasinoDesktop.Instance!=null,"production casino desktop installed");CasinoDesktop.Instance.enabled=true;
+    }
+    static IEnumerator OpenCasino(XingGuangController ctl)
+    {
+        Need(CasinoDesktop.Instance.OpenSite(),"native local-only casino browser navigation fixture");
+        yield return Until(()=>Page!=null&&ReferenceEquals(Field<XgSim>(Page,"bound"),ctl.Sim),"casino page bound to current save");
+        var browser=Object.FindAnyObjectByType<WebBrowserManager>(FindObjectsInactive.Include);
+        yield return Until(()=>WindowReady(browser.GetComponentInParent<WindowManager>(true)),"browser open animation completed");
+        yield return Frames(4);yield return Foreground();
+    }
+    static void NearFreeze(XgSim sim)
+    {
+        sim.S.casinoWatching=true;sim.S.casinoWatchRound=0;sim.S.casinoWatchNet=0;sim.S.casinoSaidFirst=true;
+        sim.Casino.rounds=29;sim.Casino.wagered=290;sim.Casino.returned=290;sim.Casino.rng=12345;
+        // Prior public gossip receipts are fixtures. Only beat 3's delivery is under observation.
+        sim.MarkCasinoGossip(1);sim.MarkCasinoGossip(2);
+        Check(true,"Declared prerequisite: 29 watched historical rounds, wagered=returned=290, prior public gossip receipts 1/2; the final stake is an actual LCD click");
+    }
+    static IEnumerator FreezeByClick(XingGuangController ctl,bool english)
+    {
+        Bind(ctl,english);NearFreeze(ctl.Sim);yield return OpenCasino(ctl);
+        yield return VisibleUntil(()=>ReadyButton("Game slots"),"game selector ready");Click("Game slots");yield return Frames();Click("Stake 10");yield return Frames();
+        yield return VisibleUntil(()=>ReadyButton("Place Bet"),"final real bet ready");
+        double before=ctl.runtime.Sim.S.money;Click("Place Bet");
+        Need(ctl.Sim.Casino.rounds==30&&ctl.Sim.CasinoFrozenNow,"actual accepted final bet triggers product freeze");
+        var round=ctl.Sim.Casino.history.Last();
+        Check(ctl.runtime.Sim.S.money==before-round.stake+round.returned-ctl.Sim.S.casinoFrozen,"real settlement and frozen wallet deduction agree");
+        yield return VisibleUntil(()=>Layer("Risk Notice")&&ReadyButton("Pay Deposit")&&ReadyButton("Quit Casino"),"natural reveal completes and risk notice appears",30);
+        Check(!ReadyButton("Place Bet"),"risk notice prohibits new stake");
+    }
+    static void IsolatedDisk(ChapterOneRuntime rt)
+    {
+        string expected=Path.GetFullPath(Path.Combine(Root,"Save"))+Path.DirectorySeparatorChar;
+        Need(Path.GetFullPath(rt.SavePath).StartsWith(expected,StringComparison.OrdinalIgnoreCase),"slot IO confined to unique verification root");
+        Need(Path.GetFullPath(ChapterOneRuntime.VerificationSaveDirectory).TrimEnd(Path.DirectorySeparatorChar)==expected.TrimEnd(Path.DirectorySeparatorChar),"save override matches verified root");
+    }
+    static void SaveSlot(XingGuangController ctl,string label)
+    {
+        IsolatedDisk(ctl.runtime);ctl.runtime.useDiskSave=true;
+        try{Need(ctl.runtime.SaveSlot(6),"actual slot6 save "+label+": "+ctl.runtime.SaveStatus);}
+        finally{ctl.runtime.useDiskSave=false;}
+        string slot=Path.Combine(Root,"Save","slots","6","chapter-one.sav");Need(File.Exists(slot)&&new FileInfo(slot).Length>100,"actual nonempty slot6 file: "+label);
+        Directory.CreateDirectory(Path.Combine(Root,"disk-evidence"));File.Copy(slot,Path.Combine(Root,"disk-evidence",label+".sav"),true);
+    }
+    static void LoadSlot(XingGuangController ctl)
+    {
+        IsolatedDisk(ctl.runtime);ctl.runtime.useDiskSave=true;
+        try{Need(ctl.runtime.LoadArchive(6),"actual isolated slot6 load: "+ctl.runtime.SaveStatus);}
+        finally{ctl.runtime.useDiskSave=false;ctl.runtime.tickEnabled=false;}
+        IsolateTicks(ctl,false);QuietDrivers();ctl.Sim.Clock=100;CasinoDesktop.Instance.enabled=true;
+        Need(ctl.BoundTo(ctl.runtime.Sim)&&YYChatHub.Instance.BoundTo(ctl.runtime.Sim),"disk load rebinds both lab and YY to restored owner");
+    }
+    static string Snapshot(XingGuangController ctl)
+    {
+        var s=ctl.Sim.S;var c=ctl.Sim.Casino;
+        return string.Join("|",ctl.runtime.Sim.S.money,s.casinoScam,s.casinoFrozen,s.casinoFrozenDay,s.casinoFeePaid,s.casinoScamOutcome,s.casinoLearned,
+            s.casinoWatching,s.casinoWatchRound,s.casinoWatchNet,s.casinoAiSeq,s.casinoAiFreezeLine,c.rounds,c.wagered,c.returned,
+            JsonUtility.ToJson(c.blackjack),ctl.Sim.ExtraSamples("spam"),string.Join(";",s.askedLog.Where(x=>x.sourceKind==XgSim.CasinoSourceKind).Select(x=>JsonUtility.ToJson(x))),
+            string.Join(";",s.tutorSeen.Where(x=>x.StartsWith("casino.gossip"))),JsonUtility.ToJson(Group));
+    }
+    static IEnumerator FrozenDiskAndStale(XingGuangController ctl,bool english,string tag)
+    {
+        var old=ctl.Sim;var oldHouse=ctl.runtime.Sim;var oldPage=Page;var pay=Button("Pay Deposit").onClick;var quit=Button("Quit Casino").onClick;
+        string expected=Snapshot(ctl);SaveSlot(ctl,tag+"-frozen");
+        Bind(ctl,english);
+        // Both owners deliberately remain frozen: a missing owner guard would close one and/or charge the new wallet.
+        ctl.Sim.S.casinoScam=1;ctl.Sim.S.casinoFrozenDay=ctl.Sim.Today;ctl.Sim.MarkCasinoGossip(1);ctl.Sim.MarkCasinoGossip(2);
+        // Keep the same visible page component: old closures must fail their owner guard, not merely page visibility.
+        yield return VisibleUntil(()=>ReferenceEquals(Page,oldPage)&&ReferenceEquals(Field<XgSim>(Page,"bound"),ctl.Sim)&&Layer("Risk Notice"),"same visible page rebuilt for new frozen owner");
+        double oldMoney=oldHouse.S.money,newMoney=ctl.runtime.Sim.S.money;double oldSamples=old.ExtraSamples("spam"),newSamples=ctl.Sim.ExtraSamples("spam");
+        pay.Invoke();quit.Invoke();yield return Frames();
+        Check(old.CasinoFrozenNow&&ctl.Sim.CasinoFrozenNow&&oldHouse.S.money==oldMoney&&ctl.runtime.Sim.S.money==newMoney&&old.ExtraSamples("spam")==oldSamples&&ctl.Sim.ExtraSamples("spam")==newSamples,
+            "captured old Pay/Quit callbacks cannot mutate either frozen owner (explicit late-callback fixture, not a physical click): "+tag);
+        LoadSlot(ctl);Check(Snapshot(ctl)==expected,"actual disk restore preserves frozen wallet/scam/hand/receipts/group history: "+tag);
+        yield return OpenCasino(ctl);yield return VisibleUntil(()=>Layer("Risk Notice"),"loaded freeze notice visible");
+    }
+    static IEnumerator CasinoFrames(XingGuangController ctl,bool english)
+    {
+        string lang=english?"en":"zh";
+        foreach(string outcome in new[]{XgSim.CasinoPaid,XgSim.CasinoRefused,XgSim.CasinoIgnored})
+        {
+            string tag=lang+"-"+outcome;yield return FreezeByClick(ctl,english);CaptureLcd(tag+"-01-frozen.png");
+            yield return FrozenDiskAndStale(ctl,english,tag);
+            double before=ctl.runtime.Sim.S.money;long fee=ctl.Sim.CasinoFee;double samples=ctl.Sim.ExtraSamples("spam");
+            if(outcome==XgSim.CasinoIgnored)
+            {
+                int day=GameCalendar.CurrentDay(ctl.runtime.Sim.S);Need(GameCalendar.Advance(ctl.runtime.Sim.S,day+1),"explicit next-day calendar fixture applied");
+                ctl.Sim.Today=GameCalendar.Yyyymmdd(GameCalendar.Now(ctl.runtime.Sim.S));
+                Check(true,"Declared date fixture: controller clock paused; game calendar advanced one day and Today synchronized, live CasinoDesktop.Update performs ignored transition");
+            }
+            else Click(outcome==XgSim.CasinoPaid?"Pay Deposit":"Quit Casino");
+            yield return VisibleUntil(()=>Layer("Site Closed")&&ctl.Sim.CasinoClosed,"actual closed-site presentation");
+            Check(ctl.Sim.S.casinoScamOutcome==outcome&&ctl.runtime.Sim.S.money==before-(outcome==XgSim.CasinoPaid?fee:0),"actual outcome and exact fee wallet delta: "+tag);
+            Check(ctl.Sim.S.casinoFeePaid==(outcome==XgSim.CasinoPaid?fee:0)&&ctl.Sim.S.casinoLearned&&ctl.Sim.ExtraSamples("spam")==samples+XgSim.CasinoScamSamples,"exact fee and one spam-learning award: "+tag);
+            var receipt=ctl.Sim.S.askedLog.Where(x=>x.sourceKind==XgSim.CasinoSourceKind).ToArray();
+            Check(receipt.Length==1&&receipt[0].eventKey.Contains(":"+outcome+":"),"one outcome-specific learning receipt: "+tag);
+            if(outcome==XgSim.CasinoIgnored)Check(receipt[0].answerSource=="system"&&receipt[0].playerAnswer=="","ignored records system action without invented player answer: "+tag);
+            CaptureLcd(tag+"-02-closed.png");
+            string expected=Snapshot(ctl);SaveSlot(ctl,tag+"-closed");Bind(ctl,english);LoadSlot(ctl);
+            Check(Snapshot(ctl)==expected,"actual disk restore preserves closed outcome, fee, wallet, spam, receipt and group history: "+tag);
+            yield return OpenCasino(ctl);yield return VisibleUntil(()=>Layer("Site Closed"),"closed site persists after disk rebind");
+            yield return WaitSeconds(.5);Check(Snapshot(ctl)==expected,"repeated live ticks do not duplicate wallet/sample/learning outcome: "+tag);
+            if(outcome==XgSim.CasinoPaid)yield return Gossip(ctl,english,tag);
+        }
+        yield return FrozenBlackjack(ctl,english,lang);
+    }
+    static IEnumerator FrozenBlackjack(XingGuangController ctl,bool english,string tag)
+    {
+        Bind(ctl,english);ctl.Sim.Casino.rng=12345;ctl.Sim.MarkCasinoGossip(1);ctl.Sim.MarkCasinoGossip(2);yield return OpenCasino(ctl);
+        yield return VisibleUntil(()=>ReadyButton("Game blackjack"),"blackjack selector ready");Click("Game blackjack");yield return Frames();Click("Stake 10");yield return Frames();
+        yield return VisibleUntil(()=>ReadyButton("Place Bet"),"blackjack deal ready");double before=ctl.runtime.Sim.S.money;Click("Place Bet");
+        Need(ctl.Sim.BlackjackActive&&ctl.runtime.Sim.S.money==before-10,"real LCD blackjack deal accepts exactly one stake");
+        ctl.Sim.S.casinoScam=1;ctl.Sim.S.casinoFrozenDay=ctl.Sim.Today;
+        Check(true,"Declared legacy compatibility fixture: frozen flag set only after real accepted active hand; this combination is not claimed as naturally generated by current settlement");
+        string expected=Snapshot(ctl);SaveSlot(ctl,tag+"-frozen-active-blackjack");Bind(ctl,english);LoadSlot(ctl);Need(Snapshot(ctl)==expected,"accepted frozen hand survives actual disk roundtrip");
+        yield return OpenCasino(ctl);yield return VisibleUntil(()=>ReadyButton("Game blackjack"),"restored blackjack selector ready");Click("Game blackjack");
+        ctl.Sim.Clock+=2; // Explicit logical debounce clock fixture, never animation time.
+        yield return VisibleUntil(()=>ReadyButton("Blackjack stand"),"restored card motion finishes and accepted hand can stand");
+        Check(!Layer("Risk Notice")&&!ReadyButton("Place Bet")&&!ReadyButton("Blackjack double"),"frozen accepted hand keeps Stand visible while new stake/double remain blocked: "+tag);
+        CaptureLcd(tag+"-blackjack-active.png");int rounds=ctl.Sim.Casino.rounds;double held=ctl.runtime.Sim.S.money;
+        Click("Blackjack stand");Need(!ctl.Sim.BlackjackActive&&ctl.Sim.Casino.rounds==rounds+1,"LCD Stand settles loaded frozen hand once");
+        var settled=ctl.Sim.Casino.history.Last();Check(ctl.runtime.Sim.S.money==held+settled.returned,"frozen hand preserves original gross payout exactly: "+tag);
+        yield return VisibleUntil(()=>Layer("Risk Notice"),"risk notice waits for actual accepted hand settlement",30);
+        yield return WaitSeconds(.5);Check(ctl.Sim.Casino.rounds==rounds+1&&ctl.runtime.Sim.S.money==held+settled.returned,"settled hand does not settle twice on further frames: "+tag);
+        CaptureLcd(tag+"-blackjack-settled.png");
+        expected=Snapshot(ctl);SaveSlot(ctl,tag+"-settled-blackjack");Bind(ctl,english);LoadSlot(ctl);Check(Snapshot(ctl)==expected,"settled frozen blackjack persists exactly through disk: "+tag);
+    }
+    static IEnumerator OpenGroup(XingGuangController ctl)
+    {
+        ctl.runtime.GetComponent<ChapterOneDesktopRouter>().Open(YYChatHub.AppId,YYChatHub.EraGroup);
+        var hub=YYChatHub.Instance;
+        yield return Until(()=>hub.View!=null&&hub.View.EnsureReady()&&WindowReady(Field<WindowManager>(hub.View,"window")),"YY native window opened for public gossip");
+        yield return Foreground();
+    }
+    static IEnumerator Gossip(XingGuangController ctl,bool english,string tag)
+    {
+        Need(ctl.Sim.CasinoGossipDue()==3,"only public closed-site gossip is pending");
+        yield return VisibleUntil(()=>Field<int>(CasinoDesktop.Instance,"gossipPending")==3,"live desktop queues closed-site gossip");
+        float scheduled=Field<float>(CasinoDesktop.Instance,"gossipAt");
+        Check(scheduled-Time.unscaledTime>30,"public gossip retains real forty-second schedule (no timer injection): "+tag);
+        yield return OpenGroup(ctl);int before=Group.messages.Count;
+        string exact=XgSim.GamblingGossip(3,english);
+        while(Time.unscaledTime<scheduled-.1f){Need(Application.isFocused&&!PlayerWindowState.IsMinimized,"foreground retained during actual gossip wait");Need(Group.messages.Count==before,"no early group message before actual gossip deadline");yield return null;}
+        yield return VisibleUntil(()=>Group.messages.Count>before,"actual delayed public gossip arrives",10);
+        Check(Group.messages.Count==before+1&&Group.messages.Last().text==exact&&Group.messages.Last().from==YYChatHub.EraGroup,"group receives only exact public site report, not private AI/player amounts/training: "+tag);
+        Check(!Group.messages.Last().text.Contains("PRIVATE_AI_7391")&&ctl.Sim.CasinoGossipDue()==0,"private name absent and receipt only consumed after real receive: "+tag);
+        CaptureLcd(tag+"-03-public-gossip.png");string expected=Snapshot(ctl);SaveSlot(ctl,tag+"-public-gossip");Bind(ctl,english);LoadSlot(ctl);
+        Check(Snapshot(ctl)==expected&&ctl.Sim.CasinoGossipDue()==0,"disk restores exact public message and dedup receipt: "+tag);
+        int count=Group.messages.Count;yield return WaitSeconds(41);
+        Check(Group.messages.Count==count&&ctl.Sim.CasinoGossipDue()==0,"full new delay after disk rebind never repeats delivered gossip: "+tag);
+    }
+    static IEnumerator StaleGossip(XingGuangController ctl)
+    {
+        yield return FreezeByClick(ctl,false);Click("Quit Casino");yield return VisibleUntil(()=>ctl.Sim.CasinoClosed,"old owner closed for pending gossip");
+        yield return VisibleUntil(()=>Field<int>(CasinoDesktop.Instance,"gossipPending")==3,"old owner actual gossip timer starts");
+        var old=ctl.Sim;var oldGroup=Group;int oldCount=oldGroup.messages.Count;float oldAt=Field<float>(CasinoDesktop.Instance,"gossipAt");
+        Bind(ctl,false);yield return OpenGroup(ctl);int freshCount=Group.messages.Count;
+        while(Time.unscaledTime<oldAt+1){Need(Application.isFocused&&!PlayerWindowState.IsMinimized,"foreground retained during old gossip deadline");Need(Group.messages.Count==freshCount,"new owner receives no old pending gossip before/at deadline");yield return null;}
+        Check(old.CasinoGossipDue()==3&&oldGroup.messages.Count==oldCount&&ctl.Sim.CasinoGossipDue()==0&&Group.messages.Count==freshCount,
+            "real old-owner gossip delay expires after save switch without message leak or false receipt on either owner");
+        CaptureLcd("zh-old-gossip-owner-isolated.png");
+    }
+}
+#endif

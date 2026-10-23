@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingArchiveRulesTests.cs",
+      "base_sha256": "29f5f0082f2ba21e28d3022ffb4157ff724ff7f6c711470e65661d958cae0e6c",
+      "candidate_sha256": "c375c9bcaaee3244b8e5e34b444003442160d48788d6eb4291b2e133c91923cd"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 3,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

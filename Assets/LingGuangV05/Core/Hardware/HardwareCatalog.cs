@@ -99,7 +99,7 @@ namespace LingGuangV05.Core.Hardware
                 title = "GTX 980 Ti 6G 上代旗舰", titleEn = "GTX 980 Ti 6GB, last generation's flagship",
                 pitch = "你的开局卡。", pitchEn = "The card you started with." },
             new GpuModel { id = Gtx1080, name = "GTX 1080 8G", nameEn = "GTX 1080 8GB", brand = "亮影", brandEn = "Liangying",
-                compute = 1.6, vramMB = 8192, watts = 180, price = 4999, usedPrice = 3500, release = new DateTime(2016, 5, 27), sold = 1832,
+                compute = 1.6, vramMB = 8192, watts = 180, price = 5399, usedPrice = 3500, release = new DateTime(2016, 5, 27), sold = 1832,
                 title = "【顺丰包邮】GTX 1080 公版 8G 首批现货 限购一张", titleEn = "[Free SF shipping] GTX 1080 Founders 8GB, first batch in stock, one per customer",
                 pitch = "Pascal 新架构，功耗反而更低。", pitchEn = "New Pascal architecture, and it draws less power." },
             new GpuModel { id = Gtx1070, name = "GTX 1070 8G", nameEn = "GTX 1070 8GB", brand = "亮影", brandEn = "Liangying",

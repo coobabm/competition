@@ -1,0 +1,16 @@
+{
+  "status": "prepared only; not compiled or executed in Unity",
+  "files": [
+    {
+      "scope": "candidate",
+      "file": "Assets/LocalBuild/Editor/LearningRecordsUiChecks.cs",
+      "sha256": "ce0a189ef60406ea5df69ef0820e2db133214b028ae3366663f93b2b4283cae1"
+    },
+    {
+      "scope": "shared runner hunk",
+      "file": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+      "base_sha256": "e57611c506b9beea03657d3cd44b8dc2a7827358d7b94b666d4e8e2498171e87",
+      "sha256": "65d9ae01dce15750fee84856deea49b4e93f1d314175c2d0b5164eadc37de889"
+    }
+  ]
+}

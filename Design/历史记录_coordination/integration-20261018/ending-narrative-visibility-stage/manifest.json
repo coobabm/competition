@@ -1,0 +1,12 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Narrative.cs",
+    "baseline_sha256": "5617c65f8dfd030553e43af3a2519e5fa2006166a4c30d1bbb0613fea2eefa11",
+    "candidate_sha256": "3ab20324138bc285c000ec1f14adc3ba6db08738d0530c67cb9a523b09d79bed"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs",
+    "baseline_sha256": "df790adc4b7f387bbe22d81a673f99f8f633950449336a261730e7192433d559",
+    "candidate_sha256": "c460f56458145811ecddc9be6072fdf68707c9ef39a1cc323cfc72c33d6d7adf"
+  }
+]

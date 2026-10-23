@@ -1,0 +1,72 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMoleArithmetic.cs",
+    "new": true,
+    "candidateSha256": "c00c554a85a4a0c364d564d4b9d4b403f2f74fed80c884351cfed6654694ef14",
+    "baseSha256": null,
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMoleArithmetic.cs.meta",
+    "new": true,
+    "candidateSha256": "6f167a01ffa870caccd325409ec5b0f96036de5e7bca9566f97dee584d488f11",
+    "baseSha256": null,
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.MoleArithmetic.cs",
+    "new": true,
+    "candidateSha256": "10296ee67aee9421b8928f555621d9158d82ab4f9484c7914900cd822743cf05",
+    "baseSha256": null,
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.MoleArithmetic.cs.meta",
+    "new": true,
+    "candidateSha256": "bd45285462f92049586da9d0b83e0f7fb8447733b8d99e4eb6f7d6769cc9b2e0",
+    "baseSha256": null,
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+    "new": false,
+    "candidateSha256": "218be3026346c0ab439642e0e8340477f980289d73c9a9c9f744671a16f2c5b4",
+    "baseSha256": "9ca8e5221c4024196f491e72e227a9c642ece3fcee0aea823df47610ddbbcc51",
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+    "new": false,
+    "candidateSha256": "0344a69647e0f853dd9c6301339a01b79b127959ddff7c73a63d57feec0446ba",
+    "baseSha256": "005ed28d159349ac8c0d2f6ea0e9623559771f01b98c2375b6cecba8c8842bc1",
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgActionGames.cs",
+    "new": false,
+    "candidateSha256": "337a8ed73c3b59b2d76a0863dcb50fc291a013f3f45293f507f49a27be99254a",
+    "baseSha256": "23e601f5ad513941f19c43c4b4ffd081af69536352a567fb75f3dc3b4c0bbfb9",
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticTests.cs",
+    "new": false,
+    "candidateSha256": "647ae75505d7c000a44800f143e6f3571f0f8cde1ac8f7b659240148ec20a7f0",
+    "baseSha256": "5c36b346198cd7f4736c14f63444d9989ef3579ad95d53012e3e57fdf305f88c",
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMoleArithmeticTests.cs",
+    "new": true,
+    "candidateSha256": "17a9fd2970b90897cd7e9905584668ae6c0d3368bc3630582d70ffac4350f1ab",
+    "baseSha256": null,
+    "productionUnchanged": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMoleArithmeticTests.cs.meta",
+    "new": true,
+    "candidateSha256": "3112303afbd88d748bfa6e9aab5ff57ebbbb0c6ba1b733ae7217195354e0702e",
+    "baseSha256": null,
+    "productionUnchanged": true
+  }
+]

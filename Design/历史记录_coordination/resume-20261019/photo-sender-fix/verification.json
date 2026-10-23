@@ -1,0 +1,72 @@
+{
+  "status": "static_only_passed",
+  "checks": [
+    {
+      "label": "only PhotoBubble changed",
+      "passed": true
+    },
+    {
+      "label": "sender retains 12 point font",
+      "passed": true
+    },
+    {
+      "label": "notice retains 10 point font",
+      "passed": true
+    },
+    {
+      "label": "caption retains 14 point font",
+      "passed": true
+    },
+    {
+      "label": "sender measures actual fixed rect width",
+      "passed": true
+    },
+    {
+      "label": "sender height reserves rounding and padding",
+      "passed": true
+    },
+    {
+      "label": "sender space advances avatar and bubble",
+      "passed": true
+    },
+    {
+      "label": "notice measures actual width",
+      "passed": true
+    },
+    {
+      "label": "notice actual height moves caption and total height",
+      "passed": true
+    },
+    {
+      "label": "no font shrinking or overflow bypass",
+      "passed": true
+    },
+    {
+      "label": "existing image sizing and aspect retained",
+      "passed": true
+    },
+    {
+      "label": "same production method still available for local patch",
+      "passed": true
+    },
+    {
+      "label": "git apply --check",
+      "passed": true
+    },
+    {
+      "label": "git apply --stat",
+      "passed": true
+    }
+  ],
+  "baseline_sha256": "8699cfe95fb067e5673ee9bb340a80b3a5e111b0f2e18bf1b3e02e93e63f2e04",
+  "candidate_sha256": "50ad6bebab503af2853d40ccab58cd819352ed63b629fb25d52d7b3776d8d800",
+  "patch_sha256": "4455a6c09b387921500b737a29a017acb4bd6c32c3229331a2ae0b5ea2d9fc9e",
+  "not_run": [
+    "C# compilation",
+    "Unity",
+    "actual UI",
+    "model",
+    "build"
+  ],
+  "failure_report": "LocalVerification/SidebarLayout/20261019-051351-283/report.json"
+}

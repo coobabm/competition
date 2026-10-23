@@ -1,0 +1,26 @@
+{
+  "existingPatches": [
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.DataPacks.cs",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningRecords.cs",
+    "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgActionGames.cs",
+    "Assets/LingGuangV05/XingGuang/Core/XgEndingPreparation.cs",
+    "Assets/LingGuangV05/XingGuang/Core/XgEndingNarrative.cs",
+    "Assets/LingGuangV05/YY2016/YYChatView.Learning.cs",
+    "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Learning.cs",
+    "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs",
+    "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.Records.cs",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingPreparationTests.cs",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingNarrativeTests.cs",
+    "Assets/LocalBuild/Editor/MoleReviewUiChecks.cs",
+    "Assets/LocalBuild/Editor/LearningRecordsUiChecks.cs",
+    "Design/\u7b97\u672f\u81ea\u52a8\u4f5c\u7b54_\u8bad\u7ec3\u9a8c\u8bc1_20261019.md"
+  ],
+  "newFiles": [
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningProvenance.cs",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningProvenance.cs.meta",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticProvenanceTests.cs",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticProvenanceTests.cs.meta"
+  ],
+  "validation": "Static only; Unity/.NET/model NOT RUN"
+}

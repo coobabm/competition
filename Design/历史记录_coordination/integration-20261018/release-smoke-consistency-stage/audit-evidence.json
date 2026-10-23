@@ -1,0 +1,143 @@
+{
+  "scope": "Read-only source/helper/license audit. No models or native binaries hashed, no tool/script/model executed. Static parser only.",
+  "files": [
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/Runtime/Persistence/ReleaseVerificationTrace.cs",
+      "sha256": "611f3c513194b8ae4c582f4f5a5d422794aa2709af93b294f7129f7cf4256da5"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/Runtime/Persistence/VerificationSavePaths.cs",
+      "sha256": "e972e266ed11e8d3c1f720d15790972b1def61ef7ed5fbd92c938b1dcf3d0fe0"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/LocalLLM/LocalLlm.cs",
+      "sha256": "036efc26d2ffcde07db9f0a7c52291124ebae7131b9bea08a9b3b4bcd51e15cd"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/LocalLLM/LocalEmbedder.cs",
+      "sha256": "8177d55aae1663d15c73b8601e0b0b45fb6b85e16158e0446c0843fb1ce5e2bb"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "sha256": "ccb8733fffa7828b07312caccb3a9bd14d002bb726721a644172cc8c7d47b871"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/DesktopBridge/Story/VoiceLines.cs",
+      "sha256": "b6746fd2bab086a28e8dc0efec34884ecadc72da6ee1089a16284755596641e3"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/DesktopBridge/GameMusic.cs",
+      "sha256": "0040f74c7ae5c527f613683c116ed3f1044c29d21d424e1b251aa1dbf6e783e3"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LocalBuild/Editor/IntegratedReleaseBuild.cs",
+      "sha256": "2bb9b51cc370432fdcf9c0a0f7b290ba843584a05bd707dd6ef4049a8441a88d"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LocalBuild/Editor/WindowsReleaseBuild.cs",
+      "sha256": "1374a17da4526bf183cb5e888ff97c96ef58aa902be8ba6ff5fafba773b246df"
+    },
+    {
+      "path": "competition-latest-20261016/Packages/manifest.json",
+      "sha256": "adc7374155deb591678522c132d426c91a4f8f895aa407b75503518b75ac9b29"
+    },
+    {
+      "path": "competition-latest-20261016/Packages/packages-lock.json",
+      "sha256": "3306279c9313bf7f970861a8da5f8cdc2b485b2ab9fa703d9989274f2423e769"
+    },
+    {
+      "path": "competition-latest-20261016/ProjectSettings/ProjectVersion.txt",
+      "sha256": "b1edf3997f5df08b99b97215d41f7da845bf69ec5be3d9c6a8fbcf0e66dcac85"
+    },
+    {
+      "path": "competition-latest-20261016/ProjectSettings/ProjectSettings.asset",
+      "sha256": "db3820abc9be66d96b694e932e922a2bd6990fd74573150300ff1c9e21bfac57"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/StreamingAssets/LingGuang/llama/THIRD_PARTY.txt",
+      "sha256": "b10919dd003a3bf89de7db2821ccdef46e988b52016f33514d62b8e95b1eab97"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/StreamingAssets/LingGuang/Models/LICENSE",
+      "sha256": "5de36594c10839788a8c589443a8ef9d8b8d17c65a1b5807206ae037fc36c6bd"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md",
+      "sha256": "f7b7cbdbeab2a25b55e92cf160c035287374253b13af7ea2d5178847f6f8537e"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/StreamingAssets/LingGuang/Models/SHA256SUMS.txt",
+      "sha256": "90233078b58204489d426e5e06025571abb62bd8581a8315a4ec5554cf1f3817"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-smoke-current-stage/RELEASE-SMOKE-CHECKLIST.md",
+      "sha256": "59c49b8d8a225f6ab95199862682df888d7e29037ef7ea311d677b230ed7b205"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-smoke-current-stage/Summarize-NativeTrace.ps1",
+      "sha256": "1fd04e409536ae571b393bfdcaf7b485c8e407142132a1e7f221519a59c70eb8"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-smoke-current-stage/Player-WindowQa.ps1",
+      "sha256": "6a4b771556330697f3de4c05c52819afcc3ce100652d98ea671fe8b31bdf67d8"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-smoke-current-stage/PlayerPrefs-Guard.ps1",
+      "sha256": "f69414815ecb2c62336ae08adced7e5a67d1ab6bf180dc1a93a772ee6fbd8f55"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/Package-VerifiedRelease-LowLoad.ps1",
+      "sha256": "7aec53b8a5fa1ed9030314f5a6b739346c2561a1625bbf0485712eefadda8599"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/native-licenses/README-SOURCES.md",
+      "sha256": "04b6911ec3105f677c7d84974cc358ababce38c4c6437b0a0c3dc1def45c5ff4"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/native-licenses/LlamaLib-LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/native-licenses/llama.cpp-LICENSE",
+      "sha256": "94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/native-licenses/FeatureDetector-LICENSE",
+      "sha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/native-licenses/jsonhpp-LICENSE",
+      "sha256": "c0d068392ea65358b798b8c165103560f06e9e3b38c4ab4e2d8810a7b931af86"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-audit-stage/native-licenses/cpp-httplib-LICENSE",
+      "sha256": "4b45cbe16d7b71b89ae6127e26e0d90a029198ca5e958ad8e3d0b8bbed364d8b"
+    },
+    {
+      "path": "competition-latest-20261016/Library/PackageCache/ai.undream.llm@9931a9ea4690/package.json",
+      "sha256": "5bad7d234845292521877b43f8335a661edf106e4e2c4998f7f85de09cf8520b"
+    },
+    {
+      "path": "competition-latest-20261016/Library/PackageCache/ai.undream.llm@9931a9ea4690/LICENSE.md",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "competition-latest-20261016/Library/PackageCache/ai.undream.llm@9931a9ea4690/Third Party Notices.md",
+      "sha256": "a6d2ebf6d55586e53a9c786551b977a24dc41e65dbabf7e9af64b6b27d91bb9f"
+    },
+    {
+      "path": "competition-latest-20261016/Library/PackageCache/ai.undream.llm@9931a9ea4690/Runtime/LLMUnitySetup.cs",
+      "sha256": "2dae8612c2f7ebc0ff49342ce825816a60598238ffeb1f5054abbb046531393b"
+    },
+    {
+      "path": "competition-latest-20261016/Library/PackageCache/ai.undream.llm@9931a9ea4690/Runtime/RAG/usearch/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  ],
+  "streaming_gguf_inventory": [
+    {
+      "path": "competition-latest-20261016/Assets/StreamingAssets/LingGuang/Models/Qwen3-4B-Q4_K_M.gguf",
+      "bytes": 2497280256
+    }
+  ]
+}

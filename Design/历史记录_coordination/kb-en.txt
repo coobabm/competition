@@ -1,0 +1,91 @@
+Parameters|Trainable numbers, including weights and biases. More parameters increase capacity and memory use, but do not guarantee better generalisation.
+Weights|Trainable coefficients that control how strongly signals contribute to a result.
+Bias|An added constant that shifts a neuron's decision threshold.
+Step activation|Outputs zero or one across a threshold; its discontinuity prevents ordinary gradient training.
+Sigmoid activation|A smooth S-shaped function that allows derivatives, but can saturate and weaken gradients.
+ReLU|Returns zero for negative inputs and the input otherwise. It often helps deep networks train.
+Perceptron|A linear classifier introduced in 1958. It separates linearly separable classes.
+Perceptron learning|Corrects weights after a wrong answer; convergence requires linearly separable training data.
+Multilayer perceptron|Layers of neurons and nonlinear activations can represent nonlinear relationships.
+Architecture|The connections and operations that determine how information flows through a model.
+Features|Useful patterns in data, such as edges, strokes or combinations of shapes.
+Feature engineering|People combine or transform input clues before giving them to a model.
+Gradient|Derivatives of the loss with respect to parameters; they guide a local update.
+Vanishing gradients|Backpropagated gradients can become very small, slowing updates in early layers.
+Gradient clipping|Limits large gradients to reduce unstable updates; it does not fix every cause of divergence.
+Learning rate|Controls the size of parameter updates. Too large can destabilise training; too small can slow it.
+Learning-rate decay|Reduces the step size later in training to help refine a solution.
+Learning-rate warmup|Starts with smaller updates and gradually raises the rate to reduce early instability.
+Loss function|A numerical measure of prediction error that training tries to reduce.
+Backpropagation|Applies the chain rule backwards through a network to calculate gradients.
+Automatic differentiation|Computes derivatives from the operations performed by a program.
+Mini-batch|A small set of examples used for one update; size affects memory, throughput and gradient noise.
+Momentum|Accumulates previous update directions to help reduce oscillation.
+Adaptive learning rate|Scales updates per parameter using gradient statistics.
+Adam|Tracks first and second gradient moments to scale each parameter's update. It is useful, but not always faster or better than other optimisers.
+Early stopping|Stops when held-out performance stops improving, to reduce overfitting.
+Identity initialisation|Initialises recurrent weights with an identity matrix in certain architectures to help preserve early signals.
+Overfitting|Fitting training examples closely while performing poorly on unseen examples.
+Dropout|Randomly removes activations during training to discourage reliance on individual features.
+Normalisation|Rescales values using selected statistics; its exact behaviour depends on the method.
+Batch normalisation|Uses batch statistics during training to normalise activations, often improving optimisation.
+Layer normalisation|Normalises features within one example; introduced in 2016 and useful for recurrent models.
+Residual connection|Adds an input to a learned transformation, giving signals and gradients a shortcut.
+Residual shortcut|A direct connection across layers; matching dimensions may require a projection.
+Numerical precision|The representation and number of bits used for numbers. Lower precision trades range or accuracy for storage and possible speed.
+Half precision|16-bit floating point reduces tensor storage; speed depends on hardware. Stable training may need higher-precision accumulation.
+Transfer learning|Reuses learned weights for a new task or model where compatible, often reducing required training data.
+Pretraining configuration|In this game: layer count, width and data settings. These settings differ from the learned numerical weights.
+Checkpoint|A saved model state used to resume, compare or roll back training.
+Held-out data|Examples excluded from training and used to estimate performance on unseen data.
+Training curve|A plot of training or validation metrics over time that helps reveal instability or overfitting.
+Layer count|The number of computational layers; greater depth adds capacity but can make optimisation harder.
+Network depth|The game's layer upgrade. More layers consume resources and do not guarantee higher accuracy.
+Network width|The number of units or channels per layer; wider networks usually need more parameters and memory.
+Convolution|Slides a shared filter over local regions. Weight sharing is useful for images but does not guarantee invariance to all shifts.
+Handwriting convolution|A convolutional model for learning strokes and combining them into handwritten digits.
+Deep convolution|Stacks convolutional layers to build increasingly complex visual features.
+Small-filter convolution|Stacks small filters to expand the receptive field with efficient parameter use in many designs.
+Multi-branch convolution|Runs different filter paths in parallel and combines their outputs.
+Text convolution|Slides filters over a token sequence to detect local patterns such as phrases.
+Recurrent network|Processes a sequence while carrying a hidden state from earlier steps.
+LSTM memory|Uses input, forget and output gates to control a recurrent memory cell.
+GRU memory|Uses update and reset gates; often has fewer parameters than a comparable LSTM.
+Attention|Weights relevant parts of an input when computing a result; attention predates 2016.
+Encoder-decoder attention|Looks back at relevant input positions while generating each output token.
+Multi-head attention|Several attention heads model different relationships. The familiar Transformer form dates to 2017; here it is a speculative breakthrough beyond the 2016 setting.
+Position encoding|Represents sequence positions. Its familiar Transformer use belongs to 2017, beyond this game's starting year.
+New brain research|The game's speculative attention-only architecture. The historical Transformer was published in 2017, not available as an established 2016 design.
+Word embeddings|Represent words as numerical vectors learned from usage; proximity can reflect related meanings.
+Beam search|Keeps several promising output sequences at each step; it is approximate and can miss the best sequence.
+Subword tokenisation|Splits words into reusable smaller pieces, helping represent uncommon words.
+Learning from demonstrations|Trains on example input-output pairs. This general technique is older than modern instruction-tuned assistants.
+Step-by-step solving|The game's guided reasoning exercise. Modern large-model chain-of-thought prompting became prominent after 2016.
+Data augmentation|Transforms examples, such as rotating or cropping images, when the correct label remains valid.
+Data cleaning|Finds and corrects problematic examples or labels to improve data quality.
+Accuracy|The fraction of evaluated examples answered correctly; class balance and test design affect its usefulness.
+Continuity|A game automation measure: how long background work proceeds without review or verification interruptions.
+Graphics card|Hardware suited to parallel matrix operations. Training speedups over a CPU depend on workload, memory and software.
+GPU|A processor designed for highly parallel work; this game uses graphics card and GPU interchangeably.
+GPU acceleration|Libraries such as cuDNN optimise supported GPU operations. Actual gains depend on the model and hardware.
+CPU|A general-purpose processor that handles application logic, data preparation and many inference workloads.
+Tower cooler|An air cooler that helps remove heat. Good cooling reduces thermal throttling but does not guarantee hardware reliability.
+Compute|The rate of computation. Doubling peak compute does not guarantee twice the training speed: data loading, memory bandwidth and communication may dominate.
+Floating-point operations|Arithmetic on floating-point numbers. FLOPS measures operations per second. The 2016 GTX 1080 offered roughly 9 TFLOPS FP32 at boost; P100 supported higher FP16 throughput. Peak specifications are not measured training speed.
+VRAM|GPU memory stores parameters, activations, gradients and other working data. Capacity limits model and batch size; half precision does not necessarily halve total training memory.
+Memory bandwidth|How much data can move between GPU memory and compute units each second. Memory-bound workloads can spend time waiting for transfers.
+Multi-GPU training|Divides work across GPUs and combines results. Synchronisation and communication often make speedup sublinear; hardware alone does not guarantee scaling.
+Data parallelism|Each GPU holds a model copy and processes different examples, then gradients are combined for an update.
+GPU interconnect|A path for transfers between GPUs. PCIe was common in 2016; selected P100 systems also supported NVLink.
+PCIe|An expansion bus connecting GPUs and other devices. Lane count, generation and topology affect transfer speed.
+Motherboard slots|Physical slots are only one limit on GPU count; lanes, spacing, power, cooling and software support also matter.
+Power-supply rating|The power a PSU is rated to deliver under specified conditions. Overloading can trigger protection or instability; it does not always trip a household breaker.
+Power draw|Energy consumed per second, measured in watts. Many high-end 2016 cards had rated power around 180-250 W; total system draw is higher and varies with load.
+Electricity cost|Energy in kWh equals average power in kW times hours. Multiply by the applicable tariff; cooling and other hardware also consume energy.
+Thermal throttling|Hardware reduces clocks when thermal or other limits are reached. Cooling can help sustain speed, but power limits can still apply.
+Server room|A facility that supplies space, power, cooling and networking for servers. Pricing and GPU availability vary by provider.
+Rack|A standard frame that holds servers and related equipment; space, power and cooling constrain capacity.
+RAM|The computer's working memory for data and programs, distinct from GPU memory.
+Storage drive|Persistent storage for datasets and checkpoints. Capacity and read speed can both constrain a training workflow.
+CUDA|NVIDIA's GPU computing platform, used by compatible deep-learning software to run supported computations on NVIDIA GPUs.
+Special-purpose chip|Hardware designed for a narrower workload can improve efficiency for that workload. Google disclosed its first TPU in 2016 for internal inference, not general public training-card sales.

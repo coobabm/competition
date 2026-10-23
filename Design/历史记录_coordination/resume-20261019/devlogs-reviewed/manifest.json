@@ -1,0 +1,20 @@
+{
+  "head": "3533141a406940d571e064f3797328c7d214235a",
+  "files": [
+    {
+      "path": "Design/\u53d1\u5e03\u6750\u6599/\u5f00\u53d1\u65e5\u5fd701_\u7535\u8111\u91cc\u7684\u670b\u53cb_\u5f85\u53d1\u5e03.md",
+      "baselineSHA256": "f0291f7a0a7323d155930e69f0b4b3fd182af32b6d91124af927850a4338f9f9",
+      "candidateSHA256": "27ac3526eda1e503e8fc357e58f84707b6bb446cb34cf4505bfd6645700dcb4b",
+      "productionUnchanged": true
+    },
+    {
+      "path": "Design/\u53d1\u5e03\u6750\u6599/\u5f00\u53d1\u65e5\u5fd702_\u6bcf\u6b21\u70b9\u51fb\u90fd\u6709\u56de\u5e94_\u5f85\u53d1\u5e03.md",
+      "baselineSHA256": "18ba7a26982f4c176aed7699980a02277847a52395c79c34380b566046d0fc59",
+      "candidateSHA256": "a676dfd68e80d9a14b5107b4d52348d9da9361f5b13b6f8fd7a869963fce3bed",
+      "productionUnchanged": true
+    }
+  ],
+  "productionWritten": false,
+  "screenshotsInspected": false,
+  "published": false
+}

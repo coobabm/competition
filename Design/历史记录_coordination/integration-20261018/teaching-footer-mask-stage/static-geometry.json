@@ -1,0 +1,54 @@
+{
+  "kind": "static numerical illustration of existing XgJuice formula; not actual captured transforms or runtime verification",
+  "worstReboundPhase": 0.5638,
+  "wobble": -0.4186884294935475,
+  "rows": [
+    {
+      "stageScale": 0.4,
+      "combo": 1,
+      "priorPlayerBottomClearance": 1.5006248812809888,
+      "priorAiBottomClearance": -6.258476721926566,
+      "candidateAiBottomClearance": 2.4000000000000004
+    },
+    {
+      "stageScale": 0.6,
+      "combo": 1,
+      "priorPlayerBottomClearance": 5.60044475786987,
+      "priorAiBottomClearance": -6.0382076469414825,
+      "candidateAiBottomClearance": 3.5999999999999996
+    },
+    {
+      "stageScale": 0.7,
+      "combo": 1,
+      "priorPlayerBottomClearance": 7.650354696164304,
+      "priorAiBottomClearance": -5.9280731094489125,
+      "candidateAiBottomClearance": 4.199999999999999
+    },
+    {
+      "stageScale": 0.8,
+      "combo": 1,
+      "priorPlayerBottomClearance": 9.700264634458737,
+      "priorAiBottomClearance": -5.817938571956371,
+      "candidateAiBottomClearance": 4.800000000000001
+    },
+    {
+      "stageScale": 1.0,
+      "combo": 1,
+      "priorPlayerBottomClearance": 13.800084511047604,
+      "priorAiBottomClearance": -5.5976694969712595,
+      "candidateAiBottomClearance": 6.0
+    },
+    {
+      "stageScale": 1.4,
+      "combo": 1,
+      "priorPlayerBottomClearance": 21.999724264225367,
+      "priorAiBottomClearance": -5.157131347001065,
+      "candidateAiBottomClearance": 8.399999999999999
+    }
+  ],
+  "rootCauseEvidence": "Question footer bottoms at 455 and 474 on 480-high stage; successful settlement passes the shared stage to ComboHit; its damped overshoot transforms descendants against a fixed RectMask2D.",
+  "candidateEffect": "Only SocialBackground is punched; LastAnswer/LastAiAnswer remain at unchanged original coordinates under the unpunched stage.",
+  "patchSha256": "2a7e1261abe8247e6d493faaa11954b66d78b8af9f009e7f4699fe76706b7e86",
+  "productionModified": false,
+  "runtimeExecuted": false
+}

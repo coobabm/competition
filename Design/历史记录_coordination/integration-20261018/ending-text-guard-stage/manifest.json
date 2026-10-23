@@ -1,0 +1,10 @@
+{
+  "newFiles": [
+    "Assets/LingGuangV05/XingGuang/Core/XgEndingTextGuard.cs",
+    "Assets/LingGuangV05/XingGuang/Core/XgEndingTextGuard.cs.meta",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingTextGuardTests.cs",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingTextGuardTests.cs.meta"
+  ],
+  "preparedTests": 6,
+  "patchSha256": "52ff2307e5b300fa02769691dc69e0f8c946701d856e944a8e2355435555b856"
+}

@@ -1,0 +1,116 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgUnifiedAtlasCatalog.cs",
+    "baselineSha256": null,
+    "candidateSha256": "4960a253f910a7cfcaae71076320742fe326df8ee51638e8e2c846925c0be3c4",
+    "bytes": 4089
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgUnifiedAtlasCatalog.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "f87e15169648fcc85c57fa5e74499b85f3bb865ff4b0068f97bf4f6ad95573a7",
+    "bytes": 62
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAtlasTinyDemo.cs",
+    "baselineSha256": null,
+    "candidateSha256": "0928c13602654fd10821eeab35f65b9e21d6a33fcd61bdb2c1d09b432d1dbf5d",
+    "bytes": 5829
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAtlasTinyDemo.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "a8951a9b1f60713510f4e85aaa667d22c54567ff39db94cb737dbad0b1623ce2",
+    "bytes": 62
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgStageSequenceDemo.cs",
+    "baselineSha256": "6c816ac47d5885b5988d25897a61ff0591ac8234d48c8e015bc03ad105e900cc",
+    "candidateSha256": "dccf2f4828f8f768ec0b8941164aa7e88fe6a6fb89b316c7f4c38e350cbddb14",
+    "bytes": 7483
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+    "baselineSha256": "653b6ac5a2766d825580aee3f754eb1d5c8ad34a18b516afc8edb922fba8820f",
+    "candidateSha256": "89b7af3870cde1770c94510947d005a2e9d6666d599b42824fc98714d7c1ff0a",
+    "bytes": 76877
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUnifiedAtlas.cs",
+    "baselineSha256": null,
+    "candidateSha256": "94962c65e71a6194aaf0bb5dbbeaf6ddfe82e9aace32fd5103dae98f54b06e2a",
+    "bytes": 15817
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgUnifiedAtlas.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "daeace365e0a1a4e6dd293b9f90042763f31d4f2c544156c593269f51bc815f5",
+    "bytes": 62
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Atlas.cs",
+    "baselineSha256": null,
+    "candidateSha256": "9fde8f8ed762eaa989778847c694637f52a9cf03947efac6ae32209c13751db8",
+    "bytes": 610
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Atlas.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "f335badc425c4848f4c9fc4a0503a095606e5905900a3166ce2c19735d90ce72",
+    "bytes": 62
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Profile.cs",
+    "baselineSha256": "07770ab68129b8b9966ff1f254887c919ab3f8739da028c9d23a0df63d6e9a04",
+    "candidateSha256": "109a539bf37abe377089e6e9b6c8213e5613c752795769299c09a992c056f8f4",
+    "bytes": 5438
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgUnifiedAtlasChecks.cs",
+    "baselineSha256": null,
+    "candidateSha256": "a1a4d72b106b716c3f6d96d832aa96680f06109d537ba09e2dfd8b040952d209",
+    "bytes": 7832
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgUnifiedAtlasChecks.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "8dbc4e8459c3390cfe61e265d8a3719b90990e64a467e274a46157b6dc881406",
+    "bytes": 62
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.Boundaries.cs",
+    "baselineSha256": null,
+    "candidateSha256": "2146731820ad3202f9469e638afebafafd676b56343ee1a99e8a8cdf9b322ad4",
+    "bytes": 16962
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.Boundaries.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "fe699c6debc196c58a911c99247b149d038d263911e7e13687515e03430e46c5",
+    "bytes": 62
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.cs",
+    "baselineSha256": null,
+    "candidateSha256": "dcaa5275fb4fcabb882a6bc3e954ef739b284ad195408425a5a86b5124e4efb3",
+    "bytes": 6422
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "4372834331c6c224731d0b444cbba1a93e91ead6157e5407f3dbd7d75e32b353",
+    "bytes": 62
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiRunner.cs",
+    "baselineSha256": null,
+    "candidateSha256": "e0011224963f0be6a7c4f265850e59b6febeb33dd602a0c7081ecbb32a09b6f2",
+    "bytes": 23685
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/UnifiedAtlasActualUiRunner.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "7c894e603649467576ad1de28937dc301645fb1f4dd6fc3eb7f05cb21d322172",
+    "bytes": 62
+  }
+]

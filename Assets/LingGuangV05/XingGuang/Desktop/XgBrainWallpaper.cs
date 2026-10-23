@@ -185,7 +185,7 @@ namespace LingGuangV05.Desktop.XingGuang
                 var desk = PrologueDirector.Desk;
                 var notices = desk.layer.GetComponent<TrayPopups>() ?? desk.layer.gameObject.AddComponent<TrayPopups>();
                 notices.desk = desk;
-                notices.EnqueueNotification("hongmengos", GameText.T("桌面背景已更改", "Desktop background changed"), 5, null,
+                notices.EnqueueNotification(EraSafeBranding.Os, GameText.T("桌面背景已更改", "Desktop background changed"), 5, null,
                     () => this != null && controller != null && controller.runtime != null && controller.runtime.Sim == save, null, systemBalloon: true);
                 NoticesSent++;
             }

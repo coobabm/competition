@@ -1,0 +1,72 @@
+{
+  "historicalStatus": "failed",
+  "physicalGameView": [
+    482,
+    797
+  ],
+  "sourceLcd": [
+    1280,
+    720
+  ],
+  "actualClickTarget": "ChapterOneMinimize",
+  "actualHit": "Guide Note/Paper/Task 0",
+  "conclusion": "Guide overlaps the caption in source-LCD coordinates. Outer GameView aspect is a separate uncontrolled QA fixture; resizing alone is not an occlusion fix.",
+  "failureEvidenceInventory": [
+    {
+      "path": "daily-feedback-failure-full-frame.png",
+      "sha256": "45b4c829f911444bd4952aea3311b2048cadcb0f990692a7323e5adbca496219",
+      "width": 482,
+      "height": 797
+    },
+    {
+      "path": "daily-forecast-en.png",
+      "sha256": "0a6f6cd41a8b36ef851ccfd92912eb0e42717b0c02a9a26b4c6b5b798913849b",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "daily-forecast-zh.png",
+      "sha256": "c0ef7925f9b98306dd1975670eb3fb01d57c7a373a5341fa589c210bad689f17",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "daily-rhythm-en-fallback.png",
+      "sha256": "d6c5409c9549cb78c7f71cbf1ace882f03eb1b6d2ae4038ea83e30c4fa294809",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "daily-rhythm-zh-fallback.png",
+      "sha256": "adac9bc69065abd108f9d9b2d589da3cc8d1e05b5d57006b7482580f5010ca30",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "path": "DesktopProfile/Apps.json",
+      "sha256": "34eed5543c9d603e5763ffb69a0d3762c1bfa67d2786ed1e0c44777496ca373b"
+    },
+    {
+      "path": "DesktopProfile/DateAndTime.json",
+      "sha256": "76901b72bbac8f26b2d05541c842c30b69904e0d84bc42b54b938dcb3b32f511"
+    },
+    {
+      "path": "DesktopProfile/Network.json",
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "DesktopProfile/System.json",
+      "sha256": "ec3956eb5d7ff911bbbd633305696dba6276b99afe0d904b6eec1fa7c0bc9a50"
+    },
+    {
+      "path": "DesktopProfile/User.json",
+      "sha256": "803a8e98294fd5b3d115b108611873161154b07121f5e58787c53c05bf35314b"
+    },
+    {
+      "path": "report.json",
+      "sha256": "5273cfaf935c7346d273ab288badac6f469c2e953d7ae8b48ba84c5387e07bdb"
+    }
+  ],
+  "unityRun": false,
+  "productEdited": false
+}

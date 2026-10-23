@@ -1,0 +1,22 @@
+[
+  {
+    "file": "yy-learning-drawers-ui.log",
+    "line": 10907,
+    "text": "WorldYyLearningUiChecks PASS: real notebook/persona toolbar, 260px layout, 200 stored/50 shown, newest/search, send/delivery, tags and eight pack ownership in both languages."
+  },
+  {
+    "file": "commerce-funds-real-ui-redraw.log",
+    "line": 12847,
+    "text": "WorldCommerceUiChecks PASS: actual shop/tech handlers and labels, one wallet, legacy/reload ownership, actual funds window due/partial/settled and no debit on refresh, both languages."
+  },
+  {
+    "file": "desktop-window-profile-hotpaths.log",
+    "line": 567,
+    "text": "DESKTOP_HOTPATH_PASS 13 checks; allocation result applies only unchanged SyncProfile. No FPS claim."
+  },
+  {
+    "file": "teaching-verdict-timer-streak.log",
+    "line": 697,
+    "text": "TEACHING_VERDICT_PASS: 120 correct answers, independent streak, timer preserves card, quick-only gold, actual wrong breaks streak."
+  }
+]

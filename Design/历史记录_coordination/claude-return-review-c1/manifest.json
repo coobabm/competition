@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "Assets/LocalBuild/Editor/FilesWindowUiChecks.cs",
+      "handoff_sha256": "78c8f50098ce5dbb96ece42110900969dfcdbc1b22e2b1286cc066af16e6a54c",
+      "current_sha256": "78c8f50098ce5dbb96ece42110900969dfcdbc1b22e2b1286cc066af16e6a54c",
+      "claude_sha256": "76fda82e91bee8005b8037a5169bccb2f61cbed8bb70fb7b63912979b1905ad0",
+      "candidate_sha256": "76fda82e91bee8005b8037a5169bccb2f61cbed8bb70fb7b63912979b1905ad0",
+      "current_equals_1750_bytes": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGuideTests.cs",
+      "handoff_sha256": "86effe229b22c4dc95ade82744a78a28a0597b195218dff623af07d1ce568c66",
+      "current_sha256": "86effe229b22c4dc95ade82744a78a28a0597b195218dff623af07d1ce568c66",
+      "claude_sha256": "f11c773a77fd0b730cc45dac4fed429d5e4cdea5da20cf3f6b63b4b245a2e763",
+      "candidate_sha256": "f11c773a77fd0b730cc45dac4fed429d5e4cdea5da20cf3f6b63b4b245a2e763",
+      "current_equals_1750_bytes": true
+    }
+  ],
+  "patch_sha256": "87328a30a9aafe11a662af7aed0ee3f15cc33158fbcecae2abc42e2fb2e6f5c0",
+  "optional_scope_patch_sha256": "df1df56c1547052a385c58d07377d77363725882d136b97d69f94c120effa1ec",
+  "apply_check": "both passed against current production",
+  "compile": "not run",
+  "Unity": "not run",
+  "design_conflicts": "none identified"
+}

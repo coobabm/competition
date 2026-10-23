@@ -1,0 +1,27 @@
+[
+  {
+    "patch": "legacy-world-yy-rebased-cf2cbc46-context-only.patch",
+    "check": 0,
+    "stderr": ""
+  },
+  {
+    "patch": "upstream-semantic-01-phone.patch",
+    "check": 0,
+    "stderr": ""
+  },
+  {
+    "patch": "upstream-semantic-02-private-study.patch",
+    "check": 0,
+    "stderr": ""
+  },
+  {
+    "patch": "upstream-semantic-03-interactions.patch",
+    "check": 0,
+    "stderr": ""
+  },
+  {
+    "patch": "world-gift-explicit-intent.patch",
+    "check": 0,
+    "stderr": ""
+  }
+]

@@ -1,0 +1,41 @@
+Isolated player save for technology scene
+Real opening question unlocks technology 0
+Real opening question unlocks technology 1
+Real opening question unlocks technology 2
+Real opening question unlocks technology 3
+Real opening question unlocks technology 4
+Real opening question unlocks technology 5
+Real opening question unlocks technology 6
+Real opening question unlocks technology 7
+Real opening question unlocks technology 8
+Real opening question unlocks technology 9
+Real opening question unlocks technology 10
+Real opening question unlocks technology 11
+Technology fixture passes the twelve-question opening gate
+Technology fixture has a desktop user
+Tech scene uses the common isolated fixture
+Actual Main scene owns the production tech page and LCD canvas
+Production technology page is visible before hover testing
+Idle scene checks keep player saves and simulation ticks isolated
+Idle fixture is genuinely past the title and prologue gates
+Locked idle entry navigates to technology without entering compact mode
+Locked idle entry focuses basic automatic answering
+Locked idle navigation does not purchase automation
+One basic automation level opens the compact surface
+Compact surface has its own overlay canvas
+Entire compact monitor fits the current game window
+Entire compact monitor fits the current game window
+Entire compact monitor fits the current game window
+Entire compact monitor fits the current game window
+Compact session income starts at zero
+Compact digits approach an actual settled income receipt without exceeding it
+Paused display may finish the existing receipt but invents no income
+Idle display never credits a second income stream
+Restoring closes compact mode
+Canvas enabled state restored: Viewport
+Canvas enabled state restored: LingGuang Story Overlay
+Canvas enabled state restored: HongmengOS Monitor
+Canvas enabled state restored: LingGuang Prologue Screen
+Canvas enabled state restored: hongmengos 2010 Desktop Source
+Camera enabled state restored: LCD Source Camera
+Camera enabled state restored: Main Camera

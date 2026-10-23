@@ -1,0 +1,15 @@
+# Unity inline defaults: conservative self-play restoration
+
+Apply `board-selfplay-defaultfix.patch` from production root, after the previous self-play savefix has been imported. Three existing paths only: LudoGame.cs, XgSim.BoardSelfPlay.cs, XgBoardSelfPlayVarietyTests.cs. No production files changed by this agent. No Unity/C# compilation or test execution. Packaging delimiter check and production `git apply --check` passed; baseline drift was empty at preparation.
+
+Root's actual `board-arithmetic-story-regression-fixed-20261019.xml` reports inactive Ludo with planes [-1,-1,-1,-1], winner -1, all counters zero and empty log; inactive checkers has empty pieces, turns [0,0], winner -1 and empty log. The earlier predicate accepted only null/empty arrays, so it retained these initializer-created objects.
+
+The predicate now accepts only empty or exact field-default arrays, while retaining selected game state unconditionally. Checkers must still have no pieces; Monopoly must still have no owners (its legitimate initialized board has 20 owner entries). Monopoly's position [0,0], cash [1500,1500], turns [0,0] are accepted as field defaults only with no moves/die/purchase/winner/trace evidence. Unlike the earlier predicate, winner 0 and pending 0 are no longer accepted as default; such evidence is preserved.
+
+Ludo's exact field-default array is itself a valid initial game, so arrays alone cannot distinguish a newly constructed game from Unity's optional inline placeholder. `LudoState.initialized` defaults false; only a successfully validated `LudoGame` constructor sets it true. The repair requires false as well as exact zero counters, empty trace, winner -1, and default/empty planes. New actual initialized Ludo states therefore remain present even before their first move. Any nondefault position, array shape, roll/action/die/turn count, winner, or log remains untouched regardless of the marker.
+
+Migration limit: an old **inactive**, unmarked, exact initial Ludo state cannot be distinguished from a serialized placeholder. This candidate treats that no-progress representation as absent; it does not claim to have proven its origin. An old **active** Ludo state is always retained, even initialized=false. Existing inactive progress/history is always retained. No night, rotation, completed-round ticket, random-seed input, receipt, policy, or sample fields are changed.
+
+Original three save/reload cases and the actual-inactive-state / initialized-board preservation tests remain unchanged, including the original coalesced log assertion and exact active-state comparison after five further engine actions. Added 14 NUnit cases cover observed initializer JSON, each individual Ludo evidence discriminator, near-default checkers/Monopoly evidence, and unconditional active-state preservation. Root should run XgBoardSelfPlayVarietyTests and LudoGameTests serially; this stage makes no runtime pass claim.
+
+`build.py` is one-shot and refuses existing baseline/candidate files. `package.py` is rerunnable.

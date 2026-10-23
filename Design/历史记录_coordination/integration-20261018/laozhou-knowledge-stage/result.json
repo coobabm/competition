@@ -1,0 +1,17 @@
+{
+  "timestampUtc": "2026-10-18T17:50:19.929188+00:00",
+  "contentIds": [
+    "K01",
+    "K02",
+    "K03",
+    "K05",
+    "K06"
+  ],
+  "deferred": "K04 approved A; ready as separate four-file follow-up; production integration/Unity verification pending",
+  "dotnetChecks": 47,
+  "dotnetResult": "PASS",
+  "patchApplyCheck": "PASS",
+  "unityCompilation": "NOT RUN",
+  "unityUi": "NOT RUN",
+  "productionEdits": false
+}

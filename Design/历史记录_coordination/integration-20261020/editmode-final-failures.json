@@ -1,0 +1,242 @@
+[
+  {
+    "Test": "LingGuangV05.UI.Tests.DesktopMediaTests.EveryAuthoredNewsAndThreadHasAnIndependentPhotograph",
+    "Message": "  Missing artwork: era_lz2_t03_discussion\n  Expected: not null\n  But was:  null\n",
+    "Stack": "at LingGuangV05.UI.Tests.DesktopMediaTests.AssertUniquePicture (System.String key, System.Collections.Generic.HashSet`1[T] textures) [0x00007] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\UI\\Tests\\Editor\\DesktopMediaTests.cs:105\nat LingGuangV05.UI.Tests.DesktopMediaTests.EveryAuthoredNewsAndThreadHasAnIndependentPhotograph () [0x00043] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\UI\\Tests\\Editor\\DesktopMediaTests.cs:35\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgChanceHintTests.ALoopOnLongTextIsToldItsStructureDoesNotFit",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgChanceHintTests.ALoopOnLongTextIsToldItsStructureDoesNotFit () [0x000dd] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgChanceHintTests.cs:91\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgCollectionTests.AccelerationFinishesTheDownloadForTheSecondsItSaves",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgCollectionTests.AccelerationFinishesTheDownloadForTheSecondsItSaves () [0x00105] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgCollectionTests.cs:102\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgCollectionTests.BigPacksDownloadSlowlyUnlessAccelerated",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgCollectionTests.BigPacksDownloadSlowlyUnlessAccelerated () [0x000ff] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgCollectionTests.cs:85\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.APlainLoopShowsTheDistanceProblem",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.OnLongText (LingGuangV05.XingGuang.Tests.XgDiagnosticsTests+Host& host, System.Int32 salt) [0x00160] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDiagnosticsTests.cs:33\nat LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.APlainLoopShowsTheDistanceProblem () [0x00000] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDiagnosticsTests.cs:61\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.DiagnosticGroupsComeFromTheCardsRealDistance",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.OnLongText (LingGuangV05.XingGuang.Tests.XgDiagnosticsTests+Host& host, System.Int32 salt) [0x00160] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDiagnosticsTests.cs:33\nat LingGuangV05.XingGuang.Tests.XgDiagnosticsTests.DiagnosticGroupsComeFromTheCardsRealDistance () [0x00000] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDiagnosticsTests.cs:43\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgDownloadsTests.BatchesGetDearerAndEachDownloadsItsShare",
+    "Message": "  Expected: 1\n  But was:  8\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgDownloadsTests.BatchesGetDearerAndEachDownloadsItsShare () [0x00063] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDownloadsTests.cs:194\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgDownloadsTests.SmallTextPacksArriveAtOnce",
+    "Message": "  Expected: False\n  But was:  True\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgDownloadsTests.SmallTextPacksArriveAtOnce () [0x0001e] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDownloadsTests.cs:67\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgDownloadsTests.TheNoteOffersAnOwnedPackOnlyAsItsNextBatch",
+    "Message": "  every pack is owned: only batches are left\n  Expected: not null\n  But was:  null\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgDownloadsTests.TheNoteOffersAnOwnedPackOnlyAsItsNextBatch () [0x0007b] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDownloadsTests.cs:220\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgDownloadsTests.TheNoteSaysWhatIsDownloadingAndWhenTheLineIsSlow",
+    "Message": "  label.sense: 再教它 4 张「常识判断」（0/4） | node.train.curve: 科技买「训练曲线」 | side.forum: 有空逛逛摆渡贴吧\n  Expected: not null\n  But was:  null\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgDownloadsTests.TheNoteSaysWhatIsDownloadingAndWhenTheLineIsSlow () [0x00131] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDownloadsTests.cs:294\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgDownloadsTests.TheQueueDownloadsOneItemAtATimeAtTheLineSpeed",
+    "Message": "  Expected: 30.719999999999999d +/- 9.9999999999999995E-07d\n  But was:  30.0d\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgDownloadsTests.TheQueueDownloadsOneItemAtATimeAtTheLineSpeed () [0x00090] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgDownloadsTests.cs:43\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgFeatureTests.FreshUiHidesFuturePagesUntilTheirActualMilestones",
+    "Message": "  and a checkpoint that earned a grade\n  Expected: False\n  But was:  True\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgFeatureTests.FreshUiHidesFuturePagesUntilTheirActualMilestones () [0x00226] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgFeatureTests.cs:27\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgProgressionTests.AttentionTrainingLetsTheAiSayItFirstAndOpensTheTransformer",
+    "Message": "  Expected: Buyable\n  But was:  Locked\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgProgressionTests.AttentionTrainingLetsTheAiSayItFirstAndOpensTheTransformer () [0x0013c] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgProgressionTests.cs:147\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgProgressionTests.BuyingTheMlpMovesBothTracksAndLowersAbilityTwo",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgProgressionTests.BuyingTheMlpMovesBothTracksAndLowersAbilityTwo () [0x00023] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgProgressionTests.cs:99\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgProgressionTests.FreshGameReachesTheThirdAbilityThroughPublicActions",
+    "Message": "  stage=1, P=0.3K, D=25563\n  Expected: 3\n  But was:  1\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgProgressionTests.FreshGameReachesTheThirdAbilityThroughPublicActions () [0x001fe] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgProgressionTests.cs:218\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgProgressionTests.TheTransformerIdeaAlsoComesWithTimeInStageFive",
+    "Message": "  Expected: not equal to Locked\n  But was:  Locked\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgProgressionTests.TheTransformerIdeaAlsoComesWithTimeInStageFive () [0x000a4] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgProgressionTests.cs:166\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgResearchCompletionTests.ReluAlsoMitigatesDeepGradientDecay",
+    "Message": "  Expected: less than 0.96999999999999997d\n  But was:  0.96999999999999997d\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgResearchCompletionTests.ReluAlsoMitigatesDeepGradientDecay () [0x00063] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgResearchCompletionTests.cs:18\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgResidentTests.ItLeavesDesksAboveItsAbilityToThePlayer",
+    "Message": "  Expected string length 6 but was 7. Strings differ at index 0.\n  Expected: \"closed\"\n  But was:  \"ability\"\n  -----------^\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgResidentTests.ItLeavesDesksAboveItsAbilityToThePlayer () [0x00060] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgResidentTests.cs:165\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(\"translate\",0)",
+    "Message": "  Expected: False\n  But was:  True\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack (System.String id, System.Int32 version) [0x000bb] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgRetiredTaskTests.cs:138\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack(\"translate\",2)",
+    "Message": "  Expected: False\n  But was:  True\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.FreeLegacyDeskKeepsTrainingAccessWithoutGrantingAFullPack (System.String id, System.Int32 version) [0x000bb] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgRetiredTaskTests.cs:138\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.InternalTeachingCardsCannotBeSubmittedAsPaidCrowdWork(\"translate\")",
+    "Message": "  Expected: False\n  But was:  True\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.InternalTeachingCardsCannotBeSubmittedAsPaidCrowdWork (System.String id) [0x0002d] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgRetiredTaskTests.cs:97\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.ReloadDropsRetiredCardsQueuesTimersAndWorkerAssignmentButKeepsTrainingData(\"translate\")",
+    "Message": "  Expected: not equal to \"translate\"\n  But was:  \"translate\"\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.ReloadDropsRetiredCardsQueuesTimersAndWorkerAssignmentButKeepsTrainingData (System.String id) [0x00173] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgRetiredTaskTests.cs:74\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.RetiredCrowdTasksCannotBeOpenedPostedOrSelected(\"translate\")",
+    "Message": "  Expected: null\n  But was:  <LingGuangV05.XingGuang.XgDesk>\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.RetiredCrowdTasksCannotBeOpenedPostedOrSelected (System.String id) [0x00054] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgRetiredTaskTests.cs:52\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining(\"translate\")",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining (System.String id) [0x00045] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgRetiredTaskTests.cs:117\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining(\"crosssentence\")",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgRetiredTaskTests.RetiredTaskDatasetsDoNotUnlockEarlyButRemainPurchasableForTraining (System.String id) [0x00045] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgRetiredTaskTests.cs:117\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgStageOneTutorTests.AfterTheOpeningTheNoteKeepsToTheMainLineWithItsLesson",
+    "Message": "  the opening ends\n  Expected: False\n  But was:  True\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgStageOneTutorTests.Learned (LingGuangV05.XingGuang.Tests.XgStageOneTutorTests+Host host) [0x00067] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgStageOneTutorTests.cs:26\nat LingGuangV05.XingGuang.Tests.XgStageOneTutorTests.AfterTheOpeningTheNoteKeepsToTheMainLineWithItsLesson () [0x00006] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgStageOneTutorTests.cs:47\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgStageOneTutorTests.EachLessonIsToldOnceAndOnlyInStageOne",
+    "Message": "  the opening ends\n  Expected: False\n  But was:  True\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgStageOneTutorTests.Learned (LingGuangV05.XingGuang.Tests.XgStageOneTutorTests+Host host) [0x00067] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgStageOneTutorTests.cs:26\nat LingGuangV05.XingGuang.Tests.XgStageOneTutorTests.EachLessonIsToldOnceAndOnlyInStageOne () [0x00005] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgStageOneTutorTests.cs:67\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgSubcontractTests.UnlocksAtStageTwoWithAutoLabellingAndAjieAsksInYY",
+    "Message": "  Expected: 1\n  But was:  0\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgSubcontractTests.UnlocksAtStageTwoWithAutoLabellingAndAjieAsksInYY () [0x0010e] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgSubcontractTests.cs:51\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgTechPlainTests.EveryTechNodeIsHandWritten",
+    "Message": "  train.curve has only the fallback line\n  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgTechPlainTests.EveryTechNodeIsHandWritten () [0x00014] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgTechPlainTests.cs:50\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgTechTreeTests.LaddersBecomeOneSquareInChainOrder",
+    "Message": "  board.logic1\n  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgTechTreeTests.LaddersBecomeOneSquareInChainOrder () [0x00022] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgTechTreeTests.cs:39\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgTrueFalseTests.TheDraggedSpiderStaysOffDesksItCannotDo",
+    "Message": "  Expected string length 6 but was 7. Strings differ at index 0.\n  Expected: \"closed\"\n  But was:  \"ability\"\n  -----------^\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XgTrueFalseTests.TheDraggedSpiderStaysOffDesksItCannotDo () [0x00070] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgTrueFalseTests.cs:267\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XgWiringTests.JobWiresUseTheOrdersRules",
+    "Message": "  97.5% < 99%\n  Expected: String starting with \"准确率不够\"\n  But was:  \"第 4 阶段才开放\"\n",
+    "Stack": "at NUnit.Framework.StringAssert.StartsWith (System.String expected, System.String actual, System.String message, System.Object[] args) [0x00007] in <f577cd9686154d6ab10efd7e65e64366>:0\nat LingGuangV05.XingGuang.Tests.XgWiringTests.JobWiresUseTheOrdersRules () [0x00090] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgWiringTests.cs:660\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.AFewDozenPressesBringLeNetCloseToItsCeiling",
+    "Message": "  a model big enough for the digits\n  Expected: greater than 600\n  But was:  30.0d\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.AFewDozenPressesBringLeNetCloseToItsCeiling () [0x0007e] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:82\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.ComboIsSharedTimesOutAndHasTiers",
+    "Message": "  idle too long\n  Expected: 0\n  But was:  12\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.ComboIsSharedTimesOutAndHasTiers () [0x000e0] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:494\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.DataNodesBuyThePack",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.DataNodesBuyThePack () [0x0003c] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:424\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.DesksOpenOnlyWhenTheirDataPackIsBought",
+    "Message": "  Expected: True\n  But was:  False\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.DesksOpenOnlyWhenTheirDataPackIsBought () [0x0008b] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:634\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.EachPressTrainsOneEpochAndBillsPower",
+    "Message": "  Expected: not null\n  But was:  null\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.EachPressTrainsOneEpochAndBillsPower () [0x0003c] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:66\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.EveryEpochIsAssessedAndOnlyRecordsPay",
+    "Message": "System.NullReferenceException : Object reference not set to an instance of an object",
+    "Stack": "  at LingGuangV05.XingGuang.Tests.XingGuangTests.EveryEpochIsAssessedAndOnlyRecordsPay () [0x00059] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:126 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <f713e1c3c5f545ce9b1df47230f4f853>:0 "
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.EveryRecordIsSavedToTheRepositoryAndDeployed",
+    "Message": "System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection.\nParameter name: index",
+    "Stack": "  at System.Collections.Generic.List`1[T].get_Item (System.Int32 index) [0x00009] in <f713e1c3c5f545ce9b1df47230f4f853>:0 \n  at LingGuangV05.XingGuang.Tests.XingGuangTests.EveryRecordIsSavedToTheRepositoryAndDeployed () [0x00064] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:224 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <f713e1c3c5f545ce9b1df47230f4f853>:0 "
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.GoldCardsPayTripleButExpire",
+    "Message": "  3 s limit on a picture card\n  Expected: 1\n  But was:  0\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.GoldCardsPayTripleButExpire () [0x000d1] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:604\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.GradeBonusesArePaidOnce",
+    "Message": "System.NullReferenceException : Object reference not set to an instance of an object",
+    "Stack": "  at LingGuangV05.XingGuang.Tests.XingGuangTests.GradeBonusesArePaidOnce () [0x0005d] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:146 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <f713e1c3c5f545ce9b1df47230f4f853>:0 "
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.LayersPastTheLimitHurt",
+    "Message": "  Expected: greater than 0.099999999999999978d\n  But was:  0.099999999999999978d\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.LayersPastTheLimitHurt () [0x00077] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:173\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.LoadingAModelRestoresItsDataAndProgress",
+    "Message": "System.NullReferenceException : Object reference not set to an instance of an object",
+    "Stack": "  at LingGuangV05.XingGuang.Tests.XingGuangTests.LoadingAModelRestoresItsDataAndProgress () [0x00069] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:241 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <f713e1c3c5f545ce9b1df47230f4f853>:0 "
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.MoreLabelsRaiseTheCeiling",
+    "Message": "  Expected: greater than 0.58734854120376179d\n  But was:  0.58734854120376179d\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.MoreLabelsRaiseTheCeiling () [0x00097] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:523\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.OverfittingMakesValidationPeakThenFall",
+    "Message": "  a huge model on small data overfits\n  Expected: less than 0.029999999999999978d\n  But was:  0.03999999999999998d\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.OverfittingMakesValidationPeakThenFall () [0x00091] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:163\n"
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.RecordRewardScalesWithTheDatasetRewardBaseAndPaysOnce",
+    "Message": "System.NullReferenceException : Object reference not set to an instance of an object",
+    "Stack": "  at LingGuangV05.XingGuang.Tests.XingGuangTests.RecordRewardScalesWithTheDatasetRewardBaseAndPaysOnce () [0x0006f] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:194 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <f713e1c3c5f545ce9b1df47230f4f853>:0 "
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.RepositoryCleansOldModelsButKeepsStarredAndDeployed",
+    "Message": "System.NullReferenceException : Object reference not set to an instance of an object",
+    "Stack": "  at LingGuangV05.XingGuang.Tests.XingGuangTests.RepositoryCleansOldModelsButKeepsStarredAndDeployed () [0x00042] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:255 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <f713e1c3c5f545ce9b1df47230f4f853>:0 "
+  },
+  {
+    "Test": "LingGuangV05.XingGuang.Tests.XingGuangTests.TranslationNeedsAnEncoderDecoder",
+    "Message": "  Expected: greater than 0.20000000000000001d\n  But was:  0.0d\n",
+    "Stack": "at LingGuangV05.XingGuang.Tests.XingGuangTests.TranslationNeedsAnEncoderDecoder () [0x00076] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-integration-20261020\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XingGuangTests.cs:185\n"
+  }
+]

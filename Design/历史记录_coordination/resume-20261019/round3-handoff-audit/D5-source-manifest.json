@@ -1,0 +1,55 @@
+{
+  "atUTC": "2026-10-19T11:36:55.262421+00:00",
+  "files": [
+    {
+      "path": "files/Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+      "sha256": "a7abc9c2cd925eaa98e7205010f04714d21fbbb85d71e223cdb4047d34badb96",
+      "bytes": 21029
+    },
+    {
+      "path": "files/Assets/LingGuangV05/Runtime/ChapterOneRuntime.LegacyMigration.cs",
+      "sha256": "b7b0342768b894d676f4003fb83c895328fdc8bad905110b65fe4feaa86ca20f",
+      "bytes": 2263
+    },
+    {
+      "path": "files/Assets/LingGuangV05/Runtime/ChapterOneRuntime.LegacyMigration.cs.meta",
+      "sha256": "e895a60d6eb379d99456d6627338efc5085b44097978e079cbc7d9ce127d5143",
+      "bytes": 60
+    },
+    {
+      "path": "files/Assets/LingGuangV05/Runtime/Persistence/LegacySaveMigration.cs",
+      "sha256": "72a81264d48d2f6bc507f3b2da6ae315f4e8787a6d14c204236efe9ec1faefca",
+      "bytes": 24540
+    },
+    {
+      "path": "files/Assets/LingGuangV05/Runtime/Persistence/LegacySaveMigration.cs.meta",
+      "sha256": "39dd0bbefb1dd00dda06988f77535d8bc5fe749d90bb3dbd30c1ce9f31316cfe",
+      "bytes": 60
+    },
+    {
+      "path": "files/Assets/LingGuangV05/Tests/PersistenceEditor/LegacySaveMigrationTests.cs",
+      "sha256": "1a0e3ed74bb4afc467ee06a8a7c85c9858913e3f9d4d96405701b41e5c011955",
+      "bytes": 17681
+    },
+    {
+      "path": "files/Assets/LingGuangV05/Tests/PersistenceEditor/LegacySaveMigrationTests.cs.meta",
+      "sha256": "5acd370177108bc0b9f96304019ff9e35d032582f5fa94bb4b4f8e3b4e89bd73",
+      "bytes": 60
+    },
+    {
+      "path": "QUESTIONS.md",
+      "sha256": "65b2b59e1ff2c12dd72a533bf6b02cf180340e4422513eed548c5e3dacf9ae57",
+      "bytes": 1163
+    },
+    {
+      "path": "README升级段_候选.txt",
+      "sha256": "3ee63e65353adb5451b4f8d70bf405259aedd6a8232a983b8cf425910e191062",
+      "bytes": 3506
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "3b07f49beec82120afcc4b184a0b72fcdeacf0a2d242f245136aabaf3e1891fe",
+      "bytes": 4832
+    }
+  ]
+}

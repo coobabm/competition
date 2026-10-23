@@ -1,0 +1,22 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgActionGames.cs",
+    "baselineSha256": "a7301bd0c8c0eb31b110ec54aa3c014b958a862d7af51183277861dd6039a172",
+    "candidateSha256": "aa205b3d723044b5f3b2754894ada22c0f552e6a403247246921a497c36b5d2d"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgMoleGraphic.cs",
+    "baselineSha256": "fb9ab19c29612e3b7bdb3f4d6708ccb74f32fa4271119d4b83c7179ff7400ac0",
+    "candidateSha256": "c2f18d8c3d4a04ece70a41984f5f2f2ed2376a0117a70dc14b8d871d9405fddc"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMoleTeachingTests.cs",
+    "baselineSha256": "5a35a4a2fdb463aa89171e9ab9dbbed3bd77dcf6a53263e8f13cd25726c2ac67",
+    "candidateSha256": "e23c2f1b0053336d183679a131b450dca5a7310ec878582f3e502bccbd1e4a13"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/MoleReviewUiChecks.cs",
+    "baselineSha256": "3560ee34fc431c2227bb72b68c7678c1499b91e9e5a840ee551e79a69df6ac1a",
+    "candidateSha256": "12f1589e32f0701eff919433747ec74e781485c8ffce082b68ad33b5724e412b"
+  }
+]

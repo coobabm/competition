@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/Games/ChineseCheckers.cs",
+      "base_sha256": null,
+      "candidate_sha256": "2cb0ddcd1fbe09da99d149ae34265218d3f4d9f0ecb4ac60d248d2d3d502fc48"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/ChineseCheckers.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "d2ac50da3160f1e1534d1f6e11a905b8eb59105206c1e9ede2aac5c1189dc6b8"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/ChineseCheckersPanel.cs",
+      "base_sha256": null,
+      "candidate_sha256": "2be3c673c7c04096295da62f1fe1dee2ae09b731a201ae2676370cd32cff01ec"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/ChineseCheckersPanel.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "1e7643af4c4c78e629882367b5810043387d8ae11548e6a4b7776fb2fd0b9a9b"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "base_sha256": "d3947e85131ddf2d122bcc38092feece06765988a416f54f567fc07515177da5",
+      "candidate_sha256": "c4cde241b12a6527166e4ca1c2e7e678c0271eff2f2fc51e1fd5e688b014298d"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/ChineseCheckersTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "029fde3ba3020a46f3885487c2778907622cc8132488e5a9533067086022d2d3"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/ChineseCheckersTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "cabca7cf537e9096d1e872bfee94f6a07c2c38b5cb9862cecb16648dec1f4f9c"
+    }
+  ],
+  "new_tests": 6,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

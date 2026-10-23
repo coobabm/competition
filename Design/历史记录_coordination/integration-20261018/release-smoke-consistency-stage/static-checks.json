@@ -1,0 +1,49 @@
+[
+  {
+    "source": "checklist powershell block",
+    "index": 1,
+    "errors": []
+  },
+  {
+    "source": "checklist powershell block",
+    "index": 2,
+    "errors": []
+  },
+  {
+    "source": "checklist powershell block",
+    "index": 3,
+    "errors": []
+  },
+  {
+    "source": "checklist powershell block",
+    "index": 4,
+    "errors": []
+  },
+  {
+    "source": "checklist powershell block",
+    "index": 5,
+    "errors": []
+  },
+  {
+    "source": "checklist powershell block",
+    "index": 6,
+    "errors": []
+  },
+  {
+    "source": "checklist powershell block",
+    "index": 7,
+    "errors": []
+  },
+  {
+    "source": "PlayerPrefs-Guard.ps1",
+    "errors": []
+  },
+  {
+    "source": "Player-WindowQa.ps1",
+    "errors": []
+  },
+  {
+    "source": "Summarize-NativeTrace.ps1",
+    "errors": []
+  }
+]

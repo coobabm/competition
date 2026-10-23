@@ -1,0 +1,58 @@
+{
+  "sourceSnapshots": {
+    "Design/算术自动作答_训练验证_20261019.md": "9c1c31570172d4e845ba5d3a0991f0d6684fdd4f61a5edc71902d0e05a2f9625",
+    "Assets/LocalBuild/Editor/LearningRecordsUiChecks.cs": "18808c627bda57b855bc9cc1fc06dcf73ab18aa690ce1c303b1f93a873a81bbb",
+    "Assets/LocalBuild/Editor/MoleReviewUiChecks.cs": "c076cb1e89f4d19e1e2a1e7d9ddc31101e4453393d47069888fdb5ed90e0925f",
+    "Assets/LingGuangV05/YY2016/YYChatView.Learning.cs": "1ba6f04ecd60ba4caacad01ffecc99db5f07a90c98c710ac01495ce53b6ce9cd",
+    "Assets/LingGuangV05/XingGuang/Core/XgEndingNarrative.cs": "7732696c74ba9da8831378355eba9f8a62a6734cd06ff7af25294d2b952111ad",
+    "Assets/LingGuangV05/XingGuang/Core/XgEndingPreparation.cs": "462b1eab5c570fd7f64041b0f25f2658cc785a62274a68755df889fc427c3d5d",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.DataPacks.cs": "be3b306b110c2edea718a4c3df267c29b8e4874028089c697b434e72b614c083",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningRecords.cs": "205ea2a3110fca1e46e425f4f11971778850a04c7d64f1da0acc23568f2d30c1",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs": "122208020ebb00d9c05cb0bce07bd6b98308af15ba42689f59ff130db75cbc6a",
+    "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs": "97ebcdbaa9fd0414c40ff4cd1ffac290e281930bd19d69541bc962eceaa254e2",
+    "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.Records.cs": "bdbe3c8afdef98e188ae4803e47e7e2dee85db79f7634ca4707d26c1e1432254",
+    "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Learning.cs": "9a2bdbe9b1c9ffc624372ba0bba4df753e5aa6dd87268a144f9e209857d4b6c2",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingNarrativeTests.cs": "f38a66bd0d1f239b3fe60a82a5187765bab0f234b150ed43b9f53e05c48f1bb4",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingPreparationTests.cs": "fc4242609d064e27c34bbf415bfc79d7a8880cadfa0e7a6509bcb8bd29e5c9fa",
+    "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgActionGames.cs": "c1baefc68899539b236d88e38126da5be156310cccbab1d4681b442e69d175b0"
+  },
+  "historicalCore": [
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgArithmeticInputTests.ActualAcceptedTeachingUpdatesSymbolsUsedByAutomaticReadout",
+      "result": "Passed"
+    },
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgArithmeticInputTests.LabelAndGeneratorMetadataCannotChangeArithmeticInputOrPrediction",
+      "result": "Passed"
+    },
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgArithmeticInputTests.RealTrainingPoolUsesTheSameVisibleEncodingAndKeepsItsOriginalLabels",
+      "result": "Passed"
+    },
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgArithmeticInputTests.SpacesAndEquivalentOperatorGlyphsSharePositionsAndColdSeed",
+      "result": "Passed"
+    },
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgArithmeticInputTests.SupervisionTargetChangesLearningButNeverTheInputs",
+      "result": "Passed"
+    },
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgMoleTeachingTests.ExplicitHumanCalculusLabelTrainsExactlyOnceWithoutSecondReward",
+      "result": "Passed"
+    },
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgMoleTeachingTests.HiddenCancelledRebuiltAndReloadedOwnersRejectOldLabels",
+      "result": "Passed"
+    },
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgMoleTeachingTests.IncorrectHumanLabelIsNotReplacedWithGeneratedTruth",
+      "result": "Passed"
+    },
+    {
+      "name": "LingGuangV05.XingGuang.Tests.XgMoleTeachingTests.PredictionAndLeavingAQuestionNeverTeachIt",
+      "result": "Passed"
+    }
+  ],
+  "validation": "Static only; Unity/.NET/model NOT RUN"
+}

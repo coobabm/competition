@@ -1,0 +1,43 @@
+{
+  "status": "ready candidate: K01/K02/K03/K05/K06 only; K04 deferred separately; no Unity execution",
+  "sourceSha256": "31dad73602cdb60af64d76fd1dfef09ab381521554dffe9b5a8dbdeb4f9f997a",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuController.cs",
+      "kind": "shared-hook",
+      "baseSha256": "89ba755512e480955450f5ff8573e2378273d35578d5262e175ef573aed0c39a",
+      "candidateSha256": "c12f1159fdf1aade0b46e52ade5befdda57b753b2aaf02bdc46e2e4527e712d9"
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.cs",
+      "kind": "shared-hook",
+      "baseSha256": "d929723d79eaa4ccd57932eac85010d58d1015e87de233f461174c67c3a13a0d",
+      "candidateSha256": "7ab1ef9b6ee2fc6fae90ee33923f3c9f988b752c719107064cb8ccc9e83fda5b"
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.PlayerHelp.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "candidateSha256": "d37fe30b965dcb8d2667e0276e727041bb42738ead43608de26a0bc0923e3bde"
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/PlayerKnowledgeCopy.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "candidateSha256": "7e15b5224fe7ab43926d43f8d0fe937d476e428af0cdbd33b5cfca19f7939b82"
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/PlayerKnowledgeCopy.Extended.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "candidateSha256": "a51011b932d69ce9ec4b44198894c0e982f26ced6a0f3c6007fc57b37051c61d"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PlayerKnowledgeHudChecks.cs",
+      "kind": "new",
+      "baseSha256": null,
+      "candidateSha256": "57c237dbaf808ff6557a6cf9ed1152b375fbcc191bc9b9fe9de72d85af12d1ea"
+    }
+  ],
+  "patchMethod": "git diff --no-index --ignore-space-at-eol; retained baseline has mixed CRLF/LF; minimal semantic hunks"
+}

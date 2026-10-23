@@ -1,0 +1,62 @@
+
+
+Original group-chat scene illustrations / 原创群聊情景插画 — 2026-10-19
+
+Ten original illustrated scenes complete the remaining scene slots under the approved illustration alternative. These are deliberately stylized illustrations, not real photographs and not output from an image-generation model. They do not document actual people or historical events. Existing captions are unchanged.
+十张为项目原创情境插画，非真实摄影、非ImageGen模型输出，不代表真实人物或历史事件；剧情原配文保持不变。游戏内标注“原创情景插画 · 非实拍”。
+
+Creator / 作者: Codex-authored original drawing code for this project.
+Source / 来源: Design/素材源码/group-chat/draw_chat_scenes.py (original drawing source retained in the repository); no third-party images, stock assets, recognizable likenesses, movie stills or brand graphics used.
+Rights / 使用范围: Original project assets; use, modification and distribution in this game. No new external attribution or share-alike obligations. No claim of legal exclusivity.
+Method / 制作: Pillow geometry drawing, 2x antialias rendering, subtle paper grain, optimized JPEG. API and built-in image generation were unavailable and were not used.
+
+chat_lili_grad — 毕业啦！
+五人穿学士服背对镜头举手抛帽；校园楼和草坪，明亮日照。
+人物为无五官的原创剪影；未指定/映射任何真人身份。
+Size: [600, 800]; SHA-256: 1426e464ad5b65f6e21dc78a87048dbb1cdd210ef288cc949795d7371d7b8d62
+
+chat_lili_gulangyu — 排了一小时队买的馅饼
+手持有咬口的绿豆馅饼；红砖拱廊老街与排队人群。
+建筑为鼓浪屿氛围概括，不称为可定位的真实街景。
+Size: [800, 600]; SHA-256: 3847e7f4fe2c70fdaa8abbaf889702e2a9d2b8b34438756e3cfccf6876939f91
+
+chat_lili_westlake — 看见的全是人头，湖在哪？
+湖上石桥挤满后脑勺和遮阳伞，远山与左侧少量湖面。
+断桥为概括构图，非精确地标测绘；保留少量湖面帮助辨识。
+Size: [800, 600]; SHA-256: 4c2c866cf0f0cd83be3f3c685a9a5ae25e01c495a478023c0625d2d5f916833f
+
+chat_xg_tv — 三点了，开球
+暗客厅电视显示原创绿茵球场；3点挂钟、无品牌罐装饮品和花生袋。
+电视内容为原创球场几何图，无赛事转播/台标/真实球员。
+Size: [800, 600]; SHA-256: b40605c3a644ad1f20b28c789a4068ee71c0931baeb2d260534cab6e66b38fae
+
+chat_dw_desk — 第三个周末了
+空办公室只有近景双屏工位和台灯亮着；代码线条、黑夜窗外。
+代码为不可读抽象色条，无真实代码/公司信息。
+Size: [800, 600]; SHA-256: 8f0b351cbef0b8a32a4d2adee8f8c71849070cedd5aaadeaff586bd3f93ea95f
+
+chat_dw_cafe — 整个网吧都在看决赛
+网吧电脑排布、蓝色灯光、前方游戏投影、人群举手欢呼。
+原创简化竞技游戏屏幕，不使用任何游戏截图；未画可识别面孔。
+Size: [800, 600]; SHA-256: c0d5f114f120e7717254e345d94d9bac03f006a6348682cd281c7bdae83b9d77
+
+chat_dw_iphone — 买到亮黑色了
+手托亮黑色单摄手机背面，夜间店门和长队，无标志。
+通用单摄手机情境插画，不是苹果官方产品图，也不保证具体工业尺寸。
+Size: [800, 600]; SHA-256: 8bd4ffcf327bf38d4f6adcb1176c6aee044a33ea3c56922f2740cb82dc407226
+
+chat_xg_dawn — 再来一回合，天就亮了
+淡蓝晨光和城市窗景；显示器亮着原创六角策略地图，桌边零食袋。
+原创抽象策略地图，无任何商业游戏UI/截图。
+Size: [800, 600]; SHA-256: 3bbabc34a3462c1528c7a6f7791ca989da104e538f1e501dfab9c25e1b0cf021
+
+chat_lili_parcels — 零点抢完，钱包空了
+出租屋门前层叠纸箱与快递袋，橘猫趴在顶端。
+无快递商标、真实地址、条形码信息或第三方猫照片。
+Size: [800, 600]; SHA-256: c15bc8caab7fd243239d5349cc906060a432699086bfe6c97cea630e3b40992f
+
+chat_lili_ticket — 看哭了
+掌中两张重叠票根；暖色影院走廊、爆米花桶。
+票面仅抽象墨条，没有真实电影名、影院品牌、订单数据或剧照。
+Size: [800, 600]; SHA-256: 2a9fc6708f5bea53d4592c726d52a50ea1d530c08c3b2c3326a0c66ff2102c00
+

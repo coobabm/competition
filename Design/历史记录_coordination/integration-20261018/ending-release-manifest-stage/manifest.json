@@ -1,0 +1,69 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.PublicDiscourse.cs",
+      "base_sha256": "570fed84d9d6eef8c8312d2fb7d6d16d87814addd6ebc9ed6a443bcc64de7020",
+      "candidate_sha256": "6c6c25fb6ba9daf5ab9c734abbc8dd7e86623ef72d6627e696ba0d091b328a5b"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Story/XgPublicDiscourseDesktop.cs",
+      "base_sha256": "1201cae23c7b8c1a6c3d06c67dd0d57ad43e911c1e0e498802cc0d88bb2c7cd8",
+      "candidate_sha256": "b5dd1ce21587d5b14fe6e602ddeb2fb876343e8b8872f6ab5104245d684f1b5c"
+    },
+    {
+      "file": "Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_public_discourse.json",
+      "base_sha256": "afcc216c6da47807d00143164bb6101a4360782de62f78dc7ea699b23bf519e0",
+      "candidate_sha256": "901baf3c1d4f9a25e24a5377c460676cfd3a948addecdfd73a7c4032e12c15b7"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.cs",
+      "base_sha256": "aab44a6341144883a0d2d55fcdcb1973da6f2e30c92dde539274fb616e6c89ef",
+      "candidate_sha256": "e8e2537e0b8d2e04aac07b14cbc0054991869bb6a031280911f14cb5b840ef50"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgPublicDiscourseCatalog.cs",
+      "base_sha256": "e3c295ac8d4b56a815b068512a677e4a051c07e3f361664dd8532ae4ed8d4de4",
+      "candidate_sha256": "ea06bb109e8ce2b80af08a221dc12f5fca1872655e08e6423324d894f71bcdbf"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgVirtualReleaseManifest.cs",
+      "base_sha256": null,
+      "candidate_sha256": "04df37612ca40281998a798a47a4f7c4548ee1b6642fa65843e77eab71a33bda"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgVirtualReleaseManifest.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "60ad27712bfaefa37225cc0f7a87876995589f8928909b01a0a4935e44aead18"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/EndingPreparationPanel.cs",
+      "base_sha256": "57cdaca8b75d0dc33189f2947cd8f042d17f2a0073570d81a3b24cc47fcad90b",
+      "candidate_sha256": "5bd756946d0b4dd977d66251516aec8c9458d64fce144c54b6af6119c62f92e2"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs",
+      "base_sha256": "3a4859bb60acd19a9e6ca07a6a17841d753e324621550a34b356df145eddced8",
+      "candidate_sha256": "34adec345f56017d7f4e33ce61b83c22220bff131e76829faaad8479038748d8"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueDirector.cs",
+      "base_sha256": "3c74267095a6e6d03f5e4c53faf91682952c25836194b07a99d802e7cd3f7a73",
+      "candidate_sha256": "e5d4a18336af7f4f6f5d4a33091c4c5df08c2b7a2f7ca00e1f0ded1f66fecd36"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgVirtualReleaseManifestTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "cae76c103fa4c8804a533d106bdaa76cfe6426d273697c5e964d724777b092bd"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgVirtualReleaseManifestTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "123cb79f47bbf0d41e8aa1821af47a1513f665052fc6a9bcd9f667ecc3d97a50"
+    }
+  ],
+  "new_tests": 5,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

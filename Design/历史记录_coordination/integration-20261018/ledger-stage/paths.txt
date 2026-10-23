@@ -1,0 +1,7 @@
+XingGuang/Core/XgTrainingCatalog.cs
+XingGuang/Core/XgSim.cs
+XingGuang/Core/XgSim.Progression.cs
+XingGuang/Core/XgTechTreeCopy.cs
+XingGuang/Desktop/XingGuangView.Frame.cs
+XingGuang/Desktop/XgTrainPage.Side.cs
+XingGuang/Desktop/XgTrainPage.Parts.cs

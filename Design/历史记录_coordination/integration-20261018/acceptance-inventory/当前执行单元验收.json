@@ -1,0 +1,749 @@
+[
+  {
+    "id": "P01",
+    "requirement": "三场景各30秒Profiler基线与修后对比，Deep Profile关，CPU/GC/Canvas前十热点写记录（D04§6.1）",
+    "status": "实现待实测",
+    "implemented_or_tested": "三轮各三段30秒实录已完成；最新075839常见帧20.57/17.30/18.50ms，GC110748/152234/126689B。",
+    "remaining": "第三轮raw热点完整归因、最新上游合并后独立包+模型负载复测。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P02",
+    "requirement": "缓存全场景Find，阶段变化刷新图标（D04§6.2）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "DesktopHotpathChecks13项通过窗口缓存/增删/复用；控制器实例与慢重试已整合。",
+    "remaining": "不代表全项目所有Update已无场景查找；最新包复测。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P03",
+    "requirement": "页面脏刷新、值相同不赋文本、隐藏页停刷（D04§6.2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：各页需刷新计数/隐藏计数验收",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P04",
+    "requirement": "动态文本缓存/固定字号，避免每帧分配（D04§6.2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：数字、签名、TMP逐处核",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P05",
+    "requirement": "应用/桌面/托盘/悬停/动态图形拆Canvas（D04§6.2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：层级检查与Canvas时间对比未逐项映射",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P06",
+    "requirement": "图形脏重画、脑动画15FPS、隐藏停画（D04§6.2）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "脑窗41项验证15Hz、低档静态事件更新、隐藏停画；曲线相同数据不重画。",
+    "remaining": "实际硬件帧率另列P13。",
+    "report": "LocalVerification/BrainWindowPerformance/20261018-070251-936/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P07",
+    "requirement": "复用Update集合、移除循环LINQ（D04§6.2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：逐源码扫描与GC实测待补",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P08",
+    "requirement": "自动存档后台或5分钟空闲，旧档无丢进度（D04§6.2）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "300秒+2秒空闲、dirty保持、手动暂停退出、真实磁盘22项。",
+    "remaining": "受控时间边界，不是5分钟实体鼠键录像。",
+    "report": "LocalVerification/IdleSaveAndStageSnapshot/20261018-071306-185/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P09",
+    "requirement": "模型异步单请求、玩家AI优先群/贴吧（D04§6.2、正文G）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "真实Qwen CPU15项：原生调用/实际Task最多1、取消不提早释放、玩家AI优先。",
+    "remaining": "独立空场景；桌面音乐并行压力与自由回复质量未验。",
+    "report": "LocalVerification/SerialNative/20261018-075016-103/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P10",
+    "requirement": "隐藏窗口停逻辑/动画（D04§6.2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：脑子/热图已验；exe/贴吧/游戏中心逐窗需验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P11",
+    "requirement": "粒子飘字池且同屏≤8（D04§6.2）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "UiEffectBudget实际Unity：飘字8对象、共享96粒子、隐藏清理、低档停所有发射。",
+    "remaining": "无整机60FPS含义。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P12",
+    "requirement": "高低画质、30/60、默认60/vSync0（D04§6.3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "30/60、vSync0和低档效果开关已Unity验；脑窗低档真实数据能刷新。",
+    "remaining": "干净安装默认档位、最终设置持久化与独立包待验。",
+    "report": "LocalVerification/BrainWindowPerformance/20261018-070251-936/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "P13",
+    "requirement": "1080p集显自动训练60FPS/GC<1KB（D04§6.4）",
+    "status": "未达标",
+    "implemented_or_tested": "075839三场景平均仍>16.67ms、GC>1KB且最大帧5040/352/464ms。",
+    "remaining": "必须分析尖峰/分配并复测；不将编辑器开销未经证实归零。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "T01",
+    "requirement": "科技树鼠标中心滚轮50–150%/10%步长（D07§2.1）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "实际指针事件验证鼠标锚点、50–150%限值。",
+    "remaining": "不是物理鼠标自动化。",
+    "report": "LocalVerification/TechTreeUI/20261018-062742-309/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "T02",
+    "requirement": "−/＋/适应/双击100%定位可买节点/保存比例（D07§2.1）",
+    "status": "实现待实测",
+    "implemented_or_tested": "按钮/适应/双击/当前可见卡实际中英TMP报告通过。",
+    "remaining": "保存比例、焦点可买节点、各边界未在所有断言中确认。",
+    "report": "LocalVerification/TechTreeUI/20261018-062742-309/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "T03",
+    "requirement": "<70%隐藏价格且整块缩放（D07§2.1）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：边界69/70/71%需明确验证",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "T04",
+    "requirement": "拖动缩放不Refresh、不重建线、松手刷新一次（D07§2.2）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "实际拖拽事件中刷新/线重建计数不变，松开刷新。",
+    "remaining": "独立硬件拖动帧率另验。",
+    "report": "LocalVerification/TechTreeUI/20261018-062742-309/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "T05",
+    "requirement": "拖动停hover，装饰不射线，独立Canvas/裁剪（D07§2.2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：逐项层级及hover实测待对应",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "T06",
+    "requirement": "惯性/200像素回弹且60FPS无Canvas尖峰（D07§2.2）",
+    "status": "实现待实测",
+    "implemented_or_tested": "现有惯性实现；三场景Profiler不是科技拖动专项。",
+    "remaining": "200px回弹、松手轨迹、60FPS/Canvas峰值实测缺证据。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "O01",
+    "requirement": "大厅可见且有宽度后Refresh+ForceMeshUpdate（D06§1）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "FirstOpenText34项：真实跨帧显示大厅、可见后回调、TMP文字无需QA主动刷新。",
+    "remaining": "更换小窗口分辨率仍需实包冒烟。",
+    "report": "LocalVerification/FirstOpenText/20261018-074644-736/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "O02",
+    "requirement": "科技名/答卷/YY联系人首帧文字（D06§1）",
+    "status": "实现待实测",
+    "implemented_or_tested": "首次大厅与YY文字已测，科技既有TMP报告。",
+    "remaining": "答卷首次显示与科技首次显示须各自断言，不能扩展大厅报告。",
+    "report": "LocalVerification/FirstOpenText/20261018-074644-736/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "O03",
+    "requirement": "新档只教→12题科技→购买曲线才练（D02§1/3、正文A）",
+    "status": "实现待实测",
+    "implemented_or_tested": "新档0/12/隐藏练/科技初态实际通过，runner和真实LCD坐标补丁已交。",
+    "remaining": "RunLessonGoal最新FAIL在首错题未被真实输入结算；修正点击映射后重跑12→科技→付费→练全链。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "O04",
+    "requirement": "首次教、第3题、12题、首次练结束独白一次/便签（D02§2.4/3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "StageOneTutor当前新流程、中英原句与持久字段存在并已编译。",
+    "remaining": "四个自然时点逐一只播一次/重开读档/便签联动待实测。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "O05",
+    "requirement": "第一次科技首行/其余轮廓，曲线首套收入可买（D02§3）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：第一题全对/含错题经济分别验，不能假设收入",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A01",
+    "requirement": "删除梯子/安全点/帮助/换题/放弃/手动下一题（D02§2）",
+    "status": "实现待实测",
+    "implemented_or_tested": "TeachingVerdict实际120连击、超时保题、不扣奖励以外惩罚通过。",
+    "remaining": "对0.25秒/错1秒时序、彻底移除手动下一题须真实UI逐项验证。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A02",
+    "requirement": "对错反馈（绿闪飘钱叮、红抖扣钱碎连击理由）（D02§2.3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "对错/连击8反馈路线已有实际计数。",
+    "remaining": "绿色闪、红抖、扣钱/碎连击理由及叮声不能用计数或PNG代替听觉视觉审核。",
+    "report": "LocalVerification/BrainWindowPerformance/20261018-070251-936/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A03",
+    "requirement": "连击10/25/50/100、金粒子、倍率≤2/快答+50%（D02§2.3）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "TeachingVerdict实际120连击、10/25/50/100四档、慢答/快答收入及错断连通过。",
+    "remaining": "听觉/最终视觉留A02；不是自动玩法全文完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A04",
+    "requirement": "右栏连击/档位/套数/今日题数/金额（D02§2.5）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：Sidebar464断言证明布局范围，不当然证明计数口径",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A05",
+    "requirement": "全题桌小游戏只在教，删除众包标注台（D06§2）",
+    "status": "实现待实测",
+    "implemented_or_tested": "22入口首动作和19包38正确/错误轮次实际通过。",
+    "remaining": "众包/旧数据页残留入口与阶段4可见性仍全路径核对。",
+    "report": "LocalVerification/TeachingFullRounds/20261018-073138-815/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A06",
+    "requirement": "19包按阶段/购买/视觉线/循环/门控条件开放（D06§3、data）",
+    "status": "实现待实测",
+    "implemented_or_tested": "19包数据与生产购买条件存在，部分条件受单元/轮次覆盖。",
+    "remaining": "每包锁定/自然解锁/存档3边界未有逐包完整表。",
+    "report": "LocalVerification/TeachingFullRounds/20261018-073138-815/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A07",
+    "requirement": "每小游戏有经典卡、每动作SettleMiniAction（D06§3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "19包38整轮UI正确/错误、收益样本及JsonUtility已验；新增金地鼠/诗词真假/30接龙/月包/表情另有真按钮报告。",
+    "remaining": "猜身份多轮淘汰和所有独立规则/结算视觉仍未全覆盖。",
+    "report": "LocalVerification/TeachingFullRounds/20261018-073138-815/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A08",
+    "requirement": "六阶段题型与旧题型保持、新题型首次滑入提示（D04§3.2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：stage4/5/6示例6/6/5及首动作有报告；全题型键盘/字词点击待验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A09",
+    "requirement": "代答科技前置曲线+24题+1轮，常驻/无限/答前显示/答后✓✗/<55灰未知（D02§4）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：28项答案快照测试相关；每小游戏/复杂答案显示及命名待逐项复验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A10",
+    "requirement": "门槛拖动、把握与排序、变、疑似错题、新、复核六工具（D04§3.3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "TeachingTools门槛/疑题/排序；Augmentation真实变换保留丢弃；ClassicTools经典题滑杆与复核已验。",
+    "remaining": "新题桌标记/新卡入口、所有题型工具兼容仍逐项验。",
+    "report": "LocalVerification/TeachingTools/20261018-071458-655/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A11",
+    "requirement": "真视觉：28×28→224网格数字，4字符扰动验证码，8×10照片九宫格，表情零件，5张/类ImageNet（D04§1）",
+    "status": "实现待实测",
+    "implemented_or_tested": "80照片真实资源、验证码屏幕键、网格/原图保存、真实数字与新年代梗图已落地。",
+    "remaining": "实体键盘输入和逐图美术审核未完成；群照不在本项。",
+    "report": "LocalVerification/PhotoLibrary/20261018-070833-905/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "A12",
+    "requirement": "2016限制（D06§3、正文）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：垃圾分类删除；未来技术标记探索而非已发布；按内容全搜",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B01",
+    "requirement": "练默认仅曲线/答卷/按钮，其余块按科技/事件（D02§7）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：TrainingLessons真实钱包报告相关；T1–T16逐个触发仍单验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B02",
+    "requirement": "首轮实际教过题原文/初始—/逐行翻牌/总分/首全对独白（D01§2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：快照测试相关；真实首轮动画与台词待验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B03",
+    "requirement": "购买新块淡入+2秒高亮+独白（D01§2.2，灰框已废）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：独立视觉时序待验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B04",
+    "requirement": "训练分支顺序/学习率六档/检查点/监控/权重节点（D01§2、D02§7）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：模块存在；节点效果、费用、旧档需分别验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B05",
+    "requirement": "21小题和13真实触发（D04§4）",
+    "status": "实现待实测",
+    "implemented_or_tested": "旧“shift/continues没有实现”已失效：实际移位丢信息触发shift、YY续写反问触发continues；21题资源。",
+    "remaining": "需自然触发→小卡→答→定位完整链证据，不能直接NoteTrainingPhenomenon当自然链。",
+    "report": "LocalVerification/TrainingLessons/20261018-060303-954/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B06",
+    "requirement": "小题小卡不挡按钮/正确+20/错误不罚/两句解答/跳节点金光/入图鉴（D04§4）",
+    "status": "实现待实测",
+    "implemented_or_tested": "实际选择按钮+20、错不罚、一次奖励、真实钱包与节点定位19项。",
+    "remaining": "题卡不遮按钮/金光/每种两句解释逐题视觉仍待验。",
+    "report": "LocalVerification/TrainingLessons/20261018-060303-954/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B07",
+    "requirement": "九知识卡精确阈值与首次仅一次（D01§3）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：独立卡触发分别核15pp/NaN/退步/5轮/噪声20/跳升10pp/深度4/涌现",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B08",
+    "requirement": "知识卡暂停自动/曲线光圈/三段/琥珀术语/收下台词/飞科技/红点/图鉴全文（D01§3、D02§8）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "KnowledgeVisuals24项实际卡、收下飞行/科技badge、图鉴回看、真实中英TMP、快照/不伪造光圈。",
+    "remaining": "使用受控20pp历史生产观察器；不证明9种自然现象触发。",
+    "report": "LocalVerification/KnowledgeVisuals/20261018-073754-020/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B09",
+    "requirement": "答卷48缩略图与每轮红绿闪（D04§1.3）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：48图/64行已修；逐张闪边待视觉验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "B10",
+    "requirement": "49遮挡真实热图/缓存/MLP散与CNN随移/草地捷径（D04§1.3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "实际49格遮挡、原图/热图、MLP/CNN移动、隐藏缓存通过。",
+    "remaining": "草地捷径专例和最终运行性能另验。",
+    "report": "LocalVerification/SheetAttention/20261018-060709-989/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "C01",
+    "requirement": "所有科技卡三行12/14字、中文名缩写年、确定效果、详情≤3句（D04§5、正文）",
+    "status": "实现待实测",
+    "implemented_or_tested": "062742真正中英locale，198份实际TMP三行/字形在界内通过。",
+    "remaining": "184节点全部效果语义、详情<=3句与缩写年份真实性须逐条；长度/渲染不能证明科学语义。",
+    "report": "LocalVerification/TechTreeUI/20261018-062742-309/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "C02",
+    "requirement": "实时数字与真实购买效果一致、禁免责长句（D01§4）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：77复核断言相关；全部科技不能以字符串长度证明语义正确",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "C03",
+    "requirement": "脑子窗口320×240/拖缩/最小化/关再开/初始右侧/置顶开关/动态名（D02§5）",
+    "status": "实现待实测",
+    "implemented_or_tested": "脑窗购买/默认320×240/拖缩/置顶/关闭托盘重开/名字41项已验；真实鼠标中继与详情夹边刚修。",
+    "remaining": "新修hover/readonly/region-cards须独立模式实测；不把41项旧报告覆盖新改动。",
+    "report": "LocalVerification/BrainWindowPerformance/20261018-070251-936/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "C04",
+    "requirement": "脑子八事件反馈与壁纸普通图（D02§5）",
+    "status": "实现待实测",
+    "implemented_or_tested": "8事件反馈已验，普通壁纸保留。",
+    "remaining": "自然资格升阶反馈、知识自然触发、脉冲lesson和旧细节模式独立复验。",
+    "report": "LocalVerification/BrainWindowPerformance/20261018-070251-936/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "C05",
+    "requirement": "数据买即新桌顶端红新/托盘可点/训练同源，删除下载/分批/GPU拖装（D02§6）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：需全链与旧存档迁移验证",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "D01",
+    "requirement": "月份→演示→首句→清单→淡出顺序和继续/空格（D03§3）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "071830101项真实月→演示→首句→解锁→退场、队列、控制器；包含快照UI。",
+    "remaining": "截图0；资格由夹具绕过，不称自然通关。",
+    "report": "LocalVerification/StageCurtain/20261018-071830-757/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "D02",
+    "requirement": "独占暂停并排队托盘/YY/事件/便签/悬停，逐个1.5秒（D03§3）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：共用托盘/旧toast有15逻辑断言；自绘通知覆盖仍需注入验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "D03",
+    "requirement": "70%暗、圆角8、边距32、960×540/720、无关闭叠加（D03§3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "960×540、720首句、14页实际TMP六行无溢出通过。",
+    "remaining": "70%暗/8px圆角/32边距全部装饰及人工视觉未逐条核验。",
+    "report": "LocalVerification/StageCurtain/20261018-071830-757/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "D04",
+    "requirement": "月份副标题符合真实世界、4–6专属能力演示、逐实际解锁清单≤6行（D03§3）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "4/5/6真实固定微型计算演示、真实解锁快照及双语分页101项；五阶段磁盘22项。",
+    "remaining": "固定示意不是玩家LLM权重；不是自然游戏跑至六阶段。",
+    "report": "LocalVerification/StageCurtain/20261018-071830-757/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "E01",
+    "requirement": "YY题本260抽屉保留最后3行、每组50显示/200保留/新前/搜索/抽题（D03§1.1）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "WorldYyLearningUiChecks双语真实260抽屉/剩3行/50显示200保存/搜索/排序/发送/回复通过。",
+    "remaining": "同步入口PASS后手动结束，不称自动退出成功。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "E02",
+    "requirement": "教与练真实题写入题本，原题/玩家答案/当时AI答案，现阶段答+匹配徽标（D03§1.1）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "教练题写askedLog、真实Send/Heard/Deliver、原题比较/回复ID和抽屉按钮。",
+    "remaining": "路由用确定回复夹具；非实际模型学习质量证明。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "E03",
+    "requirement": "8性格包/9标签，每回复0–2、轴2–3实时飘字、样本5/标签进提示词（D03§1.2）",
+    "status": "实现待实测",
+    "implemented_or_tested": "8包/9标签/每条最多2标签/抽屉真实按钮锁定、跨科技淘货拥有与钱包通过。",
+    "remaining": "轴2–3点飘字与提示词实际风格、所有样本5计数逐包未完全覆盖。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "E04",
+    "requirement": "日常免费可重复，科技与淘货共享拥有，副作用真实风格，实话/讨好影响终局（D03§1.2–1.3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "WorldCommerce真实中英双入口共钱包与拥有；诚实讨好标签已接终局。",
+    "remaining": "自然终局实际分支消费和免费日常反复使用待实测。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "E05",
+    "requirement": "它问你日一次/记忆终局回引，委托验收，2016新梗玩心+2，外号，3退步安慰加速（D03§2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：六种对话分别真实触发/回答验证",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "E06",
+    "requirement": "12句严格完全匹配且AI回复后解锁、双界面动画/保存回答/线索/替代路（D03§6、正文C）",
+    "status": "实现待实测",
+    "implemented_or_tested": "精确原句、前导空格不匹配、发出未解锁/真实Deliver后解锁通过。",
+    "remaining": "双界面动画/12句逐句/替代路线/线索尚无完整对照。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "E07",
+    "requirement": "全界面所有AI灵光动态名、中英、原名例外（D06§4）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：全局候选inventory已有；命名后逐画面必须验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F01",
+    "requirement": "上班两年独居、群无AI/接单/众包/房租知识或私聊；晴雯室友可留（D03§0/5）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：静态台词与本地模型系统提示均需核，不只删一句",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F02",
+    "requirement": "未发生不假装发生：先发帖才回帖、表姐求人翻译（正文1–3）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：旧分支已按意图移植；全触发路径/存档旗标验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F03",
+    "requirement": "100+9事件正确条件、每阶段≤2、3–8分钟/间隔≥6分钟、均匀一次/禁止时段（D03§4）",
+    "status": "实现待实测",
+    "implemented_or_tested": "WorldCompleteness226实际六阶段自然抽池、两次上限、日期/先发帖/独占；100事件×2独立强制原子效果。",
+    "remaining": "100条全部自然条件与均匀分布、间隔实时时钟未全覆盖。",
+    "report": "LocalVerification/WorldCompleteness/20261018-072836-460/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F04",
+    "requirement": "事件七种效果/标题发件人/两按钮效果小字（D03§4）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：每效果单元+真实卡片仍分开验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F05",
+    "requirement": "群30预设月主题/日更3个/一次/2–4秒回复/自由输入/每周两冷场（D03§5）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：数量已核；自然时间及旧档边界待验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F06",
+    "requirement": "13群照逐张生成、正确文件/尺寸/无脸品牌水印/2016/图注中英/日期/授权（D05全）",
+    "status": "缺失",
+    "implemented_or_tested": "13个指定新群照文件均不存在；旧chat_geyou.png存在。",
+    "remaining": "必须生成13张指定内容/尺寸/年代/无脸品牌并逐图审核、写许可、真实消息显示。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F07",
+    "requirement": "阶段4众包只订单/自动/分包/结算/信用（D02§9、D06§2）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：软件出现时点及删除旧入口需验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F08",
+    "requirement": "房租第3阶段起按期账单，无自动扣，提前告知，卡/工具栏/文字三入口（D07§1）",
+    "status": "实现待实测",
+    "implemented_or_tested": "真实YY部分转账按钮/文字补齐、重复拒绝与资金面板通过。",
+    "remaining": "三个入口每个+到期自然房东卡+提前告知全过程仍分别验。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F09",
+    "requirement": "部分支付/橙气泡/到账回复/账本/无滞纳金/仅房东识别货币单位（D07§1）",
+    "status": "实现待实测",
+    "implemented_or_tested": "部分支付/账本刷新不扣/双语面板有真实链。",
+    "remaining": "无余额/货币单位/其他聊天不误扣/橙气泡和到账回话每入口边界待验。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F10",
+    "requirement": "1–4日催租→警告→停GPU仍可教→押电脑、迟付涨租/5期饺子（D07§1）",
+    "status": "实现待实测",
+    "implemented_or_tested": "催租/拉闸等生产规则已整合，不能从支付成功推断时序。",
+    "remaining": "按日期1–4天、交清撤销、停GPU仍可教、押电脑/迟付涨租/五期饺子完整验收缺证据。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F11",
+    "requirement": "礼物到家再玩家亲手送，聊天按钮或送你+礼物名，AI不能代送（正文E）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "真实送礼UI→YY发送→礼物送出、模糊请求/AI代回限制、剧情pending保持路由通过。",
+    "remaining": "最终包再冒烟；不覆盖所有随机对话文学质量。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F12",
+    "requirement": "新闻45条日期门控/新前/技术靠前/水文推广/brief不可点（D04§2）",
+    "status": "实现待实测",
+    "implemented_or_tested": "43→45新闻、日期/技术优先/首页实际中英显示与一次教学通过226项。",
+    "remaining": "文档每月6–7与现有月分布不一致；45篇brief不可点/推广栏等细节未全核。",
+    "report": "LocalVerification/WorldCompleteness/20261018-072836-460/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F13",
+    "requirement": "新闻文章2–3句/3相关/转AI真资料/阶段6热搜/本地地址（D04§2）",
+    "status": "实现待实测",
+    "implemented_or_tested": "3相关新闻、文章教学一次/真实样本、阶段6双栏720布局已验。",
+    "remaining": "记忆按正常30字标题不是全文；文章句数/地址/推广及用户视觉逐条审阅。",
+    "report": "LocalVerification/WorldCompleteness/20261018-072836-460/result.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F14",
+    "requirement": "贴吧ImageNet/联合国语料只玩家发帖回复（正文F、旧分支4）",
+    "status": "已实现+已实测",
+    "implemented_or_tested": "真实论坛先主动发帖后等待回复授予ImageNet/UN语料，重复不加；回归4/4通过。",
+    "remaining": "没有NPC知道秘密AI。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F15",
+    "requirement": "象棋7入门+50、25/25、PGN复盘FEN、按难度、黑方翻转（D06§3.1、D07§3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "chess-audit逐题记录57局有效FEN/将杀，另有实际替代将杀UI。",
+    "remaining": "7后50与25/25、难度排序/黑方视角每项需实际流程对照。",
+    "report": "LocalVerification/ChessAlternate/20261018-072017-715/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F16",
+    "requirement": "象棋两步自动防守/任意合法将杀都对/错题防守正确着法/王倒音效/学会后对弈（同上）",
+    "status": "实现待实测",
+    "implemented_or_tested": "ChessAlternate实际替代a1a7→防守→b2b8判正确并保存。",
+    "remaining": "所有题防守、错题提示、王倒声音、学会后对弈不能从该2条断言推断。",
+    "report": "LocalVerification/ChessAlternate/20261018-072017-715/report.json",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "F17",
+    "requirement": "无效棋题剔除并记录、Lichess CC0/ID评分URL许可（D07§3）",
+    "status": "实现待实测",
+    "implemented_or_tested": "57题合法审计记录与Lichess CC0制作名单接线。",
+    "remaining": "原始ID/rating/URL逐条及无效候选剔除日志需完整核。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "Z01",
+    "requirement": "第四部分30旧文件按设计移植、main差异重写（正文4）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：legacy audit/patches存在；逐功能的主分支最终表现仍要验",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "Z02",
+    "requirement": "所有新增中文英语/字典无重键（正文7）",
+    "status": "实现待实测",
+    "implemented_or_tested": "真正英语科技/知识/阶段/世界/YY/资金等各报告已明确；旧英语误测已纠正。",
+    "remaining": "全域新增中文/重复字典键/所有界面英文仍需全扫描与实包验。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "Z03",
+    "requirement": "新旧档默认字段/不丢进度/重载不重复奖励（正文7）",
+    "status": "待确认",
+    "implemented_or_tested": "保留此前范围：IdleSave22项实际Unity JsonUtility与磁盘保存五阶快照/移除对应历史；PhotoLibrary实际图片题存档；其余新增字段仍需迁移清点，非全存档兼容完成。",
+    "remaining": "未见完整独立实测对应；须核具体行为与条款，不以类/方法存在报实现完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  },
+  {
+    "id": "Z04",
+    "requirement": "Unity编译、LocalBuild检查、可运行包/GitHub记录与上游整合（正文交付）",
+    "status": "实现待实测",
+    "implemented_or_tested": "最新main95c189e3已合入并语义解冲突；多批Unity/独立编译与逐项记录。",
+    "remaining": "最终Windows可运行包、启动模型/音频、新脑窗及开局验收、GitHub提交发布尚未交付完成。",
+    "report": "",
+    "evidence_scope": "历史报告有准确范围，最新95c189e3及之后UI修复需相关回归；不是所有原文子项PASS"
+  }
+]

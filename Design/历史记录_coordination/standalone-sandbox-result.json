@@ -1,0 +1,15 @@
+{
+    "passed": false,
+    "checks": [
+        "Nine desktop pages mounted",
+        "Shared board and economy initialized",
+        "20 real card actions advance chapter 1 to 2",
+        "Power cut stops board training and recovery resumes it",
+        "Bundled classifier ran successfully: 0.5656",
+        "Local Qwen conversation returned: 嗨，我是小光。"
+    ],
+    "failures": [
+        "System.Exception: Save write failed\r\n  at LingGuangV05.Integration.MainRoot+<RunSmoke>d__117.MoveNext () [0x002ef] in <b39dbb2939ed4fa899cc9db8328a94fa>:0 "
+    ],
+    "savePath": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Builds\\LingGuangV06\\Acceptance\\smoke-save.json"
+}

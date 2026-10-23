@@ -1,0 +1,99 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/CaseMenu/CaseMenuController.cs",
+      "base_sha256": "c12f1159fdf1aade0b46e52ade5befdda57b753b2aaf02bdc46e2e4527e712d9",
+      "candidate_sha256": "c079f87976655cef9a2695438df4d3e6381984ec8af99886ebc4cf82d0e57584"
+    },
+    {
+      "file": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.Archives.cs",
+      "base_sha256": "d248ea3410a6bf419d9acd12d4978a041f89ac513dfc077be4b8b742bea6d62b",
+      "candidate_sha256": "ba4c58d987717a34d2f8142125bdc6d0c4107a63ae999b4089b2d0b2b65de4ef"
+    },
+    {
+      "file": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.Endings.cs",
+      "base_sha256": null,
+      "candidate_sha256": "b10929248c771bb72027d274423c2de34b30ec1b3e317dea13d05c6ca5f274db"
+    },
+    {
+      "file": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.Endings.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "9d246d7342cffad66e0d6074e9ba438e6df6702c552237146ea67a99a680a7d7"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Models.cs",
+      "base_sha256": "734d4e50694f5f75fe248e0726400cd51702301eb4b1c7542d5ad1c2db818a9a",
+      "candidate_sha256": "55114b4b880142275273c35cbe9d29fe582a14798522aaa10e792bcccef84950"
+    },
+    {
+      "file": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+      "base_sha256": "526f48346c1e8d117fd56c16f288bba87bb99437c69cedbae4d9b1ff1d37c1ae",
+      "candidate_sha256": "a4ce66f0bf3379def6b164bef36c7edd011489ecf9e80523f4e401ac29a78786"
+    },
+    {
+      "file": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Endings.cs",
+      "base_sha256": null,
+      "candidate_sha256": "ef4b61304692da04831443e0915a30f57f12ed9d209142e0b9f051d139e12809"
+    },
+    {
+      "file": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Endings.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "adf79474fbc5d8f40a691f4336e70c4060fb70532a3a3ce539c1367d17640a2f"
+    },
+    {
+      "file": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Slots.cs",
+      "base_sha256": "c64ce36e517565d81666d5861a72c62a9e5fcdf1ef96312d667e0229a37ac6d2",
+      "candidate_sha256": "295e037a858c5a34161c1f3e2a8ecaf1de2372995b2155ef5784e94c50a6f8c2"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/PersistenceEditor/EndingArchiveDiskTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "3c8abf7fb48877af609aab1eb453fd088be9b48c782e6f897637373c4f854d0d"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/PersistenceEditor/EndingArchiveDiskTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "1bb6c69458ae5188a528e81c7cc33ffc3049b694a5a62c9809ef5beca4ea430c"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgEndingArchiveRules.cs",
+      "base_sha256": null,
+      "candidate_sha256": "7b201e7ca55a1bd1b26d989305a8ad222585bc0e865d30cd9ead5b864c616298"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgEndingArchiveRules.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "9dec1655dba1d59112233643143eba4ca471476db274e24844da39b7f34f1f2b"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Archive.cs",
+      "base_sha256": null,
+      "candidate_sha256": "ab6b0763be0ef5a52ef61979f48794815526d037ab53a88cce2815a173f2ff4f"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Archive.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "53981e5f9081eb4954358dedf5dff7f25c81c535d88cfe9976be326be4787dbd"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs",
+      "base_sha256": "f34043484e2ca90709dd43344f0791142d9e7c4c79261196eebd0826e2088c4b",
+      "candidate_sha256": "97ebcdbaa9fd0414c40ff4cd1ffac290e281930bd19d69541bc962eceaa254e2"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingArchiveRulesTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "29f5f0082f2ba21e28d3022ffb4157ff724ff7f6c711470e65661d958cae0e6c"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingArchiveRulesTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "c188bc4fa474435e745a5dff094b04dcc42ae27bcd3000580492aac28981af82"
+    }
+  ],
+  "new_tests": 25,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

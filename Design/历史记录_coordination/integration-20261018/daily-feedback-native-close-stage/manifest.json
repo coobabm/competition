@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+      "base_sha256": "dedfdc34d15a48ecddd757076b85e9cf69d05a836ac79233c2ec3288728ec622",
+      "candidate_sha256": "ba6596afdf054ca82815439a9cf49c6f588b13521e888e494433b38d3e3ed2ad"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

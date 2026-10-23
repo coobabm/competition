@@ -1,0 +1,89 @@
+{
+  "utc": "2026-10-19T10:07:36.0219358Z",
+  "scope": "read-only targeted source and helper audit; no Unity, model, recorder, build, packaging or registry mutation",
+  "commandBlocks": [
+    {
+      "errors": 0,
+      "details": []
+    },
+    {
+      "errors": 0,
+      "details": []
+    },
+    {
+      "errors": 0,
+      "details": []
+    },
+    {
+      "errors": 0,
+      "details": []
+    }
+  ],
+  "files": [
+    {
+      "path": "competition-latest-20261016/Assets/LocalBuild/Editor/IntegratedReleaseBuild.cs",
+      "bytes": 8484,
+      "sha256": "609DE0E6067FAE78C54D1EFD94AC113C2439315399CF0AF3F66EC4BE94235A69"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/Runtime/Persistence/VerificationSavePaths.cs",
+      "bytes": 8985,
+      "sha256": "E972E266ED11E8D3C1F720D15790972B1DEF61EF7ED5FBD92C938B1DCF3D0FE0"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/Runtime/Persistence/ReleaseVerificationTrace.cs",
+      "bytes": 3420,
+      "sha256": "611F3C513194B8AE4C582F4F5A5D422794AA2709AF93B294F7129F7CF4256DA5"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/LocalLLM/LocalLlm.cs",
+      "bytes": 59432,
+      "sha256": "888169B4284A93A03F6FC5C22C601136E888C8F724D570D59D04031C218DA2B8"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/LocalLLM/LocalEmbedder.cs",
+      "bytes": 16902,
+      "sha256": "8177D55AAE1663D15C73B8601E0B0B45FB6B85E16158E0446C0843FB1CE5E2BB"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "bytes": 60115,
+      "sha256": "0D9661BEB489406B1861598FCE458093E1AD2D71101AC2F61DCD74DE00A26F0C"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/LingGuangV05/YY2016/YYGirlfriend.cs",
+      "bytes": 42033,
+      "sha256": "5FDEF743DBE2F52A3CBB43877FB30D35D1F31F21CDACD4D0929DD235C9013C2E"
+    },
+    {
+      "path": "competition-latest-20261016/Assets/StreamingAssets/LingGuang/llama/THIRD_PARTY.txt",
+      "bytes": 2718,
+      "sha256": "102FC0D7E15B016E84AF95697ACDA95297E1534267E077B33B7A77807886B872"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-smoke-consistency-stage/RELEASE-SMOKE-CHECKLIST.md",
+      "bytes": 28753,
+      "sha256": "2C6FEEC9F77821F560624559505E0C7A05E87F0440A74C8BC33BCA19BA3BDC0C"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-smoke-current-stage/PlayerPrefs-Guard.ps1",
+      "bytes": 4727,
+      "sha256": "F69414815ECB2C62336AE08ADCED7E5A67D1AB6BF180DC1A93A772EE6FBD8F55"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-smoke-current-stage/Player-WindowQa.ps1",
+      "bytes": 11153,
+      "sha256": "6A4B771556330697F3DE4C05C52819AFCC3CE100652D98EA671FE8B31BDF67D8"
+    },
+    {
+      "path": ".coordination/integration-20261018/release-smoke-current-stage/Summarize-NativeTrace.ps1",
+      "bytes": 4188,
+      "sha256": "1FD04E409536AE571B393BFDCAF7B485C8E407142132A1E7F221519A59C70EB8"
+    },
+    {
+      "path": ".coordination/resume-20261019/group-art/release-review/Package-VerifiedRelease-LowLoad.ps1",
+      "bytes": 13213,
+      "sha256": "42769A446A1C9E6A8FD0732918637351BBCBF3B5A94A79C81D84774FF87AA440"
+    }
+  ]
+}

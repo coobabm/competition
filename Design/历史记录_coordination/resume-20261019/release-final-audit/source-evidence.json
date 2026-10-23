@@ -1,0 +1,37 @@
+[
+  {
+    "path": "Assets/LocalBuild/Editor/IntegratedReleaseBuild.cs",
+    "bytes": 8484,
+    "sha256": "609de0e6067fae78c54d1efd94ac113c2439315399cf0af3f66ec4be94235a69"
+  },
+  {
+    "path": "Assets/LingGuangV05/Runtime/Persistence/VerificationSavePaths.cs",
+    "bytes": 8985,
+    "sha256": "e972e266ed11e8d3c1f720d15790972b1def61ef7ed5fbd92c938b1dcf3d0fe0"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+    "bytes": 58552,
+    "sha256": "f9dc02d22902439c3b66eceec435ea0382053843e6c57a6bfb27511474ff714f"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs",
+    "bytes": 4186,
+    "sha256": "d0dff4fc57a73bed670dd307553f4134f36f521e8b09ec82c03976b28d18685f"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+    "bytes": 16285,
+    "sha256": "e06d50ac62f2072019387c0bb158d5c301ba82781f4ad354bdaa249ebc48379e"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs",
+    "bytes": 2501,
+    "sha256": "5a3291cd7d0ee63d0311652b1ba037cf74f2c1b201f27fc6c08eeada7844b653"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs",
+    "bytes": 4038,
+    "sha256": "743c8dc105a50525a971f80cf028e817ace719b81567bca56a914a4c046f6e88"
+  }
+]

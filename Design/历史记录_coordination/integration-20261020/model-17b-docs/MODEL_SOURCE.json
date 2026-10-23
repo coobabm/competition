@@ -1,0 +1,17 @@
+{
+  "model": "Qwen3-1.7B",
+  "filename": "Qwen3-1.7B-Q4_K_M.gguf",
+  "quantization": "Q4_K_M",
+  "bytes": "<PENDING>",
+  "sha256": "<PENDING>",
+  "baseModel": "https://huggingface.co/Qwen/Qwen3-1.7B",
+  "baseRevision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "quantizer": "Unsloth",
+  "quantizationRepository": "https://huggingface.co/unsloth/Qwen3-1.7B-GGUF",
+  "quantizationRevision": "d7f544eead698dbd1f15126ef60b45a1e1933222",
+  "downloadMirror": "https://modelscope.cn/models/unsloth/Qwen3-1.7B-GGUF",
+  "license": "Apache-2.0",
+  "transformation": "None. Exact upstream quantizer bytes; this payload is a 28-block dense qwen3 transformer (310 tensors) with no nextn/MTP layer.",
+  "usage": "Local text generation only; text-only dense model, no vision projector or multimodal file is bundled. Game slot context remains 4096; model metadata maximum is not the game allocation.",
+  "replaces": "Qwen3.5-4B-Q4_K_M.gguf in releases through 2026.10.19.5; historical packages remain unchanged."
+}

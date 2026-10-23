@@ -1,0 +1,67 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+    "baseline_sha256": "1525d3aad2d0c86b1163af151f485385de80d4d705ac6c708fcfacaba645d6fd",
+    "candidate_sha256": "41210ffe9d0d36a833d27a9c64a49f90192644aab2f8ccafb8851710635867f0"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs",
+    "baseline_sha256": "1d17db41123ddc4e71c344fa9855c640c9e7806b23c0efdf794664ded7965dfe",
+    "candidate_sha256": "dfacd8bf0efeb5b5e0bfd2943b080f5befd6ffbc125373c72df789093de5508a"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+    "baseline_sha256": "2c3c0b49f8068819cd226e5af4278ffa447bbb771829815dca86707bc3e46233",
+    "candidate_sha256": "472a03a2bd802c65f163d99f122970f9302ed847c07bc4c5a78ac05633922eec"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+    "baseline_sha256": "0933bc1a8fcbf93410f5cc95c5d9f1a2ef6b75e3a4059acde46839d698ea151a",
+    "candidate_sha256": "03be22a6be95011f1da906a71984692d35b49d332aa75401345b2c11159cf168"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "baseline_sha256": "9edf347bf91b6f9a2be646a7e9923db36b16202ae11f37fbbaf994531c3fd833",
+    "candidate_sha256": "7a533035eca2cf2f9f589a93d01fd5aae759077bd19802afa24793357d993021"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+    "baseline_sha256": "07ac648fdebe13b475c556d4f55a34183af57dde136f7910fbef48e9659e07a8",
+    "candidate_sha256": "9e0d91dc4ded130ba6eb04431c2b6c51ee6dcf8ed31cc358c629ee94b58d755f"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs",
+    "baseline_sha256": "467e2751662b08b7702594526a5b2278d8072ccf67c19e9429cd3e56758b414b",
+    "candidate_sha256": "ce5599be70f8d24e0666ca4251f3456505c5035e4facfdb3a5027656d5dc2b88"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/StudyDesktopGates.cs",
+    "baseline_sha256": "55bc7bcbab2dd8cd5456c645f82bc34f4bf56879cdc2b8e6a8b9e22f04f9f9a7",
+    "candidate_sha256": "b26868a0ff5f51794ef4cb6fc37d8abbb2b10b0b13147df5d581824b1e9ac85e"
+  },
+  {
+    "path": "Assets/DreamOS - Complete OS UI/Scripts/Window/WindowManager.cs",
+    "baseline_sha256": "452addcf3fb23bd20f54ecb8b7124d63eb8bf1fb5e2e3aa49bb1f448d6459401",
+    "candidate_sha256": "177d6568e27c55c4097de56d09638f3c8e0be60cc049390e2a714c3273c3d0e0"
+  },
+  {
+    "path": "Assets/HongmengOS/Aero2010/Scripts/AeroStartMenu.cs",
+    "baseline_sha256": "fee8533be9a2a63aa1bf0c0eac795d84e9cc6bb2823d1e5a6f1e67ffa76d662e",
+    "candidate_sha256": "d7a129948ed3d5a9e795341e79470582d12d3b91cb9aa493094d3d776b5ae259"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneDesktopRouter.cs",
+    "baseline_sha256": "b8eac7e47508ec7627b9a51dcb2d3b4b008ce84db46b1b7da8911f966863a3c2",
+    "candidate_sha256": "c0d4ac7d78e79b288be6a96fd7b82a77e54a315c4af22ca56ab7890d310da72d"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Narrative.cs",
+    "baseline_sha256": "3ab20324138bc285c000ec1f14adc3ba6db08738d0530c67cb9a523b09d79bed",
+    "candidate_sha256": "11d82304e16e1c8037b0750f4b2188d5336c174f85e347cb5848a580246ed871"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs",
+    "baseline_sha256": "c460f56458145811ecddc9be6072fdf68707c9ef39a1cc323cfc72c33d6d7adf",
+    "candidate_sha256": "f34043484e2ca90709dd43344f0791142d9e7c4c79261196eebd0826e2088c4b"
+  }
+]

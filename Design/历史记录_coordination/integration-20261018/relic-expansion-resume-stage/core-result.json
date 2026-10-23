@@ -1,0 +1,253 @@
+{
+  "runtime": ".NET 10, not Unity",
+  "assertions": 1253,
+  "regressionTests": 49,
+  "failures": 0,
+  "tests": [
+    {
+      "test": "TheTableHasTwentyFourRelicsInThreeTiers",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "EveryPairNamesTwoRealRelicsAndHasATextInBothLanguages",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "OwningMoreThanFourIsFineButOnlyFourAreEquipped",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "ARelicIsNeverGrantedTwice",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "AnUnequippedRelicDoesNothing",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "SwappingPutsTheOldOneBackInTheBackpackWithoutLosingIt",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "AnEquippedRelicMovesToAnotherSlotWithoutDoubling",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "AFreedSlotTakesTheNextArrivalAtOnce",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "AnArrivalWithFullSlotsGoesToTheBackpackAndMarksItNew",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "DropoutRaisesTheGainOfEveryRound",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "ImageNetAndAttentionRaiseTheirOwnLine",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheTaihuLightGivesTripleVramAndMoreGain",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheMiningCardDoublesVramAndRaisesThePowerBill",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheMultimeterCutsThePowerBill",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TiebaAndKinLowerBothAbilityLines",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "StackedThresholdRelicsStopAtTheFloor",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheCouponAndTheTermSheetCutTechTreePrices",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheServerKeyCutsTheRent",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheWatermelonBookRaisesTheYesNoAccuracy",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheTabletTriplesTheHandwritingMemory",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheRedBullFeedsMoreCardsPerRound",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "AllNightKeepsTheComboAliveThroughMistakesAndTime",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheCrunchPairLiftsTheComboCap",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheUsbStickAndKinAddSamplesToEveryHandLabel",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheNotebookExtrasBringSomeNoise",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheArcadeTokensAddOneSamplePerRightAnswer",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheForgedUserAgentTriplesWhatEachWordIsWorth",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheGoldBadgeAndTheTermSheetRaiseContractIncome",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "BatchNormAndItsPairLowerTheChanceOfADrop",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheResidualStickerExcusesOneFailedRoundEveryEight",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "EveryOtherPairChangesItsNumbers",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "EachRelicOnItsOwnMovesAtLeastOneChannel",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "NoDropComesBeforeTheFirstChoiceOfThree",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "ALearnedAbilityOffersThreeDifferentRelicsAndPickingOneKeepsIt",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "ChoicesQueueUpAndComeOneAtATime",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "LearningAnAbilityOffersAChoice",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "OnlyTheChoiceOfThreeCanShowALegendary",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "ADropRollsAtTheDocumentedChances",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "DropsAreSeededSoTheSameGameRollsTheSame",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "ARightAnswerInAGameRollsTheMiniDropAndACleanRunRollsThePerfectOne",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "EachWordTheResidentSpiderReadsRollsTheSmallChance",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheCrawlerRollsOncePerBatchWithTheSameOdds",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheCapsAndTheGapKeepDropsRare",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "ADropIsNeverOneYouAlreadyHave",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheBackpackTheSlotsAndTheChoiceSurviveASave",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "AnOldSaveWithoutRelicsGetsOneChoicePerAbilityItHas",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "AFreshGameOwesNothing",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "ABrokenSaveIsMendedWithoutLosingTheRest",
+      "status": "passed",
+      "error": ""
+    },
+    {
+      "test": "TheLegendariesAreOnlyInTheSourceText",
+      "status": "passed",
+      "error": ""
+    }
+  ]
+}

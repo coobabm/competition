@@ -9,7 +9,7 @@
       "play": "地洞里冒出带算式的地鼠（7+5=12），算对的敲，算错的放过。", "playEn": "Moles pop up wearing sums (7+5=12): whack the right ones, leave the wrong ones.",
       "fun": "敲错一只，它会龇牙；连敲十只，出一只金地鼠，分数翻倍。" },
     { "id": "minesweeper_yn", "name": "扫雷判官", "nameEn": "Minesweeper judge", "dataset": "logic", "stage": 1, "needs": "", "buy": false, "status": "new",
-      "play": "hongmengos 扫雷的残局，高亮一格，问「这格是雷吗？」。答是 / 否，点开验证。", "playEn": "A hongmengos Minesweeper endgame with one cell highlighted: is it a mine? Answer yes or no, then it opens.",
+      "play": "Aurora 7 扫雷的残局，高亮一格，问「这格是雷吗？」。答是 / 否，点开验证。", "playEn": "An Aurora 7 Minesweeper endgame with one cell highlighted: is it a mine? Answer yes or no, then it opens.",
       "fun": "答错就「嘭」一声满屏地雷，脸变成 X X。2016 年人人都玩过的那个扫雷。" },
     { "id": "make24", "name": "算 24", "nameEn": "Make 24", "dataset": "arith", "stage": 1, "needs": "", "buy": true, "status": "new",
       "play": "四张扑克牌，问「能凑出 24 吗？」答能 / 不能；答能的话，限时把算式拖出来。", "playEn": "Four playing cards: can they make 24? Yes or no; if yes, drag out the sum against the clock.",

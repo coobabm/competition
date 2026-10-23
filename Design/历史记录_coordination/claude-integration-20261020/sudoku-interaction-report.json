@@ -1,0 +1,10 @@
+{
+    "status": "passed",
+    "failure": "",
+    "unityVersion": "6000.4.5f1",
+    "detailReport": "real UI callbacks and lifecycle checks completed",
+    "enterPlayModeOptionsEnabled": true,
+    "enterPlayModeOptions": 1,
+    "errors": [],
+    "scope": "Batch-only empty scene; real Sudoku buttons, duplicate feedback, one-time settlement and lifecycle gates. No game runtime or Main scene is loaded. Editor play-mode settings are observed, never modified."
+}

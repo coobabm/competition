@@ -1,0 +1,198 @@
+3533141a406940d571e064f3797328c7d214235a
+ M Assets/LingGuangV05/CaseMenu/CaseMenuBootScreen.cs
+ M Assets/LingGuangV05/CaseMenu/CaseMenuHud.cs
+ M Assets/LingGuangV05/Core/Forum/LaoZhouQuestions.cs
+ M Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs
+ M Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs
+ M Assets/LingGuangV05/DesktopBridge/Casino/CasinoDesktop.cs
+ M Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Blackjack.cs
+ M Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.cs
+ M Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardReader.cs
+ M Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs
+ M Assets/LingGuangV05/DesktopBridge/Games/LudoPanel.cs
+ M Assets/LingGuangV05/DesktopBridge/Games/MonopolyPanel.cs
+ M Assets/LingGuangV05/DesktopBridge/Story/AjiePhoneSort.cs
+ M Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs
+ M Assets/LingGuangV05/DesktopBridge/Story/ZhouCardLoan.cs
+ M Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouQuestions.cs
+ M Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs
+ M Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs
+ M Assets/LingGuangV05/Editor/CasinoJuicePlayQa.cs
+ M Assets/LingGuangV05/Editor/CasinoPlayQa.cs
+ M Assets/LingGuangV05/Fonts/UiV4/FONT_CREDITS.txt
+ M Assets/LingGuangV05/Fonts/UiV4/SOURCE_MANIFEST.json
+ M Assets/LingGuangV05/LocalLLM/LlmPersonas.cs
+ M Assets/LingGuangV05/LocalLLM/LocalLlm.cs
+ M "Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset"
+ M Assets/LingGuangV05/Mail2016/EndingLetterPresenter.cs
+ M Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json
+ M "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset"
+ M "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset"
+ M Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/FONT_CREDITS.txt
+ M Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/Numeric.asset
+ M Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset
+ M Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt
+ M Assets/LingGuangV05/Resources/LingGuangV05/Media/PHOTO_CREDITS.txt
+ M Assets/LingGuangV05/XingGuang/Core/EndingLetterCatalog.cs
+ M Assets/LingGuangV05/XingGuang/Core/XgBlackjackRules.cs
+ M Assets/LingGuangV05/XingGuang/Core/XgEndingNarrative.cs
+ M Assets/LingGuangV05/XingGuang/Core/XgEndingPreparation.cs
+ M Assets/LingGuangV05/XingGuang/Core/XgEndingTextGuard.cs
+ M Assets/LingGuangV05/XingGuang/Core/XgGuide.cs
+ M Assets/LingGuangV05/XingGuang/Core/XgSim.Casino.cs
+ M Assets/LingGuangV05/XingGuang/Core/XgSim.DailyLife.cs
+ M Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/EndingLaunchNightPanel.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/EndingTrialPanel.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Narrative.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueMailBridge.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgIcons.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgStageSequenceDemo.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgUiV4Fonts.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs
+ M Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Profile.cs
+ M Assets/LingGuangV05/XingGuang/Tests/Editor/XgBlackjackTests.cs
+ M Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoFairnessTests.cs
+ M Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoTests.cs
+ M Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingNarrativeTests.cs
+ M Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingPreparationTests.cs
+ M Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingTextGuardTests.cs
+ M Assets/LingGuangV05/XingGuang/Tests/Editor/XgGuideTests.cs
+ M Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs
+ M Assets/LingGuangV05/YY2016/YYChatHub.cs
+ M Assets/LingGuangV05/YY2016/YYChatView.cs
+ M Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs
+ M Assets/LocalBuild/Editor/FilesWindowUiChecks.cs
+ M Assets/LocalBuild/Editor/LaoZhouNewsChecks.cs
+ M Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs
+ M Assets/LocalBuild/Editor/SidebarLayoutChecks.cs
+ M Assets/LocalBuild/Editor/TeachingFullRoundChecks.Actions.cs
+ M Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs
+ M Assets/LocalBuild/Editor/WorldYyGiftRoutingChecks.cs
+ M "Design/\345\205\255\345\260\217\346\227\266\346\225\264\345\220\210\345\206\263\347\255\226\350\256\260\345\275\225_20261019.md"
+ M "Design/\346\225\264\345\220\210\350\256\260\345\275\225.md"
+ M Packages/Aura/.gitignore
+?? .vsconfig
+?? Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs
+?? Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs.meta
+?? Assets/LingGuangV05/Core/GroupPresetLifecycle.cs
+?? Assets/LingGuangV05/Core/GroupPresetLifecycle.cs.meta
+?? Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Scam.cs
+?? Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Scam.cs.meta
+?? Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs
+?? Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs.meta
+?? Assets/LingGuangV05/Editor/UiV4FontWeights.cs
+?? Assets/LingGuangV05/Editor/UiV4FontWeights.cs.meta
+?? Assets/LingGuangV05/Fonts/UiV4/MiSans-Medium.ttf
+?? Assets/LingGuangV05/Fonts/UiV4/MiSans-Medium.ttf.meta
+?? Assets/LingGuangV05/Fonts/UiV4/MiSans-Semibold.ttf
+?? Assets/LingGuangV05/Fonts/UiV4/MiSans-Semibold.ttf.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset
+?? Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset
+?? Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg
+?? Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta
+?? Assets/LingGuangV05/Tests/Editor/GroupPresetLifecycleTests.cs
+?? Assets/LingGuangV05/Tests/Editor/GroupPresetLifecycleTests.cs.meta
+?? Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs
+?? Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs.meta
+?? Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs
+?? Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs.meta
+?? Assets/LingGuangV05/XingGuang/Core/XgEndingPresentation.cs
+?? Assets/LingGuangV05/XingGuang/Core/XgEndingPresentation.cs.meta
+?? Assets/LingGuangV05/XingGuang/Core/XgSim.Gambling.cs
+?? Assets/LingGuangV05/XingGuang/Core/XgSim.Gambling.cs.meta
+?? Assets/LingGuangV05/XingGuang/Core/XgSim.ReadNews.cs
+?? Assets/LingGuangV05/XingGuang/Core/XgSim.ReadNews.cs.meta
+?? Assets/LingGuangV05/XingGuang/Core/XgUnifiedAtlasCatalog.cs
+?? Assets/LingGuangV05/XingGuang/Core/XgUnifiedAtlasCatalog.cs.meta
+?? Assets/LingGuangV05/XingGuang/Desktop/XgAtlasTinyDemo.cs
+?? Assets/LingGuangV05/XingGuang/Desktop/XgAtlasTinyDemo.cs.meta
+?? Assets/LingGuangV05/XingGuang/Desktop/XgUnifiedAtlas.cs
+?? Assets/LingGuangV05/XingGuang/Desktop/XgUnifiedAtlas.cs.meta
+?? Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Atlas.cs
+?? Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Atlas.cs.meta
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs.meta
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoScamTests.cs
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoScamTests.cs.meta
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoSourceLocalizationTests.cs
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgCasinoSourceLocalizationTests.cs.meta
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingSmallAReviewedChecks.cs
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingSmallAReviewedChecks.cs.meta
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgReadNewsTests.cs
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgReadNewsTests.cs.meta
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgUnifiedAtlasChecks.cs
+?? Assets/LingGuangV05/XingGuang/Tests/Editor/XgUnifiedAtlasChecks.cs.meta
+?? Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs
+?? Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs.meta
+?? Assets/LingGuangV05/YY2016/YYChatHub.GroupLifecycle.cs
+?? Assets/LingGuangV05/YY2016/YYChatHub.GroupLifecycle.cs.meta
+?? Assets/LingGuangV05/YY2016/YYChatView.EndingPrivate.cs
+?? Assets/LingGuangV05/YY2016/YYChatView.EndingPrivate.cs.meta
+?? Assets/LocalBuild/Diagnostics.meta
+?? Assets/LocalBuild/Editor/CasinoScamActualUiRunner.cs
+?? Assets/LocalBuild/Editor/CasinoScamActualUiRunner.cs.meta
+?? Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs
+?? Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs.meta
+?? Assets/LocalBuild/Editor/EndingPrivateRemainingUiChecks.cs
+?? Assets/LocalBuild/Editor/EndingPrivateRemainingUiChecks.cs.meta
+?? Assets/LocalBuild/Editor/EndingPrivateRemainingUiRunner.cs
+?? Assets/LocalBuild/Editor/EndingPrivateRemainingUiRunner.cs.meta
+?? Assets/LocalBuild/Editor/EndingSmallAActualUiChecks.cs
+?? Assets/LocalBuild/Editor/EndingSmallAActualUiChecks.cs.meta
+?? Assets/LocalBuild/Editor/EndingSmallAActualUiRunner.cs
+?? Assets/LocalBuild/Editor/EndingSmallAActualUiRunner.cs.meta
+?? Assets/LocalBuild/Editor/FontBootPreview.cs
+?? Assets/LocalBuild/Editor/FontBootPreview.cs.meta
+?? Assets/LocalBuild/Editor/GroupPresetActualUiRunner.cs
+?? Assets/LocalBuild/Editor/GroupPresetActualUiRunner.cs.meta
+?? Assets/LocalBuild/Editor/GroupPresetRuntimeChecks.cs
+?? Assets/LocalBuild/Editor/GroupPresetRuntimeChecks.cs.meta
+?? Assets/LocalBuild/Editor/LaoZhouNewsCommentsUiChecks.cs
+?? Assets/LocalBuild/Editor/LaoZhouNewsCommentsUiChecks.cs.meta
+?? Assets/LocalBuild/Editor/ReadNewsRagActualUiChecks.cs
+?? Assets/LocalBuild/Editor/ReadNewsRagActualUiChecks.cs.meta
+?? Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.Boundaries.cs
+?? Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.Boundaries.cs.meta
+?? Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.cs
+?? Assets/LocalBuild/Editor/UnifiedAtlasActualUiChecks.cs.meta
+?? Assets/LocalBuild/Editor/UnifiedAtlasActualUiRunner.cs
+?? Assets/LocalBuild/Editor/UnifiedAtlasActualUiRunner.cs.meta
+?? "Design/Claude\344\270\273\345\257\274\345\215\217\344\275\234\344\272\244\346\216\245_20261019.md"
+?? "Design/Claude\345\215\217\344\275\234\344\272\244\346\216\245_20261019_\346\232\202\345\201\234\345\220\216\346\234\200\346\226\260\347\211\210.md"
+?? "Design/Claude\345\215\217\344\275\234\345\210\206\345\267\245_\345\211\251\344\275\231\344\273\273\345\212\241\345\220\204\345\215\212_20261019.md"
+?? "Design/Claude\347\216\257\345\242\203\351\231\220\345\210\266\344\270\216\346\225\264\345\220\210\347\272\240\345\201\217\350\256\260\345\275\225_20261019.md"
+?? "Design/Claude\347\254\254\344\272\214\350\275\256\345\215\217\344\275\234\345\210\206\345\267\245_20261019.md"
+?? "Design/Codex\345\211\251\344\275\231\346\225\264\345\220\210\351\252\214\346\224\266_20261019.md"
+?? "Design/Codex\346\224\266\345\260\276\344\270\216\351\200\200\345\207\272\345\255\230\346\241\243\346\240\270\345\257\271_20261019.md"
+?? "Design/\345\215\217\344\275\234\345\275\223\345\211\215\347\212\266\346\200\201_20261019.md"
+?? "Design/\345\217\221\345\270\203\346\235\220\346\226\231/"
+?? "Design/\345\255\227\344\275\223\344\270\216\345\274\200\346\234\272\351\241\265\346\224\271\347\211\210_Claude_20261019.md"
+?? "Design/\345\271\266\350\241\214\346\201\242\345\244\215\346\225\264\345\220\210\350\256\260\345\275\225_20261019.md"
+?? "Design/\346\234\254\350\275\256\344\272\244\344\273\230\345\211\251\344\275\231\346\270\205\345\215\225_20261019.md"
+?? "Design/\347\264\240\346\235\220\346\272\220\347\240\201/"
+?? "Design/\350\200\201\345\221\250\345\205\254\345\205\261\350\265\204\350\256\257\347\237\255\350\257\204_\346\226\260\345\242\236\345\257\271\347\231\275_20261019.md"

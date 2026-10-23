@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/Games/ChessComposer.cs",
+      "base_sha256": null,
+      "candidate_sha256": "57570d9a78a779c1ae73a9184cf7bc17f63063b73cb0618e42da1b659f699069"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/ChessComposer.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "52a096699ef69835b086e64fe89c684a826905288e0c7a9c8aef3214d9746552"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardComposer.cs",
+      "base_sha256": null,
+      "candidate_sha256": "62051cb104974945a1021c5ffddb4ccae7b8ce187a1bab699f2eb86c8e707eb7"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardComposer.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "aaa70bd8ca32416f3340c8ba948915138442bf2e618aadffb9d09a32ad3833fd"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "base_sha256": "193585567f3c3441bee13b00f2a5d68147b68d0eda85887b405633892b8e7e6a",
+      "candidate_sha256": "67f2e7650b14c859f7278119f72750db658551b123e39ca8114ac2a4ac16faa2"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/ChessComposerTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "56b5ede5ffc1cfea864bac9feb9a5f48379ea3ecc3341ef07b368cdbc6ae68bf"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/ChessComposerTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "b4518eb4dfbedf996191cfa2234adc1317c285f240d926645befa7f71e2e1c15"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/BoardComposerUiQaHelper.cs",
+      "base_sha256": null,
+      "candidate_sha256": "57ce2fc1549d9765be8e30f1f88313f9f979955d27f262db775de4ee91225746"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/BoardComposerUiQaHelper.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "e68b2f760bc3d8f9c076b0bf031e503a098c2d03e17216fb558f161741bf77e7"
+    }
+  ],
+  "new_tests": 4,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

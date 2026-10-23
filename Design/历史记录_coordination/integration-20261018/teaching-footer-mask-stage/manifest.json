@@ -1,0 +1,13 @@
+{
+  "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgDeskGamePage.cs",
+  "baselineSha256": "5a4f9597c06a5eaf03254135f52085e8884b7132b334d3485708026291e56bd9",
+  "candidateSha256": "72a7ddb40a0cd0190c76135b8c4eaae0be7920ed2456d5e0946f8debb6a96ed7",
+  "patchSha256": "2a7e1261abe8247e6d493faaa11954b66d78b8af9f009e7f4699fe76706b7e86",
+  "gitApplyCheck": "passed",
+  "historicalFailureReport": "competition-latest-20261016/LocalVerification/TeachingFullRounds/20261018-232633-667/report.json",
+  "historicalFailureReportSha256": "da2e329df715a2f1674b6aafaf4bd4f34e90c3b47f7294fcc04d29b97c834716",
+  "screenshotVisuallyInspected": true,
+  "productModified": false,
+  "qaModified": false,
+  "runtimeExecuted": false
+}

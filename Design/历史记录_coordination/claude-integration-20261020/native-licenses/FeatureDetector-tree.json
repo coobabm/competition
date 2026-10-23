@@ -1,0 +1,148 @@
+{
+  "sha": "077393260d5e0e19938582a33b9dd0e74baa8ff2",
+  "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/trees/077393260d5e0e19938582a33b9dd0e74baa8ff2",
+  "tree": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0699ec9685032da562878906f3d62bcbd83ef34b",
+      "size": 139,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/0699ec9685032da562878906f3d62bcbd83ef34b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "19aa0b17816abf29fc72a865e0158b7e0d02e173",
+      "size": 325,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/19aa0b17816abf29fc72a865e0158b7e0d02e173"
+    },
+    {
+      "path": "FeatureDetector.sln",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f6ec6a0a4b1fc3e66911e386cd8a85d098527bd",
+      "size": 969,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/1f6ec6a0a4b1fc3e66911e386cd8a85d098527bd"
+    },
+    {
+      "path": "FeatureDetector",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5f8cd16a504b4d55a7b5ffe7dd2519f49478f3df",
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/trees/5f8cd16a504b4d55a7b5ffe7dd2519f49478f3df"
+    },
+    {
+      "path": "FeatureDetector/FeatureDetector.vcxproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5837340ff246d138be9da1e385d6542248f22065",
+      "size": 4278,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/5837340ff246d138be9da1e385d6542248f22065"
+    },
+    {
+      "path": "FeatureDetector/FeatureDetector.vcxproj.filters",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f237a5551047d0fcb21fb5314b3d50f64299b50",
+      "size": 1552,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/3f237a5551047d0fcb21fb5314b3d50f64299b50"
+    },
+    {
+      "path": "FeatureDetector/FeatureDetector.vcxproj.user",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef5ff2a1fae669e995b58fb11281de92ca5fab27",
+      "size": 162,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/ef5ff2a1fae669e995b58fb11281de92ca5fab27"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "670154e3538863b2d9891fd5483160fbdfc89164",
+      "size": 6555,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/670154e3538863b2d9891fd5483160fbdfc89164"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41be7a1b9030196799ebd785a75f4d7e1a225262",
+      "size": 1161,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/41be7a1b9030196799ebd785a75f4d7e1a225262"
+    },
+    {
+      "path": "SConstruct",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ff237f961bb1aed90d146c4ea65231a2319396ca",
+      "size": 72,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/ff237f961bb1aed90d146c4ea65231a2319396ca"
+    },
+    {
+      "path": "src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "82f6fd686a6bad7f14adc284716c568932688039",
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/trees/82f6fd686a6bad7f14adc284716c568932688039"
+    },
+    {
+      "path": "src/Main.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d12d7524ff1410d0c42e7b055ce9d843b06f32de",
+      "size": 420,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/d12d7524ff1410d0c42e7b055ce9d843b06f32de"
+    },
+    {
+      "path": "src/x86",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5517a2cfc0ac23cd09cc3190869a7d3be4afa1e1",
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/trees/5517a2cfc0ac23cd09cc3190869a7d3be4afa1e1"
+    },
+    {
+      "path": "src/x86/CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5851f5633a65a626d51e33ca24542b3184b27a99",
+      "size": 90,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/5851f5633a65a626d51e33ca24542b3184b27a99"
+    },
+    {
+      "path": "src/x86/cpu_x86.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9475f6b612d31f82374468c9f1fcb8f340613311",
+      "size": 10132,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/9475f6b612d31f82374468c9f1fcb8f340613311"
+    },
+    {
+      "path": "src/x86/cpu_x86.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6162b10db464935ec94f4132fde36b0d10ce1dac",
+      "size": 2953,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/6162b10db464935ec94f4132fde36b0d10ce1dac"
+    },
+    {
+      "path": "src/x86/cpu_x86_Linux.ipp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1bb02ed7d14498fe74a514cd1055e5aed72a89e3",
+      "size": 1803,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/1bb02ed7d14498fe74a514cd1055e5aed72a89e3"
+    },
+    {
+      "path": "src/x86/cpu_x86_Windows.ipp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b545e226bd1633ae57674e67ffa0d98a37e08baa",
+      "size": 2280,
+      "url": "https://api.github.com/repos/Mysticial/FeatureDetector/git/blobs/b545e226bd1633ae57674e67ffa0d98a37e08baa"
+    }
+  ],
+  "truncated": false
+}

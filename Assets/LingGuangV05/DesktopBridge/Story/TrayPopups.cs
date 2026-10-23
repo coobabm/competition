@@ -147,7 +147,7 @@ namespace LingGuangV05.Desktop.Story
             if (who.Contains("贴吧") || who.Contains("Tieba")) return (new Color32(44, 100, 204, 255), new Color32(88, 145, 239, 255), Lang.T("贴"), Lang.T("确定"));
             if (who.Contains("360")) return (new Color32(36, 160, 62, 255), new Color32(76, 196, 96, 255), "360", Lang.T("知道了"));
             if (who.Contains("迅雷") || who.Contains("Thunder")) return (new Color32(26, 110, 205, 255), new Color32(70, 150, 235, 255), Lang.T("迅"), Lang.T("知道了"));
-            if (who.Contains("hongmengos") || who.Contains("Windows")) return (new Color32(0, 90, 170, 255), new Color32(30, 125, 210, 255), "⊞", Lang.T("以后再说"));
+            if (who.Contains("Aurora") || who.Contains("hongmengos") || who.Contains("Windows")) return (new Color32(0, 90, 170, 255), new Color32(30, 125, 210, 255), "⊞", Lang.T("以后再说"));
             // 摆渡众包 (the crowd-labelling platform) wears the search giant's deep blue.
             if (who.Contains("摆渡众包") || who.Contains("Bodu Crowd")) return (new Color32(41, 50, 225, 255), new Color32(78, 110, 242, 255), T("众", "BC"), Lang.T("查看详情"));
             if (who.Contains("摆渡云") || who.Contains("Bodu Cloud")) return (new Color32(45, 127, 224, 255), new Color32(95, 165, 245, 255), Lang.T("云"), Lang.T("开通会员"));
@@ -164,7 +164,7 @@ namespace LingGuangV05.Desktop.Story
             if (who.Contains("贴吧") || who.Contains("Tieba")) return "tieba";
             if (who.Contains("360")) return "qh360";
             if (who.Contains("迅雷") || who.Contains("Thunder")) return "xunlei";
-            if (who.Contains("hongmengos") || who.Contains("Windows")) return "windows";
+            if (who.Contains("Aurora") || who.Contains("hongmengos") || who.Contains("Windows")) return "windows";
             if (who.Contains("摆渡众包") || who.Contains("Bodu Crowd")) return "bodu_crowd";
             if (who.Contains("摆渡云") || who.Contains("Bodu Cloud")) return "bodu_cloud";
             if (who.Contains("淘货") || who.Contains("Taohuo")) return "taohuo";

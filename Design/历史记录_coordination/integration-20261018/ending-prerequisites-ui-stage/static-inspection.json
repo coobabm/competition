@@ -1,0 +1,12 @@
+{
+  "lexicalBalance": "pass",
+  "sourceFiles": 5,
+  "preparedTests": 10,
+  "newTextPairs": 87,
+  "patchEncoding": "UTF-8 LF",
+  "unityExecuted": false,
+  "dotnetExecuted": false,
+  "modelExecuted": false,
+  "runtimeOrRealUiVerified": false,
+  "note": "Static inspection is not compilation or gameplay validation."
+}

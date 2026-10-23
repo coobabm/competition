@@ -1,0 +1,46 @@
+Checking patch Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs...
+Checking patch Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs...
+error: while searching for:
+    /// at stage 1, one of a few at stage 2, words from ability 3. Until it has joined, its lines stay on the 概览 page's
+    /// 「它刚说」 card. Attaches itself next to the 灵光 controller at scene load.
+    /// </summary>
+    public sealed class XgYyTalk : MonoBehaviour, ILingGuangTalk
+    {
+        const string Id = YYChatHub.LingGuangId;
+        /// <summary>Seconds before a reply shows: it reads first, like a person, even when the answer is fixed or offline.</summary>
+
+error: patch failed: Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs:26
+Hunk #3 succeeded at 155 (offset 4 lines).
+error: while searching for:
+        {
+            var sim = bound;
+            if (sim == null || message == null) return false;
+            string text = NativeLaoZhouReplies.NormalizeInput(message.text);
+            if (text.Length == 0) return true;
+            if (!replayQueued) sim.CountLoveAsk(text);
+
+error: patch failed: Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs:187
+Hunk #5 succeeded at 226 (offset 6 lines).
+Hunk #6 succeeded at 312 (offset 8 lines).
+Hunk #7 succeeded at 396 (offset 8 lines).
+Checking patch Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Learning.cs...
+Checking patch Assets/LingGuangV05/YY2016/YYChatHub.cs...
+Checking patch Assets/LingGuangV05/YY2016/YYChatView.cs...
+Checking patch Assets/LingGuangV05/YY2016/YYChatView.Learning.cs...
+Checking patch Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json...
+Checking patch Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json...
+Applied patch Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs cleanly.
+Applying patch Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs with 2 rejects...
+Rejected hunk #1.
+Hunk #2 applied cleanly.
+Hunk #3 applied cleanly.
+Rejected hunk #4.
+Hunk #5 applied cleanly.
+Hunk #6 applied cleanly.
+Hunk #7 applied cleanly.
+Applied patch Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Learning.cs cleanly.
+Applied patch Assets/LingGuangV05/YY2016/YYChatHub.cs cleanly.
+Applied patch Assets/LingGuangV05/YY2016/YYChatView.cs cleanly.
+Applied patch Assets/LingGuangV05/YY2016/YYChatView.Learning.cs cleanly.
+Applied patch Assets/LingGuangV05/Resources/LingGuangV05/YY/persona_packs.json cleanly.
+Applied patch Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json cleanly.

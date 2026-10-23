@@ -308,7 +308,7 @@ MonoBehaviour:
       audioValue: {fileID: 0}
       spriteValue: {fileID: 0}
     - key: SetupWelcomeDesc
-      value: "\u6211\u5C06\u5E2E\u52A9\u4F60\u5B8C\u6210 <b>hongmengos</b> \u7684\u521D\u59CB\u8BBE\u7F6E\u3002\n\u51C6\u5907\u597D\u4E86\u5417\uFF1F"
+      value: "\u6211\u5C06\u5E2E\u52A9\u4F60\u5B8C\u6210 <b>Aurora 7</b> \u7684\u521D\u59CB\u8BBE\u7F6E\u3002\n\u51C6\u5907\u597D\u4E86\u5417\uFF1F"
       audioValue: {fileID: 0}
       spriteValue: {fileID: 0}
     - key: SetupButtonLetsGo
@@ -513,7 +513,7 @@ MonoBehaviour:
       spriteValue: {fileID: 0}
     - key: SetupFinalDescSimple
       value: "\u5373\u5C06\u5B8C\u6210\uFF01\n\u73B0\u5728\u53EF\u4EE5\u91CD\u542F\u7CFB\u7EDF\uFF0C\u5F00\u59CB\u4F7F\u7528
-        <b>hongmengos</b>\u3002"
+        <b>Aurora 7</b>\u3002"
       audioValue: {fileID: 0}
       spriteValue: {fileID: 0}
   - table: {fileID: 11400000, guid: 0eb7e7ab93f454510aac812a1eb2dc34, type: 2}

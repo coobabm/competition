@@ -1,0 +1,127 @@
+[
+  {
+    "test": "TheDrawsAreDeterministicFromTheSeed",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheDrawsLeaveTheLabsOwnDiceAlone",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "OnlyEligibleEventsFire",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "HoardingBringsANudgeThatNeverTakesMoneyByItself",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "NeverTwoAtOnce",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheIntervalIsEightMinutesFromResultClose",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "ABusyPlayerPausesTimeAndAnAlreadyDueDrawGetsGrace",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "NoEventBeforeTrainingCurveAndFinaleRemainsQuiet",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "OldSavesLoad",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "LendingACardUnplugsItForAWhileAndEarnsAFavour",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "ZhousServerCardBurnsOutOnlyOnce",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "RefusingCoolsZhouALittle",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheFavourBringsTheLongestDownloadAtOnce",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "KeepingTheFavourLeavesTheDownloadAlone",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "BadSectorsLoseABatchOrCostABackup",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "BadSectorsNeedAFullDisk",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "BroadbandRenewsForThreeMonthsOrDropsATier",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheLandlordComesAfterTwoHighMonths",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "PeopleRespectYouMoreOnceYouAreFurtherAlongAndNeverBefore",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheRoommateGetsQuietOrRedBull",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "APlayersOwnUnplugIsLeftAlone",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheForumGivesSamplesOrATip",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "LentMoneyComesBack",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "YuebaoPaysALittleAndHangingUpCostsNothing",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "EveryEventHasAFreeChoiceAndBilingualText",
+    "status": "passed",
+    "error": ""
+  }
+]

@@ -1,0 +1,119 @@
+fixture bound
+[Exception] ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+System.Collections.Generic.List`1[T].get_Item (System.Int32 index) (at <f713e1c3c5f545ce9b1df47230f4f853>:0)
+UnityEditor.Search.SearchDatabase+<EnumerateAll>d__80.MoveNext () (at <7c2ffc61e6954a57ab9283f483f825e2>:0)
+System.Linq.Enumerable.TryGetFirst[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Boolean& found) (at <101642b95873440bbf9fec45cfcaa487>:0)
+System.Linq.Enumerable.First[TSource] (System.Collections.Generic.IEnumerable`1[T] source) (at <101642b95873440bbf9fec45cfcaa487>:0)
+UnityEditor.Search.SearchDatabase.GetDefaultSearchDatabase () (at <7c2ffc61e6954a57ab9283f483f825e2>:0)
+UnityEditor.Search.SearchInit.IndexationOnStartup () (at <7c2ffc61e6954a57ab9283f483f825e2>:0)
+UnityEditor.EditorApplication.Internal_CallDelayFunctions () (at <5cd1e59afb2c420d8621a96062f56dea>:0)
+
+testmode False
+driver started
+hires src was 1280x720 screen 640x480
+quiet XgLifeEventCard
+quiet DesktopNotifications
+quiet XgEndingPreparationHost
+quiet ShopNotices
+quiet XgPlatformPopups
+quiet XgHoloCard
+quiet XgPublicDiscourseNotifier
+quiet YYGirlfriend
+quiet XgDailyUnlockNotifier
+quiet ZhouCardLoan
+shot d_desktop 2560x1440
+== part teach
+fit Container parent 1920x1030 -> (1651.20, 919.79)
+desk playing=True sel=kaixincidian focused=True
+  open window: 灵光.exe
+  open window: Web Browser
+shot t_teach_before 2560x1440
+Q0: 企鹅住在沙漠里。 | why: 企鹅大多住在南极一带，冷得很。
+shot t_combo_0_a 2560x1440
+shot t_combo_0_b 2560x1440
+shot t_combo_0_c 2560x1440
+shot t_combo_0_d 2560x1440
+Q1: 电影《魔兽》是根据金庸小说改编的。 | why: 金庸写的是武侠，没写过兽人。
+shot t_combo_1_a 2560x1440
+shot t_combo_1_b 2560x1440
+shot t_combo_1_c 2560x1440
+shot t_combo_1_d 2560x1440
+Q2: 鲸鱼是用鳃呼吸的鱼。 | why: 鲸鱼用肺呼吸，要浮上水面换气。
+shot t_combo_2_a 2560x1440
+shot t_combo_2_b 2560x1440
+shot t_combo_2_c 2560x1440
+shot t_combo_2_d 2560x1440
+Q3: 雪是热的。 | why: 雪是冷的。
+shot t_combo_3_a 2560x1440
+shot t_combo_3_b 2560x1440
+shot t_combo_3_c 2560x1440
+shot t_combo_3_d 2560x1440
+Q4: 太阳从东边升起。 | why: 太阳每天从东边升起，从西边落下。
+shot t_combo_4_a 2560x1440
+shot t_combo_4_b 2560x1440
+shot t_combo_4_c 2560x1440
+shot t_combo_4_d 2560x1440
+Q5: 很多中国人吃饭用筷子。 | why: 两根筷子，夹菜扒饭。
+shot t_combo_5_a 2560x1440
+shot t_combo_5_b 2560x1440
+shot t_combo_5_c 2560x1440
+shot t_combo_5_d 2560x1440
+combo now 17
+== part train
+trained epochs 26 unlocked=True
+fit Container parent 1920x1030 -> (1267.20, 919.79)
+brain False
+brain size (576.00, 432.60) parent 1920x1030
+shot r_train_idle 2560x1440
+begin epoch True
+shot r_train_live_1 2560x1440
+shot r_train_live_3 2560x1440
+shot r_train_live_5 2560x1440
+shot r_train_live_7 2560x1440
+shot r_train_live_9 2560x1440
+shot r_train_after 2560x1440
+== part tree
+fit Container parent 1920x1030 -> (1651.20, 919.79)
+shot k_tree_frontier 2560x1440
+shot k_tree_ab2 2560x1440
+shot k_tree_ab2_z 2560x1440
+shot k_tree_ab3 2560x1440
+shot k_tree_ab3_z 2560x1440
+shot k_tree_ab4 2560x1440
+shot k_tree_ab4_z 2560x1440
+shot k_tree_lenet_z 2560x1440
+shot k_tree_alexnet_z 2560x1440
+== part yy
+yy open True
+fit Container parent 1920x1030 -> (1190.40, 841.51)
+  yy[lingguang] 我看了你的桌面。左边一排图标，中间是我的窗口，右下角的钟一直在走。
+  yy[lingguang] 你……我是？
+shot y_yy_open 2560x1440
+  yy[lingguang] 我看了你的桌面。左边一排图标，中间是我的窗口，右下角的钟一直在走。
+  yy[lingguang] 你……我是？
+  yy[me] 你是怎么被训练出来的？
+  yy[lingguang] 一张，一张。
+shot y_yy_reply1 2560x1440
+  yy[lingguang] 我看了你的桌面。左边一排图标，中间是我的窗口，右下角的钟一直在走。
+  yy[lingguang] 你……我是？
+  yy[me] 你是怎么被训练出来的？
+  yy[lingguang] 一张，一张。
+  yy[me] 今天想学点什么？
+  yy[lingguang] 你说过来的。
+shot y_yy_reply2 2560x1440
+shot y_yy_reply2_min 2560x1440
+== part tieba
+tieba hub True view True
+fit Container parent 1920x1030 -> (1344.00, 880.65)
+spider True active True
+shot b_tieba_0 2560x1440
+shot b_tieba_1 2560x1440
+shot b_tieba_2 2560x1440
+shot b_tieba_3 2560x1440
+shot b_tieba_4 2560x1440
+shot b_tieba_5 2560x1440
+shot b_tieba_6 2560x1440
+shot b_tieba_7 2560x1440
+shot b_tieba_8 2560x1440
+DONE PASS

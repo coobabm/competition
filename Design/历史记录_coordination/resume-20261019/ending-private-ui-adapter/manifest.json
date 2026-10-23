@@ -1,0 +1,14 @@
+{
+  "base": "ending-private-paused.patch applied; original flatten-only patch preserved",
+  "files": [
+    "Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs"
+  ],
+  "incrementalPatch": "patch/ending-private-ui-driver-isolation.patch",
+  "incrementalSHA256": "ac6d9c9d281b8ed89d1d948419c032e51066b7b04700f38b80b3600927750101",
+  "incrementalBase": "ending-private-ui-flatten.patch already applied",
+  "combinedPatch": "patch/ending-private-ui-adapter.patch",
+  "combinedSHA256": "9875a3c0290836c8aefe343e7a1de9fb485220759f594954c704698af1f75893",
+  "preservedFlattenSHA256": "79275be7056464a8b11c3a74381718be608bf464ec034e70046f03c5b3bef7bd",
+  "candidateSourceSHA256": "a47c7c9b25afb7af2003ac9e86f8275516e3044bb5ffdf04e73da2ec1eb1410a",
+  "validation": "Read-only git apply --check passed against production with prior flatten patch; no Unity compile, PlayMode, model, or build run by this agent."
+}

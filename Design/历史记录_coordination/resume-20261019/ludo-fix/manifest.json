@@ -1,0 +1,20 @@
+{
+  "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\DesktopBridge\\Games\\LudoPanel.cs",
+  "base_sha256": "f9027705de5162484338f897a84484b96e2dbb5df5875b63c5dc4c51ceeea349",
+  "candidate_sha256": "6845b11066a68bb638fb5b58299ffed89e9e04b0ba9ceed068d5befadd495ad8",
+  "changed_files": [
+    "Assets/LingGuangV05/DesktopBridge/Games/LudoPanel.cs"
+  ],
+  "unchanged": [
+    "LudoGame rules/state/randomness",
+    "Roll, Move, Update, AfterAction methods",
+    "BoardGamesUiPlayQa and its actual LCD pointer path",
+    "production tree"
+  ],
+  "verification_method": "Exact candidate geometry methods extracted; compiled against unchanged core LudoGame with a minimal float Vector2/Mathf shim. This is geometry/core verification, not Unity or raycast verification.",
+  "sizes": {
+    "single_base_home": 34,
+    "two_stacked": 22,
+    "three_or_four_stacked": 18
+  }
+}

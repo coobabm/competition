@@ -1,0 +1,94 @@
+{
+  "status": "passed",
+  "tests": 14,
+  "failures": 0,
+  "unityExecuted": false,
+  "originalProductionTestCount": 12,
+  "results": [
+    {
+      "test": "MissingSaveIsANewGameWithoutWritingFiles",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-bbc3a240aca240b68a55ceb13292fcd3"
+    },
+    {
+      "test": "ChinesePayloadRoundTripsExactly",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-dd6c69cb41bb4547a33c3794a4b1a49e"
+    },
+    {
+      "test": "SecondSaveRetainsPreviousGoodBackup",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-8aa1a1507cf1409aa67a78a056a07a42"
+    },
+    {
+      "test": "SavingAfterRecoveryDoesNotReplaceGoodBackupWithCorruption",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-49e411009b3d4f2e8a63e5f114ba806c"
+    },
+    {
+      "test": "BothCorruptSavesBlockAutomaticOverwrite",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-03637e585cae4e1d9158ad5f90dd0699"
+    },
+    {
+      "test": "HashTamperingIsRejected",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-c38cdf7842724d38b089baee737ae0e2"
+    },
+    {
+      "test": "FutureFormatDoesNotRollbackToBackup",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-eddfb02daefb4e6eb18c82cc97c98433"
+    },
+    {
+      "test": "OversizedAndEmptyPayloadsAreRejected",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-88e08e4a4b64446684ed9e23a5835859"
+    },
+    {
+      "test": "TemporaryFileIsNotLoadedAfterInterruptedFirstSave",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-bcd4c7720fea4022a5de8da69c65b83b"
+    },
+    {
+      "test": "SaveFailureDoesNotThrow",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-12611f6090764721a89300edf7806b92"
+    },
+    {
+      "test": "InvalidPayloadWithValidHashFallsBackToValidatedBackup",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-0f20c24b148c415580fd794e0765aef2"
+    },
+    {
+      "test": "ConfirmedResetArchivesRatherThanDeletingOriginal",
+      "status": "passed",
+      "error": "",
+      "folder": "C:\\Users\\xomem\\AppData\\Local\\Temp\\lingguang-save-tests-412c38457d8449ec9dce52d18801ca2d"
+    },
+    {
+      "test": "OversizeUtf8FreshWritesNothing",
+      "status": "passed",
+      "payloadBytes": 268435458,
+      "payloadChars": 89478486,
+      "callbacks": 0
+    },
+    {
+      "test": "OversizeUtf8PreservesPreviousWithoutBlocks",
+      "status": "passed",
+      "folder": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\.coordination\\integration-20261018\\learning-records-stage\\StorageVerification\\oversize-82e6023440074442bcf72a39efd734cb\\existing",
+      "callbacks": 0
+    }
+  ]
+}

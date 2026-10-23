@@ -1,0 +1,223 @@
+{
+  "scope": "Editor isolated workload; local model disabled. Different source including font changes. No attribution of whole-frame delta to D2. Raw frame audit pending. Recorder nanoseconds are not per-event means; nested timings overlap.",
+  "earlier": "competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261019-092802-102-66ee98",
+  "current": "competition-latest-20261016\\LocalVerification\\IntegrationProfiler\\20261019-112234-894-8d0eff",
+  "phases": [
+    {
+      "phase": "teach-continuous",
+      "earlier": {
+        "renderedFrames": 1665,
+        "actionAttempts": 81,
+        "completedActions": 81,
+        "frameMeanMs": 18.005861571601205,
+        "frameP95Ms": 25.310897827148438,
+        "frameMaxMs": 65.4166030883789,
+        "wallSeconds": 30.214341899999994
+      },
+      "current": {
+        "renderedFrames": 1648,
+        "actionAttempts": 81,
+        "completedActions": 81,
+        "frameMeanMs": 18.18646316997056,
+        "frameP95Ms": 24.528196334838867,
+        "frameMaxMs": 52.032100677490234,
+        "wallSeconds": 30.196062100000013
+      },
+      "currentTiebaRecorders": [
+        {
+          "name": "TiebaView.Redraw(Go)",
+          "unit": "TimeNanoseconds",
+          "samples": 1648,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw(Cleared)",
+          "unit": "TimeNanoseconds",
+          "samples": 1648,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw(KeyChanged)",
+          "unit": "TimeNanoseconds",
+          "samples": 1648,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.RefreshKey",
+          "unit": "TimeNanoseconds",
+          "samples": 1648,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw.Side",
+          "unit": "TimeNanoseconds",
+          "samples": 1648,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw.Clear",
+          "unit": "TimeNanoseconds",
+          "samples": 1648,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw.Page",
+          "unit": "TimeNanoseconds",
+          "samples": 1648,
+          "mean": 0.0,
+          "max": 0.0
+        }
+      ]
+    },
+    {
+      "phase": "train-auto",
+      "earlier": {
+        "renderedFrames": 1728,
+        "actionAttempts": 29,
+        "completedActions": 16,
+        "frameMeanMs": 17.34294306790387,
+        "frameP95Ms": 22.445295333862305,
+        "frameMaxMs": 65.11739349365234,
+        "wallSeconds": 30.24040260000001
+      },
+      "current": {
+        "renderedFrames": 1692,
+        "actionAttempts": 29,
+        "completedActions": 16,
+        "frameMeanMs": 17.715750006637393,
+        "frameP95Ms": 23.78280258178711,
+        "frameMaxMs": 98.5509033203125,
+        "wallSeconds": 30.19647789999999
+      },
+      "currentTiebaRecorders": [
+        {
+          "name": "TiebaView.Redraw(Go)",
+          "unit": "TimeNanoseconds",
+          "samples": 1692,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw(Cleared)",
+          "unit": "TimeNanoseconds",
+          "samples": 1692,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw(KeyChanged)",
+          "unit": "TimeNanoseconds",
+          "samples": 1692,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.RefreshKey",
+          "unit": "TimeNanoseconds",
+          "samples": 1692,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw.Side",
+          "unit": "TimeNanoseconds",
+          "samples": 1692,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw.Clear",
+          "unit": "TimeNanoseconds",
+          "samples": 1692,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw.Page",
+          "unit": "TimeNanoseconds",
+          "samples": 1692,
+          "mean": 0.0,
+          "max": 0.0
+        }
+      ]
+    },
+    {
+      "phase": "yy-tieba-switch",
+      "earlier": {
+        "renderedFrames": 1550,
+        "actionAttempts": 20,
+        "completedActions": 20,
+        "frameMeanMs": 19.325593000227403,
+        "frameP95Ms": 32.8400993347168,
+        "frameMaxMs": 105.62080383300781,
+        "wallSeconds": 30.209227999999996
+      },
+      "current": {
+        "renderedFrames": 1493,
+        "actionAttempts": 20,
+        "completedActions": 20,
+        "frameMeanMs": 20.06835263412588,
+        "frameP95Ms": 34.2599983215332,
+        "frameMaxMs": 138.18130493164062,
+        "wallSeconds": 30.183647199999996
+      },
+      "currentTiebaRecorders": [
+        {
+          "name": "TiebaView.Redraw(Go)",
+          "unit": "TimeNanoseconds",
+          "samples": 1493,
+          "mean": 261583.9249832552,
+          "max": 48695500.0
+        },
+        {
+          "name": "TiebaView.Redraw(Cleared)",
+          "unit": "TimeNanoseconds",
+          "samples": 1493,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        {
+          "name": "TiebaView.Redraw(KeyChanged)",
+          "unit": "TimeNanoseconds",
+          "samples": 1493,
+          "mean": 84104.75552578701,
+          "max": 40213000.0
+        },
+        {
+          "name": "TiebaView.RefreshKey",
+          "unit": "TimeNanoseconds",
+          "samples": 1493,
+          "mean": 3127.3275284661754,
+          "max": 216100.0
+        },
+        {
+          "name": "TiebaView.Redraw.Side",
+          "unit": "TimeNanoseconds",
+          "samples": 1493,
+          "mean": 44305.961152042866,
+          "max": 6167800.0
+        },
+        {
+          "name": "TiebaView.Redraw.Clear",
+          "unit": "TimeNanoseconds",
+          "samples": 1493,
+          "mean": 11059.14266577361,
+          "max": 1797000.0
+        },
+        {
+          "name": "TiebaView.Redraw.Page",
+          "unit": "TimeNanoseconds",
+          "samples": 1493,
+          "mean": 290125.3851306095,
+          "max": 44579900.0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-19",
+  "image_count": 10,
+  "image_decode_dimensions_rgb": "passed",
+  "candidate_overlay_sha256": "passed",
+  "meta_guid_unique_no_production_collisions": "passed",
+  "production_targets_absent": "passed",
+  "bilingual_mappings": 20,
+  "git_apply_check_exit_code": 0,
+  "git_apply_check_output": "",
+  "visual_review": "All ten individual scenes and contact/bubble-size proofs reviewed; described fixes in README",
+  "unity_editor_started": false,
+  "player_started": false,
+  "model_started": false,
+  "production_written_by_this_subtask": false
+}

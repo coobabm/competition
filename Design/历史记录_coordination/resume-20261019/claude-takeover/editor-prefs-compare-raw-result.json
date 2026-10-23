@@ -1,0 +1,8 @@
+{
+  "action": "Compare",
+  "subkey": "Software\\Unity\\UnityEditor\\DefaultCompany\\competition",
+  "unchanged": true,
+  "comparison": "raw type, byte length, bytes, names and key existence",
+  "beforeValues": 20,
+  "currentValues": 20
+}

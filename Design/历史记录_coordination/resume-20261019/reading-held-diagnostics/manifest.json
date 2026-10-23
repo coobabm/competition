@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs",
+      "baseline_sha256": "e586828c4d7ad0c6441064116420327b01b3d4ca8b56d99a4772664164a7f451",
+      "candidate_sha256": "3bd7cdd403dad3bd30407a2add253492ca86e06043d50aac242b806a453de198"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingHeldPointerProbe.cs",
+      "baseline_sha256": null,
+      "candidate_sha256": "a473dfaad7330be65554f9db39670ca396829e955ce2b607648870f8e7a254bc"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingHeldPointerProbe.cs.meta",
+      "baseline_sha256": null,
+      "candidate_sha256": "8194a12951c484223b5ae198ede57c395b9490cf60cf7dc314a0191db9a1d13a"
+    }
+  ],
+  "patch_sha256": "a2af7313cf9838370207d87262b71080ea014f41ac3f4014cd48da0683d98ca1"
+}

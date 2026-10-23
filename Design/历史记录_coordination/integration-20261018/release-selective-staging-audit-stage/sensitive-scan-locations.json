@@ -1,0 +1,2193 @@
+{
+  "scope": "tracked added lines and full untracked UTF-8 text only; no unchanged tracked lines, ignored files, binaries, external files or GGUF opened",
+  "scannedFileCount": 533,
+  "scannedLineCount": 34888,
+  "matches": [],
+  "localFileDependencyLocations": [
+    {
+      "path": "Design/六小时整合决策记录_20261019.md",
+      "line": 103
+    }
+  ],
+  "skipped": [
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset",
+      "reason": "over 4 MiB; generated font asset, handled separately"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/ReadingSerif.asset",
+      "reason": "over 4 MiB; generated font asset, handled separately"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset",
+      "reason": "over 4 MiB; generated font asset, handled separately"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg",
+      "reason": "binary; not scanned"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg",
+      "reason": "binary; not scanned"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg",
+      "reason": "binary; not scanned"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg",
+      "reason": "binary; not scanned"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg",
+      "reason": "binary; not scanned"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg",
+      "reason": "binary; not scanned"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png",
+      "reason": "binary; not scanned"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg",
+      "reason": "binary; not scanned"
+    }
+  ],
+  "scanned": [
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Scripts/Data/DreamOSDataManager.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/DreamOS - Complete OS UI/Scripts/Window/WindowManager.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/Emergence/VisualDemos/NeuronLife/SparkNeuronDemoFont.asset",
+      "scannedLines": 0
+    },
+    {
+      "path": "Assets/HolenderGames/UpgradesTreePro/Fonts/Hardpixel-nn51 SDF.asset",
+      "scannedLines": 0
+    },
+    {
+      "path": "Assets/HongmengOS/Aero2010/Scripts/AeroStartMenu.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/Art/Materials/Decor_Ivory Ceramic.mat",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuController.cs",
+      "scannedLines": 5
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.Archives.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.cs",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/AiNamePolicy.cs",
+      "scannedLines": 14
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/ChapterOneSim.Hardware.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Era/EraLexicon.cs",
+      "scannedLines": 3
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/Forum.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhou.cs",
+      "scannedLines": 19
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/Gomoku.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Models.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Story/ChapterOneStoryVars.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+      "scannedLines": 13
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/ChapterOneDesktopRouter.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/GameExit.cs",
+      "scannedLines": 19
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/GameMusic.cs",
+      "scannedLines": 28
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/ChessPanel.cs",
+      "scannedLines": 6
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "scannedLines": 39
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameReactions.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GoPanel.cs",
+      "scannedLines": 6
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GomokuPanel.cs",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Media/DesktopMedia.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.cs",
+      "scannedLines": 26
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Music2016.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/GameEraClock.cs",
+      "scannedLines": 15
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/StudyDesktopGates.cs",
+      "scannedLines": 25
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/ZhouCardLoan.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.Discussion.cs",
+      "scannedLines": 18
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+      "scannedLines": 16
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs",
+      "scannedLines": 38
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoView.cs",
+      "scannedLines": 29
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+      "scannedLines": 15
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LocalEmbedder.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LocalLlm.cs",
+      "scannedLines": 28
+    },
+    {
+      "path": "Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset",
+      "scannedLines": 2659
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/MailInboxView.cs",
+      "scannedLines": 57
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+      "scannedLines": 9
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+      "scannedLines": 9
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset",
+      "scannedLines": 543
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+      "scannedLines": 13
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/PHOTO_CREDITS.txt",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_lines.json",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json",
+      "scannedLines": 0
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+      "scannedLines": 22
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/Localization/StoryText.json",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Slots.cs",
+      "scannedLines": 3
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+      "scannedLines": 10
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/EraCalendarTests.cs",
+      "scannedLines": 24
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ForumTests.cs",
+      "scannedLines": 34
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoard.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBoardData.cs",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Data.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Puzzles.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.cs",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs",
+      "scannedLines": 3
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BookPuzzles.cs",
+      "scannedLines": 5
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Books.cs",
+      "scannedLines": 53
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.CardLoan.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Cards.cs",
+      "scannedLines": 5
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataFiles.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataPacks.cs",
+      "scannedLines": 6
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Features.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Games.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningRecords.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Persona.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Wiring.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.YyLearning.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "scannedLines": 16
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgStageLessons.cs",
+      "scannedLines": 3
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs",
+      "scannedLines": 6
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+      "scannedLines": 9
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+      "scannedLines": 13
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgActionGames.cs",
+      "scannedLines": 223
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgDeskGamePage.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgMoleGraphic.cs",
+      "scannedLines": 21
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackChess.cs",
+      "scannedLines": 14
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackContentGames.cs",
+      "scannedLines": 12
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackGames.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackPuzzles.cs",
+      "scannedLines": 43
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgStageLessonGames.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBookPuzzleJudge.cs",
+      "scannedLines": 6
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.Records.cs",
+      "scannedLines": 5
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFinalePage.cs",
+      "scannedLines": 9
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgGradFlow.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLabelPage.DeskGame.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgResidentSpider.cs",
+      "scannedLines": 5
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgStageCurtain.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgStoryBridge.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTeachingPictures.cs",
+      "scannedLines": 12
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTechTreePage.cs",
+      "scannedLines": 3
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Books.cs",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Learning.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+      "scannedLines": 24
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticTests.cs",
+      "scannedLines": 4
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBookPuzzleTests.cs",
+      "scannedLines": 3
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBooksTests.cs",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgCardLoanTests.cs",
+      "scannedLines": 20
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGamesTests.cs",
+      "scannedLines": 12
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+      "scannedLines": 5
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "scannedLines": 57
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.Faces.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.Learning.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+      "scannedLines": 48
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYFacePicker.cs",
+      "scannedLines": 29
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYGroup.cs",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/IntegratedReleaseBuild.cs",
+      "scannedLines": 1
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LearningRecordsUiChecks.cs",
+      "scannedLines": 34
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+      "scannedLines": 185
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs",
+      "scannedLines": 112
+    },
+    {
+      "path": "Assets/Settings/PC_RPAsset.asset",
+      "scannedLines": 0
+    },
+    {
+      "path": "Assets/Settings/UniversalRenderPipelineGlobalSettings.asset",
+      "scannedLines": 0
+    },
+    {
+      "path": "Assets/StreamingAssets/LingGuang/llama/THIRD_PARTY.txt",
+      "scannedLines": 30
+    },
+    {
+      "path": "Design/Codex接管协作队列_20261019.md",
+      "scannedLines": 63
+    },
+    {
+      "path": "Design/data/browser_news.json",
+      "scannedLines": 9
+    },
+    {
+      "path": "Design/data/chat_unlocks.json",
+      "scannedLines": 1
+    },
+    {
+      "path": "Design/data/life_events_100.json",
+      "scannedLines": 14
+    },
+    {
+      "path": "Design/data/yy_group_presets.json",
+      "scannedLines": 22
+    },
+    {
+      "path": "Design/整合记录.md",
+      "scannedLines": 158
+    },
+    {
+      "path": "Design/老周问答与科技资讯_实施与对白清单_20261019.md",
+      "scannedLines": 20
+    },
+    {
+      "path": "Packages/Aura/.gitignore",
+      "scannedLines": 0
+    },
+    {
+      "path": "Packages/manifest.json",
+      "scannedLines": 2
+    },
+    {
+      "path": "Packages/packages-lock.json",
+      "scannedLines": 2
+    },
+    {
+      "path": "ProjectSettings/GraphicsSettings.asset",
+      "scannedLines": 0
+    },
+    {
+      "path": ".vsconfig",
+      "scannedLines": 6
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.Endings.cs",
+      "scannedLines": 219
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.Endings.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.PlayerHelp.cs",
+      "scannedLines": 215
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.PlayerHelp.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/PlayerKnowledgeCopy.Extended.cs",
+      "scannedLines": 13
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/PlayerKnowledgeCopy.Extended.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/PlayerKnowledgeCopy.cs",
+      "scannedLines": 17
+    },
+    {
+      "path": "Assets/LingGuangV05/CaseMenu/PlayerKnowledgeCopy.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouQuestions.cs",
+      "scannedLines": 116
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouQuestions.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/ZhouReviewEvidence.cs",
+      "scannedLines": 39
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/ZhouReviewEvidence.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/ChessComposer.cs",
+      "scannedLines": 58
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/ChessComposer.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/ChineseCheckers.cs",
+      "scannedLines": 118
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/ChineseCheckers.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/GomokuLogic.cs",
+      "scannedLines": 50
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/GomokuLogic.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/GomokuPicture.cs",
+      "scannedLines": 41
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/GomokuPicture.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/LudoGame.cs",
+      "scannedLines": 93
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/LudoGame.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/MonopolyGame.cs",
+      "scannedLines": 107
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/MonopolyGame.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/XiangqiRookEndgame.cs",
+      "scannedLines": 99
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Games/XiangqiRookEndgame.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.BoardClub.cs",
+      "scannedLines": 17
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.BoardClub.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.Library.Metadata.cs",
+      "scannedLines": 130
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.Library.Metadata.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.Library.cs",
+      "scannedLines": 112
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.Library.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.PublicDiscourse.cs",
+      "scannedLines": 101
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.PublicDiscourse.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/ChineseCheckersPanel.cs",
+      "scannedLines": 99
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/ChineseCheckersPanel.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardComposer.cs",
+      "scannedLines": 111
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardComposer.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardReader.cs",
+      "scannedLines": 56
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardReader.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.XiangqiComposer.cs",
+      "scannedLines": 109
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.XiangqiComposer.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/HubGame.BoardSessions.cs",
+      "scannedLines": 88
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/HubGame.BoardSessions.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/LudoPanel.cs",
+      "scannedLines": 113
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/LudoPanel.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/MonopolyPanel.cs",
+      "scannedLines": 81
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Games/MonopolyPanel.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Media/BoardClubPicture.cs",
+      "scannedLines": 36
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Media/BoardClubPicture.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.PublicDiscourse.cs",
+      "scannedLines": 29
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.PublicDiscourse.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/XgPublicDiscourseDesktop.cs",
+      "scannedLines": 108
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Story/XgPublicDiscourseDesktop.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouQuestions.cs",
+      "scannedLines": 152
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouQuestions.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.BoardClub.cs",
+      "scannedLines": 22
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.BoardClub.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.PublicDiscourse.cs",
+      "scannedLines": 35
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.PublicDiscourse.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/EndingLetterPresenter.cs",
+      "scannedLines": 318
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/EndingLetterPresenter.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/MailInboxView.PublicLetters.cs",
+      "scannedLines": 47
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/MailInboxView.PublicLetters.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/PublicLetterArchivePresenter.cs",
+      "scannedLines": 181
+    },
+    {
+      "path": "Assets/LingGuangV05/Mail2016/PublicLetterArchivePresenter.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Data.meta",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Data/ending_shutdown_prompts.json",
+      "scannedLines": 365
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Data/ending_shutdown_prompts.json.meta",
+      "scannedLines": 7
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Data/launch_night_requests.json",
+      "scannedLines": 565
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Data/launch_night_requests.json.meta",
+      "scannedLines": 7
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Data/memory_cards.json",
+      "scannedLines": 166
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Data/memory_cards.json.meta",
+      "scannedLines": 7
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Epilogue.meta",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_letters.json",
+      "scannedLines": 354
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_letters.json.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_public_discourse.json",
+      "scannedLines": 1062
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_public_discourse.json.meta",
+      "scannedLines": 7
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/ENDING_TRIAL_PHOTO_CREDITS.txt",
+      "scannedLines": 43
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/ENDING_TRIAL_PHOTO_CREDITS.txt.meta",
+      "scannedLines": 7
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt",
+      "scannedLines": 40
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt.meta",
+      "scannedLines": 7
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg.meta",
+      "scannedLines": 117
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg.meta",
+      "scannedLines": 117
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg.meta",
+      "scannedLines": 117
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg.meta",
+      "scannedLines": 117
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg.meta",
+      "scannedLines": 117
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg.meta",
+      "scannedLines": 117
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png.meta",
+      "scannedLines": 117
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg.meta",
+      "scannedLines": 117
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Endings.cs",
+      "scannedLines": 204
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Endings.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Persistence/ReleaseVerificationTrace.cs",
+      "scannedLines": 64
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Persistence/ReleaseVerificationTrace.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Persistence/VerificationSavePaths.cs",
+      "scannedLines": 154
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/Persistence/VerificationSavePaths.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ChessComposerTests.cs",
+      "scannedLines": 27
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ChessComposerTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ChineseCheckersTests.cs",
+      "scannedLines": 49
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ChineseCheckersTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/DailyBargainingTests.cs",
+      "scannedLines": 29
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/DailyBargainingTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/GomokuLogicTests.cs",
+      "scannedLines": 47
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/GomokuLogicTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/LaoZhouQuestionTests.cs",
+      "scannedLines": 23
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/LaoZhouQuestionTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/LudoGameTests.cs",
+      "scannedLines": 41
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/LudoGameTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/MonopolyGameTests.cs",
+      "scannedLines": 61
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/MonopolyGameTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/XiangqiRookEndgameTests.cs",
+      "scannedLines": 54
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/XiangqiRookEndgameTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ZhouReviewEvidenceTests.cs",
+      "scannedLines": 73
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/ZhouReviewEvidenceTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/EndingArchiveDiskTests.cs",
+      "scannedLines": 190
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/EndingArchiveDiskTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/VerificationSavePathsTests.cs",
+      "scannedLines": 74
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/PersistenceEditor/VerificationSavePathsTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/EpilogueDesktopClockTests.cs",
+      "scannedLines": 135
+    },
+    {
+      "path": "Assets/LingGuangV05/UI/Tests/Editor/EpilogueDesktopClockTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingLetterCatalog.cs",
+      "scannedLines": 197
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingLetterCatalog.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrerequisitesUiContract.cs",
+      "scannedLines": 240
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrerequisitesUiContract.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgAppAcquisition.cs",
+      "scannedLines": 145
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgAppAcquisition.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgArithmeticInput.cs",
+      "scannedLines": 46
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgArithmeticInput.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgArithmeticRelations.cs",
+      "scannedLines": 66
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgArithmeticRelations.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgAuthoredPublicEvents.Whitelist.cs",
+      "scannedLines": 20
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgAuthoredPublicEvents.Whitelist.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgAuthoredPublicEvents.cs",
+      "scannedLines": 226
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgAuthoredPublicEvents.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Library.Data.cs",
+      "scannedLines": 109
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Library.Data.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Library.cs",
+      "scannedLines": 83
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgBooks.Library.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgDailyKnownDates.cs",
+      "scannedLines": 38
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgDailyKnownDates.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgDailyPlayback.cs",
+      "scannedLines": 32
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgDailyPlayback.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingArchiveRules.cs",
+      "scannedLines": 30
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingArchiveRules.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingNarrative.cs",
+      "scannedLines": 127
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingNarrative.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingPreparation.cs",
+      "scannedLines": 320
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingPreparation.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingTextGuard.cs",
+      "scannedLines": 84
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingTextGuard.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingTrialFactory.cs",
+      "scannedLines": 517
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingTrialFactory.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.PublicLetters.cs",
+      "scannedLines": 62
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.PublicLetters.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.cs",
+      "scannedLines": 304
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgLaunchNightFlow.cs",
+      "scannedLines": 139
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgLaunchNightFlow.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgMoleArithmetic.cs",
+      "scannedLines": 127
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgMoleArithmetic.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgMusicOnsetGate.cs",
+      "scannedLines": 27
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgMusicOnsetGate.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgPublicDiscourseCatalog.cs",
+      "scannedLines": 132
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgPublicDiscourseCatalog.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgPublicDiscourseSchedule.cs",
+      "scannedLines": 72
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgPublicDiscourseSchedule.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardLogic.cs",
+      "scannedLines": 104
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardLogic.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardRecords.cs",
+      "scannedLines": 107
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardRecords.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardSelfPlay.cs",
+      "scannedLines": 115
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardSelfPlay.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BookLibrary.cs",
+      "scannedLines": 119
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.BookLibrary.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyFeedback.cs",
+      "scannedLines": 64
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyFeedback.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyLife.cs",
+      "scannedLines": 143
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyLife.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningProvenance.cs",
+      "scannedLines": 42
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.LearningProvenance.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.MoleArithmetic.cs",
+      "scannedLines": 67
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.MoleArithmetic.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.MoleTeaching.cs",
+      "scannedLines": 57
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.MoleTeaching.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.RiskForecast.cs",
+      "scannedLines": 57
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.RiskForecast.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgState.BookReaderReaction.cs",
+      "scannedLines": 19
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgState.BookReaderReaction.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgState.PublicDiscourse.cs",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgState.PublicDiscourse.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgVirtualReleaseManifest.cs",
+      "scannedLines": 65
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgVirtualReleaseManifest.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/EndingLaunchNightPanel.cs",
+      "scannedLines": 154
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/EndingLaunchNightPanel.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/EndingPreparationPanel.cs",
+      "scannedLines": 305
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/EndingPreparationPanel.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/EndingTrialPanel.cs",
+      "scannedLines": 240
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/EndingTrialPanel.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgBoardPictureDrag.cs",
+      "scannedLines": 61
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgBoardPictureDrag.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgDailyQuestions.cs",
+      "scannedLines": 73
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgDailyQuestions.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgMoleReviewInput.cs",
+      "scannedLines": 59
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgMoleReviewInput.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgNextMoveQuestions.cs",
+      "scannedLines": 66
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgNextMoveQuestions.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.Ui.cs",
+      "scannedLines": 149
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.Ui.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.cs",
+      "scannedLines": 210
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgDailyUnlockNotifier.cs",
+      "scannedLines": 60
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgDailyUnlockNotifier.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Archive.cs",
+      "scannedLines": 39
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Archive.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Narrative.cs",
+      "scannedLines": 170
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.Narrative.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs",
+      "scannedLines": 313
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueDirector.cs",
+      "scannedLines": 267
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueDirector.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueMailBridge.cs",
+      "scannedLines": 285
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueMailBridge.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueView.Presentation.cs",
+      "scannedLines": 188
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueView.Presentation.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueView.cs",
+      "scannedLines": 92
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueView.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgPublicDiscourseNotifier.cs",
+      "scannedLines": 97
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgPublicDiscourseNotifier.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgReadingWindow.Reactions.cs",
+      "scannedLines": 92
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgReadingWindow.Reactions.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgReadingWindow.cs",
+      "scannedLines": 228
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgReadingWindow.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Rhythm.cs",
+      "scannedLines": 52
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Rhythm.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Books.cs",
+      "scannedLines": 109
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.Books.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrerequisitesUiTests.cs",
+      "scannedLines": 124
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrerequisitesUiTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgAppAcquisitionTests.cs",
+      "scannedLines": 52
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgAppAcquisitionTests.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticInputTests.cs",
+      "scannedLines": 98
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticInputTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticLearningExperiment.cs",
+      "scannedLines": 140
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticLearningExperiment.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticProvenanceTests.cs",
+      "scannedLines": 125
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticProvenanceTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticRelationsTests.cs",
+      "scannedLines": 66
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgArithmeticRelationsTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgAuthoredPublicEventsTests.cs",
+      "scannedLines": 214
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgAuthoredPublicEventsTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardLogicTests.cs",
+      "scannedLines": 53
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardLogicTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardRecordsTests.cs",
+      "scannedLines": 63
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardRecordsTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardSelfPlayVarietyTests.cs",
+      "scannedLines": 170
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardSelfPlayVarietyTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDailyFeedbackTests.cs",
+      "scannedLines": 87
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDailyFeedbackTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDailyLifeIntegrationTests.cs",
+      "scannedLines": 98
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDailyLifeIntegrationTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEarlyContractsTests.cs",
+      "scannedLines": 34
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEarlyContractsTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingArchiveRulesTests.cs",
+      "scannedLines": 62
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingArchiveRulesTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingNarrativeTests.cs",
+      "scannedLines": 95
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingNarrativeTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingPreparationTests.cs",
+      "scannedLines": 217
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingPreparationTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingTextGuardTests.cs",
+      "scannedLines": 51
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingTextGuardTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEpilogueFlowTests.cs",
+      "scannedLines": 287
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEpilogueFlowTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMoleArithmeticTests.cs",
+      "scannedLines": 236
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMoleArithmeticTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMoleTeachingTests.cs",
+      "scannedLines": 114
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgMoleTeachingTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicDiscourseResourceTests.cs",
+      "scannedLines": 109
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicDiscourseResourceTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicDiscourseTests.cs",
+      "scannedLines": 73
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicDiscourseTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicLetterArchiveTests.cs",
+      "scannedLines": 82
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicLetterArchiveTests.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgRiskKnownDatesTests.cs",
+      "scannedLines": 67
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgRiskKnownDatesTests.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgVirtualReleaseManifestTests.cs",
+      "scannedLines": 83
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgVirtualReleaseManifestTests.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.BookLibrary.cs",
+      "scannedLines": 36
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.BookLibrary.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingProjection.cs",
+      "scannedLines": 9
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingProjection.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupIntro.cs",
+      "scannedLines": 14
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupIntro.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.KnownDates.cs",
+      "scannedLines": 42
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.KnownDates.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.LaoZhouQuestions.cs",
+      "scannedLines": 27
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.LaoZhouQuestions.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.GroupIntro.cs",
+      "scannedLines": 57
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.GroupIntro.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.KnownDates.cs",
+      "scannedLines": 14
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.KnownDates.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.PublicDiscourse.cs",
+      "scannedLines": 45
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.PublicDiscourse.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/AppAcquisitionActualUiChecks.cs",
+      "scannedLines": 385
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/AppAcquisitionActualUiChecks.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BoardComposerUiQaHelper.cs",
+      "scannedLines": 61
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BoardComposerUiQaHelper.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.LogicTools.cs",
+      "scannedLines": 253
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.LogicTools.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs",
+      "scannedLines": 418
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BoardPictureDropQa.cs",
+      "scannedLines": 66
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BoardPictureDropQa.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BookLibraryChecks.cs",
+      "scannedLines": 116
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BookLibraryChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BookLibraryUiChecks.cs",
+      "scannedLines": 426
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/BookLibraryUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/DailyFeedbackActualUiChecks.cs",
+      "scannedLines": 137
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/DailyFeedbackActualUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/DailyFeedbackActualUiRunner.cs",
+      "scannedLines": 302
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/DailyFeedbackActualUiRunner.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/DailyRhythmActualUiChecks.cs",
+      "scannedLines": 60
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/DailyRhythmActualUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingArchiveActualUiChecks.cs",
+      "scannedLines": 192
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingArchiveActualUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingArchiveActualUiRunner.cs",
+      "scannedLines": 598
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingArchiveActualUiRunner.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingCompletedReplayUiRunner.cs",
+      "scannedLines": 377
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingCompletedReplayUiRunner.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingFinalRouteUiChecks.cs",
+      "scannedLines": 320
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingFinalRouteUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingFinalRouteUiRunner.cs",
+      "scannedLines": 318
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingFinalRouteUiRunner.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingIntegrationUiChecks.cs",
+      "scannedLines": 88
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingIntegrationUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingLetterChecks.cs",
+      "scannedLines": 94
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingLetterChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingLetterUiChecks.cs",
+      "scannedLines": 106
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingLetterUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingPrerequisitesActualUiChecks.cs",
+      "scannedLines": 362
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingPrerequisitesActualUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingPresentationActualUiChecks.cs",
+      "scannedLines": 145
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingPresentationActualUiChecks.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LaoZhouNewsChecks.cs",
+      "scannedLines": 213
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LaoZhouNewsChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LaoZhouQuestionsUiChecks.cs",
+      "scannedLines": 393
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LaoZhouQuestionsUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LcdActualUiProbe.cs",
+      "scannedLines": 74
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LcdActualUiProbe.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/MoleReviewUiChecks.cs",
+      "scannedLines": 401
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/MoleReviewUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PlayerKnowledgeHudChecks.cs",
+      "scannedLines": 80
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PlayerKnowledgeHudChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PlayerKnowledgeMenuInputQa.cs",
+      "scannedLines": 589
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PlayerKnowledgeMenuInputQa.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicDiscourseUiChecks.cs",
+      "scannedLines": 425
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicDiscourseUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicLetterArchiveActualUiChecks.cs",
+      "scannedLines": 248
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicLetterArchiveActualUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicLetterArchiveActualUiRunner.cs",
+      "scannedLines": 301
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicLetterArchiveActualUiRunner.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicLetterArchiveUiChecks.cs",
+      "scannedLines": 50
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicLetterArchiveUiChecks.cs.meta",
+      "scannedLines": 11
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs",
+      "scannedLines": 295
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/XiangqiComposerUiQaHelper.cs",
+      "scannedLines": 56
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/XiangqiComposerUiQaHelper.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/ZhongbaoBusinessUiChecks.cs",
+      "scannedLines": 363
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/ZhongbaoBusinessUiChecks.cs.meta",
+      "scannedLines": 2
+    },
+    {
+      "path": "Assets/Resources/LingGuangV05.meta",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/Resources/LingGuangV05/Data.meta",
+      "scannedLines": 8
+    },
+    {
+      "path": "Assets/Resources/LingGuangV05/Data/app_unlocks.json",
+      "scannedLines": 142
+    },
+    {
+      "path": "Assets/Resources/LingGuangV05/Data/app_unlocks.json.meta",
+      "scannedLines": 7
+    },
+    {
+      "path": "Assets/Resources/LingGuangV05/Data/group_intro_scripts.json",
+      "scannedLines": 475
+    },
+    {
+      "path": "Assets/Resources/LingGuangV05/Data/group_intro_scripts.json.meta",
+      "scannedLines": 7
+    },
+    {
+      "path": "Design/三结局终局表现与六阶段网络讨论_设计稿_20261019.md",
+      "scannedLines": 209
+    },
+    {
+      "path": "Design/六小时整合决策记录_20261019.md",
+      "scannedLines": 111
+    },
+    {
+      "path": "Design/六阶段口径与实装差异_20261019.md",
+      "scannedLines": 20
+    },
+    {
+      "path": "Design/剧情残留文本清理_20261019.md",
+      "scannedLines": 19
+    },
+    {
+      "path": "Design/图书馆_旧书迁移映射_20261019.csv",
+      "scannedLines": 9
+    },
+    {
+      "path": "Design/图书馆_来源与权利_20261019.csv",
+      "scannedLines": 101
+    },
+    {
+      "path": "Design/算术第二组留出验证_预注册_20261019.md",
+      "scannedLines": 15
+    },
+    {
+      "path": "Design/算术自动作答_训练验证_20261019.md",
+      "scannedLines": 69
+    },
+    {
+      "path": "Design/终局发布清单与来源说明_20261019.md",
+      "scannedLines": 27
+    },
+    {
+      "path": "Design/终局并行实施契约_20261019.md",
+      "scannedLines": 55
+    },
+    {
+      "path": "Design/终局网络讨论_来源与对白清单_20261019.md",
+      "scannedLines": 348
+    },
+    {
+      "path": "Design/终局记忆新增对白与触发条件_20261019.md",
+      "scannedLines": 182
+    },
+    {
+      "path": "Design/终局试炼图片来源清单_20261019.json",
+      "scannedLines": 355
+    },
+    {
+      "path": "Design/群聊三图来源清单_20261019.json",
+      "scannedLines": 116
+    },
+    {
+      "path": "Design/老周审阅证据修订对白_20261019.md",
+      "scannedLines": 19
+    },
+    {
+      "path": "Design/老周科技资讯_新增对白审阅_20261019.md",
+      "scannedLines": 22
+    },
+    {
+      "path": "Design/老周科技资讯_来源核验_20261019.csv",
+      "scannedLines": 7
+    },
+    {
+      "path": "Design/老周问答与帮助_整合验证_20261019.md",
+      "scannedLines": 45
+    }
+  ],
+  "limitations": "Pattern scan is not proof that all secrets are absent. Only locations are retained; no matching content is output or saved."
+}

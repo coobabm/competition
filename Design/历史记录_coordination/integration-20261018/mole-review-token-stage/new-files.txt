@@ -1,0 +1,2 @@
+Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgMoleReviewInput.cs
+Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgMoleReviewInput.cs.meta

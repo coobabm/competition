@@ -1,0 +1,28 @@
+{
+    "status": "passed",
+    "passed": [
+        "PlayerPrefs namespace is isolated by run-isolated-ui.ps1",
+        "Shipped font is available",
+        "Actual component Update binds a normal non-test runtime",
+        "Ordinary teaching/training reaches the real accuracy gate",
+        "Actual technology page displays ??? before discovery",
+        "Ordinary teaching/training reaches the real accuracy gate",
+        "Real gameplay produces delayed pending discovery, still hidden",
+        "Pending presentation still displays ???",
+        "Pending state is written to isolated disk",
+        "Pending state survives a genuine runtime disk reload",
+        "Real Update enters the delayed presentation without calling RevealAutoLabel",
+        "Production timeout -> EndBlocked -> Finish reveals the hidden technology",
+        "Actual page replaces ??? with the revealed technology name",
+        "Revealed technology is Buyable with the naturally earned checkpoint",
+        "Actual Canvas raycaster resolves the revealed technology",
+        "Real node click purchases exactly once and debits its live price",
+        "Production reveal saves immediately and survives disk reload without another explicit save",
+        "Ordinary teaching/training reaches the real accuracy gate",
+        "Real gameplay produces delayed pending discovery, still hidden",
+        "Disable scenario is genuinely pending in Idle",
+        "Disabling the real Idle component reveals pending technology and releases deferral",
+        "Disable fallback reveal survives isolated disk reload"
+    ],
+    "scope": "Normal runtime (TestMode=false), isolated disk save. Reflection wires the empty-scene fixture to production BindSave/WriteToSave; gameplay discovery is never injected. A real Update starts the presentation. Only blockedAt is backdated to exercise production timeout -> EndBlocked -> Finish; this is not full cinematic QA. Actual technology Canvas and raycast/click purchase follow."
+}

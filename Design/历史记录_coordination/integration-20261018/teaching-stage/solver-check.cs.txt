@@ -1,0 +1,19 @@
+using System;using System.Collections.Generic;public static class ActualTwentyFourSolver {
+        public static bool Solve(List<double> numbers,List<string> forms,out string result)
+        {
+            if(numbers.Count==1){result=forms[0];return Math.Abs(numbers[0]-24)<1e-6;}
+            for(int i=0;i<numbers.Count;i++)for(int j=0;j<numbers.Count;j++)if(i!=j)
+            {
+                for(int op=0;op<4;op++)
+                {
+                    if(op==3&&Math.Abs(numbers[j])<1e-9)continue;
+                    double n=op==0?numbers[i]+numbers[j]:op==1?numbers[i]-numbers[j]:op==2?numbers[i]*numbers[j]:numbers[i]/numbers[j];
+                    var next=new List<double>();var text=new List<string>();for(int k=0;k<numbers.Count;k++)if(k!=i&&k!=j){next.Add(numbers[k]);text.Add(forms[k]);}
+                    next.Add(n);text.Add("("+forms[i]+new[]{"+","−","×","÷"}[op]+forms[j]+")");
+                    if(Solve(next,text,out result))return true;
+                }
+            }
+            result="";return false;
+        }
+
+}

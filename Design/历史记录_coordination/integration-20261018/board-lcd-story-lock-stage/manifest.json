@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "file": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs",
+      "base_sha256": "f852a3632659fcd704fb89819d20d7f86ae224e01935e592801f0a5ddba360bb",
+      "candidate_sha256": "a5f5ef1ee15e077076709b98e4912c63f6ac65c5857a519a5fdfd43d6a6f230f"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 1,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

@@ -1,0 +1,21 @@
+{
+  "depends_on": "ending-small-A-reviewed.patch",
+  "patch_sha256": "679ebb43d9dcb7db13686a69334f2e3207f14522349b86ec547f2d9d77d4af6b",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouQuestions.cs",
+      "baseline_normalized_sha256": "5acbbdcfa3433fad023e295f08f129fa300293e08c884e8ffa2c01b4cf582ada",
+      "candidate_sha256": "68d32ee2261ded25c33a29745aa40ae1f5722cc6bc52ce94dd59641b9a34e5c4"
+    },
+    {
+      "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+      "baseline_normalized_sha256": "52796237e7941d40f329f70aa29c6aed668a5d6252257dab26989fd6a3359417",
+      "candidate_sha256": "733d0f6e9549b577358ce67b1cbf281c730ad0faab4e80d9f1c47d157f120268"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+      "baseline_normalized_sha256": "c8021c025d6b8f96b09043826c92d1159304488a0b6b5e56cf6f458e20a9ead7",
+      "candidate_sha256": "818f778e45495dd26e6b86877a1d331b0439dda5ed45781f1367953966775e00"
+    }
+  ]
+}

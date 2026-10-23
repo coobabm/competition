@@ -1,0 +1,15 @@
+{
+  "path": "Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs",
+  "baseline_lf_sha256": "a5df8aae126efb6b59079cafe6f31c4433a5f308428096fb557d62b48ab92a23",
+  "candidate_lf_sha256": "bc77925e64f220783ab963505d6ce19a46ddb98267ed8b70a75d90ad07d0ada2",
+  "patch_sha256": "3ffab3b6f746765f07eea8c790558e657029accba27cf4eb6b76e1f031ea1be4",
+  "git_apply_check_exit_code": 0,
+  "git_apply_check_output": "",
+  "actual_failed_fixture": {
+    "dataFilesVersion": 1,
+    "make24_unlocked": true,
+    "installedTeachingNodes": []
+  },
+  "production_modified": false,
+  "runtime_executed": false
+}

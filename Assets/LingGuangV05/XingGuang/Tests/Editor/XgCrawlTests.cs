@@ -150,7 +150,7 @@ namespace LingGuangV05.XingGuang.Tests
         static readonly IList<string[]> Headlines = new List<string[]>
         {
             new[] { "AlphaGo 4:1 战胜李世石", "AlphaGo beats Lee Sedol 4–1" },
-            new[] { "GTX 1080 国行今日上市，4999 元起", "GTX 1080 goes on sale in China today from ¥4,999" },
+            new[] { "GTX 1080 国行今日上市，4599 元起", "GTX 1080 goes on sale in China today from ¥4,599" },
             new[] { "2016 年高考今日开考，940 万人报名", "The 2016 gaokao starts today with 9.4 million candidates" },
             new[] { "英国公投决定脱离欧盟", "The UK votes to leave the EU" },
         };
@@ -210,8 +210,8 @@ namespace LingGuangV05.XingGuang.Tests
         [Test]
         public void SegmentKeepsLatinWholeAndCutsChineseIntoShortWords()
         {
-            var w = XgCrawlArticle.Segment("GTX 1080 国行今日上市，4999 元起");
-            CollectionAssert.AreEqual(new[] { "GTX", "1080", "国行", "今日", "上市", "，", "4999", "元起" }, w);
+            var w = XgCrawlArticle.Segment("GTX 1080 国行今日上市，4599 元起");
+            CollectionAssert.AreEqual(new[] { "GTX", "1080", "国行", "今日", "上市", "，", "4599", "元起" }, w);
             Assert.IsFalse(XgCrawlArticle.Grabbable("，"));
             Assert.IsTrue(XgCrawlArticle.Grabbable("显卡"));
             CollectionAssert.AreEqual(new[] { "床前", "明月光" }, XgCrawlArticle.Segment("床前明月光"));

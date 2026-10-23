@@ -1,0 +1,42 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgAuthoredPublicEvents.cs",
+    "baselineSha256": null,
+    "candidateSha256": "b5e2bf5468901651a575983900823c4e3a367f98906c5b3ae47c7db8700f2acf"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgAuthoredPublicEvents.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "151a39cf4c7b345015794601743eaf54ebffb4f20086744608c64847f8b728a3"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgAuthoredPublicEvents.Whitelist.cs",
+    "baselineSha256": null,
+    "candidateSha256": "559c81023c3a2eede81514499cb578819280097546c9a42e7f354b7d304af093"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgAuthoredPublicEvents.Whitelist.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "1e420f71b55683384b63845a755b8a0b83b1ea374cd1173969bfbfdfe28eda0d"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.cs",
+    "baselineSha256": "e5ddcba6b76eedb31344eb34d417c131ce417296f4c5430aabecdfdee7582fbe",
+    "candidateSha256": "4df290056edb9352418113546f9205260c1aca3402a2ec3aa71f897b9c7c88ef"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgAuthoredPublicEventsTests.cs",
+    "baselineSha256": null,
+    "candidateSha256": "229f4505aaa18bccc5d5a67163a16c2f0e0f780cc37ca7d820dcd7b471c4bef3"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgAuthoredPublicEventsTests.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "abff44bb11b5609eb3372442dc6969854be81442e42309b2eae3c3dd6faabffd"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEpilogueFlowTests.cs",
+    "baselineSha256": "6d12bcff89b47e52eaf05b021417b03b4a8853b729bc6ee7d65e1d42e524d999",
+    "candidateSha256": "741de0292fb8c40a746bdac68af191d9396de3e3518b24eea766bef5ee8204c5"
+  }
+]

@@ -1,0 +1,14 @@
+{
+    "passed": true,
+    "checks": [
+        "Nine desktop pages mounted",
+        "Shared board and economy initialized",
+        "20 real card actions advance chapter 1 to 2",
+        "Power cut stops board training and recovery resumes it",
+        "Atomic save round trip contains board, economy and desktop",
+        "Bundled classifier ran successfully: 0.5656",
+        "Local Qwen conversation returned: 嗨，我是小光。"
+    ],
+    "failures": [],
+    "savePath": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Builds\\LingGuangV06\\Acceptance\\smoke-save.json"
+}

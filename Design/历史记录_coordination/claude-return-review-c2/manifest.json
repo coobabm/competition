@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs",
+      "productionSHA256": "e586828c4d7ad0c6441064116420327b01b3d4ca8b56d99a4772664164a7f451",
+      "handoffSHA256": "e586828c4d7ad0c6441064116420327b01b3d4ca8b56d99a4772664164a7f451",
+      "returnedSHA256": "c94443480171f48558fbfcbaeacff04a18a89c142b23e90382c65a85b4aaf6db",
+      "candidateSHA256": "7481ca25c52e7b2ba9e1d69c8f68605aa3bac216194bf705e17925639a9aa84d",
+      "productionEqualsHandoff": true
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingHeldPointerProbe.cs",
+      "productionSHA256": null,
+      "handoffSHA256": null,
+      "returnedSHA256": "6444bd539a004cbf195bd2124c3f9d3db4da12be0be676ae7851fc019a51b736",
+      "candidateSHA256": "6444bd539a004cbf195bd2124c3f9d3db4da12be0be676ae7851fc019a51b736",
+      "productionEqualsHandoff": null
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingHeldPointerProbe.cs.meta",
+      "productionSHA256": null,
+      "handoffSHA256": null,
+      "returnedSHA256": "8194a12951c484223b5ae198ede57c395b9490cf60cf7dc314a0191db9a1d13a",
+      "candidateSHA256": "8194a12951c484223b5ae198ede57c395b9490cf60cf7dc314a0191db9a1d13a",
+      "productionEqualsHandoff": null
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingHeldPointerPreNotifierProbe.cs",
+      "productionSHA256": null,
+      "handoffSHA256": null,
+      "returnedSHA256": "1e9dd3d3222a855256469e199bd2ac696d15aaea7957281b3993f494767b29c6",
+      "candidateSHA256": "1e9dd3d3222a855256469e199bd2ac696d15aaea7957281b3993f494767b29c6",
+      "productionEqualsHandoff": null
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/PublicReadingHeldPointerPreNotifierProbe.cs.meta",
+      "productionSHA256": null,
+      "handoffSHA256": null,
+      "returnedSHA256": "5308a7fd081893ee1ca38a5d7af0c62e1b249ae92cfcbf509a32c55ebffb8a5b",
+      "candidateSHA256": "5308a7fd081893ee1ca38a5d7af0c62e1b249ae92cfcbf509a32c55ebffb8a5b",
+      "productionEqualsHandoff": null
+    }
+  ],
+  "patchSHA256": "4a808857855c9e0cecd212e4f248991cb5e711537eb4d0c3f01abd71d870a77c",
+  "productionWritten": false,
+  "conditionalFixIncluded": false
+}

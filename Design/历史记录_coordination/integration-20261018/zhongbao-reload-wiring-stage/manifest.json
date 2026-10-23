@@ -1,0 +1,7 @@
+{
+  "path": "Assets/LocalBuild/Editor/ZhongbaoBusinessUiChecks.cs",
+  "baseline_sha256": "e335db43cb22f13bcc9ef5afd75fa2aac00d9bffec4f55cff6e6bd544e54f34b",
+  "candidate_sha256": "1f6361da00edd11036d31b52d2403821acd9b324470a2b530c668650262a536b",
+  "patch_sha256": "e28f87fbddcc20d072b480154d2c063fcb3ea4f609fa3c5bdeafc66af9c6e929",
+  "status": "static-only; no Unity/.NET execution"
+}

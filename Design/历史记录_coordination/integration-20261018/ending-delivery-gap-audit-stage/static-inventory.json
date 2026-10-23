@@ -1,0 +1,108 @@
+{
+  "scope": "Read-only static inventory, not Unity/runtime verification",
+  "records": 48,
+  "stage_platform_matrix": {
+    "1": [
+      "forum",
+      "miaoyu",
+      "news",
+      "site",
+      "yy"
+    ],
+    "2": [
+      "forum",
+      "miaoyu",
+      "news",
+      "site",
+      "yy"
+    ],
+    "3": [
+      "forum",
+      "miaoyu",
+      "news",
+      "site",
+      "yy"
+    ],
+    "4": [
+      "forum",
+      "miaoyu",
+      "news",
+      "site",
+      "yy"
+    ],
+    "5": [
+      "forum",
+      "miaoyu",
+      "news",
+      "site",
+      "yy"
+    ],
+    "6": [
+      "forum",
+      "miaoyu",
+      "news",
+      "site",
+      "yy"
+    ]
+  },
+  "route_records": {
+    "online": 5,
+    "public_model": 5,
+    "local_only": 5
+  },
+  "common_headlines": [
+    "H-01",
+    "H-02",
+    "H-03"
+  ],
+  "missing_bilingual_records": [],
+  "source_gate_violations": [],
+  "letters": [
+    {
+      "id": "zhou_open_door",
+      "date": 20170613,
+      "paragraphs": 9,
+      "all_bilingual": true
+    },
+    {
+      "id": "zhou_copies",
+      "date": 20170613,
+      "paragraphs": 9,
+      "all_bilingual": true
+    },
+    {
+      "id": "zhou_unpressed_button",
+      "date": 20170613,
+      "paragraphs": 9,
+      "all_bilingual": true
+    }
+  ],
+  "optional_appendices": 3,
+  "trial_photos": [
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg",
+      "sha256": "416736b3618fecdfe3ffe6dfca44d30fb3690e4a7ce95e3baa96aede65b14be3",
+      "hash_listed_in_credits": true
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg",
+      "sha256": "6beae803dc9241e228542497ca5fcb2df419a7509c86e298a4065176054d1cc0",
+      "hash_listed_in_credits": true
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg",
+      "sha256": "3ccf8d32b975a8a24ee0d390cfd20f51995aa84350366869212ae25a28e5ec52",
+      "hash_listed_in_credits": true
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png",
+      "sha256": "88d0e87ffc4a59fec0df9c968a74c11f012a0626122733ca8f0e757d7031d46f",
+      "hash_listed_in_credits": true
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg",
+      "sha256": "32a88db47c121f895369918495c80979a33ef56019b735fc4b2e88c20d215e43",
+      "hash_listed_in_credits": true
+    }
+  ]
+}

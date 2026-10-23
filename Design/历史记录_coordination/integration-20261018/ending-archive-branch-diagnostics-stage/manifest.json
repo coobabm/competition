@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "file": "Assets/LocalBuild/Editor/EndingArchiveActualUiRunner.cs",
+      "base_sha256": "b61711017daff2eb67991e1441cc35377e4845df1923e8b0fe53b59ac0ea96ad",
+      "candidate_sha256": "420d79cccad784a2a3fbae4f68cae2419abce0750b96e75bd86074acbcb19766"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

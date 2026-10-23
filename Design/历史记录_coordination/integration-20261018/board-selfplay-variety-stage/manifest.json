@@ -1,0 +1,69 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/Games/ChineseCheckers.cs",
+      "base_sha256": "2cb0ddcd1fbe09da99d149ae34265218d3f4d9f0ecb4ac60d248d2d3d502fc48",
+      "candidate_sha256": "dc962f3d628c9f93d88e968f1ef4cc3b97d3ec7fb4444aa894d7a09bce3bae4e"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/LudoGame.cs",
+      "base_sha256": "e195f7642499f7195b36293033e9d08fd821c1fa62a92f746a4565939879d725",
+      "candidate_sha256": "b023550a3a3d1723481e0cb93073a1564a20d497ee2eea8bfe623580ec6c3ba3"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/MonopolyGame.cs",
+      "base_sha256": "e687325564e5de53bf5277c00e6c4c6f2ec76475b297856315b6a7f92a78d47d",
+      "candidate_sha256": "fe713300a402f3c9787010971985c3e8398a086d56491ef1b53702195772b2db"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/ChineseCheckersPanel.cs",
+      "base_sha256": "2be3c673c7c04096295da62f1fe1dee2ae09b731a201ae2676370cd32cff01ec",
+      "candidate_sha256": "a2a62372bc151f3efcb580603b17672854b50c7e8ea6bee38103fcfb71e4b8a2"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/LudoPanel.cs",
+      "base_sha256": "220d66a2f953f2fce9e2278f65ec800ada0c0e8385f8804de97cffd8b9125eb7",
+      "candidate_sha256": "f9027705de5162484338f897a84484b96e2dbb5df5875b63c5dc4c51ceeea349"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/MonopolyPanel.cs",
+      "base_sha256": "dd29841b2fe273ad9419fd3643cd9582238214ebc65708c13f28119eb32bea39",
+      "candidate_sha256": "6c4ff434813d54db9afc5f87fd5ecf1e8d7afe28c8395c70b62d2f728bf006c7"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardLogic.cs",
+      "base_sha256": "43fb081120f6cd580875ea3be003fc62b2e6015fbfefadba6561871dcb29b4cd",
+      "candidate_sha256": "449a6156e823c0fdb4fbd998303a9f3c1a09df5b661275e81cf84e1114d43353"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardRecords.cs",
+      "base_sha256": "59167791f54ad5c41e6af8cdf7969c4f3f3424ddf3c9461d88c146607bb6ec45",
+      "candidate_sha256": "1dc01789f63ff260241ae4b1fe0ede702e764479d80aa03206def1066baf1d16"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardSelfPlay.cs",
+      "base_sha256": null,
+      "candidate_sha256": "087227f129bfdfa941ef1ee6459c2c21b8bee36711bf25336dce54855ef2d279"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardSelfPlay.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "2978f524aff49fdd5557188e9e402ae4124f0b390e609d57cef4691ece7f633b"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardSelfPlayVarietyTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "98bef3ec50916322a1863607ee7006ef822a1e47eb91b836dc1667b7d51d50f1"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardSelfPlayVarietyTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "129527e35d03e832ff92cbd842d9f2d226ed32d611560a541e9459c1b6836cc5"
+    }
+  ],
+  "new_tests": 8,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

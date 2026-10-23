@@ -1,0 +1,358 @@
+Assets/LingGuangV05/Mail2016/MailInboxView.PublicLetters.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Mail2016/MailInboxView.PublicLetters.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Mail2016/MailInboxView.PublicLetters.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Mail2016/PublicLetterArchivePresenter.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Mail2016/PublicLetterArchivePresenter.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Mail2016/PublicLetterArchivePresenter.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data.meta:6: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data.meta:7: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data.meta:8: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/ending_shutdown_prompts.json.meta:5: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/ending_shutdown_prompts.json.meta:6: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/ending_shutdown_prompts.json.meta:7: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/launch_night_requests.json.meta:5: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/launch_night_requests.json.meta:6: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/launch_night_requests.json.meta:7: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/memory_cards.json.meta:5: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/memory_cards.json.meta:6: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Data/memory_cards.json.meta:7: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Epilogue.meta:6: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Epilogue.meta:7: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Epilogue.meta:8: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_public_discourse.json.meta:5: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_public_discourse.json.meta:6: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Epilogue/ending_public_discourse.json.meta:7: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/ENDING_TRIAL_PHOTO_CREDITS.txt.meta:5: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/ENDING_TRIAL_PHOTO_CREDITS.txt.meta:6: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/ENDING_TRIAL_PHOTO_CREDITS.txt.meta:7: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt.meta:5: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt.meta:6: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt.meta:7: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_1080.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_ajie_noodles.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_qinghai.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_drafts.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_gpubox.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_westlake.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Core/XgAppAcquisition.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Core/XgAppAcquisition.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Core/XgAppAcquisition.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Core/XgDailyKnownDates.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Core/XgDailyKnownDates.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Core/XgDailyKnownDates.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.PublicLetters.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.PublicLetters.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Core/XgEpilogueFlow.PublicLetters.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Core/XgSim.RiskForecast.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Core/XgSim.RiskForecast.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Core/XgSim.RiskForecast.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.Ui.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.Ui.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.Ui.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Desktop/XgAppAcquisitionHost.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueView.Presentation.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueView.Presentation.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueView.Presentation.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgAppAcquisitionTests.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgAppAcquisitionTests.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgAppAcquisitionTests.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicLetterArchiveTests.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicLetterArchiveTests.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicLetterArchiveTests.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgRiskKnownDatesTests.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgRiskKnownDatesTests.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/XingGuang/Tests/Editor/XgRiskKnownDatesTests.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/YY2016/YYChatHub.GroupIntro.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/YY2016/YYChatHub.GroupIntro.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/YY2016/YYChatHub.GroupIntro.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/YY2016/YYChatHub.KnownDates.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/YY2016/YYChatHub.KnownDates.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/YY2016/YYChatHub.KnownDates.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/YY2016/YYChatView.GroupIntro.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/YY2016/YYChatView.GroupIntro.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/YY2016/YYChatView.GroupIntro.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/YY2016/YYChatView.KnownDates.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/YY2016/YYChatView.KnownDates.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/YY2016/YYChatView.KnownDates.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LocalBuild/Editor/AppAcquisitionActualUiChecks.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LocalBuild/Editor/AppAcquisitionActualUiChecks.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LocalBuild/Editor/AppAcquisitionActualUiChecks.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LocalBuild/Editor/EndingPresentationActualUiChecks.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LocalBuild/Editor/EndingPresentationActualUiChecks.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LocalBuild/Editor/EndingPresentationActualUiChecks.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LocalBuild/Editor/PublicLetterArchiveUiChecks.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LocalBuild/Editor/PublicLetterArchiveUiChecks.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LocalBuild/Editor/PublicLetterArchiveUiChecks.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/Resources/LingGuangV05.meta:6: trailing whitespace.
++  userData: 
+Assets/Resources/LingGuangV05.meta:7: trailing whitespace.
++  assetBundleName: 
+Assets/Resources/LingGuangV05.meta:8: trailing whitespace.
++  assetBundleVariant: 
+Assets/Resources/LingGuangV05/Data.meta:6: trailing whitespace.
++  userData: 
+Assets/Resources/LingGuangV05/Data.meta:7: trailing whitespace.
++  assetBundleName: 
+Assets/Resources/LingGuangV05/Data.meta:8: trailing whitespace.
++  assetBundleVariant: 
+Assets/Resources/LingGuangV05/Data/app_unlocks.json.meta:5: trailing whitespace.
++  userData: 
+Assets/Resources/LingGuangV05/Data/app_unlocks.json.meta:6: trailing whitespace.
++  assetBundleName: 
+Assets/Resources/LingGuangV05/Data/app_unlocks.json.meta:7: trailing whitespace.
++  assetBundleVariant: 
+Assets/Resources/LingGuangV05/Data/group_intro_scripts.json.meta:5: trailing whitespace.
++  userData: 
+Assets/Resources/LingGuangV05/Data/group_intro_scripts.json.meta:6: trailing whitespace.
++  assetBundleName: 
+Assets/Resources/LingGuangV05/Data/group_intro_scripts.json.meta:7: trailing whitespace.
++  assetBundleVariant: 
+Design/Claude交接_20261019/未合入候选/SHA256SUMS.txt:1: trailing whitespace.
++DF315A267FA3304632B37176F229A91E630D276AE339927B3CB9B229A3D21E31  board-lcd-story-lock-stage.md
+Design/Claude交接_20261019/未合入候选/SHA256SUMS.txt:2: trailing whitespace.
++D7D28E56E9B91D3F1DBFC4091DC853851BBCD49C696D160FB9328709E8B9B099  board-lcd-story-lock.patch
+Design/Claude交接_20261019/未合入候选/SHA256SUMS.txt:3: trailing whitespace.
++1C8FEAA828D2145B98121E2D01579F89AE82AF17E606EF3D46F9B2B2824DFEE8  board-menu-glyph-stage.md
+Design/Claude交接_20261019/未合入候选/SHA256SUMS.txt:4: trailing whitespace.
++932D4698750F72E8777ECD627F5F73E5DDB99C3EC16F165A4A8A4753AACC4057  board-menu-glyph.patch
+Design/Claude交接_20261019/未合入候选/SHA256SUMS.txt:5: trailing whitespace.
++3485211F7119ACB58C66480E95232645C10C813EF82FB7459950F2A13872ED2A  teaching-install-fixture-stage.md
+Design/Claude交接_20261019/未合入候选/SHA256SUMS.txt:6: trailing whitespace.
++3FFAB3B6F746765F07EEA8C790558E657029ACCBA27CF4EB6B76E1F031EA1BE4  teaching-install-fixture.patch
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:1: trailing whitespace.
++# Board QA: isolate the delayed YY join cutscene
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:2: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:3: trailing whitespace.
++One Editor QA file only. No production, board state, rule, outcome, LCD bridge, camera or save changes. No Unity/Player/build/C# tests/models/audio executed.
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:4: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:5: trailing whitespace.
++## What the failed evidence proves
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:6: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:7: trailing whitespace.
++BoardGamesUI/20261018-233417-939 remains failed. It completed real Ludo and Chinese checkers and entered actual Monopoly; multiple Roll and Buy property clicks passed top-hit and LCD mapping checks. The last Roll fails in LcdSurface before an input event, not in Monopoly game logic. The old condition combines absent bridge/surface, inactive surface and inputEnabled=false into one message, so the exact failing predicate and lock owner were not recorded.
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:8: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:9: trailing whitespace.
++The log contains Prologue title at startup, followed by the successful native board inputs; no intermediate title-scene/Main reload is logged before failure. It therefore does not support claiming the title/prologue reset caused this later failure. The captured source frames prove the LCD previously worked, not its state at failure. There is no failure frame.
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:10: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:11: trailing whitespace.
++## Confirmed isolation gap and bounded attribution
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:12: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:13: trailing whitespace.
++StoryDesktopPresenter.PrepareDesktopShell installs AiJoinsYy as a separate component. Disabling the presenter does not disable that component. Existing StopStory excludes AiJoinsYy. YYChatHub.CheckLingGuangUnlock repeatedly requests that cutscene for an installed app, stage>=1, non-prologue and lingguangUnlocked=false. AiJoinsYy has ForceAfter=90 seconds and can then bypass normal quiet gates. Begin calls Block, which directly disables the actual LCD input.
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:14: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:15: trailing whitespace.
++The first screenshot was written at 07:34:45 local and failure result at 07:36:12, about 87 seconds later; fixture construction precedes the screenshot. The post-failure save still has stage2/prologue2/installed app and lingguangUnlocked=false; epiphany=false excludes the normal AutoLabel pending prerequisite. These facts strongly fit the delayed join cutscene, but do not uniquely prove the runtime lock owner. Post-failure save also includes an additional Monopoly completion; teardown can continue gameplay, so that record is not promoted to a successful QA round assertion.
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:16: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:17: trailing whitespace.
++## Minimal candidate
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:18: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:19: trailing whitespace.
++Add only AiJoinsYy to the existing explicit story-host isolation in OnScene and fixture Boot; its OnDisable unregisters its join delegate and releases only its own held input. This is a prepared-desktop fixture boundary, not a game-rule fix. No flags claiming the story was played/read are written. Keep the actual LCD readiness predicate unchanged. On failure, record each predicate plus source camera, LCD power/transition, EventSystem, prologue, AiJoinsYy/AutoLabel and title display state. The diagnostics observe only; they never turn input back on, restore a camera, sleep past a lock or bypass a real hit.
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:20: trailing whitespace.
++
+Design/Claude交接_20261019/未合入候选/board-lcd-story-lock-stage.md:21: trailing whitespace.
++Static delimiter/baseline checks and git apply --check only. Serial owner should rerun RunWithLogicTools. A pass would verify this fixture correction, not retroactively establish the historical lock owner or certify cutscene/game coexistence. If it still fails, the new diagnostics distinguish lifecycle/power from story input locking without weakening LCD assertions.
+Design/Claude交接_20261019/未合入候选/board-menu-glyph.patch:15: trailing whitespace.
++ 
+Design/Claude交接_20261019/未合入候选/board-menu-glyph.patch:59: trailing whitespace.
++ 
+Design/Claude交接_20261019/未合入候选/teaching-install-fixture.patch:5: trailing whitespace.
++ 

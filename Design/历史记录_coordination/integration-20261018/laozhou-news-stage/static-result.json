@@ -1,0 +1,1592 @@
+{
+  "checks": 396,
+  "failed": 0,
+  "results": [
+    {
+      "check": "captured base hash Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "C6 baseline still current Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "unique IDs Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0601",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0607",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0608",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0616",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0620",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0624",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0628",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0702",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0707",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0708",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0711",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0718",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0725",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0729",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0801",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0808",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0816",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0821",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0825",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0830",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0902",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0904",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0908",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0915",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0920",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0922",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n0925",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1002",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1010",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1013",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1017",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1021",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1027",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1109",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1112",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1116",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1122",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1122tech",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1129",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1202",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1215",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1220",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1226",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json n1230",
+      "passed": true
+    },
+    {
+      "check": "preserved existing note Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "captured base hash Design/data/browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "C6 baseline still current Design/data/browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "unique IDs Design/data/browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0601",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0607",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0608",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0616",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0620",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0624",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0628",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0702",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0707",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0708",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0711",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0718",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0725",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0729",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0801",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0808",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0816",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0821",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0825",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0830",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0902",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0904",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0908",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0915",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0920",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0922",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n0925",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1002",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1010",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1013",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1017",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1021",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1027",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1109",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1112",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1116",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1122",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1122tech",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1129",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1202",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1215",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1220",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1226",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/browser_news.json n1230",
+      "passed": true
+    },
+    {
+      "check": "preserved existing note Design/data/browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "captured base hash Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+      "passed": true
+    },
+    {
+      "check": "C6 baseline still current Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+      "passed": true
+    },
+    {
+      "check": "unique IDs Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ai_tensorflow",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ai_openai",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ai_alphago_nature",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ai_alphago_lee",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ai_gym",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json fenda",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ai_tpu",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ow_launch",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json yangjiang",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json gtx1080_news",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json gtx1080_tieba",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json gtx1080_shop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json tray_360_uptime",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json gaokao",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json warcraft",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json gtx1070_shop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json gtx1070_tieba",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json euro_open",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json aj_gig_week2",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json cavs",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ai_safety",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json steam_summer",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_bodu",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json brexit",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json resnet_cvpr",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_join",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_hello",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_grad",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_xiamen",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json iceland",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json rx480_shop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json rx480_tieba",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json tray_win10",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json pokemon_go",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json big_fish",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json escape",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json prisma",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json south_china_sea",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json gtx1060_shop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_qinghai",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_job",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ge_you",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json hollowed",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json dawei_envy",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json win10_deadline",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json didi_uber",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json tray_360_attacks",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json titanx_shop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json rio_open",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json fu_yuanhui",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json no_mans_sky",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ti6_wings",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ti6_money",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json weibo_down",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json xiaoice4",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json volley_wake",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json aj_rent",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json volley_gold",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json onmyoji",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json aj_boss",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json note7_recall",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json g20",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json iphone7",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json wavenet",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json tiangong2",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json iphone7_shop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json iphone7_queue",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json xg_best",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json fast",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ai_partnership",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json fgo",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json mekong",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lanshou",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json dylan",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json shenzhou11",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_westlake",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_work",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json lili_advice",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json smartisan",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ms_speech",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json civ6",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json bf1",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json mimix_shop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json civ6_gone",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json skt_s6",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json leeco",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json us_election",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json d11_shop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json d11_luban",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json d11_total",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json book_drop",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json dawei_intern",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json baidu_car",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json ff15",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json your_name",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json nips2016",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json rmb",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json great_wall",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json dawei_greatwall",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json faye_tickets",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json steam_winter",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json aj_year",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json xg_wish",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json photo_ajie_1080",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json photo_xg_euro",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json photo_dw_desk",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json photo_dw_ti6",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json photo_xg_civ",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json photo_lili_cart",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json photo_lili_ticket",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json photo_ajie_noodles",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json master",
+      "passed": true
+    },
+    {
+      "check": "preserved existing note Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+      "passed": true
+    },
+    {
+      "check": "captured base hash Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "C6 baseline still current Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "unique IDs Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g01",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g02",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g03",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g04",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g05",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g06",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g07",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g08",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g09",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g10",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g11",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g12",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g13",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g14",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g15",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g16",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g17",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g18",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g19",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g20",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g21",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g22",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g23",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g24",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g25",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g26",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g27",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g28",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json g30",
+      "passed": true
+    },
+    {
+      "check": "preserved existing note Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "captured base hash Design/data/yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "C6 baseline still current Design/data/yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "unique IDs Design/data/yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g01",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g02",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g03",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g04",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g05",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g06",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g07",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g08",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g09",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g10",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g11",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g12",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g13",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g14",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g15",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g16",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g17",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g18",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g19",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g20",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g21",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g22",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g23",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g24",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g25",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g26",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g27",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g28",
+      "passed": true
+    },
+    {
+      "check": "preserved C6 Design/data/yy_group_presets.json g30",
+      "passed": true
+    },
+    {
+      "check": "preserved existing note Design/data/yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "event no later than 2016 T01",
+      "passed": true
+    },
+    {
+      "check": "visible gate T01",
+      "passed": true
+    },
+    {
+      "check": "required T01 title",
+      "passed": true
+    },
+    {
+      "check": "required T01 titleEn",
+      "passed": true
+    },
+    {
+      "check": "required T01 body",
+      "passed": true
+    },
+    {
+      "check": "required T01 bodyEn",
+      "passed": true
+    },
+    {
+      "check": "required T01 sourceUrl",
+      "passed": true
+    },
+    {
+      "check": "required T01 rights",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 Transformer",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 ChatGPT",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 GPT-4",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 Qwen",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 LoRA",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 2017",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 2018",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 阶段",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T01 stage 6",
+      "passed": true
+    },
+    {
+      "check": "event no later than 2016 T02",
+      "passed": true
+    },
+    {
+      "check": "visible gate T02",
+      "passed": true
+    },
+    {
+      "check": "required T02 title",
+      "passed": true
+    },
+    {
+      "check": "required T02 titleEn",
+      "passed": true
+    },
+    {
+      "check": "required T02 body",
+      "passed": true
+    },
+    {
+      "check": "required T02 bodyEn",
+      "passed": true
+    },
+    {
+      "check": "required T02 sourceUrl",
+      "passed": true
+    },
+    {
+      "check": "required T02 rights",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 Transformer",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 ChatGPT",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 GPT-4",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 Qwen",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 LoRA",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 2017",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 2018",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 阶段",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T02 stage 6",
+      "passed": true
+    },
+    {
+      "check": "event no later than 2016 T03",
+      "passed": true
+    },
+    {
+      "check": "visible gate T03",
+      "passed": true
+    },
+    {
+      "check": "required T03 title",
+      "passed": true
+    },
+    {
+      "check": "required T03 titleEn",
+      "passed": true
+    },
+    {
+      "check": "required T03 body",
+      "passed": true
+    },
+    {
+      "check": "required T03 bodyEn",
+      "passed": true
+    },
+    {
+      "check": "required T03 sourceUrl",
+      "passed": true
+    },
+    {
+      "check": "required T03 rights",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 Transformer",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 ChatGPT",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 GPT-4",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 Qwen",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 LoRA",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 2017",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 2018",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 阶段",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T03 stage 6",
+      "passed": true
+    },
+    {
+      "check": "event no later than 2016 T04",
+      "passed": true
+    },
+    {
+      "check": "visible gate T04",
+      "passed": true
+    },
+    {
+      "check": "required T04 title",
+      "passed": true
+    },
+    {
+      "check": "required T04 titleEn",
+      "passed": true
+    },
+    {
+      "check": "required T04 body",
+      "passed": true
+    },
+    {
+      "check": "required T04 bodyEn",
+      "passed": true
+    },
+    {
+      "check": "required T04 sourceUrl",
+      "passed": true
+    },
+    {
+      "check": "required T04 rights",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 Transformer",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 ChatGPT",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 GPT-4",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 Qwen",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 LoRA",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 2017",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 2018",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 阶段",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T04 stage 6",
+      "passed": true
+    },
+    {
+      "check": "event no later than 2016 T05",
+      "passed": true
+    },
+    {
+      "check": "visible gate T05",
+      "passed": true
+    },
+    {
+      "check": "required T05 title",
+      "passed": true
+    },
+    {
+      "check": "required T05 titleEn",
+      "passed": true
+    },
+    {
+      "check": "required T05 body",
+      "passed": true
+    },
+    {
+      "check": "required T05 bodyEn",
+      "passed": true
+    },
+    {
+      "check": "required T05 sourceUrl",
+      "passed": true
+    },
+    {
+      "check": "required T05 rights",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 Transformer",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 ChatGPT",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 GPT-4",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 Qwen",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 LoRA",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 2017",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 2018",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 阶段",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T05 stage 6",
+      "passed": true
+    },
+    {
+      "check": "event no later than 2016 T06",
+      "passed": true
+    },
+    {
+      "check": "visible gate T06",
+      "passed": true
+    },
+    {
+      "check": "required T06 title",
+      "passed": true
+    },
+    {
+      "check": "required T06 titleEn",
+      "passed": true
+    },
+    {
+      "check": "required T06 body",
+      "passed": true
+    },
+    {
+      "check": "required T06 bodyEn",
+      "passed": true
+    },
+    {
+      "check": "required T06 sourceUrl",
+      "passed": true
+    },
+    {
+      "check": "required T06 rights",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 Transformer",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 ChatGPT",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 GPT-4",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 Qwen",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 LoRA",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 2017",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 2018",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 阶段",
+      "passed": true
+    },
+    {
+      "check": "world text excludes modern/stage disclosure T06 stage 6",
+      "passed": true
+    },
+    {
+      "check": "group day gate g29",
+      "passed": true
+    },
+    {
+      "check": "paired group g29",
+      "passed": true
+    },
+    {
+      "check": "no invented LaoZhou group membership g29",
+      "passed": true
+    },
+    {
+      "check": "group day gate lz2_g_xiaoice",
+      "passed": true
+    },
+    {
+      "check": "paired group lz2_g_xiaoice",
+      "passed": true
+    },
+    {
+      "check": "no invented LaoZhou group membership lz2_g_xiaoice",
+      "passed": true
+    },
+    {
+      "check": "group day gate lz2_g_gnmt",
+      "passed": true
+    },
+    {
+      "check": "paired group lz2_g_gnmt",
+      "passed": true
+    },
+    {
+      "check": "no invented LaoZhou group membership lz2_g_gnmt",
+      "passed": true
+    },
+    {
+      "check": "group day gate lz2_g_voice",
+      "passed": true
+    },
+    {
+      "check": "paired group lz2_g_voice",
+      "passed": true
+    },
+    {
+      "check": "no invented LaoZhou group membership lz2_g_voice",
+      "passed": true
+    },
+    {
+      "check": "C6 runtime consumes exact day gate",
+      "passed": true
+    },
+    {
+      "check": "new data agrees runtime/design browser_news.json",
+      "passed": true
+    },
+    {
+      "check": "new data agrees runtime/design yy_group_presets.json",
+      "passed": true
+    },
+    {
+      "check": "patch applies to captured C6 tree",
+      "passed": true
+    }
+  ],
+  "apply_check": "",
+  "unity_executed": false
+}

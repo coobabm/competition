@@ -1,0 +1,9 @@
+{
+  "path": "Assets/LocalBuild/Editor/CasinoScamActualUiRunner.cs",
+  "baseline_sha256": "3a0fde7ac53f0b92b0bacc5ac008a99cf7cb44e9bd375962ddf4475352354c27",
+  "candidate_sha256": "165c8a5f185ac71a03e744f417829bdc65eae31b97ff3f8b8e034b6486211709",
+  "patch_sha256": "d7c907b98376daeacc2f6a53db51c7484fd126ad4502fe75351115bf01db7d6a",
+  "apply_check": "passed",
+  "Unity": "not run",
+  "compile": "not run"
+}

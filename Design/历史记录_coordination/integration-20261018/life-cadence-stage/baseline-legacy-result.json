@@ -1,0 +1,127 @@
+[
+  {
+    "test": "TheDrawsAreDeterministicFromTheSeed",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheDrawsLeaveTheLabsOwnDiceAlone",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "OnlyEligibleEventsFire",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "HoardingBringsANudgeThatNeverTakesMoneyByItself",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "NeverTwoAtOnce",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheIntervalIsThreeToFiveMinutes",
+    "status": "failed",
+    "error": "NUnit.Framework.AssertionException:   Expected: greater than or equal to 10\r\n  But was:  2\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at LingGuangV05.XingGuang.Tests.XgLifeEventsTests.TheIntervalIsThreeToFiveMinutes() in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgLifeEventsTests.cs:line 172\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+  },
+  {
+    "test": "ABusyPlayerPutsTheDrawOff",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "NoEventBeforeTheOpeningEnds",
+    "status": "failed",
+    "error": "NUnit.Framework.AssertionException:   the first minutes stay quiet\r\n  Expected: \u003Cempty\u003E\r\n  But was:  \u003C [223, zhou_loan] \u003E\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.IsEmpty(IEnumerable collection, String message, Object[] args)\r\n   at LingGuangV05.XingGuang.Tests.XgLifeEventsTests.NoEventBeforeTheOpeningEnds() in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgLifeEventsTests.cs:line 197\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+  },
+  {
+    "test": "OldSavesLoad",
+    "status": "failed",
+    "error": "NUnit.Framework.AssertionException:   Expected: in range (358,480)\r\n  But was:  221.69736761017487d\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at LingGuangV05.XingGuang.Tests.XgLifeEventsTests.OldSavesLoad() in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgLifeEventsTests.cs:line 220\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+  },
+  {
+    "test": "LendingACardUnplugsItForAWhileAndEarnsAFavour",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "ZhousServerCardBurnsOutOnlyOnce",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "RefusingCoolsZhouALittle",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheFavourBringsTheLongestDownloadAtOnce",
+    "status": "failed",
+    "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.IsTrue(Boolean condition)\r\n   at LingGuangV05.XingGuang.Tests.XgLifeEventsTests.TheFavourBringsTheLongestDownloadAtOnce() in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgLifeEventsTests.cs:line 284\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+  },
+  {
+    "test": "KeepingTheFavourLeavesTheDownloadAlone",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "BadSectorsLoseABatchOrCostABackup",
+    "status": "failed",
+    "error": "NUnit.Framework.AssertionException:   Expected: 9\r\n  But was:  10\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.AreEqual(Object expected, Object actual)\r\n   at LingGuangV05.XingGuang.Tests.XgLifeEventsTests.BadSectorsLoseABatchOrCostABackup() in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgLifeEventsTests.cs:line 318\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+  },
+  {
+    "test": "BadSectorsNeedAFullDisk",
+    "status": "failed",
+    "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.IsTrue(Boolean condition)\r\n   at LingGuangV05.XingGuang.Tests.XgLifeEventsTests.BadSectorsNeedAFullDisk() in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgLifeEventsTests.cs:line 348\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+  },
+  {
+    "test": "BroadbandRenewsForThreeMonthsOrDropsATier",
+    "status": "failed",
+    "error": "NUnit.Framework.AssertionException:   the last covered month brings the next reminder\r\n  Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.IsTrue(Boolean condition, String message, Object[] args)\r\n   at LingGuangV05.XingGuang.Tests.XgLifeEventsTests.BroadbandRenewsForThreeMonthsOrDropsATier() in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgLifeEventsTests.cs:line 370\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+  },
+  {
+    "test": "TheLandlordComesAfterTwoHighMonths",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "PeopleRespectYouMoreOnceYouAreFurtherAlongAndNeverBefore",
+    "status": "failed",
+    "error": "NUnit.Framework.AssertionException:   Expected: String containing \u0022\u5927\u795E\u0022\r\n  But was:  \u0022\u6700\u8FD1\u79EF\u6512\u4E86\u4E00\u70B9\u7ECF\u9A8C\u3002\u8981\u4E0D\u8981\u5728\u4EBA\u5DE5\u667A\u80FD\u5427\u53D1\u5E16\uFF0C\u95EE\u95EE\u54EA\u91CC\u6709\u6570\u636E\uFF0C\u6216\u8005\u5206\u4EAB\u81EA\u5DF1\u7684\u8BAD\u7EC3\u5FC3\u5F97\uFF1F\u0022\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.StringAssert.Contains(String expected, String actual, String message, Object[] args)\r\n   at NUnit.Framework.StringAssert.Contains(String expected, String actual)\r\n   at LingGuangV05.XingGuang.Tests.XgLifeEventsTests.PeopleRespectYouMoreOnceYouAreFurtherAlongAndNeverBefore() in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\XingGuang\\Tests\\Editor\\XgLifeEventsTests.cs:line 430\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+  },
+  {
+    "test": "TheRoommateGetsQuietOrRedBull",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "APlayersOwnUnplugIsLeftAlone",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "TheForumGivesSamplesOrATip",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "LentMoneyComesBack",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "YuebaoPaysALittleAndHangingUpCostsNothing",
+    "status": "passed",
+    "error": ""
+  },
+  {
+    "test": "EveryEventHasAFreeChoiceAndBilingualText",
+    "status": "passed",
+    "error": ""
+  }
+]

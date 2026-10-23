@@ -1,0 +1,11 @@
+{
+  "recordCount": 48,
+  "recordsUnchanged": true,
+  "sourceCount": 10,
+  "oldSourceFieldsAndDateGatesUnchanged": true,
+  "bilingualAttributionPresent": true,
+  "canonicalFixtureSha256": "748e5aefb159128f3cca9cfd1dd051108eb9c28282be7c3a043f30e786bbfdff",
+  "csharpCompiled": false,
+  "testsRun": false,
+  "unityRun": false
+}

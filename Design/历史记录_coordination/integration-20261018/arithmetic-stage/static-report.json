@@ -1,0 +1,8 @@
+{
+  "checks": 3284,
+  "mathematicalParameterCases": 2688,
+  "failures": [],
+  "runtimeTestsExecuted": false,
+  "compilerExecuted": false,
+  "note": "Static source checks and an independent mathematical reference audit only; Unity Editor tests still need execution."
+}

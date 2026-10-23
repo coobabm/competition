@@ -1,0 +1,39 @@
+{
+  "apply_check_exit": 0,
+  "apply_check_output": "",
+  "production_baselines": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgRelics.cs",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Relics.cs",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBackpackPage.cs",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Relics.cs",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRelicUi.cs",
+      "unchanged": true
+    }
+  ],
+  "unity_executed": false
+}

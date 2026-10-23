@@ -1,0 +1,14 @@
+# Idle autosave + profiler-root-cause handoff
+
+Apply `idle-save-performance.patch` using `git apply --ignore-space-change`. Eight source files including one verification runner. Standalone Runtime, Assembly-CSharp and Assembly-CSharp-Editor compilation succeeded. No Unity run, no claim of new frame timings.
+
+## Grounding
+Read latest original three archive-hotspots.tsv in `LocalVerification/IntegrationProfiler/20261018-045100-186-21fe74/`: teach 799 frames has YYGirlfriend.Update 7.28ms/frame and FindObjectsOfType 2.53ms/frame / 6.76 calls; train 1164 and YY/Tieba 816 include PrologueDirector/CasinoDesktop/UniverseFlicker/OriginCurtain Update. Inclusive timings overlap and are Editor-only. Parent's new TiebaHub.Lab registry eliminates the common indirect search for several hotspots; do not attribute that fix to this patch or add inclusive timings together.
+
+## Changes
+- Runtime: 300-second dirty autosave + two seconds with no reported input. Deadline remains pending while active; dirty bit is retained. Explicit/manual, pause and quit still go straight to SaveNow. Same atomic synchronous write is intentionally retained during idle; no unsafe background access to Unity serialization. Runtime adds no InputSystem dependency.
+- Desktop: router installs an input reporter (-1600 before runtime -1500). Keyboard, mouse motion/buttons/wheel, touch, gamepad buttons/sticks/triggers defer automatic saving. Actual time tracked with realtimeSinceStartupAsDouble, unaffected by gameplay pause/time scale. Scene/domain startup resets timestamp.
+- Remaining controller lookup misses in YYGirlfriend, CasinoDesktop and OriginCurtain now use parent's Instance registry. Origin obtains Runtime from controller. ResidentSpider missing-layer startup previously bypassed its own retry timer, producing repeated scene searches every frame; honors existing interval even when dependencies are missing, uses Instance for controller. No polling frequency changes after successful binding, no gameplay effect removals.
+
+## Unity verification to run
+After applying both this and stage-snapshot-stage patch, run `IdleSaveAndStageSnapshotQa.Run` from Edit Mode. It creates only an inactive runtime with private save directory, does not open or modify the player's save or scene. Tests real AtomicSaveStore writes/reload, dirty retention, 299.9/300-second threshold, input/1.9/2.1-second boundary, manual/pause/quit immediate saves, execution ordering, five real stage advances, exact JsonUtility snapshots and persisted disk roundtrip. Timer boundaries are controlled by reflection, not a five-minute wall-clock claim. Results under LocalVerification/IdleSaveAndStageSnapshot. Additional live acceptance: hold/drag/type at autosave deadline then release for two seconds, actual keyboard/mouse InputSystem path; compare new three recordings against originals before claiming performance improvement.

@@ -1,0 +1,32 @@
+{
+  "checkedAtUTC": "2026-10-19T11:20:16.855856+00:00",
+  "D6DocumentsPresent": {
+    "README.md": false,
+    "REPORT.md": false,
+    "QUESTIONS.md": false
+  },
+  "decision": "User explicitly retains latest disclosed plan. Reject D6 route-matching change; no production edits or tests.",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs",
+      "sourceStillMatchesSnapshot": true,
+      "productionStillMatchesBaseline": true,
+      "sourceSHA256": "9e82f123d013608935b046707092ced512b8213f899cba7c1676adb7b402f630",
+      "productionSHA256": "6351546a291be4e1138b9916f067efb71f835749186de37da2bdad451505ed92"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueMailBridge.cs",
+      "sourceStillMatchesSnapshot": true,
+      "productionStillMatchesBaseline": true,
+      "sourceSHA256": "9779d6e1790d3daef8ea734edbe6762ad101d97b49dc6cc1a52540163f2f0859",
+      "productionSHA256": "448131cf938ccd68db0b9df0c7799a204b363543efba7afacca0520c2f39ae2b"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs",
+      "sourceStillMatchesSnapshot": true,
+      "productionStillMatchesBaseline": true,
+      "sourceSHA256": "95002e2674ed6a6d676f12daf660a84143e08bd4a6a3663dca083f763c1ee5fe",
+      "productionSHA256": "2512dd22f8f5db55d055eb6636e823958fae083823a2e41ae90abbc2d9c85445"
+    }
+  ]
+}

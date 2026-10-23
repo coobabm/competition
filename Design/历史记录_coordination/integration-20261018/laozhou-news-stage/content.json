@@ -1,0 +1,194 @@
+{
+  "articles": [
+    {
+      "topic": "T01",
+      "id": "lz2_t01_alphago",
+      "date": "2016-05-25",
+      "eventDate": "2016-03-15",
+      "eventPrecision": "day",
+      "earliestVisibleDate": "2016-03-16",
+      "kind": "科技",
+      "title": "回看三月围棋赛：AlphaGo 以 4 比 1 战胜李世石",
+      "titleEn": "Looking back at March: AlphaGo beats Lee Sedol 4–1",
+      "body": "今年三月，AlphaGo 在首尔与李世石进行了五局围棋比赛，最终以 4 比 1 获胜；李世石赢下第四局。这是围棋任务上的重要结果。它并不能单凭这一场比赛证明，程序在所有工作上都同样可靠。",
+      "bodyEn": "In March, AlphaGo played five games of Go against Lee Sedol in Seoul and won the match 4–1. Lee won game four. This was an important result on a specific task; the match alone does not establish equal reliability in every kind of work.",
+      "sourceUrl": "https://blog.google/technology/ai/alphagos-ultimate-challenge/",
+      "rights": "Original bilingual summary; no source article text, images or product assets reproduced."
+    },
+    {
+      "topic": "T02",
+      "id": "lz2_t02_xiaoice",
+      "date": "2016-05-29",
+      "eventDate": "2014",
+      "eventPrecision": "year",
+      "earliestVisibleDate": "2016-01-01",
+      "kind": "科技",
+      "title": "聊天程序早已上网：从小冰聊起",
+      "titleEn": "Chatbots were already online: a look at XiaoIce",
+      "body": "微软小冰在 2014 年推出，到今年已经有公众与它聊天的经历。能顺着一句话接下去，是一种可以观察的表现；要判断它记住了什么、能否换个情境继续回答，还需要分别验证。这里不把流畅聊天等同于每轮都在训练模型。",
+      "bodyEn": "Microsoft launched XiaoIce in 2014, and by this year people had already been chatting with it. Continuing a conversation is observable behavior. What it remembers and whether it can answer in a different situation require separate checks. Fluent conversation does not establish that each exchange trains the model.",
+      "sourceUrl": "https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/",
+      "rights": "Original bilingual summary; no source article text, images or product assets reproduced."
+    },
+    {
+      "topic": "T03",
+      "id": "lz2_t03_tay",
+      "date": "2016-06-02",
+      "eventDate": "2016-03-25",
+      "eventPrecision": "official-report-day",
+      "earliestVisibleDate": "2016-03-26",
+      "kind": "科技",
+      "title": "回看 Tay 事件：开放互动还需要防范恶意输入",
+      "titleEn": "Looking back at Tay: public interaction needs protection from abuse",
+      "body": "微软在 3 月 25 日的说明中表示，聊天机器人 Tay 上线后的头一天遭遇了针对漏洞的协同攻击，出现不当输出，随后下线。官方承认防护存在疏漏。这一事件说明开放互动需要应对恶意使用；仅凭一条输出，不能断定模型内部具体更新了什么。",
+      "bodyEn": "In its March 25 account, Microsoft said Tay faced a coordinated attack exploiting a vulnerability within its first day online, produced offensive output, and was taken offline. Microsoft acknowledged a gap in its safeguards. Public interaction needs defenses against abuse; an output alone cannot establish what changed inside a model.",
+      "sourceUrl": "https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/",
+      "rights": "Original bilingual summary; no source article text, images or product assets reproduced."
+    },
+    {
+      "topic": "T04",
+      "id": "lz2_t04_resnet",
+      "date": "2016-06-06",
+      "eventDate": "2015-12-10",
+      "eventPrecision": "paper-v1-submission",
+      "earliestVisibleDate": "2016-01-01",
+      "kind": "科技",
+      "title": "读去年公开的残差网络论文：深度之外还有结构",
+      "titleEn": "Reading last year’s residual-network paper: structure matters too",
+      "body": "去年十二月公开的残差网络论文，把学习目标改写为相对输入的变化，并采用跨层连接。作者报告了更深网络的训练结果，包括 152 层网络的实验。这个方法帮助优化深层网络，却不表示层数加得越多，任何任务都会自动变好。",
+      "bodyEn": "The residual-network paper made public last December reformulates learning around changes relative to the input and uses shortcut connections. Its authors report results for deeper networks, including experiments with 152 layers. The approach helps optimize deep networks; it does not mean adding layers automatically improves every task.",
+      "sourceUrl": "https://arxiv.org/abs/1512.03385",
+      "rights": "Original bilingual summary; no source article text, images or product assets reproduced."
+    },
+    {
+      "topic": "T05",
+      "id": "n0928",
+      "date": "2016-09-28",
+      "eventDate": "2016-09-27",
+      "eventPrecision": "official-product-announcement",
+      "earliestVisibleDate": "2016-09-28",
+      "kind": "科技",
+      "title": "谷歌公布 GNMT，先用于中文到英文翻译",
+      "titleEn": "Google announces GNMT, beginning with Chinese-to-English translation",
+      "body": "谷歌在 9 月 27 日介绍了神经机器翻译系统 GNMT；相关论文的第一版提交于 9 月 26 日。公告称，系统已用于谷歌翻译的中文到英文方向，其他方向将逐步推出，并非所有语言同时更换。作者也指出，它仍可能漏词、误译名称，处理整段上下文仍有限制。译文更顺，并不等于重要内容可以免核对。",
+      "bodyEn": "Google introduced GNMT on September 27; version one of its paper was submitted on September 26. The announcement said GNMT was serving Chinese-to-English requests in Google Translate, with other language pairs to follow. This was not a simultaneous change for every language. The authors also noted omissions, mistranslated names and limits on wider context. Smoother wording does not remove the need to check important material.",
+      "sourceUrl": "https://research.google/blog/a-neural-network-for-machine-translation-at-production-scale/",
+      "rights": "Original bilingual summary; no source article text, images or product assets reproduced."
+    },
+    {
+      "topic": "T06",
+      "id": "lz2_t06_siri",
+      "date": "2016-06-10",
+      "eventDate": "2011-10-04",
+      "eventPrecision": "announcement-day",
+      "earliestVisibleDate": "2016-01-01",
+      "kind": "科技",
+      "title": "语音助手早已进入日常工具",
+      "titleEn": "Voice assistants were already everyday tools",
+      "body": "苹果在 2011 年发布 iPhone 4S 时介绍了 Siri，列举了拨打电话、安排提醒等用途。到 2016 年，语音助手已经不是全新的概念。不同设备、语言和环境下的体验仍要分别看，能完成一类操作，也不表示什么事都能交给它。",
+      "bodyEn": "Apple introduced Siri with its iPhone 4S announcement in 2011, listing uses such as calls and reminders. By 2016, voice assistants were already an established idea. Experiences still depend on the device, language and setting. Handling one kind of operation does not make an assistant reliable for every job.",
+      "sourceUrl": "https://www.apple.com/newsroom/2011/10/04Apple-Launches-iPhone-4S-iOS-5-iCloud/",
+      "rights": "Original bilingual summary; no source article text, images or product assets reproduced."
+    }
+  ],
+  "posts": [
+    {
+      "id": "lz2_t03_discussion",
+      "date": "2016-06-02",
+      "channel": "tieba",
+      "title": "让网友一起教聊天程序，真能越教越好吗？",
+      "titleEn": "Does letting everyone teach a chatbot always make it better?",
+      "text": "前阵子一个聊天机器人刚上线就出了问题，很快被停掉了。有人故意拿它逗乐、引它说难听的话。\n要是把任何人说的话都当教材，最后教出来的到底是谁想要的样子？",
+      "textEn": "A chatbot ran into trouble soon after going online and was quickly taken offline. Some people deliberately provoked it into offensive replies.\nIf everything anyone says is treated as teaching material, whose idea of a chatbot do we end up with?",
+      "sourceUrl": "https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/",
+      "contentType": "original-fictional-discussion",
+      "topic": "T03"
+    },
+    {
+      "id": "lz2_t04_discussion",
+      "date": "2016-06-06",
+      "channel": "tieba",
+      "title": "网络是不是堆得越深越好？",
+      "titleEn": "Is a deeper network always better?",
+      "text": "最近看残差网络的文章。原来层数加上去，训练也不一定更好，还得想办法让信息和训练信号传得过去。\n“再加几层”这句话说起来容易，真做起来没那么简单。",
+      "textEn": "I have been reading about residual networks. Adding layers does not guarantee better training; the structure still has to let information and training signals pass through.\n“Add a few more layers” is easy to say and harder to make work.",
+      "sourceUrl": "https://arxiv.org/abs/1512.03385",
+      "contentType": "original-fictional-discussion",
+      "topic": "T04"
+    }
+  ],
+  "groupPresets": [
+    {
+      "id": "g29",
+      "text": "AlphaGo 那事你们怎么看",
+      "textEn": "What do you make of the AlphaGo thing?",
+      "minDate": 20160525,
+      "replies": [
+        "[阿杰] 前阵子那个围棋比赛，电脑都赢成这样了。",
+        "[小刚] 那是不是以后什么都能交给电脑干？",
+        "[大伟] 会下围棋和会干别的事，总不是一回事吧。先让它帮我把这堆文件分好。"
+      ],
+      "repliesEn": [
+        "[A-Jie] That Go match a while back—the computer did so well.",
+        "[Xiao Gang] So can we leave everything to computers now?",
+        "[Da Wei] Playing Go and doing other jobs are different things. Let it sort this pile of files for me first."
+      ],
+      "topic": "T01",
+      "contentType": "original-fictional-dialogue"
+    },
+    {
+      "id": "lz2_g_xiaoice",
+      "text": "你们和小冰聊过吗？",
+      "textEn": "Have you chatted with XiaoIce?",
+      "minDate": 20160529,
+      "replies": [
+        "[阿杰] 我跟小冰聊了一会儿，还挺能接话。",
+        "[小刚] 我试过，有时候接得挺好，有时候突然就绕回去了。",
+        "[大伟] 能接一句，和真记得你说过什么，感觉还是两回事。"
+      ],
+      "repliesEn": [
+        "[A-Jie] I chatted with XiaoIce for a while. It can keep a conversation going.",
+        "[Xiao Gang] I tried it. Sometimes it follows along, sometimes it suddenly circles back.",
+        "[Da Wei] Having a reply and remembering what you said feel like different things."
+      ],
+      "topic": "T02",
+      "contentType": "original-fictional-dialogue"
+    },
+    {
+      "id": "lz2_g_gnmt",
+      "text": "这次神经机器翻译的消息，你们看了吗？",
+      "textEn": "Seen the news about neural machine translation?",
+      "minDate": 20160928,
+      "replies": [
+        "[阿杰] 看了篇机器翻译的新消息，说现在能更连贯地处理整句话。",
+        "[小刚] 那总算不用自己猜它翻出来的中文了？",
+        "[大伟] 先别急，这次说的是中文译成英文。我那封重要邮件还是得找人看一遍。"
+      ],
+      "repliesEn": [
+        "[A-Jie] I read some new translation news. It says the system can handle whole sentences more coherently.",
+        "[Xiao Gang] So I can finally stop guessing what its Chinese means?",
+        "[Da Wei] Hold on—this rollout is Chinese to English. I still want someone to check that important email."
+      ],
+      "topic": "T05",
+      "contentType": "original-fictional-dialogue"
+    },
+    {
+      "id": "lz2_g_voice",
+      "text": "你们平时用语音助手吗？",
+      "textEn": "Do you use a voice assistant day to day?",
+      "minDate": 20160610,
+      "replies": [
+        "[阿杰] 我试着用语音设提醒，省得老忘事。",
+        "[小刚] 我一到街上它就听不清，最后还是自己点。",
+        "[阿杰] 能帮一点是一点，我也没指望它什么都会。"
+      ],
+      "repliesEn": [
+        "[A-Jie] I have been trying voice reminders so I forget fewer things.",
+        "[Xiao Gang] Mine struggles to hear me out on the street, so I end up tapping.",
+        "[A-Jie] Any help is welcome. I never expected it to do everything."
+      ],
+      "topic": "T06",
+      "contentType": "original-fictional-dialogue"
+    }
+  ]
+}

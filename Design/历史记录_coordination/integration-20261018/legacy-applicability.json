@@ -1,0 +1,242 @@
+[
+  {
+    "file": "Assets/LingGuangV05/Core/Forum/Forum.cs",
+    "patch": "legacy-01.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": true,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Logic.cs",
+    "patch": "legacy-02.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/Core/Girlfriend/GirlfriendRules.Money.cs",
+    "patch": "legacy-03.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/Core/Girlfriend/GirlfriendState.cs",
+    "patch": "legacy-04.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/Core/Lang.En.cs",
+    "patch": "legacy-05.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/DesktopBridge/Taohuo/TaohuoView.Gifts.cs",
+    "patch": "legacy-06.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/DesktopBridge/Taohuo/TaohuoView.Gifts.cs:45\nerror: Assets/LingGuangV05/DesktopBridge/Taohuo/TaohuoView.Gifts.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.cs",
+    "patch": "legacy-07.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs",
+    "patch": "legacy-08.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoPages.cs",
+    "patch": "legacy-09.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoPages.cs:77\nerror: Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoPages.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "patch": "legacy-10.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/LocalLLM/LlmPersonas.cs:166\nerror: Assets/LingGuangV05/LocalLLM/LlmPersonas.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "patch": "legacy-11.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json:27\nerror: Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/Resources/LingGuangV05/Forum/forum.json",
+    "patch": "legacy-12.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_lines.json",
+    "patch": "legacy-13.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_lines.json:13\nerror: Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_lines.json: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/Resources/LingGuangV05/Story/era_advantage_story.json",
+    "patch": "legacy-14.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json",
+    "patch": "legacy-15.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json:52\nerror: Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_story.json",
+    "patch": "legacy-16.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/Resources/Localization/StoryText.json",
+    "patch": "legacy-17.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "patch": "legacy-18.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": true,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataSources.cs",
+    "patch": "legacy-19.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/XingGuang/Core/XgSim.DataSources.cs:151\nerror: Assets/LingGuangV05/XingGuang/Core/XgSim.DataSources.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.QualityTraps.cs",
+    "patch": "legacy-20.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": true,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs",
+    "patch": "legacy-21.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs:311\nerror: Assets/LingGuangV05/XingGuang/Core/XgSim.Subcontract.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Desktop/XgDataUi.cs",
+    "patch": "legacy-22.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/XingGuang/Desktop/XgDataUi.cs:63\nerror: Assets/LingGuangV05/XingGuang/Desktop/XgDataUi.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Desktop/XgMarketRelay.cs",
+    "patch": "legacy-23.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": true,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Desktop/XgStoryBridge.cs",
+    "patch": "legacy-24.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/XingGuang/Desktop/XgStoryBridge.cs:199\nerror: Assets/LingGuangV05/XingGuang/Desktop/XgStoryBridge.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Desktop/XgWiringPage.cs",
+    "patch": "legacy-25.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/XingGuang/Desktop/XgWiringRelay.cs",
+    "patch": "legacy-26.patch",
+    "apply": true,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": ""
+  },
+  {
+    "file": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+    "patch": "legacy-27.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/YY2016/YYChatHub.cs:660\nerror: Assets/LingGuangV05/YY2016/YYChatHub.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+    "patch": "legacy-28.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/YY2016/YYChatView.cs:508\nerror: Assets/LingGuangV05/YY2016/YYChatView.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/YY2016/YYGirlfriend.cs",
+    "patch": "legacy-29.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/YY2016/YYGirlfriend.cs:236\nerror: Assets/LingGuangV05/YY2016/YYGirlfriend.cs: patch does not apply\n"
+  },
+  {
+    "file": "Assets/LingGuangV05/YY2016/YYGirlfriendUi.cs",
+    "patch": "legacy-30.patch",
+    "apply": false,
+    "already": false,
+    "new_equals_old_base": false,
+    "error": "error: patch failed: Assets/LingGuangV05/YY2016/YYGirlfriendUi.cs:45\nerror: Assets/LingGuangV05/YY2016/YYGirlfriendUi.cs: patch does not apply\n"
+  }
+]

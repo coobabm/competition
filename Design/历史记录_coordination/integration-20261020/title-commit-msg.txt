@@ -1,0 +1,24 @@
+Use the v9 clean lockup as the opening title
+
+Claude delivered v9 (TapTap物料_v9_20261020). The in-game title now ships the
+clean two-line lockup: 我的电脑 / [monitor icon carrying 活]了, warm white text,
+no dark outline, a soft green glow on 了. The spider, web and signal lines stay
+in the store artwork only; at 720p they were 1-1.5 physical pixels of noise over
+the Three-Body poster.
+
+- TitleLogoV9.png (1775x1040) replaces the v5 art; v5 stays in Resources for now
+  so a rollback needs no reimport.
+- Layout: 500 reference px wide at (65,-98), ink starts at x~70, right edge 565
+  (Turing poster starts near 715), subheading follows at -398.96 with the same
+  8 px gap.
+- Tests assert the source size, 1.707 aspect (two-line lockup, not the 5.83
+  single-line store art), anchor, width, poster clearance and the subheading
+  position.
+- TitleMarkPreview now measures the title/subheading gap in reference pixels
+  inside the shared chrome rect instead of dividing world corners by the canvas
+  scale factor, and records the drawn size, right edge and gap.
+- NamingDesktopSmoke looks for the rendered RawImage mesh instead of a TMP text
+  with the old title string, which stopped existing when the title became art.
+
+Verified: CaseMenuHudTests 3/3; TitleMarkPreview exits 0 at 1920x1080 and
+1280x720 (source 1775x1040, draw 500x292.96, right 565, gap 8.00).

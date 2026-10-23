@@ -1,0 +1,4 @@
+Actual CaseMenuHud Chrome + title actions on a neutral dark background. Not the 3D menu or a Player run.
+Full Build/BuildSettings deliberately omitted because they read PlayerPrefs through GamePerformance.
+FAIL: System.InvalidOperationException: v3 Resources texture must be available before constructing title; asset=TitleLogoV3 (UnityEngine.Texture2D)
+  at TitleMarkPreview.Capture () [0x00213] in C:\Users\xomem\Documents\ChatGPT\games\competition-integration-20261020\Assets\LocalBuild\Editor\TitleMarkPreview.cs:67 

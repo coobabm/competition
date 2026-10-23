@@ -1,0 +1,22 @@
+{
+  "status": "failed",
+  "failure": "System.InvalidOperationException: Daily feedback actual UI: primary disk records all three real purchases and four natural clicked rounds\r\n  at DailyFeedbackActualUiChecks.Need (System.Boolean value, System.String message) [0x00020] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\DailyFeedbackActualUiChecks.cs:27 \r\n  at DailyFeedbackActualUiChecks+<Frames>d__19.MoveNext () [0x00f0d] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\DailyFeedbackActualUiChecks.cs:168 \r\n  at DailyFeedbackActualUiRunner.Tick () [0x000b8] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\DailyFeedbackActualUiRunner.cs:185 ",
+  "assertions": 309,
+  "report_sha256": "6320beac81b2149e64b0c12a787b4c5d95a13b825ef72eae8a02017c85306671",
+  "primary_sha256": "a81ca5d18b13117460155c75fda4d7caf9e7c72dfec31f339f8169ae88fbb830",
+  "payload_digest_valid": true,
+  "owned": [],
+  "unlocked": [
+    "perceptron",
+    "train.curve",
+    "shared.lr",
+    "train.checkpoint",
+    "daily.rhythm",
+    "daily.dice",
+    "train.monitor"
+  ],
+  "sequence_epoch": 4,
+  "money": 1000828.1475503766,
+  "tests_run": false,
+  "production_or_evidence_modified": false
+}

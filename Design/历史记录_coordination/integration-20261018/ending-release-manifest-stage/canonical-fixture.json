@@ -1,0 +1,10 @@
+{
+  "schema": "xg.virtual-release-manifest/1",
+  "kind": "virtual_public_release_manifest",
+  "modelFileStatus": "not_exported",
+  "product": "样例",
+  "description": "Description \"quoted\"\u000aline",
+  "capabilities": "Yes / no",
+  "limitations": "Not a diagnosis",
+  "maintenanceAndLicense": "Credit the source"
+}

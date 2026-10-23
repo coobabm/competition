@@ -1,0 +1,187 @@
+perceptron	Arch	感知机	只能画一条直线，学不会异或。
+weights	Research	权重	每个输入有自己的分量。训练 ×1.1
+learnrule	Research	感知机学习规则	答错就往对的方向挪一点。训练 ×1.15
+step	Research	阶跃激活	过线是，不过线否。准确率 +1%
+bias	Research	偏置	判断门槛可以挪了。准确率 +2%
+features	Research	特征工程	人替它整理线索，感知机也能做逻辑题。每轮卡数减半
+shared.lr	LrKnob	学习率搜索	自动试几个学习率，挑最好的那个：两条线的上限都高一点。
+spam.pack	Dataset	垃圾短信	完整数据包 1.2 万条，分 5 批下载，这里买的是下载权和第一批。
+mlp	Arch	多层感知机	多几层，能学组合了。挪个位置就不认识。
+s.d2	Depth	2 层	可用层数上限 2。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+sigmoid	Research	Sigmoid	开关换成平滑曲线，误差能往回传。准确率 +1%
+s.w1	Width	宽 32	每层可用 32 个单元。
+s.w2	Width	宽 64	每层可用 64 个单元。
+s.d3	Depth	3 层	可用层数上限 3。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+momentum	Research	动量 SGD	带着惯性往前冲。训练 ×1.3
+backprop	Research	小批量训练	一次看一批卡再改。训练 ×1.2
+chainrule	Research	自动求导	梯度让框架自己算。训练 ×1.1
+cudnn	Research	cuDNN 加速	NVIDIA 的加速库。训练 ×1.3，电费 −30%
+cooler	Research	九州风神	塔式散热器。烧卡概率减半
+mnist.pack	Dataset	MNIST 手写数字	完整数据包 6 万条，分 5 批下载，这里买的是下载权和第一批。
+danmu.pack	Dataset	弹幕情绪	完整数据包 2 万条，分 5 批下载，这里买的是下载权和第一批。
+headline.pack	Dataset	标题党	完整数据包 1.2 万条，分 5 批下载，这里买的是下载权和第一批。
+logic.pack	Dataset	逻辑是非题	完整数据包 10 万条，分 8 批下载，这里买的是下载权和第一批。
+arith.pack	Dataset	算术是非题	完整数据包 2 万条，分 5 批下载，这里买的是下载权和第一批。
+lenet	Arch	LeNet-5	小窗口扫全图，挪了位置也认得。
+rnn	Arch	朴素 RNN	边读边记，只记得最近几个字。
+v.d3	Depth	3 层	可用层数上限 3。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+v.d4	Depth	4 层	可用层数上限 4。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+v.w1	Width	宽 32	每层可用 32 个通道。
+v.w2	Width	宽 64	每层可用 64 个通道。
+v.w3	Width	宽 128	每层可用 128 个通道。
+s.w3	Width	宽 128	每层可用 128 个单元。
+alexnet	Arch	AlexNet	更深、更宽、两块显卡。
+vgg	Arch	VGG-16	全用小窗口，叠得很深，吃显存。
+googlenet	Arch	GoogLeNet	大小窗口一起看，参数少。
+v.d5	Depth	5 层	可用层数上限 5。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+v.d6	Depth	6 层	可用层数上限 6。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+v.d8	Depth	8 层	可用层数上限 8。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+v.w4	Width	宽 256	每层可用 256 个通道。
+s.d4	Depth	4 层	可用层数上限 4。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+s.w4	Width	宽 256	每层可用 256 个单元。
+cifar.pack	Dataset	CIFAR-10	完整数据包 5 万条，分 5 批下载，这里买的是下载权和第一批。
+meme.pack	Dataset	表情包情绪	完整数据包 6000 条，分 5 批下载，这里买的是下载权和第一批。
+poems.pack	Dataset	全唐诗	完整数据包 20 万条，分 8 批下载，这里买的是下载权和第一批。
+relu	Research	ReLU	误差往回传不缩水，深网络练得动。训练 ×1.3
+gradclip	Research	梯度裁剪	每一步不许迈太大，循环网络不再炸
+irnn	Research	单位初始化	RNN 的记忆不再一个字一个字漏掉。要配梯度裁剪
+dropout	Research	Dropout	随机关掉一些神经元，不让它死记硬背
+augment	Research	数据增强	图片挪一挪、转一转，一张变几张
+dataclean	Research	数据清洗	杂包和众包的错标减半；去重压缩，下好的数据少占 30% 硬盘
+rmsprop	Research	RMSProp	每个参数自己定步子。训练 ×1.6
+lstm	Arch	LSTM	给记忆装上门，整句都记得住。
+gru	Arch	GRU	LSTM 简化版，更快。
+longtext.pack	Dataset	长句理解	完整数据包 8 万条，分 5 批下载，这里买的是下载权和第一批。
+v.d12	Depth	12 层	可用层数上限 12。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+v.d16	Depth	16 层	可用层数上限 16。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+v.w5	Width	宽 512	每层可用 512 个通道。
+s.d6	Depth	6 层	可用层数上限 6。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+s.w5	Width	宽 512	每层可用 512 个单元。
+crosssentence.pack	Dataset	跨句理解	数据集：8 万条，分 5 批下载，这里买的是下载权和第一批。一句话的意思藏在上一句。
+review.pack	Dataset	刷单评论	完整数据包 1.2 万条，分 5 批下载，这里买的是下载权和第一批。
+textcnn	Arch	文字卷积	用看图的办法读句子，快，但看不远。
+resnet	Arch	ResNet	层间开近道，152 层也练得动。
+go.pack	Dataset	围棋局面	完整数据包 5 万条，分 5 批下载，这里买的是下载权和第一批。
+imagenet.pack	Dataset	ImageNet	数据集：120 万条，分 10 批下载，这里买的是下载权和第一批。120 万张图、1000 类。买硬盘加下载一周。
+batchnorm	Research	BatchNorm	层数上限 +6，训练 ×1.2，更稳
+adam	Research	Adam	最省心的优化器。训练 ×2
+lrschedule	Research	学习率衰减	先大步后小步，上限高一截
+seq2seq	Arch	Seq2Seq	先读完，再说出来。能翻译了。
+attention	Arch	注意力	翻每个词都回头看原文。
+position	Research	位置标记	给每个字编号，不用循环也知道先后。预训练要用
+v.d32	Depth	32 层	可用层数上限 32。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+v.w6	Width	宽 1024	每层可用 1024 个通道。
+s.d8	Depth	8 层	可用层数上限 8。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+s.w6	Width	宽 1024	每层可用 1024 个单元。
+translate.pack	Dataset	中英平行语料	数据集：200 万条，分 10 批下载，这里买的是下载权和第一批。两百万对中英句子。没有编码器-解码器做不了。
+news.pack	Dataset	人民日报语料	数据集：500 万条，分 20 批下载，这里买的是下载权和第一批。二十年新闻，五百万句。
+caption	Arch	看图说话	边看图边说话。
+transfer	Research	迁移学习	换结构时，学过的底层知识带着走
+transformer	Arch	Transformer	只用注意力，整句一起算。
+multihead	Label	多头注意力	研发产出，不另收费。
+layernorm	Label	LayerNorm	2016 年提出：每个字按自己的各项特征归一化，不依赖整批数据（BatchNorm 是按一批样本）。
+residual	Label	残差连接	继承 ResNet：每层都留一条捷径。
+warmup	Research	学习率预热	换模型后学习率慢慢升，不容易崩。预训练要用
+fp16	Research	混合精度	用一半的位数算，显存省一半。预训练规模 ×2
+s.d12	Depth	12 层	可用层数上限 12。层越多能组合出越复杂的东西；用不上的层得学会原样转交，学不会就越深越差。也更吃显存。
+earlystop	Research	早停	分数不涨就停。训练 +5%
+wordvec	Research	词向量	每个词变成一串数字。文字训练 +8%；聊天时能按意思想起有关的事
+beamsearch	Research	束搜索	翻译时多留几条候选。翻译训练 +10%
+subword	Research	子词切分	生僻词拆成小块。文字训练 +5%
+sft	Research	指令微调	教它听懂吩咐。预训练 +5%
+cot	Research	思维链	让它一步步想。预训练 +5%
+ph.xor	Phenomenon	异或不可分	单层只能画一条直线，“恰好一个为真”分不开，准确率卡在 50%。
+ph.vanish	Phenomenon	梯度消失	S 形激活每往下一层只剩四分之一，层数一多，底层概念几乎不动。
+ph.memorize	Phenomenon	死记硬背	格子多、数据少：每张卡长出一个专属概念，训练卡全对，测试卡全错。
+ph.grok	Phenomenon	顿悟	练过的题早就全对了，没见过的题却过了很久才突然跳上去（这个词 2022 年才有）。
+ph.generalize	Phenomenon	泛化	第一次答对一张从没训练过的卡。
+ph.deeper	Phenomenon	越深越差	多加的普通层本该什么都不做、原样往上传，可它学不会：每层都改动一点，层一多，连练过的题都变差（2015 年 ResNet 论文发现的「退化」）。弱小和无知不是生存的障碍，傲慢才是。
+ph.amnesia	Phenomenon	长句失忆	回环每一步 ×0.75，八个字以后开头就接不上了。
+ph.forget	Phenomenon	灾难性遗忘	一直只练别的：共用的格子被新数据改写、挤掉，这个数据集学会的东西就没了。
+ph.sycophancy	Phenomenon	讨好	你总挑好听的回答，「附和」就越来越强，它开始顺着你说错话（大模型时代才有这个说法）。
+ph.hallucinate	Phenomenon	幻觉	两个概念叠在一格，它把两者混为一谈，还说得很肯定。这只是个类比：真实模型「一本正经地胡说」，原因比这复杂。
+ph.shortcut	Phenomenon	捷径偏见	碰巧总一起出现的东西也会被连起来：狗的图都在草地上，它就把「草地」当成了「狗」。翻转裁剪治不了它，要有反例：多标一些配文和表情对不上的图。
+ph.transfer	Phenomenon	迁移	别的数据集练出来的概念，在这里直接用上了：没练几张卡就答得不错。
+ph.drift	Phenomenon	人格漂移	你希望它是一个样子，喂给它的卡却把它推向另一个样子。看性格面板的「目标」和「实际」。
+ph.translation	Phenomenon	翻译不了	一条序列只够得着自己相邻的字，够不着另一条序列。
+ph.bottleneck	Phenomenon	定长瓶颈	整句压进一格再说出来：短句能翻，长句一翻就乱。
+ph.serial	Phenomenon	串行瓶颈	循环在一句话里只能一个字一个字地算，句子越长越慢；加显卡只能多算几句，快不了一句。
+ph.inbreeding	Phenomenon	近亲繁殖	自动标错又没被抽检发现的题混进了训练数据，它把自己的错当成答案又学了回去。错得越多，成绩越被拖住。
+ph.emergence	Phenomenon	能力突然出现	多个高层概念同时过了阈值，一项能力从完全没有，到突然出现。
+ab.1	Ability	能力 · 是/否	它只会回答「是」或「否」。
+ab.2	Ability	能力 · 多选一	它能在几个选项里挑一个。
+ab.3	Ability	能力 · 看图说词	它第一次开口：一个词，最多几个字的碎片。看图，能说出图里是什么。
+ab.4	Ability	能力 · 短句	它能说一两句短话，只记得这次聊天里说过的。
+ab.5	Ability	能力 · 长记忆·翻译	它记得前几天聊过的事，能翻译，能读懂乱码。
+ab.6	Ability	能力 · 全部放开	看图的和读字的接到了一块儿。预训练跑完、偏好对齐做完，它才真正放开。
+secret.6	Secret	秘籍 · 预训练	秘籍：写明预训练的配法。自己跑通能拿 1.5 倍奖金。
+datacenter	Label	租机房（IDC 机柜）	预训练一开，一台机箱的 3500W 就跳闸。在 IDC 租一个机柜，八张卡接专线：这里付押金和首月租金；预训练跑着的时候，按时长另付租金和电费（¥25/秒），钱不够就断电。
+label.raise	Label	加薪	人工标注报酬：×2、×4、×6 … ×34，每买一次 +2 倍；与标注台商店共用。
+label.auto	Label	自动答题	全局每级每桌 +0.15 题/秒；需任一 60% 检查点。
+label.coop	Label	拿不准才问我	用把握阈值分流；待复核总量 20，满时自动暂停。
+label.brain	Label	灵光的大脑	第四阶段：它会说短句了，文字题让它用自己的话判断，不再只靠最好的检查点打分。
+label.hard	Label	难例加价	人工复核答对：报酬 ×1.5，样本 ×2。
+label.audit	Label	自查	拦下 40% 自动错题，退回复核，不污染训练数据。
+label.parallel	Label	多开推理	本地推理并发 1 → 4，保留聊天优先；实际速度取决于本机。
+label.trapmemory	Label	题库比对	记住平台抽过的金标题；再遇到时交给你人工复核，不自动提交。
+label.captcha	Label	验证码代填	需要第四阶段、手写数字检查点 ≥ 95%。它替你填验证码，3–6 秒后提交；太规律会被平台盯上。
+train.curve	Research	训练曲线	看见每轮进步。▶ 解锁练页
+brain.window	Research	脑子窗口	看看它怎么想。▶ 打开脑子窗口
+label.ai	Research	代答	每题看看它的答案。▶ 每题显示它的回答
+pack.make24	Research	算 24	一桌新的练习。▶ 开放算 24
+pack.headline_swipe	Research	左滑右滑 · 标题党	一桌新的练习。▶ 开放左滑右滑 · 标题党
+pack.mnist_write	Research	手写数字	一桌新的练习。▶ 开放手写数字
+pack.chess_mate1	Research	国际象棋 · 一步杀	一桌新的练习。▶ 开放国际象棋 · 一步杀
+pack.captcha	Research	验证码	一桌新的练习。▶ 开放验证码
+pack.meme_word	Research	表情包配字	一桌新的练习。▶ 开放表情包配字
+pack.poem_next	Research	唐诗 · 下一个字	一桌新的练习。▶ 开放唐诗 · 下一个字
+pack.chess_mate2	Research	国际象棋 · 两步杀	一桌新的练习。▶ 开放国际象棋 · 两步杀
+pack.review_swipe	Research	刷单评论	一桌新的练习。▶ 开放刷单评论
+pack.chinglish	Research	中式英语改错	一桌新的练习。▶ 开放中式英语改错
+lesson.overfit	Phenomenon	过拟合 · Overfitting	实线涨了，新题虚线没跟上。
+它背下了练过的答案，换一道就不会。多给新题，或研究随机失活。
+lesson.nan	Phenomenon	练崩了 · NaN	曲线断了，冒出一串 NaN。
+一步改得太猛，脑子里的数乱了。把步子调小；有检查点就回档。
+lesson.regress	Phenomenon	退步	这一轮比上一轮分低。
+训练有波动，已学会的能力不会因此丢失。继续练，或用检查点回档。
+lesson.ceiling	Phenomenon	天花板 · Ceiling	连续五轮，成绩几乎没动。
+现有结构和数据限制了成绩。补题、加宽加深，或试试新结构。
+lesson.small_step	Phenomenon	步子太小 · Learning rate	用稳档练了五轮，曲线还是很平。
+每次只改一点，所以进步很慢。试试中档步子。
+lesson.noise	Phenomenon	错题 · Noisy labels	题库里的错标已超过二十条。
+标错的答案也会被当成知识。先挑错，再让它学。
+lesson.grokking	Phenomenon	顿悟 · Grokking	新题成绩一轮跳了十个百分点。
+练过的线索突然连起来，像是想通了。保留这次记录，再拿新题试试。
+lesson.vanishing	Phenomenon	加层没用了 · Vanishing gradient	多加几层，成绩却不涨。
+误差信号一路缩小，传到底就太弱。换一种激活函数，例如 ReLU。
+lesson.emergence	Phenomenon	它学会了 · Emergence	下一项能力的两条进度都满了。
+脑子够大、练习够多，新能力开始出现。去教页试试它刚学会的本领。
+quiz.q1a	Phenomenon	它现在能学会什么？	一层脑子只能画一条线，把题分成两边：是，或否。
+quiz.q1b	Phenomenon	分数为什么卡在 50% 不动？	有些题要两个条件一起看才分得开，一条直线做不到。加一层就行。
+quiz.q1c	Phenomenon	练过的题全对，新题却错，为什么？	它记住了答案，没记住规律。多给它不同的题。
+quiz.q1d	Phenomenon	步子开到最大，会怎样？	一次改太多，脑子里的数就乱了。快要到顶时换小步。
+quiz.q2a	Phenomenon	多加几层有什么用？	第一层看笔画，第二层把笔画拼成字。层越多，能想越复杂的事。
+quiz.q2b	Phenomenon	层加到 5 层以上，为什么不涨了？	误差每往回传一层就缩小一截，传到底就没了。换 ReLU 就不缩了。
+quiz.q2c	Phenomenon	数字挪一格它就不认识了，为什么？	它把每个格子当成不同的线索。用小窗口到处找同一个笔画，就不怕挪了。
+quiz.q3a	Phenomenon	看图和读句子，为什么要两种脑型？	图里有用的是旁边的像素，句子里有用的是前面的字。
+quiz.q3b	Phenomenon	七言诗它总忘前面的字，怎么办？	普通循环每走一步记忆就淡一点。门控记忆自己决定留什么。
+quiz.q3c	Phenomenon	屏幕一串 NaN，是什么意思？	一步改太猛，数变成了「不是数」。限住每步的大小（梯度裁剪），再回档。
+quiz.q3d	Phenomenon	题只有几十道，怎么防它背答案？	每次随机关掉两成线索，它就没法只靠某几条蒙对。
+quiz.q4a	Phenomenon	它能说短句了，靠的是什么？	门控记忆让它记住一句话的开头，才能接上结尾。
+quiz.q4b	Phenomenon	看图的脑子越深越差，为什么？	每一层都改一点，改着改着就走样了。给每层留条近路（残差）。
+quiz.q4c	Phenomenon	为什么它翻译不了？	它只会接着同一句往下说。先读完一句，再用另一种语言说出来（编码器 + 解码器）。
+quiz.q5a	Phenomenon	长句一翻就乱，为什么？	它把整句压进一个小盒子，长了就丢细节。翻每个词时回头看原文（注意力）。
+quiz.q5b	Phenomenon	八张卡只有一张在忙，为什么？	下一个字要等上一个字算完。去掉循环，每个字同时看所有字。
+quiz.q5c	Phenomenon	便宜数据包让分数变低了，为什么？	错题会被它当成对的学进去。先挑错，再喂。
+quiz.q6a	Phenomenon	通读有什么不一样？	每句话的下一个字就是答案，所以什么文字都能拿来练。
+quiz.q6b	Phenomenon	难度降到一半就停了，缺什么？	能力是规模到了才冒出来的。加脑容量、加题、换机房。
+quiz.q6c	Phenomenon	问它问题，它接着出题，为什么？	通读只教它往下接。再用「问题 + 好回答」教一遍，它才会回答（指令微调）。
+quiz.q6d	Phenomenon	它总顺着你说，为什么？	挑好答案时你选什么，它就学什么。想要实话，就挑实话。
+train.holdout	Research	留出验证集	留些新题考它。
+▶ 显示新题成绩
+train.checkpoint	Research	检查点 Checkpoint	存好最好的一版。
+▶ 恢复最佳成绩
+train.monitor	Research	训练监控	先看看这轮风险。
+▶ 显示训练风险
+train.weights	Research	权重可视化	看看它在注意哪。
+▶ 打开看它学

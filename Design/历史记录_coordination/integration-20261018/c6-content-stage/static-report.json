@@ -1,0 +1,10 @@
+{
+  "checks": 1138,
+  "failures": [],
+  "itemRows": 507,
+  "senseCount": 216,
+  "senseYes": 108,
+  "senseNo": 108,
+  "oldComparisons": 19,
+  "scope": "Python static data/schema/cross-reference checks only; no Unity, compiler, model, image generation or source-network validation"
+}

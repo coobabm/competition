@@ -1,0 +1,65 @@
+[
+  {
+    "id": "daily.dice",
+    "nameZh": "概率直觉",
+    "nameEn": "Probability intuition",
+    "summaryZh": "从几种可能里数机会",
+    "summaryEn": "Count equally likely outcomes",
+    "effectZh": "开放概率小题",
+    "effectEn": "Opens probability questions"
+  },
+  {
+    "id": "daily.news",
+    "nameZh": "时事",
+    "nameEn": "Current affairs",
+    "summaryZh": "再想想读过的新闻",
+    "summaryEn": "Recall news you have read",
+    "effectZh": "开放新闻回顾",
+    "effectEn": "Opens news review"
+  },
+  {
+    "id": "daily.surf",
+    "nameZh": "冲浪",
+    "nameEn": "Surfing",
+    "summaryZh": "在帖子里找到资料",
+    "summaryEn": "Find learning links in posts",
+    "effectZh": "高亮手写数字资料链接",
+    "effectEn": "Highlights the digit-data link"
+  },
+  {
+    "id": "daily.bargain",
+    "nameZh": "砍价",
+    "nameEn": "Bargaining",
+    "summaryZh": "买二手显卡少花一点",
+    "summaryEn": "Spend less on used GPUs",
+    "effectZh": "启用喵鱼二手显卡折扣",
+    "effectEn": "Discounts Miaoyu used GPUs"
+  },
+  {
+    "id": "daily.care",
+    "nameZh": "体贴",
+    "nameEn": "Considerate",
+    "summaryZh": "记得对方说过的话",
+    "summaryEn": "Remember what others told you",
+    "effectZh": "体贴表达与已知生日提醒",
+    "effectEn": "Considerate cues and known birthdays"
+  },
+  {
+    "id": "daily.slang",
+    "nameZh": "网络用语",
+    "nameEn": "Internet slang",
+    "summaryZh": "读懂群里的梗",
+    "summaryEn": "Understand the group slang",
+    "effectZh": "加入用语解释与斗图建议",
+    "effectEn": "Adds slang and sticker tips"
+  },
+  {
+    "id": "daily.rhythm",
+    "nameZh": "节奏",
+    "nameEn": "Rhythm",
+    "summaryZh": "让完成提示跟上音乐",
+    "summaryEn": "Let completion cues follow music",
+    "effectZh": "完成提示跟随音乐重音",
+    "effectEn": "Completion cues follow music accents"
+  }
+]

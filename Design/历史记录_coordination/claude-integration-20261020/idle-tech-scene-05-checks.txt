@@ -1,0 +1,542 @@
+Isolated player save for technology scene
+Real opening question unlocks technology 0
+Real opening question unlocks technology 1
+Real opening question unlocks technology 2
+Real opening question unlocks technology 3
+Real opening question unlocks technology 4
+Real opening question unlocks technology 5
+Real opening question unlocks technology 6
+Real opening question unlocks technology 7
+Real opening question unlocks technology 8
+Real opening question unlocks technology 9
+Real opening question unlocks technology 10
+Real opening question unlocks technology 11
+Technology fixture passes the twelve-question opening gate
+Technology fixture has a desktop user
+Tech scene uses the common isolated fixture
+Actual Main scene owns the production tech page and LCD canvas
+Production technology page is visible before hover testing
+Actual application resize gives tech page (840.00, 560.00) at scale 1
+Longest live tooltip title and effect selected for ZH
+Actual application resize gives tech page (840.00, 560.00) at scale 1
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+Existing tray notification closes through its actual Close button
+Tray notifications finish their normal close animation before tech edge inspection
+Tray notifications finish their normal close animation before tech edge inspection
+Tray notifications finish their normal close animation before tech edge inspection
+Tray notifications finish their normal close animation before tech edge inspection
+Tray notifications finish their normal close animation before tech edge inspection
+Tray notifications finish their normal close animation before tech edge inspection
+Tray notifications finish their normal close animation before tech edge inspection
+Tray notifications finish their normal close animation before tech edge inspection
+Tray notifications finish their normal close animation before tech edge inspection
+tech-zh-0-mnist-pack: tooltip is visible in the actual scene
+tech-zh-0-mnist-pack: card stays inside the page
+tech-zh-0-mnist-pack: card corner stays inside the rendered LCD
+tech-zh-0-mnist-pack: card corner stays inside the rendered LCD
+tech-zh-0-mnist-pack: card corner stays inside the rendered LCD
+tech-zh-0-mnist-pack: card corner stays inside the rendered LCD
+tech-zh-0-mnist-pack: card stays clear of the actual taskbar
+tech-zh-0-mnist-pack: TMP has enough height for tipName
+tech-zh-0-mnist-pack: wrapped line fits tipName
+tech-zh-0-mnist-pack: TMP has enough height for tipLevel
+tech-zh-0-mnist-pack: wrapped line fits tipLevel
+tech-zh-0-mnist-pack: TMP has enough height for tipBody
+tech-zh-0-mnist-pack: wrapped line fits tipBody
+tech-zh-0-mnist-pack: wrapped line fits tipBody
+tech-zh-0-mnist-pack: wrapped line fits tipBody
+tech-zh-0-mnist-pack: wrapped line fits tipBody
+tech-zh-0-mnist-pack: wrapped line fits tipBody
+tech-zh-0-mnist-pack: TMP has enough height for tipCost
+tech-zh-0-mnist-pack: wrapped line fits tipCost
+tech-zh-0-mnist-pack: hover card never intercepts pointer rays
+tech-zh-0-mnist-pack: wheel over the node keeps its passive details open
+tech-zh-0-mnist-pack: tooltip wheel leaves tree pan and zoom unchanged
+tech-zh-0-mnist-pack: entire cost/status bar is readable at the bottom
+tech-zh-0-mnist-pack: passive cost row preserves pointer access to the node beneath
+Actual application resize gives tech page (840.00, 560.00) at scale 1
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+tech-zh-1-transformer: tooltip is visible in the actual scene
+tech-zh-1-transformer: card stays inside the page
+tech-zh-1-transformer: card corner stays inside the rendered LCD
+tech-zh-1-transformer: card corner stays inside the rendered LCD
+tech-zh-1-transformer: card corner stays inside the rendered LCD
+tech-zh-1-transformer: card corner stays inside the rendered LCD
+tech-zh-1-transformer: card stays clear of the actual taskbar
+tech-zh-1-transformer: TMP has enough height for tipName
+tech-zh-1-transformer: wrapped line fits tipName
+tech-zh-1-transformer: TMP has enough height for tipLevel
+tech-zh-1-transformer: wrapped line fits tipLevel
+tech-zh-1-transformer: wrapped line fits tipLevel
+tech-zh-1-transformer: TMP has enough height for tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: wrapped line fits tipBody
+tech-zh-1-transformer: TMP has enough height for tipCost
+tech-zh-1-transformer: wrapped line fits tipCost
+tech-zh-1-transformer: hover card never intercepts pointer rays
+tech-zh-1-transformer: wheel over the node keeps its passive details open
+tech-zh-1-transformer: tooltip wheel leaves tree pan and zoom unchanged
+tech-zh-1-transformer: wheel reaches the real bottom
+tech-zh-1-transformer: entire cost/status bar is readable at the bottom
+tech-zh-1-transformer: passive cost row preserves pointer access to the node beneath
+tech-zh-1-transformer: long content exposes a scrollbar
+tech-zh-1-transformer: node wheel reaches the title again
+Actual application resize gives tech page (240.00, 320.00) at scale 1.25
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+tech-zh-2-mnist-pack: tooltip is visible in the actual scene
+tech-zh-2-mnist-pack: card stays inside the page
+tech-zh-2-mnist-pack: card corner stays inside the rendered LCD
+tech-zh-2-mnist-pack: card corner stays inside the rendered LCD
+tech-zh-2-mnist-pack: card corner stays inside the rendered LCD
+tech-zh-2-mnist-pack: card corner stays inside the rendered LCD
+tech-zh-2-mnist-pack: card stays clear of the actual taskbar
+tech-zh-2-mnist-pack: TMP has enough height for tipName
+tech-zh-2-mnist-pack: wrapped line fits tipName
+tech-zh-2-mnist-pack: wrapped line fits tipName
+tech-zh-2-mnist-pack: TMP has enough height for tipLevel
+tech-zh-2-mnist-pack: wrapped line fits tipLevel
+tech-zh-2-mnist-pack: TMP has enough height for tipBody
+tech-zh-2-mnist-pack: wrapped line fits tipBody
+tech-zh-2-mnist-pack: wrapped line fits tipBody
+tech-zh-2-mnist-pack: wrapped line fits tipBody
+tech-zh-2-mnist-pack: wrapped line fits tipBody
+tech-zh-2-mnist-pack: wrapped line fits tipBody
+tech-zh-2-mnist-pack: wrapped line fits tipBody
+tech-zh-2-mnist-pack: TMP has enough height for tipCost
+tech-zh-2-mnist-pack: wrapped line fits tipCost
+tech-zh-2-mnist-pack: hover card never intercepts pointer rays
+tech-zh-2-mnist-pack: wheel over the node keeps its passive details open
+tech-zh-2-mnist-pack: tooltip wheel leaves tree pan and zoom unchanged
+tech-zh-2-mnist-pack: wheel reaches the real bottom
+tech-zh-2-mnist-pack: entire cost/status bar is readable at the bottom
+tech-zh-2-mnist-pack: passive cost row preserves pointer access to the node beneath
+tech-zh-2-mnist-pack: long content exposes a scrollbar
+tech-zh-2-mnist-pack: node wheel reaches the title again
+Actual application resize gives tech page (160.00, 240.00) at scale 0.75
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+tech-zh-3-transformer: tooltip is visible in the actual scene
+tech-zh-3-transformer: card stays inside the page
+tech-zh-3-transformer: card corner stays inside the rendered LCD
+tech-zh-3-transformer: card corner stays inside the rendered LCD
+tech-zh-3-transformer: card corner stays inside the rendered LCD
+tech-zh-3-transformer: card corner stays inside the rendered LCD
+tech-zh-3-transformer: card stays clear of the actual taskbar
+tech-zh-3-transformer: TMP has enough height for tipName
+tech-zh-3-transformer: wrapped line fits tipName
+tech-zh-3-transformer: TMP has enough height for tipLevel
+tech-zh-3-transformer: wrapped line fits tipLevel
+tech-zh-3-transformer: wrapped line fits tipLevel
+tech-zh-3-transformer: wrapped line fits tipLevel
+tech-zh-3-transformer: TMP has enough height for tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: wrapped line fits tipBody
+tech-zh-3-transformer: TMP has enough height for tipCost
+tech-zh-3-transformer: wrapped line fits tipCost
+tech-zh-3-transformer: hover card never intercepts pointer rays
+tech-zh-3-transformer: wheel over the node keeps its passive details open
+tech-zh-3-transformer: tooltip wheel leaves tree pan and zoom unchanged
+tech-zh-3-transformer: wheel reaches the real bottom
+tech-zh-3-transformer: entire cost/status bar is readable at the bottom
+tech-zh-3-transformer: passive cost row preserves pointer access to the node beneath
+tech-zh-3-transformer: long content exposes a scrollbar
+tech-zh-3-transformer: node wheel reaches the title again
+Actual application resize gives tech page (840.00, 560.00) at scale 1
+Longest live tooltip title and effect selected for EN
+Actual application resize gives tech page (840.00, 560.00) at scale 1
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+tech-en-0-crosssentence-pack: tooltip is visible in the actual scene
+tech-en-0-crosssentence-pack: card stays inside the page
+tech-en-0-crosssentence-pack: card corner stays inside the rendered LCD
+tech-en-0-crosssentence-pack: card corner stays inside the rendered LCD
+tech-en-0-crosssentence-pack: card corner stays inside the rendered LCD
+tech-en-0-crosssentence-pack: card corner stays inside the rendered LCD
+tech-en-0-crosssentence-pack: card stays clear of the actual taskbar
+tech-en-0-crosssentence-pack: TMP has enough height for tipName
+tech-en-0-crosssentence-pack: wrapped line fits tipName
+tech-en-0-crosssentence-pack: wrapped line fits tipName
+tech-en-0-crosssentence-pack: TMP has enough height for tipLevel
+tech-en-0-crosssentence-pack: wrapped line fits tipLevel
+tech-en-0-crosssentence-pack: TMP has enough height for tipBody
+tech-en-0-crosssentence-pack: wrapped line fits tipBody
+tech-en-0-crosssentence-pack: wrapped line fits tipBody
+tech-en-0-crosssentence-pack: wrapped line fits tipBody
+tech-en-0-crosssentence-pack: wrapped line fits tipBody
+tech-en-0-crosssentence-pack: wrapped line fits tipBody
+tech-en-0-crosssentence-pack: wrapped line fits tipBody
+tech-en-0-crosssentence-pack: TMP has enough height for tipCost
+tech-en-0-crosssentence-pack: wrapped line fits tipCost
+tech-en-0-crosssentence-pack: hover card never intercepts pointer rays
+tech-en-0-crosssentence-pack: wheel over the node keeps its passive details open
+tech-en-0-crosssentence-pack: tooltip wheel leaves tree pan and zoom unchanged
+tech-en-0-crosssentence-pack: entire cost/status bar is readable at the bottom
+tech-en-0-crosssentence-pack: passive cost row preserves pointer access to the node beneath
+Actual application resize gives tech page (840.00, 560.00) at scale 1
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+tech-en-1-transformer: tooltip is visible in the actual scene
+tech-en-1-transformer: card stays inside the page
+tech-en-1-transformer: card corner stays inside the rendered LCD
+tech-en-1-transformer: card corner stays inside the rendered LCD
+tech-en-1-transformer: card corner stays inside the rendered LCD
+tech-en-1-transformer: card corner stays inside the rendered LCD
+tech-en-1-transformer: card stays clear of the actual taskbar
+tech-en-1-transformer: TMP has enough height for tipName
+tech-en-1-transformer: wrapped line fits tipName
+tech-en-1-transformer: TMP has enough height for tipLevel
+tech-en-1-transformer: wrapped line fits tipLevel
+tech-en-1-transformer: wrapped line fits tipLevel
+tech-en-1-transformer: TMP has enough height for tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: wrapped line fits tipBody
+tech-en-1-transformer: TMP has enough height for tipCost
+tech-en-1-transformer: wrapped line fits tipCost
+tech-en-1-transformer: hover card never intercepts pointer rays
+tech-en-1-transformer: wheel over the node keeps its passive details open
+tech-en-1-transformer: tooltip wheel leaves tree pan and zoom unchanged
+tech-en-1-transformer: wheel reaches the real bottom
+tech-en-1-transformer: entire cost/status bar is readable at the bottom
+tech-en-1-transformer: passive cost row preserves pointer access to the node beneath
+tech-en-1-transformer: long content exposes a scrollbar
+tech-en-1-transformer: node wheel reaches the title again
+Actual application resize gives tech page (240.00, 320.00) at scale 1.25
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+tech-en-2-crosssentence-pack: tooltip is visible in the actual scene
+tech-en-2-crosssentence-pack: card stays inside the page
+tech-en-2-crosssentence-pack: card corner stays inside the rendered LCD
+tech-en-2-crosssentence-pack: card corner stays inside the rendered LCD
+tech-en-2-crosssentence-pack: card corner stays inside the rendered LCD
+tech-en-2-crosssentence-pack: card corner stays inside the rendered LCD
+tech-en-2-crosssentence-pack: card stays clear of the actual taskbar
+tech-en-2-crosssentence-pack: TMP has enough height for tipName
+tech-en-2-crosssentence-pack: wrapped line fits tipName
+tech-en-2-crosssentence-pack: wrapped line fits tipName
+tech-en-2-crosssentence-pack: wrapped line fits tipName
+tech-en-2-crosssentence-pack: wrapped line fits tipName
+tech-en-2-crosssentence-pack: TMP has enough height for tipLevel
+tech-en-2-crosssentence-pack: wrapped line fits tipLevel
+tech-en-2-crosssentence-pack: TMP has enough height for tipBody
+tech-en-2-crosssentence-pack: wrapped line fits tipBody
+tech-en-2-crosssentence-pack: wrapped line fits tipBody
+tech-en-2-crosssentence-pack: wrapped line fits tipBody
+tech-en-2-crosssentence-pack: wrapped line fits tipBody
+tech-en-2-crosssentence-pack: wrapped line fits tipBody
+tech-en-2-crosssentence-pack: wrapped line fits tipBody
+tech-en-2-crosssentence-pack: wrapped line fits tipBody
+tech-en-2-crosssentence-pack: TMP has enough height for tipCost
+tech-en-2-crosssentence-pack: wrapped line fits tipCost
+tech-en-2-crosssentence-pack: hover card never intercepts pointer rays
+tech-en-2-crosssentence-pack: wheel over the node keeps its passive details open
+tech-en-2-crosssentence-pack: tooltip wheel leaves tree pan and zoom unchanged
+tech-en-2-crosssentence-pack: wheel reaches the real bottom
+tech-en-2-crosssentence-pack: entire cost/status bar is readable at the bottom
+tech-en-2-crosssentence-pack: passive cost row preserves pointer access to the node beneath
+tech-en-2-crosssentence-pack: long content exposes a scrollbar
+tech-en-2-crosssentence-pack: node wheel reaches the title again
+Actual application resize gives tech page (160.00, 240.00) at scale 0.75
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+tech-en-3-transformer: tooltip is visible in the actual scene
+tech-en-3-transformer: card stays inside the page
+tech-en-3-transformer: card corner stays inside the rendered LCD
+tech-en-3-transformer: card corner stays inside the rendered LCD
+tech-en-3-transformer: card corner stays inside the rendered LCD
+tech-en-3-transformer: card corner stays inside the rendered LCD
+tech-en-3-transformer: card stays clear of the actual taskbar
+tech-en-3-transformer: TMP has enough height for tipName
+tech-en-3-transformer: wrapped line fits tipName
+tech-en-3-transformer: wrapped line fits tipName
+tech-en-3-transformer: wrapped line fits tipName
+tech-en-3-transformer: TMP has enough height for tipLevel
+tech-en-3-transformer: wrapped line fits tipLevel
+tech-en-3-transformer: wrapped line fits tipLevel
+tech-en-3-transformer: wrapped line fits tipLevel
+tech-en-3-transformer: wrapped line fits tipLevel
+tech-en-3-transformer: TMP has enough height for tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: wrapped line fits tipBody
+tech-en-3-transformer: TMP has enough height for tipCost
+tech-en-3-transformer: wrapped line fits tipCost
+tech-en-3-transformer: hover card never intercepts pointer rays
+tech-en-3-transformer: wheel over the node keeps its passive details open
+tech-en-3-transformer: tooltip wheel leaves tree pan and zoom unchanged
+tech-en-3-transformer: wheel reaches the real bottom
+tech-en-3-transformer: entire cost/status bar is readable at the bottom
+tech-en-3-transformer: passive cost row preserves pointer access to the node beneath
+tech-en-3-transformer: long content exposes a scrollbar
+tech-en-3-transformer: node wheel reaches the title again
+Actual application resize gives tech page (240.00, 320.00) at scale 1
+Real scene tech node exists: relu
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+ReLU Chinese: tooltip is visible in the actual scene
+ReLU Chinese: card stays inside the page
+ReLU Chinese: card corner stays inside the rendered LCD
+ReLU Chinese: card corner stays inside the rendered LCD
+ReLU Chinese: card corner stays inside the rendered LCD
+ReLU Chinese: card corner stays inside the rendered LCD
+ReLU Chinese: card stays clear of the actual taskbar
+ReLU Chinese: TMP has enough height for tipName
+ReLU Chinese: wrapped line fits tipName
+ReLU Chinese: TMP has enough height for tipLevel
+ReLU Chinese: wrapped line fits tipLevel
+ReLU Chinese: wrapped line fits tipLevel
+ReLU Chinese: TMP has enough height for tipBody
+ReLU Chinese: wrapped line fits tipBody
+ReLU Chinese: wrapped line fits tipBody
+ReLU Chinese: wrapped line fits tipBody
+ReLU Chinese: wrapped line fits tipBody
+ReLU Chinese: wrapped line fits tipBody
+ReLU Chinese: wrapped line fits tipBody
+ReLU Chinese: wrapped line fits tipBody
+ReLU Chinese: wrapped line fits tipBody
+ReLU Chinese: TMP has enough height for tipCost
+ReLU Chinese: wrapped line fits tipCost
+Hovering ReLU refreshes its title on language change
+Hovering ReLU refreshes its current complete English explanation
+ReLU English after live switch: tooltip is visible in the actual scene
+ReLU English after live switch: card stays inside the page
+ReLU English after live switch: card corner stays inside the rendered LCD
+ReLU English after live switch: card corner stays inside the rendered LCD
+ReLU English after live switch: card corner stays inside the rendered LCD
+ReLU English after live switch: card corner stays inside the rendered LCD
+ReLU English after live switch: card stays clear of the actual taskbar
+ReLU English after live switch: TMP has enough height for tipName
+ReLU English after live switch: wrapped line fits tipName
+ReLU English after live switch: TMP has enough height for tipLevel
+ReLU English after live switch: wrapped line fits tipLevel
+ReLU English after live switch: wrapped line fits tipLevel
+ReLU English after live switch: TMP has enough height for tipBody
+ReLU English after live switch: wrapped line fits tipBody
+ReLU English after live switch: wrapped line fits tipBody
+ReLU English after live switch: wrapped line fits tipBody
+ReLU English after live switch: wrapped line fits tipBody
+ReLU English after live switch: wrapped line fits tipBody
+ReLU English after live switch: wrapped line fits tipBody
+ReLU English after live switch: wrapped line fits tipBody
+ReLU English after live switch: TMP has enough height for tipCost
+ReLU English after live switch: wrapped line fits tipCost
+Real scene tech node exists: augment
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+Rapid node switch replaces ReLU with the current augmentation explanation
+Augmentation English: tooltip is visible in the actual scene
+Augmentation English: card stays inside the page
+Augmentation English: card corner stays inside the rendered LCD
+Augmentation English: card corner stays inside the rendered LCD
+Augmentation English: card corner stays inside the rendered LCD
+Augmentation English: card corner stays inside the rendered LCD
+Augmentation English: card stays clear of the actual taskbar
+Augmentation English: TMP has enough height for tipName
+Augmentation English: wrapped line fits tipName
+Augmentation English: wrapped line fits tipName
+Augmentation English: TMP has enough height for tipLevel
+Augmentation English: wrapped line fits tipLevel
+Augmentation English: wrapped line fits tipLevel
+Augmentation English: TMP has enough height for tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: wrapped line fits tipBody
+Augmentation English: TMP has enough height for tipCost
+Augmentation English: wrapped line fits tipCost
+Real scene tech node exists: label.auto
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+Mystery tooltip exposes only its hint in ZH
+Real scene tech node exists: label.raise
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+Fully upgraded pay node has no further price in ZH
+Max pay ZH: tooltip is visible in the actual scene
+Max pay ZH: card stays inside the page
+Max pay ZH: card corner stays inside the rendered LCD
+Max pay ZH: card corner stays inside the rendered LCD
+Max pay ZH: card corner stays inside the rendered LCD
+Max pay ZH: card corner stays inside the rendered LCD
+Max pay ZH: card stays clear of the actual taskbar
+Max pay ZH: TMP has enough height for tipName
+Max pay ZH: wrapped line fits tipName
+Max pay ZH: TMP has enough height for tipLevel
+Max pay ZH: wrapped line fits tipLevel
+Max pay ZH: TMP has enough height for tipBody
+Max pay ZH: wrapped line fits tipBody
+Max pay ZH: wrapped line fits tipBody
+Max pay ZH: TMP has enough height for tipCost
+Max pay ZH: wrapped line fits tipCost
+Real scene tech node exists: label.auto
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+Mystery tooltip exposes only its hint in EN
+Real scene tech node exists: label.raise
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+Fully upgraded pay node has no further price in EN
+Max pay EN: tooltip is visible in the actual scene
+Max pay EN: card stays inside the page
+Max pay EN: card corner stays inside the rendered LCD
+Max pay EN: card corner stays inside the rendered LCD
+Max pay EN: card corner stays inside the rendered LCD
+Max pay EN: card corner stays inside the rendered LCD
+Max pay EN: card stays clear of the actual taskbar
+Max pay EN: TMP has enough height for tipName
+Max pay EN: wrapped line fits tipName
+Max pay EN: TMP has enough height for tipLevel
+Max pay EN: wrapped line fits tipLevel
+Max pay EN: TMP has enough height for tipBody
+Max pay EN: wrapped line fits tipBody
+Max pay EN: wrapped line fits tipBody
+Max pay EN: wrapped line fits tipBody
+Max pay EN: TMP has enough height for tipCost
+Max pay EN: wrapped line fits tipCost
+Returning to the tech page clears the old hover card
+Reopened tech navigation settles before pointer inspection
+Real scene tech node exists: relu
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+Real scene tech node exists: relu
+Hiding a hovered node closes its tooltip immediately
+Actual application resize gives tech page (840.00, 560.00) at scale 1
+Offline unlock hint locates the real basic auto-answer node
+Basic auto-answer navigation shows the matching node details
+Unlock navigation does not purchase or bypass discovery requirements
+Real scene tech node exists: weights
+Explicit details open for a technology with unmet prerequisites
+Unmet technology prerequisite is a navigation link in pinned details
+Prerequisite link focuses its exact real node
+Prerequisite navigation never buys the target
+Final purchase keeps disk saving and simulation ticking disabled
+Pointer enter opens tech details immediately, before Tick and without hover dwell
+Idle tooltip remains visible with stable placement and dimensions
+Leaving the node closes hover details synchronously without a grace period
+Real wallet and prerequisites make the final node buyable: Hold to buy ¥400
+Real source canvas reaches the purchase node after closing its tooltip
+Hover details are click-through before purchasing
+Hover details do not intercept the real node raycast
+Pointer target exists
+Pointer roundtrip reaches target through actual LCD rectangle
+Actual LCD input gate is open
+Actual relay reaches intended click/down receiver, not an arbitrary ancestor background
+A single node click purchases through the real LCD pointer path
+LCD purchase charges the displayed cost exactly once and records matching total spent
+Idle scene checks keep player saves and simulation ticks isolated
+Idle fixture is genuinely past the title and prologue gates
+Locked idle entry navigates to technology without entering compact mode
+Locked idle entry focuses basic automatic answering
+Locked idle navigation does not purchase automation
+One basic automation level opens the compact surface
+Compact surface has its own overlay canvas
+Compact session income starts at zero
+Compact digits approach an actual settled income receipt without exceeding it
+Paused display may finish the existing receipt but invents no income
+Idle display never credits a second income stream
+Restoring closes compact mode
+Canvas enabled state restored: LingGuang Prologue Screen
+Canvas enabled state restored: hongmengos 2010 Desktop Source
+Canvas enabled state restored: LingGuang Story Overlay
+Canvas enabled state restored: HongmengOS Monitor
+Canvas enabled state restored: Viewport
+Camera enabled state restored: LCD Source Camera
+Camera enabled state restored: Main Camera

@@ -37,8 +37,8 @@ namespace LingGuangV05.Desktop.Mail
                 body = "尊敬的旅客：\n\n您已成功购买 6 月 18 日 G1218 次列车车票，二等座 07 车 12F 号。请携带购票时使用的有效身份证件原件乘车。\n\n本邮件由系统自动发送，请勿回复。",
                 bodyEn = "Dear passenger,\n\nYour ticket for train G1218 on 18 June is confirmed: second class, car 07, seat 12F. Bring the ID you booked with.\n\nThis is an automated message; do not reply." },
             new Mail { id = "background.taohuo", from = "淘货", fromEn = "Taohuo", date = "5月23日", subject = "您关注的「亮影 1080 8G」开始预约了", subjectEn = "The 8 GB card you watched is open for pre-order",
-                body = "亲，您收藏的宝贝开始预约了！\n\n亮影 1080 8G 公版  首发价 ¥4999，限购一张。\n\n库存紧张，先到先得。\n\n（此邮件为系统推送，退订请回复 TD）",
-                bodyEn = "Good news! An item you saved is open for pre-order.\n\n8 GB flagship card, launch price ¥4999, one per customer.\n\nLimited stock.\n\n(Automated; reply TD to unsubscribe)" },
+                body = "亲，您收藏的宝贝开始预约了！\n\n亮影 1080 8G 公版  首发价 ¥5399，限购一张。\n\n库存紧张，先到先得。\n\n（此邮件为系统推送，退订请回复 TD）",
+                bodyEn = "Good news! An item you saved is open for pre-order.\n\n8 GB flagship card, launch price ¥5399, one per customer.\n\nLimited stock.\n\n(Automated; reply TD to unsubscribe)" },
             // Same historical slot as the former graduation notice; other rows/read flags are retained.
             new Mail { id = "background.work_roster", from = "行政同事", fromEn = "Office administration", date = "5月22日", subject = "本周值班表核对", subjectEn = "Please check this week's duty roster",
                 body = "各位同事：\n\n本周值班表已放在共享文件夹。请核对自己的班次；如需调整，请先和换班同事确认，再回复行政登记。\n\n离开工位前请检查电源和门窗。\n\n行政",

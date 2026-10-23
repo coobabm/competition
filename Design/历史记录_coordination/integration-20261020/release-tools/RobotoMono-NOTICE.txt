@@ -1,0 +1,24 @@
+Roboto Mono Medium — bundled OriginMono typeface
+
+Copyright 2015 Google Inc. All Rights Reserved.
+Roboto Mono is a trademark of Google.
+Licensed under the Apache License, Version 2.0
+http://www.apache.org/licenses/LICENSE-2.0
+
+The statements above are copied from the actual unmodified font's embedded name
+table (name IDs 0, 7, 13 and 14). This provenance note was prepared by the game
+packager; it is not an upstream NOTICE file or a claim of a new font download.
+
+Bundled source: Assets/LingGuangV05/Localization/Fonts/RobotoMono-Medium.ttf
+Font family: Roboto Mono Medium
+Font subfamily: Regular
+Version: Version 2.000985; 2015; ttfautohint (v1.3)
+Source byte length: 109292
+SHA256: 8e3fc643b30cff29c10e5f57534d2ffcf791f1319dff30c3e37c2b6b5e3d679f
+The game uses this source through Resources/LingGuangV05/Fonts/OriginMono SDF.
+The source font file has not been modified by this packaging work.
+
+The complete unmodified Apache License 2.0 text accompanies this notice as
+Apache-2.0.txt. It is copied from the existing LLMUnity 3.0.3 LICENSE.md, which
+contains the standard full text and placeholder appendix; it is not a new font
+permission or a substitution of LLMUnity ownership for Google's copyright.

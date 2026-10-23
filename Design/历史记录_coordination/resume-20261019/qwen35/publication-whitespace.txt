@@ -1,0 +1,388 @@
+Assets/LingGuangV05/Fonts/UiV4/MiSans-Medium.ttf.meta:14: trailing whitespace.
++  customCharacters: 
+Assets/LingGuangV05/Fonts/UiV4/MiSans-Medium.ttf.meta:19: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Fonts/UiV4/MiSans-Medium.ttf.meta:20: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Fonts/UiV4/MiSans-Medium.ttf.meta:21: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Fonts/UiV4/MiSans-Semibold.ttf.meta:14: trailing whitespace.
++  customCharacters: 
+Assets/LingGuangV05/Fonts/UiV4/MiSans-Semibold.ttf.meta:19: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Fonts/UiV4/MiSans-Semibold.ttf.meta:20: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Fonts/UiV4/MiSans-Semibold.ttf.meta:21: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset:24: trailing whitespace.
++  m_MipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset:41: trailing whitespace.
++  m_PlatformBlob: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset:48: trailing whitespace.
++    path: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:24: trailing whitespace.
++  m_MipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:41: trailing whitespace.
++  m_PlatformBlob: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:48: trailing whitespace.
++    path: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:68: trailing whitespace.
++  m_LockedProperties: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:154: trailing whitespace.
++    sourceFontFileName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:155: trailing whitespace.
++    sourceFontFileGUID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:165: trailing whitespace.
++    characterSequence: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:166: trailing whitespace.
++    referencedFontAssetGUID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:167: trailing whitespace.
++    referencedTextAssetGUID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:173: trailing whitespace.
++  m_SourceFontFilePath: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:31578: trailing whitespace.
++    Name: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:31625: trailing whitespace.
++  m_MipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:31642: trailing whitespace.
++  m_PlatformBlob: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset:31649: trailing whitespace.
++    path: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset.meta:6: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset.meta:7: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansMedium.asset.meta:8: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:24: trailing whitespace.
++  m_MipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:41: trailing whitespace.
++  m_PlatformBlob: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:48: trailing whitespace.
++    path: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:87: trailing whitespace.
++    sourceFontFileName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:88: trailing whitespace.
++    sourceFontFileGUID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:98: trailing whitespace.
++    characterSequence: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:99: trailing whitespace.
++    referencedFontAssetGUID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:100: trailing whitespace.
++    referencedTextAssetGUID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:106: trailing whitespace.
++  m_SourceFontFilePath: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:39138: trailing whitespace.
++    Name: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:39183: trailing whitespace.
++  m_LockedProperties: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:39252: trailing whitespace.
++  m_MipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:39269: trailing whitespace.
++  m_PlatformBlob: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset:39276: trailing whitespace.
++    path: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset.meta:6: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset.meta:7: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSansSemibold.asset.meta:8: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt:102: new blank line at EOF.
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta:100: trailing whitespace.
++    customData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta:103: trailing whitespace.
++    spriteID: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta:106: trailing whitespace.
++    indices: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta:113: trailing whitespace.
++  mipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta:115: trailing whitespace.
++  userData: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta:116: trailing whitespace.
++  assetBundleName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta:117: trailing whitespace.
++  assetBundleVariant: 
+Assets/LocalBuild/Diagnostics.meta:6: trailing whitespace.
++  userData: 
+Assets/LocalBuild/Diagnostics.meta:7: trailing whitespace.
++  assetBundleName: 
+Assets/LocalBuild/Diagnostics.meta:8: trailing whitespace.
++  assetBundleVariant: 
+Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs.meta:9: trailing whitespace.
++  userData: 
+Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs.meta:10: trailing whitespace.
++  assetBundleName: 
+Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs.meta:11: trailing whitespace.
++  assetBundleVariant: 
+Assets/LocalBuild/Editor/GroupPresetActualUiRunner.cs:552: new blank line at EOF.
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:17: trailing whitespace.
++> This repository contains model weights and configuration files for the post-trained model in the Hugging Face Transformers format. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:63: trailing whitespace.
++    - MTP: trained with multi-steps  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:716: trailing whitespace.
++For streamlined integration, we recommend using Qwen3.5 via APIs. Below is a guide to use Qwen3.5 via OpenAI-compatible API. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:725: trailing whitespace.
++> Inference efficiency and throughput vary significantly across frameworks. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:731: trailing whitespace.
++> If you encounter out-of-memory (OOM) errors, consider reducing the context window. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:746: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:752: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:758: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:770: trailing whitespace.
++See [its documentation](https://docs.vllm.ai/en/stable/getting_started/installation/index.html) for more details. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:779: trailing whitespace.
++    vllm serve Qwen/Qwen3.5-4B --port 8000 --tensor-parallel-size 1 --max-model-len 262144 --reasoning-parser qwen3 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:783: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:785: trailing whitespace.
++    vllm serve Qwen/Qwen3.5-4B --port 8000 --tensor-parallel-size 1 --max-model-len 262144 --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:795: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:801: trailing whitespace.
++ 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:804: trailing whitespace.
++ 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:862: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:902: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:948: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:960: trailing whitespace.
++You can obtain direct response from the model without thinking by configuring the API parameters. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:995: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1010: trailing whitespace.
++We recommend using [Qwen-Agent](https://github.com/QwenLM/Qwen-Agent) to quickly build Agent applications with Qwen3.5. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1090: trailing whitespace.
++Qwen3.5 natively supports context lengths of up to 262,144 tokens. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1093: trailing whitespace.
++YaRN is currently supported by several inference frameworks, e.g., `transformers`, `vllm`, `ktransformers` and `sglang`. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1118: trailing whitespace.
++    VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 vllm serve ... --hf-overrides '{"text_config": {"rope_parameters": {"mrope_interleaved": true, "mrope_section": [11, 11, 10], "rope_type": "yarn", "rope_theta": 10000000, "partial_rotary_factor": 0.25, "factor": 4.0, "original_max_position_embeddings": 262144}}}' --max-model-len 1010000  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1128: trailing whitespace.
++> We advise modifying the `rope_parameters` configuration only when processing long contexts is required. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1129: trailing whitespace.
++> It is also recommended to modify the `factor` as needed. For example, if the typical context length for your application is 524,288 tokens, it would be better to set `factor` as 2.0. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1135: trailing whitespace.
++1. **Sampling Parameters**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1136: trailing whitespace.
++   - We suggest using the following sets of sampling parameters depending on the mode and task type:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1137: trailing whitespace.
++     - **Thinking mode for general tasks**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1138: trailing whitespace.
++       `temperature=1.0`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1139: trailing whitespace.
++     - **Thinking mode for precise coding tasks (e.g., WebDev)**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1140: trailing whitespace.
++       `temperature=0.6`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=0.0`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1141: trailing whitespace.
++     - **Instruct (or non-thinking) mode for general tasks**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1142: trailing whitespace.
++       `temperature=0.7`, `top_p=0.8`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1143: trailing whitespace.
++     - **Instruct (or non-thinking) mode for reasoning tasks**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1144: trailing whitespace.
++       `temperature=1.0`, `top_p=1.0`, `top_k=40`, `min_p=0.0`, `presence_penalty=2.0`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:43: trailing whitespace.
++> This repository contains model weights and configuration files for the post-trained model in the Hugging Face Transformers format. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:89: trailing whitespace.
++    - MTP: trained with multi-steps  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:742: trailing whitespace.
++For streamlined integration, we recommend using Qwen3.5 via APIs. Below is a guide to use Qwen3.5 via OpenAI-compatible API. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:751: trailing whitespace.
++> Inference efficiency and throughput vary significantly across frameworks. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:757: trailing whitespace.
++> If you encounter out-of-memory (OOM) errors, consider reducing the context window. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:772: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:778: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:784: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:796: trailing whitespace.
++See [its documentation](https://docs.vllm.ai/en/stable/getting_started/installation/index.html) for more details. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:805: trailing whitespace.
++    vllm serve Qwen/Qwen3.5-4B --port 8000 --tensor-parallel-size 1 --max-model-len 262144 --reasoning-parser qwen3 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:809: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:811: trailing whitespace.
++    vllm serve Qwen/Qwen3.5-4B --port 8000 --tensor-parallel-size 1 --max-model-len 262144 --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:821: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:827: trailing whitespace.
++ 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:830: trailing whitespace.
++ 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:888: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:928: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:974: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:986: trailing whitespace.
++You can obtain direct response from the model without thinking by configuring the API parameters. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1021: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1036: trailing whitespace.
++We recommend using [Qwen-Agent](https://github.com/QwenLM/Qwen-Agent) to quickly build Agent applications with Qwen3.5. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1116: trailing whitespace.
++Qwen3.5 natively supports context lengths of up to 262,144 tokens. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1119: trailing whitespace.
++YaRN is currently supported by several inference frameworks, e.g., `transformers`, `vllm`, `ktransformers` and `sglang`. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1144: trailing whitespace.
++    VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 vllm serve ... --hf-overrides '{"text_config": {"rope_parameters": {"mrope_interleaved": true, "mrope_section": [11, 11, 10], "rope_type": "yarn", "rope_theta": 10000000, "partial_rotary_factor": 0.25, "factor": 4.0, "original_max_position_embeddings": 262144}}}' --max-model-len 1010000  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1154: trailing whitespace.
++> We advise modifying the `rope_parameters` configuration only when processing long contexts is required. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1155: trailing whitespace.
++> It is also recommended to modify the `factor` as needed. For example, if the typical context length for your application is 524,288 tokens, it would be better to set `factor` as 2.0. 
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1161: trailing whitespace.
++1. **Sampling Parameters**:  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1162: trailing whitespace.
++   - We suggest using the following sets of sampling parameters depending on the mode and task type:  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1163: trailing whitespace.
++     - **Thinking mode for general tasks**:  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1164: trailing whitespace.
++       `temperature=1.0`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1165: trailing whitespace.
++     - **Thinking mode for precise coding tasks (e.g., WebDev)**:  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1166: trailing whitespace.
++       `temperature=0.6`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=0.0`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1167: trailing whitespace.
++     - **Instruct (or non-thinking) mode for general tasks**:  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1168: trailing whitespace.
++       `temperature=0.7`, `top_p=0.8`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1169: trailing whitespace.
++     - **Instruct (or non-thinking) mode for reasoning tasks**:  
+Assets/StreamingAssets/LingGuang/Models/QUANT_MODEL_CARD.md:1170: trailing whitespace.
++       `temperature=1.0`, `top_p=1.0`, `top_k=40`, `min_p=0.0`, `presence_penalty=2.0`, `repetition_penalty=1.0`  

@@ -1,0 +1,103 @@
+competition-latest-20261016/Assets/LocalBuild/Editor\ClaudeHandoffChecks.cs:22:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\CorrectionDropoutChecks.cs:20:    public static void Run(Action<string> log)
+competition-latest-20261016/Assets/LocalBuild/Editor\BrainWindowPlayQa.cs:26:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\BrainWindowPlayQa.cs:80:    [MenuItem("LingGuang/Verification/Brain window (isolated Play only)")]
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignCrowdPrivacyChecks.cs:14:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignFirstLessonChecks.cs:134:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignFirstLessonChecks.cs:443:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignFirstLessonChecks.cs:520:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\AnswerTraceChecks.cs:25:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.Corrections.cs:11:    public static void RunAnswerCorrections() { Start("answer-correction"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperChecks.cs:8:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.AnswerPaths.cs:13:    public static void RunAnswerPaths() { Start("answer-path"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:44:    public static void Run() { Start("all"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:45:    public static void RunPin() { Start("pin"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:46:    public static void RunConcepts() { Start("concepts"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:47:    public static void RunLinks() { Start("links"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:48:    public static void RunRegions() { Start("regions"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:49:    public static void RunSeed() { Start("seed"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:50:    public static void RunOutputs() { Start("outputs"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:51:    public static void RunPersona() { Start("persona"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:52:    public static void RunAbilities() { Start("abilities"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:53:    public static void RunFamily() { Start("family"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:54:    public static void RunRules() { Start("rules"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:55:    public static void RunHover() { Start("hover"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:56:    public static void RunRegionCards() { Start("region-cards"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:57:    public static void RunRegionVisual() { Start("region-cards-visual"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:58:    public static void RunMenu() { Start("menu"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:59:    public static void RunLesson() { Start("lesson"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:60:    public static void RunMotion() { Start("motion"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:61:    public static void RunReadOnly() { Start("readonly"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.cs:62:    public static void RunParallelBatch()
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.DesktopFade.cs:13:    public static void RunDesktopFade() { Start("desktop-fade"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.FirstMinute.cs:20:    public static void RunFirstMinute() { StartFirstMinuteScenario("natural"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.FirstMinute.cs:21:    public static void RunFirstMinuteIdle() { StartFirstMinuteScenario("idle"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.FirstMinute.cs:22:    public static void RunFirstMinuteCorrection() { StartFirstMinuteScenario("correction"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.FirstMinute.cs:23:    public static void RunFirstMinuteEnglishCorrection() { StartFirstMinuteScenario("english-correction"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.FirstMinute.cs:24:    public static void RunFirstMinutePendingChat() { StartFirstMinuteScenario("pending-chat"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.Growth.cs:26:    [MenuItem("Tools/Design Pass/Growth Scene Smoke")]
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.Growth.cs:27:    public static void RunGrowth() { growthSteps = null; Start("growth"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.Growth.cs:508:    [MenuItem("Tools/Design Pass/Growth Scene Smoke")]
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.Growth.cs:509:    public static void RunGrowth() { Start("growth"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.LessonGoal.cs:17:    [MenuItem("Tools/Design Pass/Four Card Lesson Goal Scene Smoke")]
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.LessonGoal.cs:18:    public static void RunLessonGoal() { Start("lesson-goal"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.SenseStart.cs:18:    [MenuItem("Tools/Design Pass/Common Sense Start Scene Smoke")]
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.SenseStart.cs:19:    public static void RunSenseStart() { Start("sense-start"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.Wiring.cs:11:    public static void RunWiringMotion() { Start("wiring-motion"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.WiringScene.cs:21:    public static void RunWiringScene() { Start("wiring-scene"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.TrainingScene.cs:37:    public static void RunTrainingScene() { Start("training-scene"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\IntegrationProfilerCapture.cs:50:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.Tech.cs:30:    [MenuItem("Tools/Design Pass/Tech Tree Scene Smoke")]
+competition-latest-20261016/Assets/LocalBuild/Editor\DesignWallpaperSmoke.Tech.cs:31:    public static void RunTech() { techStep = 0; Start("tech"); }
+competition-latest-20261016/Assets/LocalBuild/Editor\LabelBaselineChecks.cs:13:    [UnityEditor.MenuItem("Tools/Design Pass/Check Label Baseline 009")]
+competition-latest-20261016/Assets/LocalBuild/Editor\LabelBaselineChecks.cs:14:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\LatestDownloadedBuild.cs:12:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\LatestRequestChecks.cs:13:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\Motion003PointerChecks.cs:13:    [UnityEditor.MenuItem("Tools/Design Pass/Check Motion 003 Pointer Boundaries")]
+competition-latest-20261016/Assets/LocalBuild/Editor\Motion003PointerChecks.cs:14:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\Motion008HoldChecks.cs:13:    [UnityEditor.MenuItem("Tools/Design Pass/Check Motion 008 Hold Exit")]
+competition-latest-20261016/Assets/LocalBuild/Editor\Motion008HoldChecks.cs:14:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\PrepareRecordingSave.cs:15:    [MenuItem("Tools/LingGuang/Prepare Stage Four Recording Save")]
+competition-latest-20261016/Assets/LocalBuild/Editor\PrepareRecordingSave.cs:16:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\PlayabilityDesktopSmoke.cs:33:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\PlayabilityChecks.cs:64:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\NamingDesktopSmoke.cs:34:    public static void RunMonitor() { RunFullscreen(); }
+competition-latest-20261016/Assets/LocalBuild/Editor\NamingDesktopSmoke.cs:35:    public static void RunFullscreen() { SessionState.SetBool("NamingDesktopSmoke.FullscreenOnly", true); Run(); }
+competition-latest-20261016/Assets/LocalBuild/Editor\NamingDesktopSmoke.cs:36:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\WorldYyGiftRoutingChecks.cs:18:    [MenuItem("LingGuang/Checks/World all interactions and photos")]
+competition-latest-20261016/Assets/LocalBuild/Editor\WorldYyGiftRoutingChecks.cs:19:    public static void Run() { RunInteractions(); RunPhotos(); }
+competition-latest-20261016/Assets/LocalBuild/Editor\WorldYyGiftRoutingChecks.cs:20:    [MenuItem("LingGuang/Checks/World interactions")]
+competition-latest-20261016/Assets/LocalBuild/Editor\WorldYyGiftRoutingChecks.cs:21:    public static void RunInteractions()
+competition-latest-20261016/Assets/LocalBuild/Editor\WorldYyGiftRoutingChecks.cs:124:    [MenuItem("LingGuang/Checks/World group photos")]
+competition-latest-20261016/Assets/LocalBuild/Editor\WorldYyGiftRoutingChecks.cs:125:    public static void RunPhotos()
+competition-latest-20261016/Assets/LocalBuild/Editor\NamingChecks.cs:16:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\MusicInteractionChecks.cs:57:    [MenuItem("Tools/Local Verification/Music interaction checks")]
+competition-latest-20261016/Assets/LocalBuild/Editor\MusicInteractionChecks.cs:58:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\WindowsReleaseBuild.cs:18:    public static void Build()
+competition-latest-20261016/Assets/LocalBuild/Editor\MotionIntegrationChecks.cs:14:    [UnityEditor.MenuItem("Tools/Design Pass/Check Integrated Motion Foundation")]
+competition-latest-20261016/Assets/LocalBuild/Editor\MotionIntegrationChecks.cs:15:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\SkillTreeCopyChecks.cs:38:    [MenuItem("Tools/Design Pass/Skill Tree Copy Checks")]
+competition-latest-20261016/Assets/LocalBuild/Editor\SkillTreeCopyChecks.cs:39:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\SheetAttentionPlayModeChecks.cs:43:    [MenuItem("Tools/Local Verification/Sheet original images and attention")]
+competition-latest-20261016/Assets/LocalBuild/Editor\SheetAttentionPlayModeChecks.cs:44:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\VisualRasterInteractionChecks.cs:45:    [MenuItem("Tools/Local Verification/Visual raster interactions")]
+competition-latest-20261016/Assets/LocalBuild/Editor\VisualRasterInteractionChecks.cs:46:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\SidebarLayoutChecks.cs:53:    [MenuItem("Tools/Local Verification/Exe sidebar layout")]
+competition-latest-20261016/Assets/LocalBuild/Editor\SidebarLayoutChecks.cs:54:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\StageCurtainPlayQa.cs:26:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\ReducedSwitchChecks.cs:14:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\TeachingPackInteractionChecks.cs:45:    [MenuItem("Tools/Local Verification/All teaching packs")]
+competition-latest-20261016/Assets/LocalBuild/Editor\TeachingPackInteractionChecks.cs:46:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\MotionButtonPerfProbe.cs:26:    [UnityEditor.MenuItem("Tools/Design Pass/Measure Motion Button Allocation (isolated edit mode)")]
+competition-latest-20261016/Assets/LocalBuild/Editor\MotionButtonPerfProbe.cs:27:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\MotionButtonChecks.cs:12:    [UnityEditor.MenuItem("Tools/Design Pass/Check Motion Button Foundation")]
+competition-latest-20261016/Assets/LocalBuild/Editor\MotionButtonChecks.cs:13:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\ShutdownReturnSmoke.cs:59:    [MenuItem("Tools/LingGuang/Verify Shutdown Return (isolated)")]
+competition-latest-20261016/Assets/LocalBuild/Editor\ShutdownReturnSmoke.cs:60:    public static void Run() { Begin(false); }
+competition-latest-20261016/Assets/LocalBuild/Editor\ShutdownReturnSmoke.cs:61:    public static void RunAndExit() { Begin(true); }
+competition-latest-20261016/Assets/LocalBuild/Editor\RecordingPlayerBuild.cs:9:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\TechTreeUiPlayQa.cs:28:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\TrainingLessonInteractionChecks.cs:52:    [MenuItem("Tools/Local Verification/Training lessons")]
+competition-latest-20261016/Assets/LocalBuild/Editor\TrainingLessonInteractionChecks.cs:53:    public static void Run()
+competition-latest-20261016/Assets/LocalBuild/Editor\UiEffectBudgetChecks.cs:18:    [MenuItem("Tools/Local Verification/UI effect budgets")]
+competition-latest-20261016/Assets/LocalBuild/Editor\UiEffectBudgetChecks.cs:19:    public static void Run()

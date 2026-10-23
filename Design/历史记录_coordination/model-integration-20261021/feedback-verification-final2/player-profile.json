@@ -1,0 +1,17 @@
+{
+    "version": 1,
+    "openingFinished": true,
+    "setup": {
+        "name": "存档测试",
+        "self": "我",
+        "callMe": "你",
+        "personality": "嘴硬心软",
+        "warmth": 70.0,
+        "play": 50.0,
+        "opinion": 70.0,
+        "words": [
+            "嘴硬"
+        ]
+    },
+    "source": "setup"
+}

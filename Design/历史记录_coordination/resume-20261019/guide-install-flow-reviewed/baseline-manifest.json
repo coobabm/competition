@@ -1,0 +1,26 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgGuide.cs",
+    "sha256": "7d5945a1bded26d0c3eb56d2e4d0ceebfbdaf95985546b93f3b82027c7be67ab"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/GuideNote.cs",
+    "sha256": "58d0e915d940cfe59d2c7122d5359b4a8607231786148d8f4ca11977c095f11c"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgFilesWindow.cs",
+    "sha256": "4551b9458826428e1a37b37e8d8b85e181af58cfb795624b42d0f95ec8cfa71f"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Frame.cs",
+    "sha256": "ece434a990bffc91ae61edbc6012001bc5b6cbc51b4ad64ad3f52f1f4673bfd0"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgGuideTests.cs",
+    "sha256": "4887194d99fc6bc7ea7409750d49d1a15687c4bc8b66006714c6fbf17d831581"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/FilesWindowUiChecks.cs",
+    "sha256": "21eb81c08c41631a1c295fe678869b984bc4f7dea8d551cad2aee3c16ad298f9"
+  }
+]

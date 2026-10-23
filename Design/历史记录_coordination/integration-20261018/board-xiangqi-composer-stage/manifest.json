@@ -1,0 +1,64 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/Games/XiangqiRookEndgame.cs",
+      "base_sha256": null,
+      "candidate_sha256": "d07530a7c69d155d3674c1e53a106b9a22dac02eada993af846daa5410065142"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/XiangqiRookEndgame.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "e6370daf3fee1af251b3f8345372162a259bc950d548b264f7b789bf7b7f5b2f"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.BoardComposer.cs",
+      "base_sha256": "62051cb104974945a1021c5ffddb4ccae7b8ce187a1bab699f2eb86c8e707eb7",
+      "candidate_sha256": "e80fecee0cf6868ed41dc501e57b273815dd72653615edd78b1afef30b6845cd"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "base_sha256": "67f2e7650b14c859f7278119f72750db658551b123e39ca8114ac2a4ac16faa2",
+      "candidate_sha256": "617a067b6d45ab5c7a158208269664715fe92e296039721869b8bbb86c03b27f"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.XiangqiComposer.cs",
+      "base_sha256": null,
+      "candidate_sha256": "01908a378c5649dfc2fa7a7413f5fedbd524921d8ea8cb9eeaebe6190731a129"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.XiangqiComposer.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "b3d90c59548c483d5a54bf4bb260b6f696bd649aee52f84f8e3b6092abd44216"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/XiangqiRookEndgameTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "024b58f883b5ea9655c912bb4bac712d5a32d80005f1aab1d47fccf14aefce8b"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/XiangqiRookEndgameTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "b638766775c5c8aba9c41cb6a0a1be40975026bf71ce1f8a09011ffb297bfd14"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/BoardComposerUiQaHelper.cs",
+      "base_sha256": "57ce2fc1549d9765be8e30f1f88313f9f979955d27f262db775de4ee91225746",
+      "candidate_sha256": "1a13ded121fe473933e9abe299fa735d4d10d5a8df8d439ec6d3f36ea45ee49a"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/XiangqiComposerUiQaHelper.cs",
+      "base_sha256": null,
+      "candidate_sha256": "23ba11a397a11048327ba6fd5c23614fab9ab4fecb1c5874cfc180bb361351e8"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/XiangqiComposerUiQaHelper.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "fb14a76f7246c3764f94397941318c0e991e94c31b5d54a62cdfc129c9fe531c"
+    }
+  ],
+  "new_tests": 9,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

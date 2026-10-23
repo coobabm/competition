@@ -1,0 +1,27 @@
+[
+  {
+    "patch": "legacy-port-main-30fbe6.patch",
+    "check": 1,
+    "output": "error: patch failed: Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json:44\nerror: Assets/LingGuangV05/Resources/LingGuangV05/Story/six_stage_lines.json: patch does not apply\n"
+  },
+  {
+    "patch": "world-rent.patch",
+    "check": 0,
+    "output": ""
+  },
+  {
+    "patch": "world-news-presets.patch",
+    "check": 1,
+    "output": "error: patch failed: Assets/LingGuangV05/YY2016/YYChatHub.cs:305\nerror: Assets/LingGuangV05/YY2016/YYChatHub.cs: patch does not apply\n"
+  },
+  {
+    "patch": "world-life.patch",
+    "check": 0,
+    "output": ""
+  },
+  {
+    "patch": "yy-learning.patch",
+    "check": 1,
+    "output": "error: patch failed: Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs:26\nerror: Assets/LingGuangV05/XingGuang/Desktop/XgYyTalk.cs: patch does not apply\n"
+  }
+]

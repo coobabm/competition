@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "file": "Assets/DreamOS - Complete OS UI/Scripts/Data/DreamOSDataManager.cs",
+      "base_sha256": "d38d89b9a365f64898cdd8ad253a3f7a6ec3ca147d65ad9e06ce483c67d0de6a",
+      "candidate_sha256": "c53a7324639ef11068078fe3e5d93b0c8a592272d0551e7789f010523a9531ae"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Music2016.cs",
+      "base_sha256": "b14c0cbc95a5996b0e2766f2042ded4e47767094d95ea1dc9cd06701e1c4b67a",
+      "candidate_sha256": "f269b9bb4f568fb548b39ab7fa62065e032619bc98af4935342a61450ce82afd"
+    },
+    {
+      "file": "Assets/LingGuangV05/LocalLLM/LocalEmbedder.cs",
+      "base_sha256": "c4051d3c99d5aef0a16b2469a8752dc9a7f2fe0d0c25d5326c8b4b10f5df05db",
+      "candidate_sha256": "8177d55aae1663d15c73b8601e0b0b45fb6b85e16158e0446c0843fb1ce5e2bb"
+    },
+    {
+      "file": "Assets/LingGuangV05/LocalLLM/LocalLlm.cs",
+      "base_sha256": "52150a142bd8bd13b789f8121f9ab8157112cee771a01153c43f512236d4ce76",
+      "candidate_sha256": "21847c337cfaa25cbe6d60b0e211ec3dc43e03cba70649d085817a0fb45ef885"
+    },
+    {
+      "file": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.cs",
+      "base_sha256": "35a856b5b5eff8a1f06a448d7010b8eae9508014d78074ff477dc3de3a063798",
+      "candidate_sha256": "526f48346c1e8d117fd56c16f288bba87bb99437c69cedbae4d9b1ff1d37c1ae"
+    },
+    {
+      "file": "Assets/LingGuangV05/Runtime/Persistence/VerificationSavePaths.cs",
+      "base_sha256": null,
+      "candidate_sha256": "e972e266ed11e8d3c1f720d15790972b1def61ef7ed5fbd92c938b1dcf3d0fe0"
+    },
+    {
+      "file": "Assets/LingGuangV05/Runtime/Persistence/VerificationSavePaths.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "f9ac6b5006050cb854b681eaece7b4576a236065b138e7c1e6728e09bcfd66f0"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/PersistenceEditor/VerificationSavePathsTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "7aad95b1bb33f54676056e1fc0488c2b49db7e6ef4e5a4b1a9783838c6730a6e"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/PersistenceEditor/VerificationSavePathsTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "42e1f2966140c3b49360308bfe53786e2b1a11f3625fc516d65ce5cc18680b9b"
+    }
+  ],
+  "new_tests": 14,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

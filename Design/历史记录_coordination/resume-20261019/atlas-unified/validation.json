@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "gitApplyCheck": "passed",
+  "productionBaselinesUnchanged": true,
+  "staticAssertions": 24,
+  "checks": [
+    "No replay or catalog call to SaveNow(",
+    "No replay or catalog call to QueueStagePresentation(",
+    "No replay or catalog call to CompleteStagePresentation(",
+    "No replay or catalog call to CollectTrainingLesson(",
+    "No replay or catalog call to BuyNode(",
+    "No replay or catalog call to AddGameSamples(",
+    "No replay or catalog call to MarkDirty(",
+    "No replay or catalog call to Earn(",
+    "Replay does not borrow the live story/training panel",
+    "Early replay uses the existing fixed-seed tiny lesson engine",
+    "Later replay reuses the existing sequence presentation",
+    "Rebinding invalidates callbacks and closes replay",
+    "Tab switch and exclusive story dismiss replay",
+    "Original sequence Begin call keeps default animation behavior",
+    "Stage curtain and subtitle timing are untouched",
+    "Tiny replay has no saved-state access",
+    "Closed or inactive atlas rejects retained callbacks",
+    "Native minimize and close synchronously end independent replay",
+    "Native window subscriptions are removed with the atlas",
+    "Idle refresh reuses projected entries and skips repeated row text writes",
+    "Text layout is measured only after content or viewport changes",
+    "core isolated compilation has zero errors",
+    "desktop isolated compilation has zero errors",
+    "editor isolated compilation has zero errors"
+  ],
+  "pureCoreAssertions": 80,
+  "unityRun": false,
+  "uiScreenshotsProduced": 0,
+  "compile": {
+    "core": "passed",
+    "desktop": "passed",
+    "editor": "passed",
+    "method": "isolated dotnet build using existing Unity reference assemblies; Unity not launched"
+  },
+  "compileLogs": {
+    "core": "resume-core-build.log",
+    "desktop": "resume-desktop-build.log",
+    "editor": "resume-editor-build-final.log"
+  },
+  "files": 19,
+  "patchSha256": "731cf8a04773b0b5ec6d54020b0c5d94a99eac48cb65272595deba93d0da5832"
+}

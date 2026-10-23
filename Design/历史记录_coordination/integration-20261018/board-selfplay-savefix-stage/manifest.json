@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardSelfPlay.cs",
+      "base_sha256": "087227f129bfdfa941ef1ee6459c2c21b8bee36711bf25336dce54855ef2d279",
+      "candidate_sha256": "914fb54368b27e9780dded53e701afa8be9f1544ff8073c829c3bad265a7579f"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "base_sha256": "41210ffe9d0d36a833d27a9c64a49f90192644aab2f8ccafb8851710635867f0",
+      "candidate_sha256": "d042964c50db5e71810d8ac95e2c9ffe2f05e905b308d5763023dd6bb90d2558"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardSelfPlayVarietyTests.cs",
+      "base_sha256": "98bef3ec50916322a1863607ee7006ef822a1e47eb91b836dc1667b7d51d50f1",
+      "candidate_sha256": "541b873b7a969d30d3da8515ee2148ac1fb2a16309d9bb9829b87cd32578fe88"
+    }
+  ],
+  "new_tests": 2,
+  "updated_legacy_tests": 3,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

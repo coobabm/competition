@@ -1,0 +1,79 @@
+{
+  "status": "static_only_passed",
+  "checks": [
+    {
+      "label": "single editor harness file only",
+      "passed": true
+    },
+    {
+      "label": "all original Need assertions retained",
+      "passed": true
+    },
+    {
+      "label": "actual focus requirement retained",
+      "passed": true
+    },
+    {
+      "label": "no runtime notifier mutation",
+      "passed": true
+    },
+    {
+      "label": "both input buffers initialized and released",
+      "passed": true
+    },
+    {
+      "label": "after-update callback maintains player state",
+      "passed": true
+    },
+    {
+      "label": "only explicit held fixture selects synthetic mouse",
+      "passed": true
+    },
+    {
+      "label": "counts distinct player frames",
+      "passed": true
+    },
+    {
+      "label": "real LCD down/up and target ownership remain",
+      "passed": true
+    },
+    {
+      "label": "popup remains interactable while held",
+      "passed": true
+    },
+    {
+      "label": "callback unsubscribed before device removal",
+      "passed": true
+    },
+    {
+      "label": "held state released before LCD pointer up",
+      "passed": true
+    },
+    {
+      "label": "original mouse and module cleanup remain",
+      "passed": true
+    },
+    {
+      "label": "original 26 photograph checks unchanged",
+      "passed": true
+    },
+    {
+      "label": "git apply --check",
+      "passed": true
+    },
+    {
+      "label": "git apply --stat",
+      "passed": true
+    }
+  ],
+  "patch_sha256": "b37e1546d1feb572832a7ddda4508e3b75a7b143eb4b5324c78dfdb5ae36d364",
+  "baseline_sha256": "25a38b301814bbc467ebe52bd0f7b7f90a9451988ccff699582fe9d60bd5a2c9",
+  "failure_report": "LocalVerification/SidebarLayout/20261019-053542-858/report.json",
+  "not_run": [
+    "C# compilation",
+    "Unity",
+    "actual UI",
+    "model",
+    "build"
+  ]
+}

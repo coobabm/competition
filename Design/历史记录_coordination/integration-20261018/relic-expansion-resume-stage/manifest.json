@@ -1,0 +1,100 @@
+{
+  "base_head": "bf354fdbce3745a81056fec6d17452ca91b15f21",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgRelics.cs",
+      "base_sha256_normalized": "c16b9b17920f5ce201e7b6922aec772fa61216a6f391738b1f7c2c192b3fe681"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Relics.cs",
+      "base_sha256_normalized": "bd8e601a0973ead36825ac6e3022239f850767e840f5b3f239dc533c8e218972"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+      "base_sha256_normalized": "eb3dc7f07fa9ea3f85d247b22f88621179ed89bef63a007455aef36ccdc07316"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "base_sha256_normalized": "e43dfab2b1ac6cbe0401295f46638c849269e8288d0eb0e9210235a932518a56"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+      "base_sha256_normalized": "993063145026f478ca03d8092c5e32a7c4240ff9688e6d084a574a813e2d1360"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBackpackPage.cs",
+      "base_sha256_normalized": "bd9d93e58a428831e6e92f1071c70e8de0c04f2f0c53f0dc37c72684e8e5deb9"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Relics.cs",
+      "base_sha256_normalized": "2e6d657c991a0213c708a0015f44ae841cc3f507e0d1c2fa3f7d3559299189ca"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRelicUi.cs",
+      "base_sha256_normalized": "3f850ac6ea250f7465623cfc84b1fe831541273b027668893343ab65c8090d4b"
+    }
+  ],
+  "candidate_files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgRelics.cs",
+      "group": "relic-core",
+      "candidate_sha256_normalized": "f15c2beab0c23a19e1b5fd0adc998a052862e72e1d3cb90b190a0c5b282c571c"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "group": "shared",
+      "candidate_sha256_normalized": "9ca8e5221c4024196f491e72e227a9c642ece3fcee0aea823df47610ddbbcc51"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Relics.cs",
+      "group": "relic-core",
+      "candidate_sha256_normalized": "93bb05aba478613582ddf064d3b533c061f886617f1372355bccdf90103bb7f2"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+      "group": "shared",
+      "candidate_sha256_normalized": "d87f0241e3675e9b9e1012a3a3ce1fc2deadce5e2e9b5cca2c2544c3c05d1177"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+      "group": "shared",
+      "candidate_sha256_normalized": "005ed28d159349ac8c0d2f6ea0e9623559771f01b98c2375b6cecba8c8842bc1"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBackpackPage.cs",
+      "group": "ui",
+      "candidate_sha256_normalized": "93110e187f72d66fa41e8b46e5a1c275f0e6bd23375cec58bff12d7891485d5d"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRelicUi.cs",
+      "group": "ui",
+      "candidate_sha256_normalized": "fb252858b25feaa7b5c7744e25ae3c0ad0586e741114993363042c93b1c07db7"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Relics.cs",
+      "group": "ui",
+      "candidate_sha256_normalized": "a6aad79cb3159bf41e4237303202e792b3cace8a76214a48a1865416f2691855"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/RelicExpansionChecks.cs",
+      "group": "checks",
+      "candidate_sha256_normalized": "279f2d83311000e1f9e896f04216857ba3c51a7fdd9f4ac02afe67c284a7948d"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/RelicExpansionChecks.cs.meta",
+      "group": "checks",
+      "candidate_sha256_normalized": "9f79fd886a85a1aa004d5ce005de7c3d91fc2fb2e3eb6cf48b972c262407baca"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/RelicExpansionUiChecks.cs",
+      "group": "checks",
+      "candidate_sha256_normalized": "ae4f5070e773de9c076cff6b0bf95c1fc65f69d383bcd54b12261fc26949ba94"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/RelicExpansionUiChecks.cs.meta",
+      "group": "checks",
+      "candidate_sha256_normalized": "b996c55311ce8ab288c75aa20601b817ae4c64852a0669ebd70cae5f3511a37f"
+    }
+  ],
+  "patch_sha256": "d76857918095ec4f7fa48720b709666654572aa4ec8c57c0dc6b08dfe98e9c1c"
+}

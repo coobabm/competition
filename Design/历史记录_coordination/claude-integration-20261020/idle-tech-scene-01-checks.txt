@@ -1,0 +1,16 @@
+Isolated player save for technology scene
+Real opening question unlocks technology 0
+Real opening question unlocks technology 1
+Real opening question unlocks technology 2
+Real opening question unlocks technology 3
+Real opening question unlocks technology 4
+Real opening question unlocks technology 5
+Real opening question unlocks technology 6
+Real opening question unlocks technology 7
+Real opening question unlocks technology 8
+Real opening question unlocks technology 9
+Real opening question unlocks technology 10
+Real opening question unlocks technology 11
+Technology fixture passes the twelve-question opening gate
+Technology fixture has a desktop user
+Tech scene uses the common isolated fixture

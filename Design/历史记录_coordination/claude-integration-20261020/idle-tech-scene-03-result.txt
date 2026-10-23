@@ -1,0 +1,5 @@
+FAIL: System.Exception: tech-zh-0-mnist-pack: wheel over the node keeps its passive details open
+  at DesignWallpaperSmoke.Check (System.Boolean ok, System.String message) [0x00029] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.cs:111 
+  at DesignWallpaperSmoke+<TechSceneSteps>d__113.MoveNext () [0x00703] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.Tech.cs:130 
+  at DesignWallpaperSmoke.TickTech (LingGuangV05.Desktop.XingGuang.XingGuangController controller, LingGuangV05.Runtime.ChapterOneRuntime runtime, LingGuangV05.Desktop.XingGuang.XgBrainWallpaper brain) [0x0009b] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.Tech.cs:56 
+  at DesignWallpaperSmoke.Update () [0x005ee] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.cs:197 

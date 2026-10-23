@@ -1,0 +1,31 @@
+{
+  "pr": "https://github.com/coobabm/competition/pull/6",
+  "assets": [
+    {
+      "name": "MyComputerAlive-Windows.7z.001",
+      "size": 1572864000,
+      "digest": "sha256:738d0a0babe61340901d3ca40a3ade8b78c52cc74ff928b3db1fcbeb1a70b885",
+      "browser_download_url": "https://github.com/coobabm/competition/releases/download/v2026.10.19.5/MyComputerAlive-Windows.7z.001"
+    },
+    {
+      "name": "MyComputerAlive-Windows.7z.002",
+      "size": 1409508079,
+      "digest": "sha256:6951bde38f6c194b390b929c8ccd5d61c4277a03d4eb11a527318af3e653abff",
+      "browser_download_url": "https://github.com/coobabm/competition/releases/download/v2026.10.19.5/MyComputerAlive-Windows.7z.002"
+    },
+    {
+      "name": "READ-ME.txt",
+      "size": 3638,
+      "digest": "sha256:ac140550cbaa87e5c65c37ef6b4f37fb0ed2d5bfd3c5339e6f27f90b4f0aeae7",
+      "browser_download_url": "https://github.com/coobabm/competition/releases/download/v2026.10.19.5/READ-ME.txt"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 196,
+      "digest": "sha256:04fe7fb32c3fccf2850a0b13ee1ce40303bffa65e6f66ce4462cabef5b569ad1",
+      "browser_download_url": "https://github.com/coobabm/competition/releases/download/v2026.10.19.5/SHA256SUMS.txt"
+    }
+  ],
+  "commit": "c4e02003cece703b93b7d46b18e5cd86c977ffcd",
+  "release": "https://github.com/coobabm/competition/releases/tag/v2026.10.19.5"
+}

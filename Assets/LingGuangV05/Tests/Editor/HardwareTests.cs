@@ -93,7 +93,7 @@ namespace LingGuangV05.Tests
             Assert.That(sim.MemoryCapacity, Is.EqualTo(6144 + 8192));
             Assert.That(sim.CardWatts, Is.EqualTo(250 + 180));
             Assert.That(sim.HeartbeatsPerSecond, Is.EqualTo(both).Within(1e-9));
-            Assert.That(sim.S.money, Is.EqualTo(100000 - 4999).Within(1e-9));
+            Assert.That(sim.S.money, Is.EqualTo(100000 - 5399).Within(1e-9));
             // Both slots of the one case are full.
             Assert.That(sim.BuyCard(HardwareCatalog.Gtx1070, D(7, 1)), Is.False);
             Assert.That(sim.BuyNvme(D(8, 31)), Is.False);
@@ -131,7 +131,7 @@ namespace LingGuangV05.Tests
         [Test]
         public void SellingOnMiaoyuPaysTheAgreedPriceAndKeepsOneCard()
         {
-            var sim = Rich(5000);
+            var sim = Rich(6000);
             var aug = D(8, 10);
             Assert.That(sim.SellCard(0, 100, aug), Is.False, "the last card stays");
             Assert.That(sim.BuyCard(HardwareCatalog.Gtx1080, aug), Is.True);
@@ -196,8 +196,8 @@ namespace LingGuangV05.Tests
         public void SinglesDayTakesTwentyPercentOff()
         {
             var g = HardwareCatalog.Gpu(HardwareCatalog.Gtx1080);
-            Assert.That(HardwareCatalog.Price(g, D(11, 11)), Is.EqualTo(Math.Round(4999 * .8)));
-            Assert.That(HardwareCatalog.Price(g, D(11, 12)), Is.EqualTo(4999));
+            Assert.That(HardwareCatalog.Price(g, D(11, 11)), Is.EqualTo(Math.Round(5399 * .8)));
+            Assert.That(HardwareCatalog.Price(g, D(11, 12)), Is.EqualTo(5399));
         }
 
         [Test]

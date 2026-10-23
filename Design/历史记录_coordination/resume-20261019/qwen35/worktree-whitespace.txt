@@ -1,0 +1,104 @@
+warning: in the working copy of 'Assets/Emergence/VisualDemos/NeuronLife/SparkNeuronDemoFont.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/HolenderGames/UpgradesTreePro/Fonts/Hardpixel-nn51 SDF.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/CaseMenu/Art/Materials/Decor_Ivory Ceramic.mat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/CaseMenu/CaseMenuHud.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/DesktopBridge/Story/ZhouCardLoan.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/DesktopBridge/Zhongbao/ZhongbaoView.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/README.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/Numeric.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/XingGuang/Core/XgBoardData.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/XingGuang/Desktop/XgBrainWallpaper.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/XingGuang/Desktop/XgBrainWindow.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/XingGuang/Desktop/XgBrainWindowFeedback.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/XingGuang/Desktop/XgUiV4Fonts.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LingGuangV05/XingGuang/README.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Assets/Settings/PC_RPAsset.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Settings/UniversalRenderPipelineGlobalSettings.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ProjectSettings/EditorBuildSettings.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ProjectSettings/GraphicsSettings.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ProjectSettings/ProjectSettings.asset', LF will be replaced by CRLF the next time Git touches it
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset:24: trailing whitespace.
++  m_MipmapLimitGroupName: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset:41: trailing whitespace.
++  m_PlatformBlob: 
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset:48: trailing whitespace.
++    path: 
+Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt:102: new blank line at EOF.
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:17: trailing whitespace.
++> This repository contains model weights and configuration files for the post-trained model in the Hugging Face Transformers format. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:63: trailing whitespace.
++    - MTP: trained with multi-steps  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:716: trailing whitespace.
++For streamlined integration, we recommend using Qwen3.5 via APIs. Below is a guide to use Qwen3.5 via OpenAI-compatible API. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:725: trailing whitespace.
++> Inference efficiency and throughput vary significantly across frameworks. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:731: trailing whitespace.
++> If you encounter out-of-memory (OOM) errors, consider reducing the context window. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:746: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:752: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:758: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:770: trailing whitespace.
++See [its documentation](https://docs.vllm.ai/en/stable/getting_started/installation/index.html) for more details. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:779: trailing whitespace.
++    vllm serve Qwen/Qwen3.5-4B --port 8000 --tensor-parallel-size 1 --max-model-len 262144 --reasoning-parser qwen3 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:783: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:785: trailing whitespace.
++    vllm serve Qwen/Qwen3.5-4B --port 8000 --tensor-parallel-size 1 --max-model-len 262144 --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:795: trailing whitespace.
++    
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:801: trailing whitespace.
++ 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:804: trailing whitespace.
++ 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:862: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:902: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:948: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:960: trailing whitespace.
++You can obtain direct response from the model without thinking by configuring the API parameters. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:995: trailing whitespace.
++    }, 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1010: trailing whitespace.
++We recommend using [Qwen-Agent](https://github.com/QwenLM/Qwen-Agent) to quickly build Agent applications with Qwen3.5. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1090: trailing whitespace.
++Qwen3.5 natively supports context lengths of up to 262,144 tokens. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1093: trailing whitespace.
++YaRN is currently supported by several inference frameworks, e.g., `transformers`, `vllm`, `ktransformers` and `sglang`. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1118: trailing whitespace.
++    VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 vllm serve ... --hf-overrides '{"text_config": {"rope_parameters": {"mrope_interleaved": true, "mrope_section": [11, 11, 10], "rope_type": "yarn", "rope_theta": 10000000, "partial_rotary_factor": 0.25, "factor": 4.0, "original_max_position_embeddings": 262144}}}' --max-model-len 1010000  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1128: trailing whitespace.
++> We advise modifying the `rope_parameters` configuration only when processing long contexts is required. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1129: trailing whitespace.
++> It is also recommended to modify the `factor` as needed. For example, if the typical context length for your application is 524,288 tokens, it would be better to set `factor` as 2.0. 
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1135: trailing whitespace.
++1. **Sampling Parameters**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1136: trailing whitespace.
++   - We suggest using the following sets of sampling parameters depending on the mode and task type:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1137: trailing whitespace.
++     - **Thinking mode for general tasks**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1138: trailing whitespace.
++       `temperature=1.0`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1139: trailing whitespace.
++     - **Thinking mode for precise coding tasks (e.g., WebDev)**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1140: trailing whitespace.
++       `temperature=0.6`, `top_p=0.95`, `top_k=20`, `min_p=0.0`, `presence_penalty=0.0`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1141: trailing whitespace.
++     - **Instruct (or non-thinking) mode for general tasks**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1142: trailing whitespace.
++       `temperature=0.7`, `top_p=0.8`, `top_k=20`, `min_p=0.0`, `presence_penalty=1.5`, `repetition_penalty=1.0`  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1143: trailing whitespace.
++     - **Instruct (or non-thinking) mode for reasoning tasks**:  
+Assets/StreamingAssets/LingGuang/Models/MODEL_CARD.md:1144: trailing whitespace.
++       `temperature=1.0`, `top_p=1.0`, `top_k=40`, `min_p=0.0`, `presence_penalty=2.0`, `repetition_penalty=1.0`  

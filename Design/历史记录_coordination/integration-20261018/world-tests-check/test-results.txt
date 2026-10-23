@@ -1,0 +1,4 @@
+SKIP Unity JSON: ADebtorsSaveLoadsWithTheFundsLedgerThatFollowedItBelowZero
+SKIP Unity JSON: ADebtorsSaveLoadsWithItsNegativeWallet
+SKIP Unity JSON: ASaveWrittenWithTheRetiredFieldsStillLoads
+PASS 78; FAIL 0; SKIP 3

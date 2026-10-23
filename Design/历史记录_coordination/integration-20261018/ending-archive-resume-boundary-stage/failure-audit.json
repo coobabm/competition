@@ -1,0 +1,463 @@
+{
+  "historicalStatus": "failed",
+  "historicalFailure": "System.InvalidOperationException: Ending archive runner: actual branch list click resumes branch marker from disk without replacing original primary\r\n  at EndingArchiveActualUiRunner.Need (System.Boolean value, System.String message) [0x00014] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\EndingArchiveActualUiRunner.cs:186 \r\n  at EndingArchiveActualUiRunner.Check (System.Boolean value, System.String message) [0x00000] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\EndingArchiveActualUiRunner.cs:187 \r\n  at EndingArchiveActualUiRunner+<BranchLifecycle>d__56.MoveNext () [0x00969] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\EndingArchiveActualUiRunner.cs:416 \r\n  at EndingArchiveActualUiRunner.Tick () [0x000b8] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\EndingArchiveActualUiRunner.cs:211 ",
+  "firstBranchPersistencePassed": true,
+  "sourceAndEvidenceCopyTree": "3219a8f641deb8ce0a91f16af34dcb0c8b88fd3de471ce267ab7457a5d3b8478",
+  "postRestartPrimaryVsBackupChangedFields": [
+    "lastSeenUnix"
+  ],
+  "branchPath": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\EndingArchiveActual\\20261018-231243-360\\Save\\endings\\branches\\2d1bd44d064449659bac986b57f90f99\\chapter-one.sav",
+  "branchId": "2d1bd44d064449659bac986b57f90f99",
+  "branchDiskMarker": 1094554.0,
+  "protectedFilesAfterRestart": [
+    {
+      "path": "/chapters/6/chapter-one.sav",
+      "expected": "3176f06c446131e10128dd8d7d43833bc90dfb4dbcf98adfc1a38913bec948b3",
+      "current": "3176f06c446131e10128dd8d7d43833bc90dfb4dbcf98adfc1a38913bec948b3",
+      "unchanged": true
+    },
+    {
+      "path": "/endings/checkpoints/0df8250f216240f585444350163d2bd1/chapter-one.sav",
+      "expected": "7022207e797bbce0857518baae103236ec59beca4c4281df2ca77638e44209c1",
+      "current": "7022207e797bbce0857518baae103236ec59beca4c4281df2ca77638e44209c1",
+      "unchanged": true
+    },
+    {
+      "path": "/endings/checkpoints/3e51d9d5b89948fc84f5f5405bdcfb01/chapter-one.sav",
+      "expected": "bb2081f3c77dc8883b6370503a1c8aadd442211515d91af7dd92da7f7291d3ac",
+      "current": "bb2081f3c77dc8883b6370503a1c8aadd442211515d91af7dd92da7f7291d3ac",
+      "unchanged": true
+    },
+    {
+      "path": "/endings/checkpoints/535e857a698741cb990afd675af70549/chapter-one.sav",
+      "expected": "d4bf10af035d1aea69bd26bf530084aec5938e81236749350892f44f998512fe",
+      "current": "d4bf10af035d1aea69bd26bf530084aec5938e81236749350892f44f998512fe",
+      "unchanged": true
+    },
+    {
+      "path": "/endings/checkpoints/59c016e51eb54d5db0fe6a45a2efa05b/chapter-one.sav",
+      "expected": "85f1db49f34b57fcb31228a2a15eb403b55c2ca7338ad0d703c262c45e38743d",
+      "current": "85f1db49f34b57fcb31228a2a15eb403b55c2ca7338ad0d703c262c45e38743d",
+      "unchanged": true
+    },
+    {
+      "path": "/endings/checkpoints/b349ea8e235c4a24979e03ddb637c537/chapter-one.sav",
+      "expected": "dde67a15caa9a429a3079b1f0a7b947688355d6ab87c8159c9b29c4c95f58892",
+      "current": "dde67a15caa9a429a3079b1f0a7b947688355d6ab87c8159c9b29c4c95f58892",
+      "unchanged": true
+    },
+    {
+      "path": "/endings/checkpoints/c5254e4a7d924dacbd1e85bb2ccfa26b/chapter-one.sav",
+      "expected": "3aad4030417833ec3e5bbb8df7c585a779bc3527e8ca56e0dcb507d703116e39",
+      "current": "3aad4030417833ec3e5bbb8df7c585a779bc3527e8ca56e0dcb507d703116e39",
+      "unchanged": true
+    },
+    {
+      "path": "/endings/checkpoints/e4bc6a0151724112a4e74cf16e3fcc1f/chapter-one.sav",
+      "expected": "e79e3d070ba6595f779d9e5941ecb8c5f4fe01f4568fd56b0f6aca3de8dbe044",
+      "current": "e79e3d070ba6595f779d9e5941ecb8c5f4fe01f4568fd56b0f6aca3de8dbe044",
+      "unchanged": true
+    },
+    {
+      "path": "/endings/checkpoints/f9ea87c87b664254b8b53bbf4c2eb50e/chapter-one.sav",
+      "expected": "a23809fef0cb5549e6eb7273003e980f99d4450c94b64f3b5f41810e02f90397",
+      "current": "a23809fef0cb5549e6eb7273003e980f99d4450c94b64f3b5f41810e02f90397",
+      "unchanged": true
+    },
+    {
+      "path": "/night-after-reload.json",
+      "expected": "eb565a84ac352e3d682ba3da8b1f5180670fe7c4886bb79ed3e8d0d9e0821fc3",
+      "current": "eb565a84ac352e3d682ba3da8b1f5180670fe7c4886bb79ed3e8d0d9e0821fc3",
+      "unchanged": true
+    },
+    {
+      "path": "/night-before-reload.json",
+      "expected": "436c028dac314236b3482f7cd40db77c8e2c9f1496207809790845a3b3a39583",
+      "current": "436c028dac314236b3482f7cd40db77c8e2c9f1496207809790845a3b3a39583",
+      "unchanged": true
+    },
+    {
+      "path": "/slots/3/chapter-one.sav",
+      "expected": "8f367bf9e0820b1acb2ea191005c492495be6047e6e73afc4a7c8d85a6712bc6",
+      "current": "8f367bf9e0820b1acb2ea191005c492495be6047e6e73afc4a7c8d85a6712bc6",
+      "unchanged": true
+    },
+    {
+      "path": "/slots/3/chapter-one.sav.bak",
+      "expected": "315e43c84e3d62377f869fea26a019198975129da0734c29f128963fd56d0089",
+      "current": "315e43c84e3d62377f869fea26a019198975129da0734c29f128963fd56d0089",
+      "unchanged": true
+    },
+    {
+      "path": "/slots/4/chapter-one.sav",
+      "expected": "0acbee5e296279e0fbe0f44b62f865eaeda1c74b4ffe2c8e2d48e897ff5c5be8",
+      "current": "0acbee5e296279e0fbe0f44b62f865eaeda1c74b4ffe2c8e2d48e897ff5c5be8",
+      "unchanged": true
+    },
+    {
+      "path": "/slots/6/chapter-one.sav",
+      "expected": "9a538c1ae24be0ae4d250f608437628ed149ae5025b9c8d79fd2c05ec162415b",
+      "current": "9a538c1ae24be0ae4d250f608437628ed149ae5025b9c8d79fd2c05ec162415b",
+      "unchanged": true
+    },
+    {
+      "path": "/slots/6/chapter-one.sav.bak",
+      "expected": "b64524e88fc1fc9fda129f621bf7b430aae997b650af4fa850e5750e8e5ae2dd",
+      "current": "b64524e88fc1fc9fda129f621bf7b430aae997b650af4fa850e5750e8e5ae2dd",
+      "unchanged": true
+    }
+  ],
+  "failureEvidenceInventory": [
+    {
+      "path": "DesktopProfile/Apps.json",
+      "sha256": "34eed5543c9d603e5763ffb69a0d3762c1bfa67d2786ed1e0c44777496ca373b",
+      "mtimeUtc": "2026-10-18T23:13:04.863120+00:00"
+    },
+    {
+      "path": "DesktopProfile/DateAndTime.json",
+      "sha256": "76901b72bbac8f26b2d05541c842c30b69904e0d84bc42b54b938dcb3b32f511",
+      "mtimeUtc": "2026-10-18T23:13:04.166411+00:00"
+    },
+    {
+      "path": "DesktopProfile/Network.json",
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "mtimeUtc": "2026-10-18T23:13:04.215699+00:00"
+    },
+    {
+      "path": "DesktopProfile/System.json",
+      "sha256": "9e7e7c5166b1e1b1da046c0001f695a6ee9950ad3313c14afc579410aa82d0e4",
+      "mtimeUtc": "2026-10-18T23:13:04.978301+00:00"
+    },
+    {
+      "path": "DesktopProfile/User.json",
+      "sha256": "803a8e98294fd5b3d115b108611873161154b07121f5e58787c53c05bf35314b",
+      "mtimeUtc": "2026-10-18T23:13:04.390480+00:00"
+    },
+    {
+      "path": "ending-archive-branch-list-after-restart.png",
+      "sha256": "c4f90d6f3d077b5d4ab9176cc088ee05a8e0277497f6ed2a2c12eb24107d628c",
+      "mtimeUtc": "2026-10-18T23:14:55.736101+00:00"
+    },
+    {
+      "path": "ending-archive-branch-write-failure.png",
+      "sha256": "5727ae714711f95eaf49e6d53ce797b26f3bdfa05160f1769e163e29bc37ad23",
+      "mtimeUtc": "2026-10-18T23:14:33.886828+00:00"
+    },
+    {
+      "path": "ending-archive-choice-failure-0.png",
+      "sha256": "3763481410ec5a968e14689c2188acad362836df3025f8ad488933f875218557",
+      "mtimeUtc": "2026-10-18T23:13:33.937950+00:00"
+    },
+    {
+      "path": "ending-archive-choice-failure-1.png",
+      "sha256": "7139fee22b14876e6d3e556db6f15475c8ca3e8c25c42aef3fb277a78fe76421",
+      "mtimeUtc": "2026-10-18T23:13:35.656754+00:00"
+    },
+    {
+      "path": "ending-archive-choice-failure-2.png",
+      "sha256": "7c9dbefaa4e4104fdf9675d9f32dbd5ad9307a81a6cb53a2bdd08fe5d219d986",
+      "mtimeUtc": "2026-10-18T23:13:38.954853+00:00"
+    },
+    {
+      "path": "ending-archive-choice-failure-3.png",
+      "sha256": "4981f00bb772ea9d0a6cd12a45092d76c33bd63f87cdeeb25c94e17ac2c392f9",
+      "mtimeUtc": "2026-10-18T23:13:37.338770+00:00"
+    },
+    {
+      "path": "ending-archive-choice-saved-0.png",
+      "sha256": "49cb442cdeaa37d57f626eae3efb05855ff832b26184b0443f498f9acccbd040",
+      "mtimeUtc": "2026-10-18T23:13:34.354044+00:00"
+    },
+    {
+      "path": "ending-archive-choice-saved-1.png",
+      "sha256": "440d4dc11d0d6275fbe84ee24155cdd9b6d3d7f9d541c15a8879137af5430113",
+      "mtimeUtc": "2026-10-18T23:13:36.106502+00:00"
+    },
+    {
+      "path": "ending-archive-choice-saved-2.png",
+      "sha256": "ded316413352833c906d89f0929fd71ee3c7626a5be5c1408ca357b2e7cd6525",
+      "mtimeUtc": "2026-10-18T23:13:39.376866+00:00"
+    },
+    {
+      "path": "ending-archive-choice-saved-3.png",
+      "sha256": "c5b23a50d9ef0bc3377be6f0824fb907e387e925f0c25842143205d6358c1f2e",
+      "mtimeUtc": "2026-10-18T23:13:37.734967+00:00"
+    },
+    {
+      "path": "ending-archive-failure-full-frame.png",
+      "sha256": "e616fb02042f934e053704f0c8f362ae67321606a2a250629b98ea320c6608f1",
+      "mtimeUtc": "2026-10-18T23:15:04.436370+00:00"
+    },
+    {
+      "path": "ending-archive-home-new-local-en.png",
+      "sha256": "bdb267bd0601ac225244d1387785e9267e75e3ee05f4e47b7f31f70d534991e5",
+      "mtimeUtc": "2026-10-18T23:14:20.038821+00:00"
+    },
+    {
+      "path": "ending-archive-home-new-local-zh.png",
+      "sha256": "1998a6b1086d003a41f23f91660cc444060c0893f4b700ecfdd162f1f803ad2d",
+      "mtimeUtc": "2026-10-18T23:14:05.619295+00:00"
+    },
+    {
+      "path": "ending-archive-home-real-source-zh.png",
+      "sha256": "042587c5089454b127af9f06b9613a391164e85270e015d4d1ebe03ec34bbc8c",
+      "mtimeUtc": "2026-10-18T23:13:08.094990+00:00"
+    },
+    {
+      "path": "ending-archive-independent-branch-main.png",
+      "sha256": "5c1c3df9283d32e89220efea7ee1867a3554d909f8a6cea441520374568d6220",
+      "mtimeUtc": "2026-10-18T23:14:42.810762+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_copies-new-local-en.png",
+      "sha256": "ea3f164ac439aca144a9fa927cddc30e6ac61a18c3c0f81edd45b6447d3c150b",
+      "mtimeUtc": "2026-10-18T23:14:31.773374+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_copies-new-local-zh.png",
+      "sha256": "ea3f164ac439aca144a9fa927cddc30e6ac61a18c3c0f81edd45b6447d3c150b",
+      "mtimeUtc": "2026-10-18T23:14:17.643512+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_copies-real-source-zh.png",
+      "sha256": "ea3f164ac439aca144a9fa927cddc30e6ac61a18c3c0f81edd45b6447d3c150b",
+      "mtimeUtc": "2026-10-18T23:13:20.259709+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_open_door-new-local-en.png",
+      "sha256": "80f799f7fad450ec961a06a7682de599eae8c087fb1929f53f132dfe405e55d4",
+      "mtimeUtc": "2026-10-18T23:14:30.778450+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_open_door-new-local-zh.png",
+      "sha256": "80f799f7fad450ec961a06a7682de599eae8c087fb1929f53f132dfe405e55d4",
+      "mtimeUtc": "2026-10-18T23:14:16.397726+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_open_door-real-source-zh.png",
+      "sha256": "80f799f7fad450ec961a06a7682de599eae8c087fb1929f53f132dfe405e55d4",
+      "mtimeUtc": "2026-10-18T23:13:18.916469+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_unpressed_button-new-local-en.png",
+      "sha256": "0de6faa1bef3b695ca6506c61e3535632ae4d6ed45ee27f0839d934ddae9c820",
+      "mtimeUtc": "2026-10-18T23:14:32.999208+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_unpressed_button-new-local-zh.png",
+      "sha256": "0de6faa1bef3b695ca6506c61e3535632ae4d6ed45ee27f0839d934ddae9c820",
+      "mtimeUtc": "2026-10-18T23:14:18.848916+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_unpressed_button-real-source-zh.png",
+      "sha256": "0de6faa1bef3b695ca6506c61e3535632ae4d6ed45ee27f0839d934ddae9c820",
+      "mtimeUtc": "2026-10-18T23:13:21.575480+00:00"
+    },
+    {
+      "path": "ending-final-completion-save-failed-zh.png",
+      "sha256": "488addba8dad4530f9514de4cb0e6e0ba2b9d2ac12d69d6857926f140def0964",
+      "mtimeUtc": "2026-10-18T23:13:56.747719+00:00"
+    },
+    {
+      "path": "ending-final-read-to-end-zh.png",
+      "sha256": "55cf6fafc18c7ca8bf7fa00f9e7edafd00e4e0cde95d67529c0fdd06a726a58b",
+      "mtimeUtc": "2026-10-18T23:13:55.873709+00:00"
+    },
+    {
+      "path": "ending-final-real-title-return.png",
+      "sha256": "bd289d815d1ca89103a94e7ddb6202ee21e9481708f12b8261d46809d7dc1d2b",
+      "mtimeUtc": "2026-10-18T23:14:05.209634+00:00"
+    },
+    {
+      "path": "EvidenceCopy/chapter-one.sav",
+      "sha256": "9a538c1ae24be0ae4d250f608437628ed149ae5025b9c8d79fd2c05ec162415b",
+      "mtimeUtc": "2026-10-18T21:57:23.764906+00:00"
+    },
+    {
+      "path": "EvidenceCopy/chapter-one.sav.bak",
+      "sha256": "97ea7a166e71bb6c44f449ee1bd4fde77ad0e277b39cf1962ece700989ab78a2",
+      "mtimeUtc": "2026-10-18T21:57:12.853073+00:00"
+    },
+    {
+      "path": "EvidenceCopy/chapters/6/chapter-one.sav",
+      "sha256": "3176f06c446131e10128dd8d7d43833bc90dfb4dbcf98adfc1a38913bec948b3",
+      "mtimeUtc": "2026-10-18T21:57:22.700315+00:00"
+    },
+    {
+      "path": "EvidenceCopy/night-after-reload.json",
+      "sha256": "eb565a84ac352e3d682ba3da8b1f5180670fe7c4886bb79ed3e8d0d9e0821fc3",
+      "mtimeUtc": "2026-10-18T21:51:50.429625+00:00"
+    },
+    {
+      "path": "EvidenceCopy/night-before-reload.json",
+      "sha256": "436c028dac314236b3482f7cd40db77c8e2c9f1496207809790845a3b3a39583",
+      "mtimeUtc": "2026-10-18T21:51:50.428103+00:00"
+    },
+    {
+      "path": "EvidenceCopy/slots/3/chapter-one.sav",
+      "sha256": "8f367bf9e0820b1acb2ea191005c492495be6047e6e73afc4a7c8d85a6712bc6",
+      "mtimeUtc": "2026-10-18T21:51:35.965255+00:00"
+    },
+    {
+      "path": "EvidenceCopy/slots/3/chapter-one.sav.bak",
+      "sha256": "315e43c84e3d62377f869fea26a019198975129da0734c29f128963fd56d0089",
+      "mtimeUtc": "2026-10-18T21:51:34.149871+00:00"
+    },
+    {
+      "path": "EvidenceCopy/slots/4/chapter-one.sav",
+      "sha256": "0acbee5e296279e0fbe0f44b62f865eaeda1c74b4ffe2c8e2d48e897ff5c5be8",
+      "mtimeUtc": "2026-10-18T21:51:41.031352+00:00"
+    },
+    {
+      "path": "EvidenceCopy/slots/6/chapter-one.sav",
+      "sha256": "9a538c1ae24be0ae4d250f608437628ed149ae5025b9c8d79fd2c05ec162415b",
+      "mtimeUtc": "2026-10-18T21:57:23.781025+00:00"
+    },
+    {
+      "path": "EvidenceCopy/slots/6/chapter-one.sav.bak",
+      "sha256": "b64524e88fc1fc9fda129f621bf7b430aae997b650af4fa850e5750e8e5ae2dd",
+      "mtimeUtc": "2026-10-18T21:51:48.996450+00:00"
+    },
+    {
+      "path": "lifecycle-00.txt",
+      "sha256": "c41acc0ff3ed0aa4a50370e0560c0f20f916573b1331ae2155509fcd1e4fc153",
+      "mtimeUtc": "2026-10-18T23:13:25.484704+00:00"
+    },
+    {
+      "path": "lifecycle-01.txt",
+      "sha256": "95722eb9d5ef69f9f5b38279ad9421d1ab2096ce9b63a308e3472ea8e19d2e18",
+      "mtimeUtc": "2026-10-18T23:13:26.214178+00:00"
+    },
+    {
+      "path": "lifecycle-02.txt",
+      "sha256": "fc0b9d8ebfd711b4ddcd67294022cc587b1587a74d5a30f25b1f75bb312e89b1",
+      "mtimeUtc": "2026-10-18T23:13:31.103835+00:00"
+    },
+    {
+      "path": "lifecycle-03.txt",
+      "sha256": "64ff55b770d5fcfd373815f373b6068a2f6c068c21a0c595c219118c6855486d",
+      "mtimeUtc": "2026-10-18T23:13:32.194198+00:00"
+    },
+    {
+      "path": "report.json",
+      "sha256": "2be80c33eb121c7c5e0d47a1253d14a3ab70677174e3ac40479dbfb693ad25f3",
+      "mtimeUtc": "2026-10-18T23:15:07.606167+00:00"
+    },
+    {
+      "path": "Save/chapter-one.sav",
+      "sha256": "ac8332cf3ee04cd7eed3dd2652f741e8092a91e944b15d3e31228534806141cb",
+      "mtimeUtc": "2026-10-18T23:14:52.805504+00:00"
+    },
+    {
+      "path": "Save/chapter-one.sav.bak",
+      "sha256": "7b2559d53900980ea729fbc79135c640d51e1782ee987a8b001052b4529fa7f6",
+      "mtimeUtc": "2026-10-18T23:14:03.129157+00:00"
+    },
+    {
+      "path": "Save/chapters/6/chapter-one.sav",
+      "sha256": "3176f06c446131e10128dd8d7d43833bc90dfb4dbcf98adfc1a38913bec948b3",
+      "mtimeUtc": "2026-10-18T21:57:22.700315+00:00"
+    },
+    {
+      "path": "Save/endings/branches/2d1bd44d064449659bac986b57f90f99/chapter-one.sav",
+      "sha256": "6240a11c9d6ca81788122fa0876dc3e71a487fa69edc8fa8dae0f21bd2d73bda",
+      "mtimeUtc": "2026-10-18T23:14:43.059464+00:00"
+    },
+    {
+      "path": "Save/endings/branches/2d1bd44d064449659bac986b57f90f99/chapter-one.sav.bak",
+      "sha256": "b5e5c6db31d5b0f59e727cfd5c64fd77fa5093946b520a5e40f447123dcab826",
+      "mtimeUtc": "2026-10-18T23:14:42.652418+00:00"
+    },
+    {
+      "path": "Save/endings/branches/2d1bd44d064449659bac986b57f90f99/chapters/6/chapter-one.sav",
+      "sha256": "28a5bff7399579235a621cc333908decac14373a62a84da61e54780c082d4cfe",
+      "mtimeUtc": "2026-10-18T23:14:41.646258+00:00"
+    },
+    {
+      "path": "Save/endings/checkpoints/0df8250f216240f585444350163d2bd1/chapter-one.sav",
+      "sha256": "7022207e797bbce0857518baae103236ec59beca4c4281df2ca77638e44209c1",
+      "mtimeUtc": "2026-10-18T23:13:33.717797+00:00"
+    },
+    {
+      "path": "Save/endings/checkpoints/3e51d9d5b89948fc84f5f5405bdcfb01/chapter-one.sav",
+      "sha256": "bb2081f3c77dc8883b6370503a1c8aadd442211515d91af7dd92da7f7291d3ac",
+      "mtimeUtc": "2026-10-18T23:13:35.455126+00:00"
+    },
+    {
+      "path": "Save/endings/checkpoints/535e857a698741cb990afd675af70549/chapter-one.sav",
+      "sha256": "d4bf10af035d1aea69bd26bf530084aec5938e81236749350892f44f998512fe",
+      "mtimeUtc": "2026-10-18T23:13:39.156446+00:00"
+    },
+    {
+      "path": "Save/endings/checkpoints/59c016e51eb54d5db0fe6a45a2efa05b/chapter-one.sav",
+      "sha256": "85f1db49f34b57fcb31228a2a15eb403b55c2ca7338ad0d703c262c45e38743d",
+      "mtimeUtc": "2026-10-18T23:13:34.133746+00:00"
+    },
+    {
+      "path": "Save/endings/checkpoints/b349ea8e235c4a24979e03ddb637c537/chapter-one.sav",
+      "sha256": "dde67a15caa9a429a3079b1f0a7b947688355d6ab87c8159c9b29c4c95f58892",
+      "mtimeUtc": "2026-10-18T23:13:38.748120+00:00"
+    },
+    {
+      "path": "Save/endings/checkpoints/c5254e4a7d924dacbd1e85bb2ccfa26b/chapter-one.sav",
+      "sha256": "3aad4030417833ec3e5bbb8df7c585a779bc3527e8ca56e0dcb507d703116e39",
+      "mtimeUtc": "2026-10-18T23:13:35.888250+00:00"
+    },
+    {
+      "path": "Save/endings/checkpoints/e4bc6a0151724112a4e74cf16e3fcc1f/chapter-one.sav",
+      "sha256": "e79e3d070ba6595f779d9e5941ecb8c5f4fe01f4568fd56b0f6aca3de8dbe044",
+      "mtimeUtc": "2026-10-18T23:13:37.547225+00:00"
+    },
+    {
+      "path": "Save/endings/checkpoints/f9ea87c87b664254b8b53bbf4c2eb50e/chapter-one.sav",
+      "sha256": "a23809fef0cb5549e6eb7273003e980f99d4450c94b64f3b5f41810e02f90397",
+      "mtimeUtc": "2026-10-18T23:13:37.147133+00:00"
+    },
+    {
+      "path": "Save/night-after-reload.json",
+      "sha256": "eb565a84ac352e3d682ba3da8b1f5180670fe7c4886bb79ed3e8d0d9e0821fc3",
+      "mtimeUtc": "2026-10-18T21:51:50.429625+00:00"
+    },
+    {
+      "path": "Save/night-before-reload.json",
+      "sha256": "436c028dac314236b3482f7cd40db77c8e2c9f1496207809790845a3b3a39583",
+      "mtimeUtc": "2026-10-18T21:51:50.428103+00:00"
+    },
+    {
+      "path": "Save/slots/3/chapter-one.sav",
+      "sha256": "8f367bf9e0820b1acb2ea191005c492495be6047e6e73afc4a7c8d85a6712bc6",
+      "mtimeUtc": "2026-10-18T21:51:35.965255+00:00"
+    },
+    {
+      "path": "Save/slots/3/chapter-one.sav.bak",
+      "sha256": "315e43c84e3d62377f869fea26a019198975129da0734c29f128963fd56d0089",
+      "mtimeUtc": "2026-10-18T21:51:34.149871+00:00"
+    },
+    {
+      "path": "Save/slots/4/chapter-one.sav",
+      "sha256": "0acbee5e296279e0fbe0f44b62f865eaeda1c74b4ffe2c8e2d48e897ff5c5be8",
+      "mtimeUtc": "2026-10-18T21:51:41.031352+00:00"
+    },
+    {
+      "path": "Save/slots/6/chapter-one.sav",
+      "sha256": "9a538c1ae24be0ae4d250f608437628ed149ae5025b9c8d79fd2c05ec162415b",
+      "mtimeUtc": "2026-10-18T21:57:23.781025+00:00"
+    },
+    {
+      "path": "Save/slots/6/chapter-one.sav.bak",
+      "sha256": "b64524e88fc1fc9fda129f621bf7b430aae997b650af4fa850e5750e8e5ae2dd",
+      "mtimeUtc": "2026-10-18T21:51:48.996450+00:00"
+    },
+    {
+      "path": "source-report.json",
+      "sha256": "7415ee6631bd47248ac4b259134eca96005b1a415d46472a33d141374aeb311b",
+      "mtimeUtc": "2026-10-18T21:57:27.440401+00:00"
+    },
+    {
+      "path": "source-sha256.txt",
+      "sha256": "afb7f017bdf12ecd059773a6a8239bf25ef4348df4e462641efeb72b1ac705ee",
+      "mtimeUtc": "2026-10-18T23:12:43.446849+00:00"
+    }
+  ],
+  "limitation": "Historical live money/path/identity at the last assertion were not recorded separately. The disk and source checks pass, and the assertion is after gameplay restarts; the exact live earnings change remains for the next observed run."
+}

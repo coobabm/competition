@@ -1,0 +1,6 @@
+FAIL: System.Exception: tech-zh-0-mnist-pack: cost/status row is not covered by another canvas control
+  at DesignWallpaperSmoke.Check (System.Boolean ok, System.String message) [0x00029] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.cs:111 
+  at DesignWallpaperSmoke.TechBottom (System.String label) [0x001d0] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.Tech.cs:433 
+  at DesignWallpaperSmoke+<TechSceneSteps>d__113.MoveNext () [0x0077b] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.Tech.cs:133 
+  at DesignWallpaperSmoke.TickTech (LingGuangV05.Desktop.XingGuang.XingGuangController controller, LingGuangV05.Runtime.ChapterOneRuntime runtime, LingGuangV05.Desktop.XingGuang.XgBrainWallpaper brain) [0x0009b] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.Tech.cs:56 
+  at DesignWallpaperSmoke.Update () [0x005ee] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.cs:197 

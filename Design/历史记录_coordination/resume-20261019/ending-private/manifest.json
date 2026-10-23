@@ -1,0 +1,83 @@
+{
+  "baselineCommit": "3533141a406940d571e064f3797328c7d214235a",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/Mail2016/EndingLetterPresenter.cs",
+      "new": false,
+      "candidateSHA256": "6c7f90319b605bac6ca47048dce3b8ec12ca2724b7ff60930a61f9eed1d2217c",
+      "baselineSHA256": "c4fe362c7aa6b8c921e24f4661d88645c135f4d2770fc2214cc1dae7c5186b99"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingLetterCatalog.cs",
+      "new": false,
+      "candidateSHA256": "168614632bf3c5c222ee6b9e99e16b5d16a04314f977271d58b4cd2c3bab01a6",
+      "baselineSHA256": "fc1402e3ae287cd743ced8059b9e23621afe6da7144f4dc4b58da3a2c645d78a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs",
+      "new": true,
+      "candidateSHA256": "41be5e5f9acc9ed88ed8c169228e48b088c10eec73f28c4ca755002b2be54974",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs.meta",
+      "new": true,
+      "candidateSHA256": "aa35e13ac7d4ca7db3546b232acfe1bb241a24db866cb715aeba4f8731b9bc43",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueMailBridge.cs",
+      "new": false,
+      "candidateSHA256": "448131cf938ccd68db0b9df0c7799a204b363543efba7afacca0520c2f39ae2b",
+      "baselineSHA256": "d70475946cc022b151f003ec82c5c72e4473f3072198dfbd1e14bbbb0d517570"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs",
+      "new": true,
+      "candidateSHA256": "085711016383c4004c800a342da303733c9f172563fd0c2b4c439be49addd325",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs.meta",
+      "new": true,
+      "candidateSHA256": "54fbf4ef19fffeb4403b687272c0a0093e19c2f9cceef15248a2b7d6f63187cd",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "new": false,
+      "candidateSHA256": "f9dc02d22902439c3b66eceec435ea0382053843e6c57a6bfb27511474ff714f",
+      "baselineSHA256": "ccb8733fffa7828b07312caccb3a9bd14d002bb726721a644172cc8c7d47b871"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs",
+      "new": true,
+      "candidateSHA256": "95762e222f8d734840413bc9c32071388b3f5b36560ee913d83b61d325b86832",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs.meta",
+      "new": true,
+      "candidateSHA256": "45828ca93a8226200eb122ad298f1c934286bfe2b59c4e09231f3ab45a5e8215",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+      "new": false,
+      "candidateSHA256": "a46b52d0a5a4801bf93bba41a6725eb997b1b92f95634e0972288a2471a450a4",
+      "baselineSHA256": "2e55f84f9e962f9aadda869deb781e2b345463540d16c7aca127c2b6ac17f021"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.EndingPrivate.cs",
+      "new": true,
+      "candidateSHA256": "ab7d2649aa6429aecf4cc935701c4bab60a2b44b5a40d0924d3838bdee785367",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.EndingPrivate.cs.meta",
+      "new": true,
+      "candidateSHA256": "9c16a2d7f03d75b0fc945dc858cfab65ab2ed2bcd767f264092b04b74eb20257",
+      "baselineSHA256": null
+    }
+  ]
+}

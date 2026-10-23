@@ -1,0 +1,13 @@
+{
+  "status": "candidate-ready",
+  "patch": "delivery.patch",
+  "sha256": "52ff2307e5b300fa02769691dc69e0f8c946701d856e944a8e2355435555b856",
+  "preparedTests": 6,
+  "newDialogue": 0,
+  "jointGitApplyCheck": "pass with ending-prerequisites-ui-stage/delivery.patch",
+  "productionEdited": false,
+  "unityExecuted": false,
+  "dotnetExecuted": false,
+  "modelExecuted": false,
+  "remaining": ["E-D dynamic/reviewed filtering integration", "single-instance compile", "NUnit execution"]
+}

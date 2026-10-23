@@ -1,0 +1,133 @@
+[
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\CasinoPage.Juice.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "a64d907c3959dca28f3ff096ecfb99db25b77b281d68e7bc6437df96894479d8"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\CasinoPage.Scam.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "0f7f00f1264a41e39eb6537631ab9351fdd1b00076142c08599efc3f7aa0a296"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\ContentFilter.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "fec761931f8bd8fda20a2f17c4df05e76d4a3ccef44b3594e99abcf5c4a3f86c"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\ContentFilterLoader.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "d462995011299c95e9df6c0170fcffb665b5dd63a29154089a76e60c321f4516"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\ContentFilterTests.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "7d1d7e2074a80b9dcb717bb85ab383eb0675bca706d406dfd83b5e776cbaf584"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\LaoZhouInsight.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "5a0a2f20e0c72ddd224591c3fa3fedc1ab8ff7aa320874c3b633eec2b72ae762"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\LlmContentGuard.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "9fbfccfce08d17c93af0ee6a2f52d303e8143f87904435eb07e72c7d8a267b86"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\PhotosensitivityGuard.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "7b0cc1f23b741c6578ba31f7d5e824c3a2b3272b424679937d34c45cf42fe2f4"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\XgSim.Gambling.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "badf6c3c1eb03eabab70be5a32dd53236eef3f6022d6e3d44107b179cfaf254d"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\XgSim.Trial.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "8fe223bba0298d573a5c1287bb2fb086ce812b17f133a66e755bb42535676b11"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\XgTrialFile.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "8324b44f9b64c3d174ba2125290acd41c8b809f7fdf5dd4ec3ce60ec75c9b9bc"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\XgTrialPanel.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "8a0d307a3193a4e8651bd3f9be78a24d3087b02995cb7160467ae67deddb19dc"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\YYChatView.Filter.cs",
+    "current": null,
+    "same": false,
+    "status": "No same-named production source found; not imported",
+    "oldSha256": "1cd9eaad46f0e70941c46bb2b01f854e4c9d375fc026ff065a0929175d9e5cfd"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Assets\\LingGuangV05\\LocalLLM\\LlmPersonas.cs",
+    "current": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LingGuangV05\\LocalLLM\\LlmPersonas.cs",
+    "same": false
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\第九轮_最终挑战_老周的最后一份卷子.md",
+    "current": null,
+    "same": false,
+    "oldSha256": "4b6a39b868d8193df1e767feb6f1d593d631bb3e82caac2e08a082eef9bc258c",
+    "scope": "Reference document only; finale/model work not imported by C6"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\第九轮_老周最终挑战_周而复始的棋室.md",
+    "current": null,
+    "same": false,
+    "oldSha256": "3a465d460fe10d420947afb348e6f464e2519f179433040a9e264b550218dd09",
+    "scope": "Reference document only; finale/model work not imported by C6"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\第十轮_结局关机梳理与暗示数据.md",
+    "current": null,
+    "same": false,
+    "oldSha256": "ee53008f862814071e8e75f1000d104608ca0467db66be00cbe1ef13a752fa46",
+    "scope": "Reference document only; finale/model work not imported by C6"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\第十一轮_888骗局_老周加一把火_接入说明.md",
+    "current": null,
+    "same": false,
+    "oldSha256": "1e0b659707118e1859536853cbb0bccf7e1080a7a45c6fe03a78533ca85eabc4",
+    "scope": "Reference document only; finale/model work not imported by C6"
+  },
+  {
+    "old": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\Play\\Main-NoModel-20261003\\Design\\code\\第十二轮_YY老周好友_常识题_Qwen35_接入说明.md",
+    "current": null,
+    "same": false,
+    "oldSha256": "26cd4b3cd704ea5c43294ea186a8e14f89cd88c810b4cb098b8489c3e6082a0b",
+    "scope": "Reference document only; finale/model work not imported by C6"
+  }
+]

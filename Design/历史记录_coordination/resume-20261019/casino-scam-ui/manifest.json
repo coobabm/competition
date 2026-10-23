@@ -1,0 +1,70 @@
+{
+  "created": "2026-10-19T09:18:09.162075+00:00",
+  "production": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016",
+  "head": "3533141a406940d571e064f3797328c7d214235a",
+  "patch_sha256": "0c1c17bb0d1ed5e16bad11448bee49134fab0e7c18f01f9ef8be46ccb2016c94",
+  "files": [
+    {
+      "path": "Assets/LocalBuild/Editor/CasinoScamActualUiRunner.cs",
+      "new": true,
+      "sha256": "25966eae0e59380a585afb59e41ad7d0ae12ef344e0693b03d4384e42f3d534d"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/CasinoScamActualUiRunner.cs.meta",
+      "new": true,
+      "sha256": "1349069f2bee117b289d1c582bbd630fb05820eedb5ebb79eeba2465b3fe05e6"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "Assets/LocalBuild/Editor/FilesWindowUiChecks.cs",
+      "sha256": "21eb81c08c41631a1c295fe678869b984bc4f7dea8d551cad2aee3c16ad298f9"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoDesktop.cs",
+      "sha256": "dfb8f344731d128f02152dbf060446d9fdd2e0cf95056c5fb91bf0f16a92aeb0"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.cs",
+      "sha256": "9896e737c4dbe179ef671d4f055df0de8036917862eb56039373a3ffe6a8fcae"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Scam.cs",
+      "sha256": "993c342d7ecf236d40dcd75026e03dd7b9e06c68a277c008db8d593642d35b2c"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Casino/CasinoPage.Blackjack.cs",
+      "sha256": "81926dd448bd45bd643f654ffb72afc93e8a46d319e82a10136a3b2b0775476a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Gambling.cs",
+      "sha256": "30372961d79a5809be0d8ae32a17de253de62a6671a895f657a2350187a00c9d"
+    },
+    {
+      "path": "Assets/LingGuangV05/Runtime/ChapterOneRuntime.Slots.cs",
+      "sha256": "295e037a858c5a34161c1f3e2a8ecaf1de2372995b2155ef5784e94c50a6f8c2"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+      "sha256": "472a03a2bd802c65f163d99f122970f9302ed847c07bc4c5a78ac05633922eec"
+    },
+    {
+      "path": "Library/ScriptAssemblies/Assembly-CSharp.dll",
+      "sha256": "4d19a17b31efa8853413a8a1e49b8eda811c140e31193f4322096e3a63ac9953"
+    },
+    {
+      "path": "Library/ScriptAssemblies/Assembly-CSharp-Editor.dll",
+      "sha256": "aa5e12a8114d6b3fe673115477ddb9ec2d570a2ed8d6ffa324fb30237d19f0db"
+    },
+    {
+      "path": "Library/ScriptAssemblies/LingGuangV05.Core.dll",
+      "sha256": "1a48a88b0014a32a768be9fe5f057ff9a42644491f99512506bfef08e66a10b1"
+    }
+  ],
+  "verification": {
+    "narrow_compile": "passed; 0 errors, 0 warnings",
+    "unity_run": "NOT RUN; root is sole Unity owner",
+    "apply_check": "see verification/apply-check.log"
+  },
+  "scope": "Independent editor runner only; no product edits; explicit history, date and legacy active-hand fixtures; actual LCD clicks, real unscaled gossip waits, real isolated archive IO. No auto-save-success/Player/inference/physical-input claim."
+}

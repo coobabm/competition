@@ -1,0 +1,10 @@
+{
+  "staticUnityCompilerErrors": 0,
+  "nunitMethodsExecutedOutsideUnity": 78,
+  "failed": 0,
+  "unityJsonUtilityMethodsPending": 3,
+  "yyRealRoutingCheck": "static-compiled; Unity execution pending",
+  "mainEdited": false,
+  "testPatchApplyCheck": "passed with --ignore-space-change (CRLF context)",
+  "fix": "nonnegative rent migration clock; preserves net wealth and reloads idempotently"
+}

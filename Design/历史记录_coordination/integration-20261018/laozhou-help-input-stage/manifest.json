@@ -1,0 +1,9 @@
+{
+  "status": "candidate only; not compiled or executed in Unity",
+  "files": [
+    {
+      "path": "Assets/LocalBuild/Editor/PlayerKnowledgeMenuInputQa.cs",
+      "sha256": "c1981b4c492b326d6d22c03162d1de344e55585d755a255f9af138f4d797bae4"
+    }
+  ]
+}

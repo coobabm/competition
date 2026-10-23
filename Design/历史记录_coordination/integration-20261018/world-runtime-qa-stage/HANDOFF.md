@@ -1,0 +1,6 @@
+# World runtime QA
+Copy WorldCompletenessQa.cs to Assets/LocalBuild/Editor and run WorldCompletenessQa.Run from Edit Mode after world patch. Independent compilation passed; no Unity execution here.
+
+Creates isolated Main Play session/save roots and disables local LLM. Natural event scheduler tests call the production TickLifeEvents timer (reflection, not forced opening), drive countdown boundaries and real eligible pool for six stages, two-event cap/no repeated IDs, month/stage gate, actual posting vs decline flag, curtain hold/resume. This is controlled clock simulation, not waiting six minutes or asserting all 100 natural triggers. All 200 choices separately checked in prior standalone suite.
+
+Reads actual Resources news; 45/date/month gate/teaching once + actual Unity JsonUtility receipt; actual Bodu window four screenshot cases: stage1 Chinese, stage6 English, stage6 width720 Chinese, English article. Checks positive TMP geometry/overflow, columns don't overlap, content height, actual teach button click, receipt UI and removed repeat action. Screen paths checked after capture delay; failure retained in result.json. Run exits Play, leaves result under LocalVerification/WorldCompleteness. Does not claim screenshots or Unity pass until executed.

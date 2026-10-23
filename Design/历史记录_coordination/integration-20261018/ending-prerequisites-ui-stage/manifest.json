@@ -1,0 +1,16 @@
+{
+  "newFiles": [
+    "Assets/LingGuangV05/XingGuang/Core/EndingPrerequisitesUiContract.cs",
+    "Assets/LingGuangV05/XingGuang/Core/EndingPrerequisitesUiContract.cs.meta",
+    "Assets/LingGuangV05/XingGuang/Desktop/EndingLaunchNightPanel.cs",
+    "Assets/LingGuangV05/XingGuang/Desktop/EndingLaunchNightPanel.cs.meta",
+    "Assets/LingGuangV05/XingGuang/Desktop/EndingPreparationPanel.cs",
+    "Assets/LingGuangV05/XingGuang/Desktop/EndingPreparationPanel.cs.meta",
+    "Assets/LingGuangV05/XingGuang/Desktop/EndingTrialPanel.cs",
+    "Assets/LingGuangV05/XingGuang/Desktop/EndingTrialPanel.cs.meta",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrerequisitesUiTests.cs",
+    "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrerequisitesUiTests.cs.meta"
+  ],
+  "textPairs": 87,
+  "patchSha256": "49d61fbfe2ae8cbc65dd1a3d2202ab1874e4f7b7c30ca0aba7ca0e192dc1fdcb"
+}

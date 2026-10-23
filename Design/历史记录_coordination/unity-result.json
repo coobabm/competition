@@ -1,0 +1,9 @@
+{
+    "id": "final-build-warning-audit",
+    "action": "buildreport",
+    "status": "ok",
+    "detail": "",
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+}

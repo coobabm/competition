@@ -60,7 +60,7 @@ namespace LingGuangV05.CaseMenu.Editor
             labelObject.transform.localPosition = new Vector3(0, 0, -.012f);
             var text = labelObject.GetComponent<TextMeshPro>();
             text.font = font; text.fontSize = 2.2f;
-            text.text = "hongmengos\n<size=42%><color=#617E89>2016  /  STANDBY</color></size>";
+            text.text = "Aurora 7\n<size=42%><color=#617E89>2016  /  STANDBY</color></size>";
             text.color = new Color(.37f, .54f, .60f);
             text.alignment = TextAlignmentOptions.Center;
             text.rectTransform.sizeDelta = new Vector2(4.8f, 1.2f);

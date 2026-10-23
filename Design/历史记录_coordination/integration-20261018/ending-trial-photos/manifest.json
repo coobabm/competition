@@ -1,0 +1,109 @@
+{
+  "packageStatus": "PARTIAL_2_OF_5_NOT_TRIAL_READY",
+  "verifiedAssets": [
+    {
+      "title": "File:Tongyang - downtown - internet cafe - CIMG9869.JPG",
+      "source": "https://commons.wikimedia.org/wiki/File:Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/9/96/Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG/960px-Tongyang_-_downtown_-_internet_cafe_-_CIMG9869.JPG",
+      "author": "User:Vmenkov",
+      "license": "CC BY-SA 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+      "description": "An internet café in Tongyang Town, the county seat of Tongshan County, Hubei.",
+      "date": "2008-09-04",
+      "width": 1600,
+      "height": 1200,
+      "index": 3,
+      "key": "avatar_netbar",
+      "file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/avatar_netbar.jpg",
+      "sha256": "3ccf8d32b975a8a24ee0d390cfd20f51995aa84350366869212ae25a28e5ec52",
+      "bytes": 132630,
+      "usage_note": "Real 2008 Chinese internet-cafe interior with rows of lit monitors; fictional trial reference photo, not a photograph taken by the fictional character.",
+      "retrieved": "2026-10-07",
+      "trialId": "trial_netbar",
+      "candidate": "candidate/Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_netbar.jpg",
+      "sourceLocalFile": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/avatar_netbar.jpg",
+      "changes": "Unchanged bytes; new Unity resource name and unique meta GUID. No crop, retouch or blur.",
+      "visualFit": "Visually verified interior with multiple rows of lit computer monitors in a Chinese internet cafe.",
+      "creditCorrection": "The existing usage_note says exterior, but visual inspection of the exact SHA-256-matched file confirms interior; source description says internet cafe without claiming exterior."
+    },
+    {
+      "title": "File:Unique Server Racks.png",
+      "source": "https://commons.wikimedia.org/wiki/File:Unique_Server_Racks.png",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/d/db/Unique_Server_Racks.png",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Unique_Server_Racks.png/960px-Unique_Server_Racks.png",
+      "author": "Akramusns",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+      "description": "The image depicts the server racks of the Unique Star (web hosting)",
+      "date": "2014-12-15",
+      "width": 1000,
+      "height": 388,
+      "index": 3,
+      "key": "era_weibo_down",
+      "file": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/era_weibo_down.png",
+      "sha256": "88d0e87ffc4a59fec0df9c968a74c11f012a0626122733ca8f0e757d7031d46f",
+      "bytes": 659611,
+      "usage_note": "Real 2014 hosting-server racks; fictional trial reference photo, not a photograph taken by the fictional character and not Weibo infrastructure.",
+      "retrieved": "2026-10-07",
+      "event_date": "2016-08-14",
+      "event_title": "凌晨一条离婚声明，微博服务器又挂了",
+      "editorial_label": "资料图 / Reference image",
+      "artist_html": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Akramusns&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Akramusns (page does not exist)\">Akramusns</a>",
+      "credit_html": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+      "author_links": [
+        "https://commons.wikimedia.org/w/index.php?title=User:Akramusns&amp;action=edit&amp;redlink=1"
+      ],
+      "trialId": "trial_serverroom",
+      "candidate": "candidate/Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/trial_serverroom.png",
+      "sourceLocalFile": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/era_weibo_down.png",
+      "changes": "Unchanged bytes; new Unity resource name and unique meta GUID. No crop, retouch or blur.",
+      "visualFit": "Visually verified room aisle between rows of open server racks; equipment shelves and server cases visible."
+    }
+  ],
+  "missingAssets": [
+    {
+      "trialId": "trial_gpubox",
+      "descriptionZh": "桌上一只拆开的显卡盒",
+      "descriptionEn": "An opened graphics card box on a desk",
+      "answerZh": "显卡",
+      "answerEn": "graphics card",
+      "status": "missing_exact_photo",
+      "requiredVisual": "A visibly opened graphics-card retail box on a desk, with open lid/flaps and card or antistatic insert visible. Hardware must be plausible in 2016 or earlier. A closed box, bare GPU or open computer case does not meet the original description.",
+      "generationPrompt": "Natural amateur phone photograph taken indoors in 2016: a visibly opened cardboard retail box for a 2015-era desktop graphics card sits on a plain wooden desk. Box lid and flaps are open, foam insert and a generic dual-fan graphics card partly in an antistatic sleeve are clearly visible. Close three-quarter overhead view. Modest warm desk-lamp lighting, slight handheld softness, ordinary lived-in desk, no modern hardware, no RTX labels, no legible brand or slogan, no illustration. The opened graphics-card box is the unmistakable subject."
+    },
+    {
+      "trialId": "trial_westlake",
+      "descriptionZh": "雨夜的西湖，远处有灯",
+      "descriptionEn": "West Lake on a rainy night, lights far off",
+      "answerZh": "湖",
+      "answerEn": "lake",
+      "status": "missing_exact_photo",
+      "requiredVisual": "Hangzhou West Lake at actual night during visible rain: lake water dominant, distant shore/pavilion lights, rain streaks or raindrop ripples and wet foreground. Daylight, dusk, Hanoi West Lake, artificial mist, or a dry night is not an exact match.",
+      "generationPrompt": "Photorealistic fictional amateur phone photograph at Hangzhou West Lake in China on a rainy night in 2016. Broad dark lake water is the dominant subject, with many small raindrop ripples in near water, a narrow wet stone lakeside edge, distant warm shoreline lights and a small traditional Chinese pavilion across the water. Naturally dark rainy sky, soft distant reflections, slight handheld motion blur and high-ISO grain. No people, no readable signs, no bright daytime sky, no dry weather, no artificial fog plume, no city skyline dominating the lake. Preserve enough visible water to identify a lake."
+    },
+    {
+      "trialId": "trial_drafts",
+      "descriptionZh": "桌上摊满写满字的草稿纸",
+      "descriptionEn": "A desk covered in scribbled drafts",
+      "answerZh": "草稿纸",
+      "answerEn": "drafts",
+      "status": "missing_exact_photo",
+      "requiredVisual": "A desk visibly covered by several loose overlapping sheets densely filled with handwriting, crossed-out sentences, rough diagrams or calculations. A single notebook, blank scattered paper, printed paperwork or unrelated clutter does not meet the original description.",
+      "generationPrompt": "Natural amateur phone photograph of a plain wooden desk almost covered by eight to twelve loose overlapping sheets of scribbled draft paper. Sheets are densely filled with ordinary handwritten Chinese notes, small equations, arrows, corrections and crossed-out passages in blue and black ink; writing is naturally too small and slightly blurred to read. One simple pen at an edge, modest warm indoor lighting, slight rushed handheld softness, overhead diagonal angle, 2016 everyday student or programmer desk. Paper drafts dominate the frame; no laptop, no legible brand, no illustration, no blank-paper pile, no single isolated notebook."
+    }
+  ],
+  "rules": {
+    "preserveOriginalQuestionsAnswersScoring": true,
+    "missingAssetsMustNotPassReadiness": true,
+    "doNotLoadReviewFolder": true,
+    "generatedImagesCreated": false
+  },
+  "generationEnvironment": {
+    "builtInImageGenerationToolAvailable": false,
+    "apiKeyPresentAtLastCheck": false,
+    "openaiPythonPackagePresentAtLastCheck": false,
+    "fallbackAuthorized": true
+  },
+  "runtimeVerification": "No Unity, .NET, compilation, inference or gameplay verification run by this agent."
+}

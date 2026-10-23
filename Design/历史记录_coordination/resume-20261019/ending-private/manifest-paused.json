@@ -1,0 +1,97 @@
+{
+  "baselineCommit": "3533141a406940d571e064f3797328c7d214235a",
+  "status": "paused-uncompiled-unexecuted",
+  "patchSHA256": "fb5de21daf3406359b5fcaff0f454b6e07102651639295bd34217880aaf125d1",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/Mail2016/EndingLetterPresenter.cs",
+      "new": false,
+      "candidateSHA256": "6c7f90319b605bac6ca47048dce3b8ec12ca2724b7ff60930a61f9eed1d2217c",
+      "baselineSHA256": "c4fe362c7aa6b8c921e24f4661d88645c135f4d2770fc2214cc1dae7c5186b99"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingLetterCatalog.cs",
+      "new": false,
+      "candidateSHA256": "168614632bf3c5c222ee6b9e99e16b5d16a04314f977271d58b4cd2c3bab01a6",
+      "baselineSHA256": "fc1402e3ae287cd743ced8059b9e23621afe6da7144f4dc4b58da3a2c645d78a"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs",
+      "new": true,
+      "candidateSHA256": "6351546a291be4e1138b9916f067efb71f835749186de37da2bdad451505ed92",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/EndingPrivateDisclosure.cs.meta",
+      "new": true,
+      "candidateSHA256": "aa35e13ac7d4ca7db3546b232acfe1bb241a24db866cb715aeba4f8731b9bc43",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueMailBridge.cs",
+      "new": false,
+      "candidateSHA256": "448131cf938ccd68db0b9df0c7799a204b363543efba7afacca0520c2f39ae2b",
+      "baselineSHA256": "d70475946cc022b151f003ec82c5c72e4473f3072198dfbd1e14bbbb0d517570"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs",
+      "new": true,
+      "candidateSHA256": "2512dd22f8f5db55d055eb6636e823958fae083823a2e41ae90abbc2d9c85445",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/EndingPrivateDisclosureTests.cs.meta",
+      "new": true,
+      "candidateSHA256": "54fbf4ef19fffeb4403b687272c0a0093e19c2f9cceef15248a2b7d6f63187cd",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.cs",
+      "new": false,
+      "candidateSHA256": "f9dc02d22902439c3b66eceec435ea0382053843e6c57a6bfb27511474ff714f",
+      "baselineSHA256": "ccb8733fffa7828b07312caccb3a9bd14d002bb726721a644172cc8c7d47b871"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs",
+      "new": true,
+      "candidateSHA256": "f6d3312bc34c56f7136dde2ddddc6aa86361080065a70db676ae75af28deaf92",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatHub.EndingPrivate.cs.meta",
+      "new": true,
+      "candidateSHA256": "45828ca93a8226200eb122ad298f1c934286bfe2b59c4e09231f3ab45a5e8215",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+      "new": false,
+      "candidateSHA256": "42a39521b7e75d7658e2f3185a94e2771ae9663a5cbb2793950efb3a94cf1138",
+      "baselineSHA256": "2e55f84f9e962f9aadda869deb781e2b345463540d16c7aca127c2b6ac17f021"
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.EndingPrivate.cs",
+      "new": true,
+      "candidateSHA256": "64d9c7e3222eadb63f36a10681e3726db7e970a9c55b87695ed9d78a772f4dc1",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LingGuangV05/YY2016/YYChatView.EndingPrivate.cs.meta",
+      "new": true,
+      "candidateSHA256": "9c16a2d7f03d75b0fc945dc858cfab65ab2ed2bcd767f264092b04b74eb20257",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs",
+      "new": true,
+      "candidateSHA256": "0b2942a61d1c1d39c40896cdc1405c9dd13082c2f9e49fac1ef7eeac1ce7dcc0",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/EndingPrivateActualUiChecks.cs.meta",
+      "new": true,
+      "candidateSHA256": "4ea1130acfea491fd86fc6f11e5bd869d1cd018b2da9e7b51275e2982144e73e",
+      "baselineSHA256": null
+    }
+  ]
+}

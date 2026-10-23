@@ -1,0 +1,22 @@
+{
+  "tag": "v2026.10.21.2",
+  "commit": "8eb5771ec5dbe922acd8e3995037f996e6a5db1c",
+  "release": "https://github.com/coobabm/competition/releases/tag/v2026.10.21.2",
+  "zipSha256": "7cae8fc59b2d9782a84581ae52fa31111ff6eb899fa8ce82d0c5e8399bbc7d3c",
+  "zipBytes": 1615651460,
+  "assets": [
+    {
+      "name": "MyComputerAlive-Windows-2026.10.21.2.zip",
+      "size": 1615651460,
+      "digest": "sha256:7cae8fc59b2d9782a84581ae52fa31111ff6eb899fa8ce82d0c5e8399bbc7d3c",
+      "browser_download_url": "https://github.com/coobabm/competition/releases/download/v2026.10.21.2/MyComputerAlive-Windows-2026.10.21.2.zip"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 107,
+      "digest": "sha256:422a8ba02ce88ff8bce31517e2a3ac76f39f94fd9b4ece301875b325f2d90065",
+      "browser_download_url": "https://github.com/coobabm/competition/releases/download/v2026.10.21.2/SHA256SUMS.txt"
+    }
+  ],
+  "verifiedUtc": "2026-10-20T20:22:54.8271719Z"
+}

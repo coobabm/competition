@@ -1,0 +1,12 @@
+Assets/LingGuangV05/CaseMenu/Art/Materials/Decor_Ivory Ceramic.mat
+Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/ReadingSerif.asset
+Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset
+Assets/Emergence/VisualDemos/NeuronLife/SparkNeuronDemoFont.asset
+Assets/HolenderGames/UpgradesTreePro/Fonts/Hardpixel-nn51 SDF.asset
+Assets/Settings/PC_RPAsset.asset
+Assets/Settings/UniversalRenderPipelineGlobalSettings.asset
+Packages/Aura/.gitignore
+ProjectSettings/GraphicsSettings.asset

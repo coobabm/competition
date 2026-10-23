@@ -1,0 +1,51 @@
+[
+  {
+    "path": "Design/发布材料/发行包_README_候选.txt",
+    "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\ClaudeReturnRound2\\D3\\files\\Design\\发布材料\\发行包_README_候选.txt",
+    "sourceSha256": "6093fd18f359ac9d2165e0f0d29ca657140a32b56ba9d516b003920c2e973bb7",
+    "candidateSha256": "0c4687a11d0520cb6a3b8398888f564def81bd5e4a0413285db40e9894ae1e8c",
+    "bytes": 8290
+  },
+  {
+    "path": "Design/发布材料/截图图注与裁切建议.md",
+    "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\ClaudeReturnRound2\\D3\\files\\Design\\发布材料\\截图图注与裁切建议.md",
+    "sourceSha256": "f5629056a57ad7d1ded8e0790ed7c4454d85f4c8263227a3b73030a44292485c",
+    "candidateSha256": "287c299516ea86830c1c8590caba1b659c1b3a92e4903a79895462e76a70c760",
+    "bytes": 6235
+  },
+  {
+    "path": "Design/发布材料/开发日志01_电脑里的朋友_待发布.md",
+    "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Design\\发布材料\\开发日志01_电脑里的朋友_待发布.md",
+    "sourceSha256": "914f3be00c9537e428fe04c3e1bb2d34af154dc7c9592181ad86eb77c4f6f17b",
+    "candidateSha256": "8b913a3be449513ac0e03842cbcd3b9942a06d1cb283274c6a80358ebb372e00",
+    "bytes": 4817
+  },
+  {
+    "path": "Design/发布材料/开发日志02_每次点击都有回应_待发布.md",
+    "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Design\\发布材料\\开发日志02_每次点击都有回应_待发布.md",
+    "sourceSha256": "9ca0281977e0088e9e3ff9d5a59e2dc33cb375673cff039eb97b56a426226c52",
+    "candidateSha256": "7aba164d346a23549d01293e73ab8cc775d49f348faf30319dd519fee77dd8e6",
+    "bytes": 3564
+  },
+  {
+    "path": "Design/发布材料/新增对白与完成情况.md",
+    "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\ClaudeReturnRound2\\D3\\files\\Design\\发布材料\\新增对白与完成情况.md",
+    "sourceSha256": "99a76f5b72e2d4b52dc1a3e127018e4f90478f23139bc43fc65e8e3e1a2801f7",
+    "candidateSha256": "290710b607484b6009aa3074470512f969ecc2bbf3dc55075b01df865eff45d8",
+    "bytes": 11111
+  },
+  {
+    "path": "Design/发布材料/许可映射表.md",
+    "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\ClaudeReturnRound2\\D3\\files\\Design\\发布材料\\许可映射表.md",
+    "sourceSha256": "a0a9e1069a273de67da623734adba15e823af7ccf70b8e3ff26d4bd7ef3201ab",
+    "candidateSha256": "47000fdcea5683a291c59f3be29ba52b3b1390eb0e3bcf04dd98ef7cf615629b",
+    "bytes": 14200
+  },
+  {
+    "path": "Design/发布材料/GitHub更新说明_候选.md",
+    "source": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\ClaudeReturnRound2\\D3\\files\\Design\\发布材料\\GitHub更新说明_候选.md",
+    "sourceSha256": "1dafe5c8ce4785ffacaa6a4bec9d3b4530c766bf262fd349f62f56cf96d8d954",
+    "candidateSha256": "b826819011fa9eeff418ae153105049e1a96a5d36ccafe90452b19da45959d10",
+    "bytes": 11147
+  }
+]

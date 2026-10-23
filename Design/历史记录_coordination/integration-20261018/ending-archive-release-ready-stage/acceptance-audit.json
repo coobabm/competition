@@ -1,0 +1,63 @@
+{
+  "reportPath": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\EndingArchiveActual\\20261018-232218-004\\report.json",
+  "reportSha256": "3e4c45fa858321d90ee10fd667f691ed9b30979409cb2d843e93038c570db189",
+  "status": "passed",
+  "prerequisiteAssertions": 1426,
+  "finalAssertions": 67,
+  "screenshotsPresent": 26,
+  "errors": [],
+  "cleanupErrors": [],
+  "completionReceipt": "epilogue:76d9c2c662ce4c69ac8815c833f6ee23",
+  "currentDiskHashes": {
+    "primary": "31bb1e933b73e8683e2fbc021182a99174c6f524f96ff6bd07306c6ca471e242",
+    "branch": "39983282d659c72b5cc44a4b28059da09f984f98543bfe7c6e37c5185539a27d",
+    "slots": "96185521be29648308d60f610b21d8f132e029d6afef3b54b89c557166e60394",
+    "checkpoints": "a5365d5b44c0db1ce7638cd8c1a5f8544a63117423792f863ef37a18ca971d91",
+    "source": "3219a8f641deb8ce0a91f16af34dcb0c8b88fd3de471ce267ab7457a5d3b8478",
+    "evidenceCopy": "3219a8f641deb8ce0a91f16af34dcb0c8b88fd3de471ce267ab7457a5d3b8478"
+  },
+  "branchResume": {
+    "expectedPath": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\EndingArchiveActual\\20261018-232218-004\\Save\\endings\\branches\\16cb1e2e031545b4adf9ef9c516ec527\\chapter-one.sav",
+    "expectedBranch": "16cb1e2e031545b4adf9ef9c516ec527",
+    "expectedCheckpoint": "fdc87a53c1ab4dc89a3204609953c04e",
+    "expectedMarker": "1094596 bits=0x4130B3C400000000",
+    "diskMarkerBefore": "1094596 bits=0x4130B3C400000000",
+    "diskBeforeHash": "39983282d659c72b5cc44a4b28059da09f984f98543bfe7c6e37c5185539a27d",
+    "boundPath": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\EndingArchiveActual\\20261018-232218-004\\Save\\endings\\branches\\16cb1e2e031545b4adf9ef9c516ec527\\chapter-one.sav",
+    "boundBranch": "16cb1e2e031545b4adf9ef9c516ec527",
+    "boundCheckpoint": "fdc87a53c1ab4dc89a3204609953c04e",
+    "boundMarker": "1094596 bits=0x4130B3C400000000",
+    "boundEarned": "94589.838040024042 bits=0x40F717DD689CA800",
+    "afterMarker": "1095312.7424100637 bits=0x4130B690BE0E9600",
+    "afterEarned": "95306.580450087786 bits=0x40F744A949860800",
+    "moneyDelta": "716.74241006374359 bits=0x408665F074B00000",
+    "earningsDelta": "716.74241006374359 bits=0x408665F074B00000",
+    "primaryBefore": "31bb1e933b73e8683e2fbc021182a99174c6f524f96ff6bd07306c6ca471e242",
+    "primaryAfter": "31bb1e933b73e8683e2fbc021182a99174c6f524f96ff6bd07306c6ca471e242",
+    "slotsAfter": "96185521be29648308d60f610b21d8f132e029d6afef3b54b89c557166e60394",
+    "checkpointsAfter": "a5365d5b44c0db1ce7638cd8c1a5f8544a63117423792f863ef37a18ca971d91",
+    "bindingObserved": true,
+    "boundBeforeGameplay": true,
+    "boundMarkerExact": true,
+    "boundIdentityExact": true,
+    "sameBoundSimulation": true,
+    "primaryExact": true,
+    "slotsExact": true,
+    "checkpointsExact": true
+  },
+  "pastFailures": [
+    {
+      "run": "20261018-225153-642",
+      "status": "failed",
+      "sha256": "95e866dd37b3e1899b648a1381d54bce35eaf11c9bf2262ef91b7f42a4ab53f2",
+      "unchangedSincePriorAudit": true
+    },
+    {
+      "run": "20261018-231243-360",
+      "status": "failed",
+      "sha256": "2be80c33eb121c7c5e0d47a1253d14a3ab70677174e3ac40479dbfb693ad25f3",
+      "unchangedSincePriorAudit": true
+    }
+  ],
+  "reviewMode": "read-only existing evidence, no new tests or Unity run"
+}

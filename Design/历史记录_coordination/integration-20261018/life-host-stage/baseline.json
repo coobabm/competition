@@ -1,0 +1,18 @@
+[
+  {
+    "sha256": "7F3F0D3306EAED080E5329D1810A26ED71C43D675235C80495128BE20A55F47A",
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs"
+  },
+  {
+    "sha256": "4893E0208CBEB0B5B58FA3985A012B1F7E7540D3D1F32BD353001B7CF32D00C1",
+    "path": "Assets/LingGuangV05/CaseMenu/CaseMenuController.cs"
+  },
+  {
+    "sha256": "0627E0B49A08959BF4B62FC84FE1F6ADE3DF53EB8EF2BD9D701EBF3FD23B262B",
+    "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.cs"
+  },
+  {
+    "sha256": "7091E64AF4DF6F0E9A0192A1C17D2E2497D8B93EF05273D1181A8C45F0A43627",
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs"
+  }
+]

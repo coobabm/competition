@@ -1,0 +1,139 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/Games/Gomoku.cs",
+      "base_sha256": "126d339802d1137958a57579977160fa3c6452ed848a29ffec9b9ccde5580905",
+      "candidate_sha256": "cdcf1c40f9f5ac22664f720ae10c3424103f5b342651adf3941a92a65bb1e5f3"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/GomokuLogic.cs",
+      "base_sha256": null,
+      "candidate_sha256": "3fd7976723ce3352aa98ff89b8a8bf5b07612afd220cf5b00199c439520fbd27"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/GomokuLogic.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "6cd38bb8eaef78de6862174553ea4a15b6cd5f1c50d57a791a2bf67ab994825f"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/GomokuPicture.cs",
+      "base_sha256": null,
+      "candidate_sha256": "7528305aa75072ac7fc1bd05bc6508780e614515b65e978b5b73573ff62fa741"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/GomokuPicture.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "8a1e9b7405d0d66b0cbe3301a470710fc3516d9bd98553c33c950457ad3c68f4"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GomokuPanel.cs",
+      "base_sha256": "9275bf4556670d2609869451f0be7f1f7d89f8b6230a3ae98e780206ee99d71f",
+      "candidate_sha256": "47ecc8bada25a1d2f636529cb4c174bbd324c8af54822d9a4a6ff7e639e209b1"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GoPanel.cs",
+      "base_sha256": "243bbaa1e04b43d3174aae49da1b2ff1f55d91db3b1d45a54a561e60e2adb25b",
+      "candidate_sha256": "c0ae6456ce10a97aaceabc6fdff0702bb4398b5c6e1f1d6745b93c54abea0e21"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/HubGame.BoardSessions.cs",
+      "base_sha256": "eaf7489710d2adf998ee37aa15944ccdd3a3482410725aa9d9438a880d019277",
+      "candidate_sha256": "1fdff24ab3e36b365763bf307486d59cd10246a063f861b05a4204795809cc35"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/GomokuLogicTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "7ae6a06ec4b9b827fdb98c338db734b6ad6f88c47de51fb0f545b1f4197c9422"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/GomokuLogicTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "cc9ea3d43355ce8ba1fe8bd9aac5504043ca1b4c4b9cce95728670a254c6d198"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgCatalog.cs",
+      "base_sha256": "be1f39a42bfba723d22c0b69e0c8375df1af0f3c3af91cdf1e876e6f8e1dbde4",
+      "candidate_sha256": "50411413f209110d963c8cbba696c0661bd88540ec221e768c62e998764b76a9"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardLogic.cs",
+      "base_sha256": null,
+      "candidate_sha256": "11483a2ecb7518aec79b191e20fe85176ede0f41119b45f0406acae0ed31144d"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardLogic.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "5d8e08cc1260648c0768996c813903087b3556faa3bc6c40d414b88ffb258d54"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.BoardRecords.cs",
+      "base_sha256": "7901b8a71095ee3c9310d6c07fa38e238d2cf04117570b551dc51170cdd6694a",
+      "candidate_sha256": "59167791f54ad5c41e6af8cdf7969c4f3f3424ddf3c9461d88c146607bb6ec45"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.cs",
+      "base_sha256": "df4de27f07273c01bc163a9a939c271eef64c3dcb177f2fa1715ee7b3992f306",
+      "candidate_sha256": "5371978faa5ea6444b81777869fab59e6ff5ab008284569e60f62225217abb01"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.DataPacks.cs",
+      "base_sha256": "8bba364e5e1f84d8facd4dc1013a65c1f1a0c219c5c3ffe9125884e002fc6df7",
+      "candidate_sha256": "be3b306b110c2edea718a4c3df267c29b8e4874028089c697b434e72b614c083"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "base_sha256": "bfe06fdc87b4e02e053e88d0eb1d251c81603845f08e3e0096c5440cecb88f36",
+      "candidate_sha256": "8242d6f93034199c6d04fb418797ec311dd9e8a38c085361ef1746bb12f30c06"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgStageLessons.cs",
+      "base_sha256": "9849af790386f4efebfd82c910335f36dc4a87cedf77029d5571952059105b15",
+      "candidate_sha256": "2fb268ae8dca6a5f4ad735a428ed6e1a1870a410203543ca829d1ceead348435"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Core/XgTechTree.cs",
+      "base_sha256": "25a1e46bae99ddec1ac9901963ae382e9df4c9e91492151456051469d922cb23",
+      "candidate_sha256": "cdfc4142c1a91dd84332dcac2d1a79db3d2e95534ec0b9f085d637f78e32ca26"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgNextMoveQuestions.cs",
+      "base_sha256": null,
+      "candidate_sha256": "b7e5bb40aecfb5d9d9bb507c8bfbadfddc5dddfd698d66a358252b671c7c7ff9"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgNextMoveQuestions.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "4e944162f30cfde95492dd438539096790ce139af1c74137f68201d0e5601e66"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/MiniGames/XgPackGames.cs",
+      "base_sha256": "a3910010d3ad3ff5aa310ee0187d1c4e666952a3613ea9504c0f746b35e3d8fc",
+      "candidate_sha256": "ff6f829c7d201849e1770dec7665a6b3fbd6fe5fe67abf404aebed0921266982"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgTeachingPictures.cs",
+      "base_sha256": "376809871a57cb40d6607e55f25af74655a5e62209e9d4869da5d2d991e483c2",
+      "candidate_sha256": "3075adcb65bc88b4d6db3c30d4222293b9f0f97f3caf41322b38c4c43a8661fa"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+      "base_sha256": "f912f4764101a5bd1932cb08b2430e3354acf0ccbe5e06eda4656f5255a2c780",
+      "candidate_sha256": "2c3c0b49f8068819cd226e5af4278ffa447bbb771829815dca86707bc3e46233"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardLogicTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "5cf63f9a90a8df36e92b57ffde58ea8485d0776386a34475a01e9201125a721c"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgBoardLogicTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "44cacf1aaa0d4728143c522393e84a3ed62633f12bac96abab416b63463ac46f"
+    }
+  ],
+  "new_tests": 12,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

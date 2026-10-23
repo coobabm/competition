@@ -1,0 +1,32 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueDirector.cs",
+    "baseline_sha256": "1ae8648454a337d0b9f0ef22e75cece4c0fd49e582fe56976a3cb4a48e4e3c03",
+    "baseline_normalized_sha256": "1ae8648454a337d0b9f0ef22e75cece4c0fd49e582fe56976a3cb4a48e4e3c03",
+    "candidate_sha256": "2174ffaae6ddd0c83244efe4e9d3c9c8bcd4dab7581bcacfeff357c2e69c6507"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueMailBridge.cs",
+    "baseline_sha256": "790da37279fcb3d6ce38ef3955fcb51a88b61a8c781a64fa721f567beb0fa266",
+    "baseline_normalized_sha256": "790da37279fcb3d6ce38ef3955fcb51a88b61a8c781a64fa721f567beb0fa266",
+    "candidate_sha256": "d3315872c50e6514b723f67e3f41a45e3e9fb8738d8ec9869bf51767b929f18c"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEpilogueView.cs",
+    "baseline_sha256": "2dc35e18c17cab2d137805b2716175e97ea7d1b94e7701321a2953c38600e426",
+    "baseline_normalized_sha256": "2dc35e18c17cab2d137805b2716175e97ea7d1b94e7701321a2953c38600e426",
+    "candidate_sha256": "61fafb68be5200486779dca8077473dc05c2b574f2f44fa480db284ca963e851"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/EndingFinalRouteUiChecks.cs",
+    "baseline_sha256": "42206ce2528419a95763de9d1a74e1ff4e9750c9f1096f1ae6ed35bb6b309419",
+    "baseline_normalized_sha256": "42206ce2528419a95763de9d1a74e1ff4e9750c9f1096f1ae6ed35bb6b309419",
+    "candidate_sha256": "00ecb24c87fa1e50ba74011b7724f67698a2b89306e1d4c90b3f314f66ab8526"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/EndingFinalRouteUiRunner.cs",
+    "baseline_sha256": "24f6a93280ef790f5c53a20d42c1d7e9869abe2aa62be8125c38bd55547aec55",
+    "baseline_normalized_sha256": "24f6a93280ef790f5c53a20d42c1d7e9869abe2aa62be8125c38bd55547aec55",
+    "candidate_sha256": "046892e61985c36235cc26bc9c296ce5f829eb0a2363ae9144e5cd9c3ff543c6"
+  }
+]

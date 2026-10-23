@@ -113,12 +113,12 @@
         201606,
         201607
       ],
-      "who": "hongmengos",
-      "whoEn": "hongmengos",
-      "title": "hongmengos 10 强制更新",
-      "titleEn": "A forced hongmengos 10 upgrade",
-      "body": "下班回来，屏幕上写着「正在升级到 hongmengos 10，请勿关机 27%」。",
-      "bodyEn": "Home from work, the screen says \"Upgrading to hongmengos 10. Do not turn off your PC. 27%\".",
+      "who": "Aurora 7",
+      "whoEn": "Aurora 7",
+      "title": "Aurora 10 强制更新",
+      "titleEn": "A forced Aurora 10 upgrade",
+      "body": "下班回来，屏幕上写着「正在升级到 Aurora 10，请勿关机 27%」。",
+      "bodyEn": "Home from work, the screen says \"Upgrading to Aurora 10. Do not turn off your PC. 27%\".",
       "choices": [
         {
           "label": "等它升完",

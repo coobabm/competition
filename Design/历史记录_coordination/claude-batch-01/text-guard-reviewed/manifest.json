@@ -1,0 +1,15 @@
+{
+  "patch_sha256": "86b2dbdb12c075a541eaab619f0b27ebcf972e9f1fbf7879ef15159183d7e393",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgEndingTextGuard.cs",
+      "baseline_sha256": "a9e8fb5b2f3980d12462033fbb39a2adbfede39aecc12fa8212bca7971107994",
+      "candidate_sha256": "5d0de7314f4133edabc45d53342d8b88897c280963c8d1f4e6b6284817902fd2"
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgEndingTextGuardTests.cs",
+      "baseline_sha256": "9ef00603c24d7c4217da53c78c5dc74ea5e2ff755cc1553ec6b4d4bd2cb3306a",
+      "candidate_sha256": "85d4b6aed1d4751191501c7337beb3652625337cf5b46ba43a4088e92bd5546f"
+    }
+  ]
+}

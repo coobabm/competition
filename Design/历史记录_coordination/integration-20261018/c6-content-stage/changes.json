@@ -1,0 +1,706 @@
+[
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "before": "if (stage <= 2) return \"\\n你对他的态度：普通租客，按时到账你就没意见。\";\n                    if (stage <= 4) return \"\\n你对他的态度：他一直按时交租、不惹事，你对这个年轻人有好感，说话客气一点。\";\n                    return \"\\n你对他的态度：他是你见过最靠谱的租客，自己挣钱、按时交租，你有点佩服他，语气更软，愿意商量，偶尔说一句「小伙子有出息」。仍是房东的实际口气。\";",
+    "after": "return \"\\n你对他的态度：普通租客，按时到账你就没意见。\";",
+    "reason": "Reuse existing neutral tenant persona; stage is not evidence of rent payment history."
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "before": "if (stage <= 2) return \"\\n你们互损，你觉得他窝在电脑前不太靠谱，但还是关心他。\";\n                    return \"\\n你觉得他一个人折腾出了名堂，比自己闷头复习更有劲，常说「你比我活得明白」，遇到纠结的事想问他的意见。\" + tail;",
+    "after": "return \"\\n你们互损，你觉得他窝在电脑前不太靠谱，但还是关心他。\";",
+    "reason": "Reuse existing friend personality without inventing successful work from stage."
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "before": "            int stage = lab != null ? lab.S.stage : 1;\n            const string tail = \"夸要具体，点出他做成了什么，别每句都夸，保持你原本的口气，不肉麻。\";\n",
+    "after": "",
+    "reason": "Remove now-unused stage-derived prompt inputs."
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "before": "\"群里没人知道对方电脑里那个程序，不要主动聊它或点名灵光。训练包、样本数量、科技升级、模型能力和训练结果都是私密信息，不能猜测或声称知道。不要提摆渡众包、标注兼职、接单、房租。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面吐槽。玩家常把天聊死，你可以简短迟疑，但不要复述先前的回答。\"",
+    "after": "LingGuangV05.Runtime.GameText.T(\"群里没人知道对方电脑里的私人程序、训练包、样本数量、科技升级、模型能力或训练结果，不能猜测或声称知道。可以接着玩家的话聊公开的摆渡众包、标注兼职和接单，但不能把玩家未说过的接单、收入或训练经历当成事实，也不主动打听房租。只接玩家刚才的话或群里当前话题。ChatGPT、Claude、豆包、DeepSeek、千问都是没听过的名字，只按字面理解。可以简短迟疑，但不要复述先前的回答。\", \"Nobody in the group knows about the player's private program, training packs, sample counts, upgrades, model abilities or training results. Do not guess or claim that knowledge. You may discuss public Bodu crowdsourcing, annotation jobs and orders when the player brings them up. Never assume the player has taken orders, earned money or trained anything unless they said so, and do not ask about rent. Respond only to the player's latest message or the current group topic. ChatGPT, Claude, Doubao, DeepSeek and Qwen are unfamiliar names; interpret them literally. A brief hesitation is fine; do not repeat earlier replies.\")",
+    "reason": "Confirmed public-crowdsourcing/private-AI distinction; bilingual model instruction, no authored NPC dialogue."
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "before": "see: he graduated with no job, earns his own rent, keeps getting work done, and is steady.",
+    "after": "see in the actual conversation; capability stage alone never proves employment, income or paid rent.",
+    "reason": "Correct stale persona comment."
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYGroup.cs",
+    "before": "        /// <summary>\n        /// What the others say when the player's line is about his work, his rent or how he is doing, by how far the year\n        /// has got (June teasing with a grudging nod, July–September plain respect, October–December they look up to him).\n        /// The group knows him as a fresh graduate with no job who keeps getting work done on 摆渡众包; it never knows about 灵光.\n        /// </summary>\n        static readonly string[] RegardKeys = { \"摆渡\", \"众包\", \"接单\", \"标注\", \"标图\", \"找工作\", \"简历\", \"房租\", \"忙啥\", \"忙什么\", \"最近怎么样\", \"最近咋样\", \"混得\", \"你怎么样\", \"厉害\", \"牛\" };\n\n        static readonly string[][] Regard =\n        {\n            new[] {\n                \"[阿杰] 标图那个？一张几毛，积少成多，总比天天打游戏强\", \"[A-Jie] The labelling thing? A few cents a card adds up. Beats gaming all day\",\n                \"[小刚] 自由职业者，我们羡慕不来\", \"[Xiao Gang] A freelancer. We can't keep up\",\n                \"[大伟] 在家自己挣钱也算本事，别睡太晚\", \"[Da Wei] Earning at home is a skill too. Don't stay up too late\",\n                \"[莉莉] 阿杰说你每天都在标，好认真哦～\", \"[Lili] A-Jie says you're labelling every day. So dedicated～\" },\n            new[] {\n                \"[阿杰] 说真的，你现在比我们都忙，而且忙的全是正事\", \"[A-Jie] Seriously, you're busier than all of us now, and it's all real work\",\n                \"[小刚] 你标得又快又准，回头也教教我呗\", \"[Xiao Gang] You label fast and accurately. Teach me some time\",\n                \"[大伟] 你这状态，比我们公司那些混日子的强多了\", \"[Da Wei] Compared with the clock-watchers at my company, you're doing great\",\n                \"[莉莉] 感觉你每个月都比上个月厉害一点～\", \"[Lili] Feels like you get a bit better every month～\" },\n            new[] {\n                \"[阿杰] 咱群里要评最能折腾的，你实至名归\", \"[A-Jie] If this group voted for the most resourceful, it'd be you, no contest\",\n                \"[小刚] 有事问你准没错，群里最靠谱的就是你\", \"[Xiao Gang] Ask you and you're never wrong. The most reliable one in this group\",\n                \"[大伟] 你这大半年，我看在眼里，真不容易\", \"[Da Wei] I've watched you these months. It hasn't been easy\",\n                \"[莉莉] 我现在遇到事，第一个想到的就是问你～\", \"[Lili] When I hit a problem these days, you're the first person I think to ask～\" },\n        };\n\n        static int RegardTier(DateTime? today) => !today.HasValue || today.Value.Month <= 6 ? 0 : today.Value.Month <= 9 ? 1 : 2;\n\n",
+    "after": "",
+    "reason": "Remove obsolete month-based achievement/graduate fallback dialogue; no longer a reachable or latent alternate pool."
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYGroup.cs",
+    "before": "\"加班\", \"上班\", \"老板\", \"领导\", \"累\", \"困\", \"work\", \"boss\", \"tired\"",
+    "after": "\"加班\", \"上班\", \"老板\", \"领导\", \"累\", \"困\", \"摆渡众包\", \"众包\", \"接单\", \"标注\", \"标图\", \"找工作\", \"简历\", \"crowdsourcing\", \"annotation\", \"work\", \"boss\", \"tired\"",
+    "reason": "Public work/order topics route to existing coworkers talking about their own work, without assumptions about player achievements."
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYGroup.cs",
+    "before": "            if (Array.Exists(RegardKeys, k => q.Contains(k))) bucket = (new string[0], Regard[RegardTier(today)]);\n            else foreach (var b in Pool)",
+    "after": "            foreach (var b in Pool)",
+    "reason": "Keep normal topic matching; unmatched rent/status phrases use existing generic pool."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "id": "dawei_envy",
+    "field": "text",
+    "before": "加班加到怀疑人生，突然想到：咱群里就你一个是给自己干活的。羡慕，也有点佩服，真的。",
+    "after": "别提了，我今天又要加班到很晚",
+    "reason": "Reuse existing approved self-topic line; dated automatic push cannot invent player employment/accomplishment."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "id": "dawei_envy",
+    "field": "textEn",
+    "before": "Overtime to the point of doubting life, and then it hit me: you're the only one in this group working for yourself. I'm jealous, and a bit in awe, seriously.",
+    "after": "Don't. Working late again",
+    "reason": "English counterpart from the same existing line."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "id": "aj_boss",
+    "field": "text",
+    "before": "我跟网吧老板提起你了，说我有个兄弟自己在家把活接得明明白白。老板让我多跟你学学，别天天抽卡。",
+    "after": "昨晚连跪五把，今天我要洗刷耻辱",
+    "reason": "Reuse existing approved self-topic line; dated automatic push cannot invent player employment/accomplishment."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "id": "aj_boss",
+    "field": "textEn",
+    "before": "I mentioned you to the café boss: said I've got a buddy who handles his own work properly at home. The boss told me to learn from you and quit pulling gacha every day.",
+    "after": "Lost five straight last night. Revenge today",
+    "reason": "English counterpart from the same existing line."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "id": "lili_advice",
+    "field": "text",
+    "before": "上班了才知道，自己找事做有多难。你一个人撑了小半年，我是真的服～能不能教教我，怎么管时间啊？",
+    "after": "上班第一个月，工资还没到手就花完了，我也加入你们了",
+    "reason": "Reuse existing approved self-topic line; dated automatic push cannot invent player employment/accomplishment."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "id": "lili_advice",
+    "field": "textEn",
+    "before": "Only now that I work do I know how hard it is to find things to do on your own. You've held on alone for months and I'm really impressed～ Could you teach me how to manage my time?",
+    "after": "First month at work and the salary's gone before it arrives. I'm one of you now",
+    "reason": "English counterpart from the same existing line."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "id": "dawei_intern",
+    "field": "text",
+    "before": "我们组新来个实习生，问我怎么才能学到真本事。我说你去问咱群里那位，他一个人啃下来的东西，比培训班讲的都多。",
+    "after": "我们老板又说要拥抱互联网+",
+    "reason": "Reuse existing approved self-topic line; dated automatic push cannot invent player employment/accomplishment."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "id": "dawei_intern",
+    "field": "textEn",
+    "before": "A new intern in our team asked how to learn real skills. I told him to ask the one in our group: what he taught himself alone beats what any training course covers.",
+    "after": "My boss says we must embrace Internet Plus again",
+    "reason": "English counterpart from the same existing line."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "metadata",
+    "field": "note",
+    "before": "下班屁股群的预设发言（《第三轮设计》第五节）。群里聊游戏、电脑配置、显卡、看球、上班吐槽；没人知道玩家在练 AI，也不找他单聊。输入框上方一次显示 3 条可点的预设（按当前月份和最近群话题挑），点一下就发出去，群友按 replies 依次回（每条间隔 2–4 秒）。玩家仍可自由打字（自由打字走本地模型，按 LlmPersonas 里的群规则回复）。month = 可用月份范围（省略=全年）；after = 群里最近出现过这个 era 事件 id 才显示。",
+    "after": "下班屁股群预设：玩家点击后发言，群友按 replies 依次回复，正常间隔 2–4 秒。群友可聊公开众包工作，但不知道私人 AI。month 为月份范围；minDate 为最早游戏日期 yyyyMMdd；after 为当前存档实际收到的 era 推送事件 id（不是只存在于新闻列表的条目）。莉莉加入日期另由运行时检查。",
+    "reason": "Document actual consumed date/event gates; no obsolete timing changes."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g01",
+    "field": "after",
+    "before": null,
+    "after": "ow_launch",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g11",
+    "field": "after",
+    "before": null,
+    "after": "warcraft",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g12",
+    "field": "after",
+    "before": null,
+    "after": "iceland",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g14",
+    "field": "minDate",
+    "before": null,
+    "after": 20160707,
+    "reason": "No exact matching pushed era event; paired schema/filter hunk consumes this day gate."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g15",
+    "field": "after",
+    "before": null,
+    "after": "ge_you",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g16",
+    "field": "after",
+    "before": null,
+    "after": "volley_wake",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g17",
+    "field": "after",
+    "before": null,
+    "after": "fu_yuanhui",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g18",
+    "field": "after",
+    "before": null,
+    "after": "ti6_wings",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g19",
+    "field": "minDate",
+    "before": null,
+    "after": 20160830,
+    "reason": "No exact matching pushed era event; paired schema/filter hunk consumes this day gate."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g20",
+    "field": "minDate",
+    "before": null,
+    "after": 20160908,
+    "reason": "No exact matching pushed era event; paired schema/filter hunk consumes this day gate."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g21",
+    "field": "after",
+    "before": null,
+    "after": "onmyoji",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g22",
+    "field": "after",
+    "before": null,
+    "after": "lili_westlake",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g23",
+    "field": "after",
+    "before": null,
+    "after": "lanshou",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g24",
+    "field": "after",
+    "before": null,
+    "after": "civ6_gone",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g25",
+    "field": "after",
+    "before": null,
+    "after": "photo_lili_cart",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Design/data/yy_group_presets.json",
+    "id": "g26",
+    "field": "after",
+    "before": null,
+    "after": "steam_winter",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "metadata",
+    "field": "note",
+    "before": "下班屁股群的预设发言（《第三轮设计》第五节）。群里聊游戏、电脑配置、显卡、看球、上班吐槽；没人知道玩家在练 AI，也不找他单聊。输入框上方一次显示 3 条可点的预设（按当前月份和最近群话题挑），点一下就发出去，群友按 replies 依次回（每条间隔 2–4 秒）。玩家仍可自由打字（自由打字走本地模型，按 LlmPersonas 里的群规则回复）。month = 可用月份范围（省略=全年）；after = 群里最近出现过这个 era 事件 id 才显示。",
+    "after": "下班屁股群预设：玩家点击后发言，群友按 replies 依次回复，正常间隔 2–4 秒。群友可聊公开众包工作，但不知道私人 AI。month 为月份范围；minDate 为最早游戏日期 yyyyMMdd；after 为当前存档实际收到的 era 推送事件 id（不是只存在于新闻列表的条目）。莉莉加入日期另由运行时检查。",
+    "reason": "Document actual consumed date/event gates; no obsolete timing changes."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g01",
+    "field": "after",
+    "before": null,
+    "after": "ow_launch",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g11",
+    "field": "after",
+    "before": null,
+    "after": "warcraft",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g12",
+    "field": "after",
+    "before": null,
+    "after": "iceland",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g14",
+    "field": "minDate",
+    "before": null,
+    "after": 20160707,
+    "reason": "No exact matching pushed era event; paired schema/filter hunk consumes this day gate."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g15",
+    "field": "after",
+    "before": null,
+    "after": "ge_you",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g16",
+    "field": "after",
+    "before": null,
+    "after": "volley_wake",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g17",
+    "field": "after",
+    "before": null,
+    "after": "fu_yuanhui",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g18",
+    "field": "after",
+    "before": null,
+    "after": "ti6_wings",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g19",
+    "field": "minDate",
+    "before": null,
+    "after": 20160830,
+    "reason": "No exact matching pushed era event; paired schema/filter hunk consumes this day gate."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g20",
+    "field": "minDate",
+    "before": null,
+    "after": 20160908,
+    "reason": "No exact matching pushed era event; paired schema/filter hunk consumes this day gate."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g21",
+    "field": "after",
+    "before": null,
+    "after": "onmyoji",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g22",
+    "field": "after",
+    "before": null,
+    "after": "lili_westlake",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g23",
+    "field": "after",
+    "before": null,
+    "after": "lanshou",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g24",
+    "field": "after",
+    "before": null,
+    "after": "civ6_gone",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g25",
+    "field": "after",
+    "before": null,
+    "after": "photo_lili_cart",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+    "id": "g26",
+    "field": "after",
+    "before": null,
+    "after": "steam_winter",
+    "reason": "Reuse a real YY push and persisted eraDelivered marker."
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "before": "            public int[] month;",
+    "after": "            public int[] month;\n            public int minDate;",
+    "reason": "Minimal date data schema; default zero preserves existing records."
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "before": "            int month = date.Year * 100 + date.Month;",
+    "after": "            int month = date.Year * 100 + date.Month;\n            int day = month * 100 + date.Day;",
+    "reason": "Use existing game calendar, never wall-clock date."
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "before": "                if (p.month != null",
+    "after": "                if (p.minDate > 0 && day < p.minDate) continue;\n                if (p.month != null",
+    "reason": "Apply exact lower date before existing month/after/Lili filters; coroutine lifecycle untouched."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "metadata",
+    "field": "note",
+    "before": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率：每个阶段最多弹 2 个，第一个在进入阶段后 3–8 分钟随机出现，两个之间至少隔 6 分钟；过场、考试、验证码、升阶界面期间不弹。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。每条只出现一次。",
+    "after": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率按最新确认：上一个结果确认结束后累计 8 分钟活跃游玩时间，可在当前存档改为 15 分钟或关闭；整游戏最小化或明确暂停停表，失焦和游戏内 AI 程序隐藏不停表；冲突结束后留出 30 秒。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。当前阶段已满足条件的池抽完后再循环，新解锁事件优先；永久历史与选择标记保留。",
+    "reason": "Replace superseded stage cap/random timer/one-shot documentation; scheduler remains owned by root."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e033",
+    "field": "minDate",
+    "before": null,
+    "after": 20160821,
+    "reason": "Match existing n0821/volley_wake game-date evidence; 20160806 was only the Olympics opening."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e096",
+    "field": "body",
+    "before": "鼠标开始单击变双击，标题的时候点错了好几次。",
+    "after": "鼠标开始单击变双击，标注的时候点错了好几次。",
+    "reason": "Typo: 标题 → 标注; English already describes labels."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e096/0",
+    "field": "result",
+    "before": "罗技 G102，稳。",
+    "after": "新鼠标，稳。",
+    "reason": "Remove ungated specific G102 model from a year-round event; generic result does not introduce a new product date."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e096/0",
+    "field": "resultEn",
+    "before": "A new Logitech. Solid.",
+    "after": "A new mouse. Solid.",
+    "reason": "Keep English generic like the corrected Chinese."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e100/0",
+    "field": "result",
+    "before": "十题，然后关灯。",
+    "after": "二十题，然后关灯。",
+    "reason": "Match existing samples=20 without changing economy/effects."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e100/0",
+    "field": "resultEn",
+    "before": "Ten questions, then lights out.",
+    "after": "Twenty questions, then lights out.",
+    "reason": "Match existing samples=20 in both languages."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "metadata",
+    "field": "note",
+    "before": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率：每个阶段最多弹 2 个，第一个在进入阶段后 3–8 分钟随机出现，两个之间至少隔 6 分钟；过场、考试、验证码、升阶界面期间不弹。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。每条只出现一次。",
+    "after": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率按最新确认：上一个结果确认结束后累计 8 分钟活跃游玩时间，可在当前存档改为 15 分钟或关闭；整游戏最小化或明确暂停停表，失焦和游戏内 AI 程序隐藏不停表；冲突结束后留出 30 秒。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。当前阶段已满足条件的池抽完后再循环，新解锁事件优先；永久历史与选择标记保留。",
+    "reason": "Replace superseded stage cap/random timer/one-shot documentation; scheduler remains owned by root."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e033",
+    "field": "minDate",
+    "before": 20160806,
+    "after": 20160821,
+    "reason": "Match existing n0821/volley_wake game-date evidence; 20160806 was only the Olympics opening."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e096",
+    "field": "body",
+    "before": "鼠标开始单击变双击，标题的时候点错了好几次。",
+    "after": "鼠标开始单击变双击，标注的时候点错了好几次。",
+    "reason": "Typo: 标题 → 标注; English already describes labels."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e096/0",
+    "field": "result",
+    "before": "罗技 G102，稳。",
+    "after": "新鼠标，稳。",
+    "reason": "Remove ungated specific G102 model from a year-round event; generic result does not introduce a new product date."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e096/0",
+    "field": "resultEn",
+    "before": "A new Logitech. Solid.",
+    "after": "A new mouse. Solid.",
+    "reason": "Keep English generic like the corrected Chinese."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e100/0",
+    "field": "result",
+    "before": "十题，然后关灯。",
+    "after": "二十题，然后关灯。",
+    "reason": "Match existing samples=20 without changing economy/effects."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e100/0",
+    "field": "resultEn",
+    "before": "Ten questions, then lights out.",
+    "after": "Twenty questions, then lights out.",
+    "reason": "Match existing samples=20 in both languages."
+  },
+  {
+    "path": "Design/data/chat_unlocks.json",
+    "id": "metadata",
+    "field": "note",
+    "before": "对话解锁（《第三轮设计》第六节）：某些科技节点的解锁条件是「在 YY 里对它打出一句指定的话，并且它回答了」。比对时去掉空格和标点、全角半角统一、大小写不敏感，其余必须完全相同。玩家不知道原句时，节点卡上只显示「对它说一句话：____」和提示；完整原句藏在 hint 指向的地方（贴吧楼层、书架、老周的回答、新闻）。它回答后（不论回答什么），节点从锁着变成可买，播放一次「对上了」动画，回答保存在节点卡背面。answer = 它在当前阶段说不出完整句子时的预设回答（模型可用时由模型生成，仍受阶段说话规则限制）。",
+    "after": "对话解锁（《第三轮设计》第六节）：某些科技节点的解锁条件是「在 YY 里对它打出一句指定的话，并且它回答了」。按最新已接入规则，比对玩家未经规范化的中文或英文原句，使用 Ordinal 精确匹配；必须已有真实回复才记录解锁。玩家不知道原句时，节点卡上只显示「对它说一句话：____」和提示；完整原句藏在 hint 指向的地方（贴吧楼层、书架、老周的回答、新闻）。它回答后（不论回答什么），节点从锁着变成可买，播放一次「对上了」动画，回答保存在节点卡背面。answer = 它在当前阶段说不出完整句子时的预设回答（模型可用时由模型生成，仍受阶段说话规则限制）。",
+    "reason": "Match RegisterYyReply and the latest confirmed exact-original-phrase behavior; no unlocking logic changed."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/chat_unlocks.json",
+    "id": "metadata",
+    "field": "note",
+    "before": "对话解锁（《第三轮设计》第六节）：某些科技节点的解锁条件是「在 YY 里对它打出一句指定的话，并且它回答了」。比对时去掉空格和标点、全角半角统一、大小写不敏感，其余必须完全相同。玩家不知道原句时，节点卡上只显示「对它说一句话：____」和提示；完整原句藏在 hint 指向的地方（贴吧楼层、书架、老周的回答、新闻）。它回答后（不论回答什么），节点从锁着变成可买，播放一次「对上了」动画，回答保存在节点卡背面。answer = 它在当前阶段说不出完整句子时的预设回答（模型可用时由模型生成，仍受阶段说话规则限制）。",
+    "after": "对话解锁（《第三轮设计》第六节）：某些科技节点的解锁条件是「在 YY 里对它打出一句指定的话，并且它回答了」。按最新已接入规则，比对玩家未经规范化的中文或英文原句，使用 Ordinal 精确匹配；必须已有真实回复才记录解锁。玩家不知道原句时，节点卡上只显示「对它说一句话：____」和提示；完整原句藏在 hint 指向的地方（贴吧楼层、书架、老周的回答、新闻）。它回答后（不论回答什么），节点从锁着变成可买，播放一次「对上了」动画，回答保存在节点卡背面。answer = 它在当前阶段说不出完整句子时的预设回答（模型可用时由模型生成，仍受阶段说话规则限制）。",
+    "reason": "Match RegisterYyReply and the latest confirmed exact-original-phrase behavior; no unlocking logic changed."
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "before": "            var sb = new StringBuilder(\"你是「\" + AppNames.AiZh + \"」，一个在 2016 年一台旧电脑里被训练出来的小程序。\n\"不要说自己是大语言模型或 AI 助手，你就是\" + AppNames.AiZh + \"。",
+    "after": "            string aiName = lab != null ? lab.AiDisplayName : AppNames.Ai(LingGuangV05.Runtime.GameText.IsEnglish);\n            var sb = new StringBuilder(\"你是「\" + aiName + \"」，一个在 2016 年一台旧电脑里被训练出来的小程序。\n\"不要说自己是大语言模型或 AI 助手，你就是\" + aiName + \"。",
+    "reason": "Use the saved player AI name in the actual model identity; original app name remains the unnamed fallback."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "metadata",
+    "field": "note",
+    "before": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率按最新确认：上一个结果确认结束后累计 8 分钟活跃游玩时间，可在当前存档改为 15 分钟或关闭；整游戏最小化或明确暂停停表，失焦和游戏内 AI 程序隐藏不停表；冲突结束后留出 30 秒。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。当前阶段已满足条件的池抽完后再循环，新解锁事件优先；永久历史与选择标记保留。",
+    "after": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率按最新确认：上一个结果确认结束后累计 8 分钟活跃游玩时间，可在当前存档改为 15 分钟或关闭；整游戏最小化或明确暂停停表，失焦和游戏内 AI 程序隐藏不停表；到期遇冲突时，冲突结束后留出 30 秒。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。当前阶段已满足条件的池抽完后再循环，新解锁事件优先；永久历史与选择标记保留。",
+    "reason": "Precisely describe due-while-held retry."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e014/1",
+    "field": "result",
+    "before": "「卷王啊。」他笑着走开了。",
+    "after": "他笑着走开了。",
+    "reason": "Remove anachronistic 卷王 epithet, preserving existing narration without new dialogue."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e014/1",
+    "field": "resultEn",
+    "before": "\"Overachiever.\" He laughs and walks off.",
+    "after": "He laughs and walks off.",
+    "reason": "Remove the matching epithet in English."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e033",
+    "field": "body",
+    "before": "凌晨四点女排决赛。你醒着，它也醒着。",
+    "after": "女排决赛开始了。你醒着，它也醒着。",
+    "reason": "Remove unverified 4 a.m. claim; retain existing final/day evidence and narration."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e033",
+    "field": "bodyEn",
+    "before": "Volleyball final at 4 a.m. You're up, and so is it.",
+    "after": "The women's volleyball final begins. You're awake, and so is it.",
+    "reason": "Match Chinese without assuming broadcast timezone."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e048",
+    "field": "body",
+    "before": "GeForce Experience：「新驱动 372.70 可用，游戏性能提升！」",
+    "after": "GeForce Experience：「新驱动可用，游戏性能提升！」",
+    "reason": "Remove ungated version 372.70; no change to effects or player choices."
+  },
+  {
+    "path": "Design/data/life_events_100.json",
+    "id": "e048",
+    "field": "bodyEn",
+    "before": "GeForce Experience: \"New driver 372.70. Better game performance!\"",
+    "after": "GeForce Experience: \"New driver available. Better game performance!\"",
+    "reason": "Same generic driver notification in English."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "metadata",
+    "field": "note",
+    "before": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率按最新确认：上一个结果确认结束后累计 8 分钟活跃游玩时间，可在当前存档改为 15 分钟或关闭；整游戏最小化或明确暂停停表，失焦和游戏内 AI 程序隐藏不停表；冲突结束后留出 30 秒。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。当前阶段已满足条件的池抽完后再循环，新解锁事件优先；永久历史与选择标记保留。",
+    "after": "突发事件 100 条（《第三轮设计》第四节）。人设：工作两年的上班族，白天上班、晚上练它，一个人租房，没有室友。频率按最新确认：上一个结果确认结束后累计 8 分钟活跃游玩时间，可在当前存档改为 15 分钟或关闭；整游戏最小化或明确暂停停表，失焦和游戏内 AI 程序隐藏不停表；到期遇冲突时，冲突结束后留出 30 秒。stage = [最低阶段, 最高阶段]；month = [起始年月, 结束年月]（可省略）；when = 额外条件（night=00:00–06:00, day=09:00–18:00, cards2=至少两张卡, bills=房租电费已开始, training=最近 30 秒在训练, money1000=钱包≥¥1000）。effects：money=加减钱（负数为花费，钱不够时该选项变灰）；samples=给当前题库加题；noise=给当前题库加错题；pause=训练暂停秒数；boost=[倍率, 秒数] 训练加速；persona=[轴, 变化]（温度/玩心/主见）；flag=写一个标记。requires = 需要先有某个标记（玩家自己做过的事）。当前阶段已满足条件的池抽完后再循环，新解锁事件优先；永久历史与选择标记保留。",
+    "reason": "Precisely describe due-while-held retry."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e014/1",
+    "field": "result",
+    "before": "「卷王啊。」他笑着走开了。",
+    "after": "他笑着走开了。",
+    "reason": "Remove anachronistic 卷王 epithet, preserving existing narration without new dialogue."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e014/1",
+    "field": "resultEn",
+    "before": "\"Overachiever.\" He laughs and walks off.",
+    "after": "He laughs and walks off.",
+    "reason": "Remove the matching epithet in English."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e033",
+    "field": "body",
+    "before": "凌晨四点女排决赛。你醒着，它也醒着。",
+    "after": "女排决赛开始了。你醒着，它也醒着。",
+    "reason": "Remove unverified 4 a.m. claim; retain existing final/day evidence and narration."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e033",
+    "field": "bodyEn",
+    "before": "Volleyball final at 4 a.m. You're up, and so is it.",
+    "after": "The women's volleyball final begins. You're awake, and so is it.",
+    "reason": "Match Chinese without assuming broadcast timezone."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e048",
+    "field": "body",
+    "before": "GeForce Experience：「新驱动 372.70 可用，游戏性能提升！」",
+    "after": "GeForce Experience：「新驱动可用，游戏性能提升！」",
+    "reason": "Remove ungated version 372.70; no change to effects or player choices."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Life/life_events_100.json",
+    "id": "e048",
+    "field": "bodyEn",
+    "before": "GeForce Experience: \"New driver 372.70. Better game performance!\"",
+    "after": "GeForce Experience: \"New driver available. Better game performance!\"",
+    "reason": "Same generic driver notification in English."
+  },
+  {
+    "path": "Design/data/browser_news.json",
+    "id": "n1013",
+    "field": "body",
+    "before": "第一次颁给一位歌手。他本人好几天没回应。",
+    "after": "今年的诺贝尔文学奖颁给了鲍勃·迪伦。",
+    "reason": "Announcement-day report must not know that days of silence will follow; no unsupported first-songwriter claim."
+  },
+  {
+    "path": "Design/data/browser_news.json",
+    "id": "n1013",
+    "field": "bodyEn",
+    "before": "The first time it goes to a songwriter. He didn't respond for days.",
+    "after": "This year's Nobel Prize in Literature goes to Bob Dylan.",
+    "reason": "Same factual announcement in English."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "id": "n1013",
+    "field": "body",
+    "before": "第一次颁给一位歌手。他本人好几天没回应。",
+    "after": "今年的诺贝尔文学奖颁给了鲍勃·迪伦。",
+    "reason": "Announcement-day report must not know that days of silence will follow; no unsupported first-songwriter claim."
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+    "id": "n1013",
+    "field": "bodyEn",
+    "before": "The first time it goes to a songwriter. He didn't respond for days.",
+    "after": "This year's Nobel Prize in Literature goes to Bob Dylan.",
+    "reason": "Same factual announcement in English."
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "before": "\"名字里就写着呢。\", \"It is in the name.\"",
+    "after": "\"长脖子是它的显著特征。\", \"Its long neck is a distinctive feature.\"",
+    "reason": "The English word giraffe does not literally say long neck; preserve the same fact in both explanations."
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgMemes.Sense.cs",
+    "before": "",
+    "after": "            S(2, false, \"黄河是中国最长的河。\", \"The Yellow River is the longest river in China.\", \"最长的是长江，黄河排第二。\", \"The Yangtze is the longest; the Yellow River comes second.\"),\n",
+    "reason": "Reviewed the old round-12 note rather than overwriting: replace the previously removed forbidden question with its documented same-level false river question, restoring existing balance invariant."
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "before": "        /// How this contact regards the player by how far he has really got (tech stage 1–6): doubtful and teasing early,\n        /// specific respect later. It never says the contact knows 灵光 or his training; what they respect is what they can\n        /// see in the actual conversation; capability stage alone never proves employment, income or paid rent.",
+    "after": "        /// Human contacts keep their own personality and respond only to actual conversation facts.\n        /// Capability stage alone never proves employment, income, paid rent or knowledge of the private AI.",
+    "reason": "Keep live prompt consistent with the corrected cached system persona; no new NPC dialogue."
+  },
+  {
+    "path": "Assets/LingGuangV05/LocalLLM/LlmPersonas.cs",
+    "before": "return \"\\n你们只按群里真实发过的消息接话。对方工作了两年、独自租房；没有室友。别从游戏阶段推断他的收入、经历或私生活，只聊游戏、配置、显卡、看球、上班吐槽。\";",
+    "after": "return LingGuangV05.Runtime.GameText.T(\"\\n你们只按群里真实发过的消息接话。对方工作了两年、独自租房；没有室友。别从游戏阶段推断他的收入、经历或私生活。可以聊游戏、配置、显卡、看球、上班吐槽，以及玩家主动提起的公开众包话题。\", \"\\nRespond only to messages actually sent in the group. The player has worked for two years and rents alone, with no current roommate. Do not infer income, achievements or private life from game stage. Topics may include games, PC builds, GPUs, sports, work complaints and public crowdsourcing when the player raises it.\");",
+    "reason": "Keep live prompt consistent with the corrected cached system persona; no new NPC dialogue."
+  }
+]

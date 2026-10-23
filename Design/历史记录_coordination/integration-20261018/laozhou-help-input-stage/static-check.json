@@ -1,0 +1,21 @@
+{
+  "scope": "source invariants only, not runtime/compile proof",
+  "count": 13,
+  "checks": {
+    "actual_menu_scene": true,
+    "normal_input_events": true,
+    "physics_and_event_raycast": true,
+    "no_direct_ui_action": true,
+    "no_scroll_state_assignment": true,
+    "escape_checks": true,
+    "preload_isolation_before_start": true,
+    "no_scene_or_build_settings_mutation": true,
+    "no_load_or_save_action": true,
+    "save_failsafe": true,
+    "assert_no_main_runtime": true,
+    "outputs_and_restoration": true,
+    "five_contents_only": true
+  },
+  "unityCompiled": false,
+  "unityExecuted": false
+}

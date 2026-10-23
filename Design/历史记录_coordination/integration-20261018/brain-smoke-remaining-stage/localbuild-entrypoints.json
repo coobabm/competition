@@ -1,0 +1,662 @@
+[
+  {
+    "entry": "AnswerTraceChecks.Run",
+    "source": "Assets/LocalBuild/Editor/AnswerTraceChecks.cs",
+    "line": 25,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "BrainWindowPerformanceQa.Run",
+    "source": "Assets/LocalBuild/Editor/BrainWindowPerformanceQa.cs",
+    "line": 26,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "BrainWindowPerformanceQa.Start",
+    "source": "Assets/LocalBuild/Editor/BrainWindowPerformanceQa.cs",
+    "line": 81,
+    "classification": "utility or callable helper; inspect before execution"
+  },
+  {
+    "entry": "BrainWindowPlayQa.Run",
+    "source": "Assets/LocalBuild/Editor/BrainWindowPlayQa.cs",
+    "line": 26,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "BrainWindowPlayQa.Start",
+    "source": "Assets/LocalBuild/Editor/BrainWindowPlayQa.cs",
+    "line": 81,
+    "classification": "utility or callable helper; inspect before execution"
+  },
+  {
+    "entry": "ChessAlternateInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/ChessAlternateInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "ChinglishInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/ChinglishInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "ClassicToolsInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/ClassicToolsInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "ClaudeHandoffChecks.Run",
+    "source": "Assets/LocalBuild/Editor/ClaudeHandoffChecks.cs",
+    "line": 22,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "ClaudeHandoffChecks.Validate",
+    "source": "Assets/LocalBuild/Editor/ClaudeHandoffChecks.cs",
+    "line": 65,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignCrowdPrivacyChecks.Run",
+    "source": "Assets/LocalBuild/Editor/DesignCrowdPrivacyChecks.cs",
+    "line": 14,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignFirstLessonChecks.Run",
+    "source": "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs",
+    "line": 134,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignFirstLessonChecks.Run",
+    "source": "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs",
+    "line": 443,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignFirstLessonChecks.Run",
+    "source": "Assets/LocalBuild/Editor/DesignFirstLessonChecks.cs",
+    "line": 520,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperChecks.Run",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperChecks.cs",
+    "line": 8,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunAnswerPaths",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.AnswerPaths.cs",
+    "line": 13,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunAnswerCorrections",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.Corrections.cs",
+    "line": 11,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.Run",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunPin",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 47,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunConcepts",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 48,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunLinks",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 49,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunRegions",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 50,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunSeed",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 51,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunOutputs",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 52,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunPersona",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 53,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunAbilities",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 54,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunFamily",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 55,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunRules",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 56,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunHover",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 57,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunRegionCards",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 58,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunRegionVisual",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 59,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunMenu",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 60,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunLesson",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 61,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunMotion",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 62,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunReadOnly",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 63,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunParallelBatch",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.cs",
+    "line": 64,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunDesktopFade",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.DesktopFade.cs",
+    "line": 13,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunFirstMinute",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs",
+    "line": 20,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunFirstMinuteIdle",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs",
+    "line": 21,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunFirstMinuteCorrection",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs",
+    "line": 22,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunFirstMinuteEnglishCorrection",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs",
+    "line": 23,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunFirstMinutePendingChat",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.FirstMinute.cs",
+    "line": 24,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunGrowth",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.Growth.cs",
+    "line": 27,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunGrowth",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.Growth.cs",
+    "line": 509,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunLessonGoal",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.LessonGoal.cs",
+    "line": 18,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunSenseStart",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.SenseStart.cs",
+    "line": 19,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunTech",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.Tech.cs",
+    "line": 31,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunTrainingScene",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.TrainingScene.cs",
+    "line": 37,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunWiringMotion",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.Wiring.cs",
+    "line": 11,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesignWallpaperSmoke.RunWiringScene",
+    "source": "Assets/LocalBuild/Editor/DesignWallpaperSmoke.WiringScene.cs",
+    "line": 21,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "DesktopHotpathChecks.Run",
+    "source": "Assets/LocalBuild/Editor/DesktopHotpathChecks.cs",
+    "line": 8,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "FirstOpenTextQa.Run",
+    "source": "Assets/LocalBuild/Editor/FirstOpenTextQa.cs",
+    "line": 29,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "GoldenMoleInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/GoldenMoleInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "IdiomChainInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/IdiomChainInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "IdleSaveAndStageSnapshotQa.Run",
+    "source": "Assets/LocalBuild/Editor/IdleSaveAndStageSnapshotQa.cs",
+    "line": 11,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "IntegratedReleaseBuild.Run",
+    "source": "Assets/LocalBuild/Editor/IntegratedReleaseBuild.cs",
+    "line": 12,
+    "classification": "utility; not automatically an acceptance check"
+  },
+  {
+    "entry": "IntegrationCoreAcceptance.Run",
+    "source": "Assets/LocalBuild/Editor/IntegrationCoreAcceptance.cs",
+    "line": 8,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "IntegrationProfilerCapture.Run",
+    "source": "Assets/LocalBuild/Editor/IntegrationProfilerCapture.cs",
+    "line": 50,
+    "classification": "utility; not automatically an acceptance check"
+  },
+  {
+    "entry": "KnowledgeVisualsQa.Run",
+    "source": "Assets/LocalBuild/Editor/KnowledgeVisualsQa.cs",
+    "line": 29,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "KnowledgeVisualsQa.Start",
+    "source": "Assets/LocalBuild/Editor/KnowledgeVisualsQa.cs",
+    "line": 83,
+    "classification": "utility or callable helper; inspect before execution"
+  },
+  {
+    "entry": "LabelBaselineChecks.Run",
+    "source": "Assets/LocalBuild/Editor/LabelBaselineChecks.cs",
+    "line": 14,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "LatestDownloadedBuild.Run",
+    "source": "Assets/LocalBuild/Editor/LatestDownloadedBuild.cs",
+    "line": 12,
+    "classification": "utility; not automatically an acceptance check"
+  },
+  {
+    "entry": "LatestRequestChecks.Run",
+    "source": "Assets/LocalBuild/Editor/LatestRequestChecks.cs",
+    "line": 13,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "MemeCaptionInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/MemeCaptionInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "MonthlyPackInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/MonthlyPackInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "Motion003PointerChecks.Run",
+    "source": "Assets/LocalBuild/Editor/Motion003PointerChecks.cs",
+    "line": 14,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "Motion008HoldChecks.Run",
+    "source": "Assets/LocalBuild/Editor/Motion008HoldChecks.cs",
+    "line": 14,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "MotionButtonChecks.Run",
+    "source": "Assets/LocalBuild/Editor/MotionButtonChecks.cs",
+    "line": 13,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "MotionButtonPerfProbe.Run",
+    "source": "Assets/LocalBuild/Editor/MotionButtonPerfProbe.cs",
+    "line": 27,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "MotionIntegrationChecks.Run",
+    "source": "Assets/LocalBuild/Editor/MotionIntegrationChecks.cs",
+    "line": 15,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "MusicInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/MusicInteractionChecks.cs",
+    "line": 58,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "NamingChecks.Validate",
+    "source": "Assets/LocalBuild/Editor/NamingChecks.cs",
+    "line": 15,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "NamingChecks.Run",
+    "source": "Assets/LocalBuild/Editor/NamingChecks.cs",
+    "line": 16,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "NamingDesktopSmoke.Validate",
+    "source": "Assets/LocalBuild/Editor/NamingDesktopSmoke.cs",
+    "line": 33,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "NamingDesktopSmoke.RunMonitor",
+    "source": "Assets/LocalBuild/Editor/NamingDesktopSmoke.cs",
+    "line": 34,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "NamingDesktopSmoke.RunFullscreen",
+    "source": "Assets/LocalBuild/Editor/NamingDesktopSmoke.cs",
+    "line": 35,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "NamingDesktopSmoke.Run",
+    "source": "Assets/LocalBuild/Editor/NamingDesktopSmoke.cs",
+    "line": 36,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "PhotoLibraryInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/PhotoLibraryInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "PlayabilityChecks.Run",
+    "source": "Assets/LocalBuild/Editor/PlayabilityChecks.cs",
+    "line": 64,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "PlayabilityDesktopSmoke.Run",
+    "source": "Assets/LocalBuild/Editor/PlayabilityDesktopSmoke.cs",
+    "line": 33,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "PlayabilityDesktopSmoke.Validate",
+    "source": "Assets/LocalBuild/Editor/PlayabilityDesktopSmoke.cs",
+    "line": 48,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "PrepareRecordingSave.Run",
+    "source": "Assets/LocalBuild/Editor/PrepareRecordingSave.cs",
+    "line": 16,
+    "classification": "utility; not automatically an acceptance check"
+  },
+  {
+    "entry": "ProfilerArchiveAnalysis.Run",
+    "source": "Assets/LocalBuild/Editor/ProfilerArchiveAnalysis.cs",
+    "line": 12,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "RecordingPlayerBuild.Run",
+    "source": "Assets/LocalBuild/Editor/RecordingPlayerBuild.cs",
+    "line": 9,
+    "classification": "utility; not automatically an acceptance check"
+  },
+  {
+    "entry": "ReducedSwitchChecks.Run",
+    "source": "Assets/LocalBuild/Editor/ReducedSwitchChecks.cs",
+    "line": 14,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "SheetAttentionPlayModeChecks.Run",
+    "source": "Assets/LocalBuild/Editor/SheetAttentionPlayModeChecks.cs",
+    "line": 44,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "ShutdownReturnSmoke.Run",
+    "source": "Assets/LocalBuild/Editor/ShutdownReturnSmoke.cs",
+    "line": 60,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "ShutdownReturnSmoke.RunAndExit",
+    "source": "Assets/LocalBuild/Editor/ShutdownReturnSmoke.cs",
+    "line": 61,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "SidebarLayoutChecks.Run",
+    "source": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+    "line": 54,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "SkillTreeCopyChecks.Run",
+    "source": "Assets/LocalBuild/Editor/SkillTreeCopyChecks.cs",
+    "line": 44,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "StageCurtainPlayQa.Run",
+    "source": "Assets/LocalBuild/Editor/StageCurtainPlayQa.cs",
+    "line": 26,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "TeachingAugmentationInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/TeachingAugmentationInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "TeachingFullRoundChecks.Run",
+    "source": "Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs",
+    "line": 47,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "TeachingPackInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/TeachingPackInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "TeachingToolsInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/TeachingToolsInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "TeachingVerdictChecks.Run",
+    "source": "Assets/LocalBuild/Editor/TeachingVerdictChecks.cs",
+    "line": 16,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "TechTreeUiPlayQa.Run",
+    "source": "Assets/LocalBuild/Editor/TechTreeUiPlayQa.cs",
+    "line": 28,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "TrainingLessonInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/TrainingLessonInteractionChecks.cs",
+    "line": 53,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "UiEffectBudgetChecks.Run",
+    "source": "Assets/LocalBuild/Editor/UiEffectBudgetChecks.cs",
+    "line": 19,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "VisualRasterInteractionChecks.Run",
+    "source": "Assets/LocalBuild/Editor/VisualRasterInteractionChecks.cs",
+    "line": 46,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "WindowsReleaseBuild.VerifyAndBuild",
+    "source": "Assets/LocalBuild/Editor/WindowsReleaseBuild.cs",
+    "line": 11,
+    "classification": "utility; not automatically an acceptance check"
+  },
+  {
+    "entry": "WindowsReleaseBuild.Build",
+    "source": "Assets/LocalBuild/Editor/WindowsReleaseBuild.cs",
+    "line": 18,
+    "classification": "utility or callable helper; inspect before execution"
+  },
+  {
+    "entry": "WorldCommerceUiChecks.Run",
+    "source": "Assets/LocalBuild/Editor/WorldCommerceUiChecks.cs",
+    "line": 25,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "WorldCompletenessQa.Run",
+    "source": "Assets/LocalBuild/Editor/WorldCompletenessQa.cs",
+    "line": 29,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "WorldCompletenessQa.Start",
+    "source": "Assets/LocalBuild/Editor/WorldCompletenessQa.cs",
+    "line": 94,
+    "classification": "utility or callable helper; inspect before execution"
+  },
+  {
+    "entry": "WorldYyGiftRoutingChecks.Run",
+    "source": "Assets/LocalBuild/Editor/WorldYyGiftRoutingChecks.cs",
+    "line": 19,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "WorldYyGiftRoutingChecks.RunInteractions",
+    "source": "Assets/LocalBuild/Editor/WorldYyGiftRoutingChecks.cs",
+    "line": 21,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "WorldYyGiftRoutingChecks.RunPhotos",
+    "source": "Assets/LocalBuild/Editor/WorldYyGiftRoutingChecks.cs",
+    "line": 125,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "WorldYyLearningChecks.Run",
+    "source": "Assets/LocalBuild/Editor/WorldYyLearningChecks.cs",
+    "line": 18,
+    "classification": "QA candidate; runtime evidence unverified"
+  },
+  {
+    "entry": "WorldYyLearningUiChecks.Run",
+    "source": "Assets/LocalBuild/Editor/WorldYyLearningUiChecks.cs",
+    "line": 25,
+    "classification": "QA candidate; runtime evidence unverified"
+  }
+]

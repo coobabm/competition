@@ -1,0 +1,10 @@
+{
+  "probePairs": 9,
+  "probeColumns": 5,
+  "scenePairs": 12,
+  "sceneColumns": 6,
+  "moodIndicesUnchanged": true,
+  "translationExerciseSourceAndTruthUnchanged": true,
+  "englishContentContainsChinese": false,
+  "unityRun": "pending"
+}

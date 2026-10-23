@@ -1,0 +1,72 @@
+[
+  {
+    "path": "Assets/LingGuangV05/CaseMenu/CaseMenuController.cs",
+    "sha256": "6fa3c40f7bdc0abfe222a9c6c668dbf419eb066764db74f3a9f8979fd828d200",
+    "new": false
+  },
+  {
+    "path": "Assets/LingGuangV05/CaseMenu/CaseMenuHud.cs",
+    "sha256": "0176da439fe12da2921b04926f380ba52ad47db9f85297790a354f5d9d199b87",
+    "new": false
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/PlayerWindowState.cs",
+    "sha256": "66d373917e09e26277ab50a8c363bc9dcd37efc33f8319ceb6f33ee933ded25b",
+    "new": true
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/PlayerWindowState.cs.meta",
+    "sha256": "86503582e13c546e26f14ec9e210d1d27c88b29a2e83288b537c7e582e569f23",
+    "new": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLifeHostActivity.cs",
+    "sha256": "22dbee48a71cbffba2a91df578c68b0574a73348566ff6002aa9f4832dce1bee",
+    "new": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgLifeHostActivity.cs.meta",
+    "sha256": "2a3140bd1914c1c94542ec511b1d6f760ccff1c2400963bb7c7cd28f6e224e4e",
+    "new": true
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangController.cs",
+    "sha256": "66e7db00f28762f6c111e7d2eb5762343575e8722241291a9ba6685a858d8fcf",
+    "new": false
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "sha256": "9d4718d6fcba417c8b4c6c149f2348b5593a589289ce4c0a08c2b6bf632d05e4",
+    "new": false
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/LifeGroupPlaybackChecks.cs",
+    "sha256": "6fa15fdf370e73e691c429cd41985eedad788e31e007c088747a5bb63ed6e42b",
+    "new": true
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/LifeGroupPlaybackChecks.cs.meta",
+    "sha256": "14356bd6891ee3c70948a9a14c730f746ef1ae17a03fc510f29e06af9f4737bc",
+    "new": true
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/LifeGroupPlaybackRunner.cs",
+    "sha256": "2a97fb52c8def8d4802e92c122541e945fb3745d1601ed8796df1f2cce921a2b",
+    "new": true
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/LifeGroupPlaybackRunner.cs.meta",
+    "sha256": "f4e7dd9a75c6d2f43b2d242fb0e8aec064e2c79eaf5aa3c45bb527db101c64e5",
+    "new": true
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/LifeHostSettingsChecks.cs",
+    "sha256": "f252d948dbeeb399c01ef3accea9d4ecbb0906fcf96d291195c1f011952954b1",
+    "new": true
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/LifeHostSettingsChecks.cs.meta",
+    "sha256": "5f7346a74e5c9b3b58304daa8364d9847cb4a7655354c213219c1912b05c0238",
+    "new": true
+  }
+]

@@ -1,0 +1,136 @@
+[
+  {
+    "id": "alphago_official",
+    "requestedUrl": "https://deepmind.google/research/breakthroughs/alphago/",
+    "retrievedUtc": "2026-10-18T17:38:22.089955+00:00",
+    "status": 200,
+    "finalUrl": "https://deepmind.google/research/alphago/",
+    "sha256": "f53108c0057313676ebff19e11ef9e8299ad2491a8158ab763554a00e95f5e9a",
+    "reviewFile": "source-text/alphago_official.txt",
+    "characters": 8741
+  },
+  {
+    "id": "alphago_nature",
+    "requestedUrl": "https://www.nature.com/articles/nature16961",
+    "retrievedUtc": "2026-10-18T17:37:40.657318+00:00",
+    "status": 200,
+    "finalUrl": "https://www.nature.com/articles/nature16961",
+    "sha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea",
+    "reviewFile": "source-text/alphago_nature.txt",
+    "characters": 307
+  },
+  {
+    "id": "tay_microsoft",
+    "requestedUrl": "https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/",
+    "retrievedUtc": "2026-10-18T17:37:40.657804+00:00",
+    "status": 200,
+    "finalUrl": "https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/",
+    "sha256": "53df1e514971237a686b95788034708a65099ace8107b38a153bdf65a38cf598",
+    "reviewFile": "source-text/tay_microsoft.txt",
+    "characters": 5534
+  },
+  {
+    "id": "xiaoice_paper",
+    "requestedUrl": "https://arxiv.org/abs/1812.08989",
+    "retrievedUtc": "2026-10-18T17:37:40.658136+00:00",
+    "status": 200,
+    "finalUrl": "https://arxiv.org/abs/1812.08989",
+    "sha256": "55f58dcabdb7d7526c7f72bb159c13d44c07a91df9bfd071a2505e0ebc47465a",
+    "reviewFile": "source-text/xiaoice_paper.txt",
+    "characters": 4841
+  },
+  {
+    "id": "resnet_paper",
+    "requestedUrl": "https://arxiv.org/abs/1512.03385",
+    "retrievedUtc": "2026-10-18T17:37:40.721674+00:00",
+    "status": 200,
+    "finalUrl": "https://arxiv.org/abs/1512.03385",
+    "sha256": "818e6e7c7934ebdc143f0e50b5f4d96cb1229e53932a9d3c7f7c86bcc2d37f16",
+    "reviewFile": "source-text/resnet_paper.txt",
+    "characters": 4751
+  },
+  {
+    "id": "resnet_cvpr",
+    "requestedUrl": "https://openaccess.thecvf.com/content_cvpr_2016/html/He_Deep_Residual_Learning_CVPR_2016_paper.html",
+    "retrievedUtc": "2026-10-18T17:37:40.722420+00:00",
+    "status": 200,
+    "finalUrl": "https://openaccess.thecvf.com/content_cvpr_2016/html/He_Deep_Residual_Learning_CVPR_2016_paper.html",
+    "sha256": "a6128bfc0780410d6155b3ebb04e135a903418bab86385fd4c7bfeb1a69a2237",
+    "reviewFile": "source-text/resnet_cvpr.txt",
+    "characters": 2439
+  },
+  {
+    "id": "gnmt_paper",
+    "requestedUrl": "https://arxiv.org/abs/1609.08144",
+    "retrievedUtc": "2026-10-18T17:37:40.904679+00:00",
+    "status": 200,
+    "finalUrl": "https://arxiv.org/abs/1609.08144",
+    "sha256": "3111181350be81fcf1023f5c46c31b1b9e756e9334d87456f1bb857f78294ace",
+    "reviewFile": "source-text/gnmt_paper.txt",
+    "characters": 6100
+  },
+  {
+    "id": "gnmt_google",
+    "requestedUrl": "https://research.google/blog/a-neural-network-for-machine-translation-at-production-scale/",
+    "retrievedUtc": "2026-10-18T17:37:40.905193+00:00",
+    "status": 200,
+    "finalUrl": "https://research.google/blog/a-neural-network-for-machine-translation-at-production-scale/",
+    "sha256": "6f7ea8b0e0153fd1e99701a56e3b27adb799af7d4ae1d2dac59fea046494c1af",
+    "reviewFile": "source-text/gnmt_google.txt",
+    "characters": 11394
+  },
+  {
+    "id": "siri_apple",
+    "requestedUrl": "https://www.apple.com/newsroom/2011/10/04Apple-Launches-iPhone-4S-iOS-5-iCloud/",
+    "retrievedUtc": "2026-10-18T17:37:40.905532+00:00",
+    "status": 200,
+    "finalUrl": "https://www.apple.com/newsroom/2011/10/04Apple-Launches-iPhone-4S-iOS-5-iCloud/",
+    "sha256": "a65cb050d8b0f5b999b54effaf7d95697fc1e36c24364f54c726635a9fbf56bd",
+    "reviewFile": "source-text/siri_apple.txt",
+    "characters": 9922
+  },
+  {
+    "id": "alphago_match",
+    "requestedUrl": "https://deepmind.google/blog/alphago-the-story-so-far/",
+    "retrievedUtc": "2026-10-18T17:38:22.091152+00:00",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "id": "xiaoice_microsoft",
+    "requestedUrl": "https://www.microsoft.com/en-us/research/blog/conversation-as-a-platform-what-we-learned-from-xiaoice/",
+    "retrievedUtc": "2026-10-18T17:38:22.121563+00:00",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "id": "alphago_next",
+    "requestedUrl": "https://deepmind.google/blog/alphago-and-lee-sedol-whats-next/",
+    "retrievedUtc": "2026-10-18T17:39:08.905098+00:00",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "id": "alphago_google",
+    "requestedUrl": "https://blog.google/technology/ai/alphago-machine-learning-game-go/",
+    "retrievedUtc": "2026-10-18T17:39:08.906621+00:00",
+    "status": 200,
+    "finalUrl": "https://blog.google/innovation-and-ai/products/alphago-machine-learning-game-go/",
+    "sha256": "81f5772c7f64f31601d08d1acc4b30424e9aaf6eebfd39804052cacd38739a5c",
+    "reviewFile": "source-text/alphago_google.txt",
+    "characters": 9497
+  },
+  {
+    "id": "alphago_sgf",
+    "requestedUrl": "https://raw.githubusercontent.com/google-deepmind/alphago/master/Lee%20Sedol%20Games/Lee%20Sedol%20vs%20AlphaGo%20-%20Game%205.sgf",
+    "retrievedUtc": "2026-10-18T17:39:08.907523+00:00",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "id": "alphago_schedule",
+    "requestedUrl": "https://blog.google/technology/ai/alphagos-ultimate-challenge/",
+    "retrievedUtc": "2026-10-18T17:40:11.286499+00:00",
+    "status": 200,
+    "finalUrl": "https://blog.google/innovation-and-ai/products/alphagos-ultimate-challenge/",
+    "sha256": "a7233f39785b902c8073c4d8d6741ada8206a183e31b170e7d1adb7b7cdf722c",
+    "reviewFile": "source-text/alphago_schedule.txt",
+    "characters": 14368
+  }
+]

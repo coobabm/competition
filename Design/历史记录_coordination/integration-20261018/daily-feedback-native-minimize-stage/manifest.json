@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.Rhythm.cs",
+      "base_sha256": "d8008f1d4a9d5ea813c88360287437f4f5e6c33d473524156cb09942e1c73f58",
+      "candidate_sha256": "f537048958b8edf7b05f5e89e5e9e0595b3d5565217fead1c8412d689e804f6e"
+    },
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.cs",
+      "base_sha256": "94f78287dd9519c741ea2b3a9c63ce54ee2391491282a1d76088b182f873b92e",
+      "candidate_sha256": "dedfdc34d15a48ecddd757076b85e9cf69d05a836ac79233c2ec3288728ec622"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/DailyFeedbackActualUiChecks.cs",
+      "base_sha256": "c375df90b604dad9cb8254e424e2f97eb5c8fe79834f98a9c632c493a98966db",
+      "candidate_sha256": "9faa9fb8ef4e9fca47d1281943e57e741322466a19f1c5f1e6fe32bdc830ba63"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 1,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

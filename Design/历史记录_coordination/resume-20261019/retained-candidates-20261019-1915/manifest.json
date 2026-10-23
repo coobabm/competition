@@ -1,0 +1,102 @@
+[
+  {
+    "path": "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs",
+    "sha256": "98346f40ff599e375aef3aeedcdd1c965f095279f145ea34eba32e3cf487f60f",
+    "bytes": 34054
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/EndingPrivateRemainingUiChecks.cs",
+    "sha256": "a867a13277cd8d1c16163ad52f812f3918bbcefb2c096cd4cb560c3f0eff72a7",
+    "bytes": 46210
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/EndingPrivateRemainingUiChecks.cs.meta",
+    "sha256": "37859ddb926f70f5c7aec8850db78261ecf4c9258f4ce074f7d387586dcf7ee2",
+    "bytes": 240
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/EndingPrivateRemainingUiRunner.cs",
+    "sha256": "bc1c047f9765efe8a9539304a64af084e7f96ad0df44021d0b65ec4252bc86b1",
+    "bytes": 27086
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/EndingPrivateRemainingUiRunner.cs.meta",
+    "sha256": "f9db0a0f9bb8ebafaa86e1cf07fc10ac2c673afc3abba39927d9a6f4f5972f9c",
+    "bytes": 240
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs",
+    "sha256": "bca45ba812cf6d300e7b5a5e9783d6a46258cd1d7abfcf51e6369543d3f7f308",
+    "bytes": 37533
+  },
+  {
+    "path": "Assets/LingGuangV05/Editor/UiV4FontWeights.cs",
+    "sha256": "b3275e6ff51acc42fd06a43c5c27551b229b38eeeaba644f6f97e7eabafb714a",
+    "bytes": 5372
+  },
+  {
+    "path": "Design/发布材料/GitHub更新说明_候选.md",
+    "sha256": "5113b35bd2030d406b81cce1375573106221b8f1bb1d6a87da732cc0a6c4714e",
+    "bytes": 11431
+  },
+  {
+    "path": "Design/发布材料/发行包_README_候选.txt",
+    "sha256": "c7d1823e463b33c28a8edaf1dcd2f3350770c0d5d1272ac9eafad1bd948a50ab",
+    "bytes": 8498
+  },
+  {
+    "path": "Design/发布材料/开发日志01_电脑里的朋友_待发布.md",
+    "sha256": "6bb6b3ca4779c0f55b57d33fdd22f14d724957d6d7fbfe9062101bd011c85dc8",
+    "bytes": 4974
+  },
+  {
+    "path": "Design/发布材料/开发日志02_每次点击都有回应_待发布.md",
+    "sha256": "72b8fa69fa7500327789b488224a58ee9c73f9f14e527e53aaa48924ee98b4f0",
+    "bytes": 3601
+  },
+  {
+    "path": "Design/发布材料/截图图注与裁切建议.md",
+    "sha256": "351c4409483b80883a7858efb8645315d411930da0d482c55d86a76214ca24fd",
+    "bytes": 6344
+  },
+  {
+    "path": "Design/发布材料/新增对白与完成情况.md",
+    "sha256": "bb4af850aff5ed82da3d9e293de352ad6e4e895e028eb5ab1489057e8fffadd8",
+    "bytes": 11304
+  },
+  {
+    "path": "Design/发布材料/许可映射表.md",
+    "sha256": "36c476bede91e3120fcc42a202ebeb47dcd51a4199703db45056ac2c8e817b9a",
+    "bytes": 14376
+  },
+  {
+    "path": "Design/发布材料/media/devlog01-group-cold-reply-zh.png",
+    "sha256": "0bc74ba4e9718b5e4307691bedec447abcc44b5e20a7ec79dec3ec8c333c73e9",
+    "bytes": 832547
+  },
+  {
+    "path": "Design/发布材料/media/devlog01-lili-grad-zh.png",
+    "sha256": "65c9deeb2dae16f924462bd362c0b680342bb152f684f7963bc2314fb510f396",
+    "bytes": 4066726
+  },
+  {
+    "path": "Design/发布材料/media/devlog01-read-news-zh.png",
+    "sha256": "c57c3098a2e5f24903b57a5dd1360ba34f7e37c4840d4bbb48194ee101b6d2f8",
+    "bytes": 2782071
+  },
+  {
+    "path": "Design/发布材料/media/devlog02-atlas-stage4-en.png",
+    "sha256": "801b9dac6973e59eb3ff3782ea2c8479e02a7a9d54731b15b61c7f5f56ae9ed3",
+    "bytes": 552814
+  },
+  {
+    "path": "Design/发布材料/media/devlog02-atlas-stage4-zh.png",
+    "sha256": "57b9c80603b9f2107c6156b53ca84a4cccf00f637071ca1d06e0e72b435aa291",
+    "bytes": 545247
+  },
+  {
+    "path": "Design/发布材料/media/devlog02-atlas-structure-zh.png",
+    "sha256": "8c326c17fdead8c90e0f7bb946dcccd30e5bd12a2f18b7d8e983a46e82dbe999",
+    "bytes": 590488
+  }
+]

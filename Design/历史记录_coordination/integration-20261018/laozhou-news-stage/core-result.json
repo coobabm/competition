@@ -1,0 +1,6 @@
+{
+  "runtime": ".NET 10; actual XgNewsCatalog and EraEvents source",
+  "assertions": 74,
+  "failed": 0,
+  "unity": false
+}

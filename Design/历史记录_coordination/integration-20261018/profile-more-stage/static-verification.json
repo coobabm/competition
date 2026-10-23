@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "scope": "source invariants only; not compiled or executed in Unity",
+  "checks": {
+    "only_profile_source_changed": true,
+    "production_baseline_unchanged": true,
+    "existing_page_instances_retained": true,
+    "existing_showtab_route_retained": true,
+    "backpack_gate_retained": true,
+    "final_gate_retained": true,
+    "cards_original_enabled_rule_retained": true,
+    "no_sim_state_assignment": true,
+    "no_new_update_loop": true,
+    "close_minimize_dismiss": true
+  }
+}

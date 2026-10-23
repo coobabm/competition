@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/Core/Games/MonopolyGame.cs",
+      "base_sha256": null,
+      "candidate_sha256": "e687325564e5de53bf5277c00e6c4c6f2ec76475b297856315b6a7f92a78d47d"
+    },
+    {
+      "file": "Assets/LingGuangV05/Core/Games/MonopolyGame.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "9d50138eddb41e4f54002ba9721f5a0e5bfe5ab9e0a8c67da57d2d118440be00"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+      "base_sha256": "c4cde241b12a6527166e4ca1c2e7e678c0271eff2f2fc51e1fd5e688b014298d",
+      "candidate_sha256": "38fd49ea668edd07e08e7745519d55820614c3de5b74e7a878fa3595dd995210"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/MonopolyPanel.cs",
+      "base_sha256": null,
+      "candidate_sha256": "dd29841b2fe273ad9419fd3643cd9582238214ebc65708c13f28119eb32bea39"
+    },
+    {
+      "file": "Assets/LingGuangV05/DesktopBridge/Games/MonopolyPanel.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "81d5290c40d47967924175ac06c088a1953fb9724d46480521e2ce2882da7c50"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/MonopolyGameTests.cs",
+      "base_sha256": null,
+      "candidate_sha256": "62ee286d07098ee6e8f44a73fa4a9a0d9c10a2accb6615c0878580b08831d962"
+    },
+    {
+      "file": "Assets/LingGuangV05/Tests/Editor/MonopolyGameTests.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "61d61c18ea3f5af15f6f110276fd2074aa2ce5f44381637771556be28ecc1691"
+    }
+  ],
+  "new_tests": 9,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

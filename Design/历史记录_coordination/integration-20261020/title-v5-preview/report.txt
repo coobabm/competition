@@ -1,0 +1,5 @@
+Actual CaseMenuHud Chrome + title actions on a neutral dark background. Not the 3D menu or a Player run.
+Full Build/BuildSettings deliberately omitted because they read PlayerPrefs through GamePerformance.
+1920x1080: logo=TitleLogoV5, source=2078x1110, aspect=1.872072, vertices=4, raycast=False
+1280x720: logo=TitleLogoV5, source=2078x1110, aspect=1.872072, vertices=4, raycast=False
+PASS: assertions completed. No settings or runtime archive callbacks invoked.

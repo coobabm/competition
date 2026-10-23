@@ -1,0 +1,22 @@
+{
+  "snapshot": "2026-10-19T17:25:00+08:00",
+  "new_file": "Design/本轮交付剩余清单_20261019.md",
+  "file_sha256": "9b4750a5ffcce5af20abf256f68c2203b34dfbc32863a9ba6bebb8ac1054c8ba",
+  "patch_sha256": "fe57b5d9e58a1b05f2b05db872955373ae56135c14e8407e92248067c7ad8d4d",
+  "group_ui": {
+    "run": "20261019-092124-583",
+    "status": "passed",
+    "named_checks": 30,
+    "screenshots": 15,
+    "runtime_errors": 0,
+    "assertion_calls_including_frame_guards": 12802
+  },
+  "merged": [
+    "text-guard-reviewed",
+    "guide-baseline-reviewed",
+    "ending-small-A-author-followup"
+  ],
+  "core_regression": "Running under root; no pass claim",
+  "production_write": false,
+  "unity_started": false
+}

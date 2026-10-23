@@ -146,7 +146,7 @@ namespace LingGuangV05.XingGuang
                 {
                     "显卡/上/有/成百上千/个/小/核心/，/同时/算/很多/简单/的/乘法/。", "A card holds hundreds of small cores that do many simple multiplications at once.",
                     "显存/决定/一次/能/装下/多大/的/模型/，/不够/就/会/报错/。", "Video memory decides how big a model fits at once; run out and it crashes.",
-                    "2016年/5月/，/GTX 1080/国行/上市/，/售价/4999/元/起/。", "In May 2016 the GTX 1080 went on sale in China from 4,999 yuan.",
+                    "2016年/5月/，/GTX 1080/国行/上市/，/售价/4599/元/起/。", "In May 2016 the GTX 1080 went on sale in China from 4,599 yuan.",
                     "温度/超过/80/度/时/，/显卡/会/自动/降频/保护/自己/。", "Above 80 degrees the card slows itself down to stay safe.",
                     "二手/矿卡/价格/便宜/，/但/风扇/往往/已经/磨损/。", "Second-hand mining cards are cheap, but their fans are often worn out.",
                     "显卡吧/的/老哥/常说/「/买新不买旧/」/，/也/有人/坚持/等等党/。", "Forum regulars say buy new, never old; others swear by waiting for the next one.",

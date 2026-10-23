@@ -1,0 +1,50 @@
+{
+  "baseline_head": "c67a7db50ace0b9df6356b7c3b79b75c404e95e0",
+  "git_apply_check_exit_code": 0,
+  "git_apply_check_output": "",
+  "production_files_unchanged": [
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgRelics.cs",
+      "base_sha256_normalized": "c16b9b17920f5ce201e7b6922aec772fa61216a6f391738b1f7c2c192b3fe681",
+      "production_matches_baseline": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Relics.cs",
+      "base_sha256_normalized": "bd8e601a0973ead36825ac6e3022239f850767e840f5b3f239dc533c8e218972",
+      "production_matches_baseline": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTrainingCatalog.cs",
+      "base_sha256_normalized": "eb3dc7f07fa9ea3f85d247b22f88621179ed89bef63a007455aef36ccdc07316",
+      "production_matches_baseline": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.Progression.cs",
+      "base_sha256_normalized": "e43dfab2b1ac6cbe0401295f46638c849269e8288d0eb0e9210235a932518a56",
+      "production_matches_baseline": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+      "base_sha256_normalized": "d5841713a14785752b1dc7e8753bd64a3555833fa9bd06ab9c0db5588dc6d2e1",
+      "production_matches_baseline": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgBackpackPage.cs",
+      "base_sha256_normalized": "bd9d93e58a428831e6e92f1071c70e8de0c04f2f0c53f0dc37c72684e8e5deb9",
+      "production_matches_baseline": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Relics.cs",
+      "base_sha256_normalized": "2e6d657c991a0213c708a0015f44ae841cc3f507e0d1c2fa3f7d3559299189ca",
+      "production_matches_baseline": true
+    },
+    {
+      "path": "Assets/LingGuangV05/XingGuang/Desktop/XgRelicUi.cs",
+      "base_sha256_normalized": "3f850ac6ea250f7465623cfc84b1fe831541273b027668893343ab65c8090d4b",
+      "production_matches_baseline": true
+    }
+  ],
+  "unity_launched": false,
+  "compiled": false,
+  "checks_executed": false
+}

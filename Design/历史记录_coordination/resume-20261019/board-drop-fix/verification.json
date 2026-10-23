@@ -1,0 +1,86 @@
+{
+  "status": "static_only_passed",
+  "checks": [
+    {
+      "label": "only intended two files changed",
+      "passed": true
+    },
+    {
+      "label": "all original QA assertions retained",
+      "passed": true
+    },
+    {
+      "label": "strict drop point and rejection retained",
+      "passed": true
+    },
+    {
+      "label": "existing first installation still uses LCD pointer up",
+      "passed": true
+    },
+    {
+      "label": "existing source top-hit check retained",
+      "passed": true
+    },
+    {
+      "label": "arrangement solely emits real LCD pointer events",
+      "passed": true
+    },
+    {
+      "label": "no transform/focus/raycast bypass in helper",
+      "passed": true
+    },
+    {
+      "label": "caption top-hit handler verified",
+      "passed": true
+    },
+    {
+      "label": "native movement verified rather than assumed",
+      "passed": true
+    },
+    {
+      "label": "arrangement before pack-row selection",
+      "passed": true
+    },
+    {
+      "label": "before after and failure evidence added",
+      "passed": true
+    },
+    {
+      "label": "foreground command flag respects existing exit result",
+      "passed": true
+    },
+    {
+      "label": "both languages inspect real account glyphs",
+      "passed": true
+    },
+    {
+      "label": "account only uses spare center area",
+      "passed": true
+    },
+    {
+      "label": "font sizes and actual text remain unchanged",
+      "passed": true
+    },
+    {
+      "label": "git apply --check",
+      "passed": true
+    },
+    {
+      "label": "git apply --stat",
+      "passed": true
+    }
+  ],
+  "patch_sha256": "f4e9ea5f9ae1342a84f6ee56ddb89ac3c560afb086d976e28cf51931522fbf6b",
+  "baseline_sha256": {
+    "Assets\\LocalBuild\\Editor\\BoardGamesUiPlayQa.cs": "a5f5ef1ee15e077076709b98e4912c63f6ac65c5857a519a5fdfd43d6a6f230f",
+    "Assets\\LingGuangV05\\DesktopBridge\\Games\\MonopolyPanel.cs": "6c4ff434813d54db9afc5f87fd5ecf1e8d7afe28c8395c70b62d2f728bf006c7"
+  },
+  "failure_report": "LocalVerification/BoardGamesUI/20261019-054110-877/result.json",
+  "not_run": [
+    "C# compilation",
+    "Unity",
+    "actual UI",
+    "model",
+    "build"
+  ]
+}

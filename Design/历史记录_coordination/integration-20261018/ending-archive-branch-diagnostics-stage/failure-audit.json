@@ -1,0 +1,510 @@
+{
+  "originalFailurePreserved": "failed",
+  "sourceExpectedTree": "3219a8f641deb8ce0a91f16af34dcb0c8b88fd3de471ce267ab7457a5d3b8478",
+  "sourceCurrentTree": "3219a8f641deb8ce0a91f16af34dcb0c8b88fd3de471ce267ab7457a5d3b8478",
+  "immutableEvidenceCopyTree": "3219a8f641deb8ce0a91f16af34dcb0c8b88fd3de471ce267ab7457a5d3b8478",
+  "copiedSlotsAndChapterComparison": [
+    {
+      "path": "slots/3/chapter-one.sav",
+      "exact": true
+    },
+    {
+      "path": "slots/3/chapter-one.sav.bak",
+      "exact": true
+    },
+    {
+      "path": "slots/4/chapter-one.sav",
+      "exact": true
+    },
+    {
+      "path": "slots/6/chapter-one.sav",
+      "exact": true
+    },
+    {
+      "path": "slots/6/chapter-one.sav.bak",
+      "exact": true
+    },
+    {
+      "path": "chapters/6/chapter-one.sav",
+      "exact": true
+    }
+  ],
+  "failureEvidenceInventory": [
+    {
+      "path": "DesktopProfile/Apps.json",
+      "sha256": "34eed5543c9d603e5763ffb69a0d3762c1bfa67d2786ed1e0c44777496ca373b",
+      "mtimeUtc": "2026-10-18T22:52:10.126985+00:00"
+    },
+    {
+      "path": "DesktopProfile/DateAndTime.json",
+      "sha256": "76901b72bbac8f26b2d05541c842c30b69904e0d84bc42b54b938dcb3b32f511",
+      "mtimeUtc": "2026-10-18T22:52:09.616864+00:00"
+    },
+    {
+      "path": "DesktopProfile/Network.json",
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "mtimeUtc": "2026-10-18T22:52:09.661984+00:00"
+    },
+    {
+      "path": "DesktopProfile/System.json",
+      "sha256": "9e7e7c5166b1e1b1da046c0001f695a6ee9950ad3313c14afc579410aa82d0e4",
+      "mtimeUtc": "2026-10-18T22:52:10.212384+00:00"
+    },
+    {
+      "path": "DesktopProfile/User.json",
+      "sha256": "803a8e98294fd5b3d115b108611873161154b07121f5e58787c53c05bf35314b",
+      "mtimeUtc": "2026-10-18T22:52:09.741202+00:00"
+    },
+    {
+      "path": "ending-archive-branch-write-failure.png",
+      "sha256": "39276cc8506e01717fb9e18adbe632188ac018fd82bd0f1045922c5d301b8268",
+      "mtimeUtc": "2026-10-18T22:53:31.844368+00:00"
+    },
+    {
+      "path": "ending-archive-choice-failure-0.png",
+      "sha256": "3763481410ec5a968e14689c2188acad362836df3025f8ad488933f875218557",
+      "mtimeUtc": "2026-10-18T22:52:35.049716+00:00"
+    },
+    {
+      "path": "ending-archive-choice-failure-1.png",
+      "sha256": "7139fee22b14876e6d3e556db6f15475c8ca3e8c25c42aef3fb277a78fe76421",
+      "mtimeUtc": "2026-10-18T22:52:36.496259+00:00"
+    },
+    {
+      "path": "ending-archive-choice-failure-2.png",
+      "sha256": "7c9dbefaa4e4104fdf9675d9f32dbd5ad9307a81a6cb53a2bdd08fe5d219d986",
+      "mtimeUtc": "2026-10-18T22:52:39.797129+00:00"
+    },
+    {
+      "path": "ending-archive-choice-failure-3.png",
+      "sha256": "4981f00bb772ea9d0a6cd12a45092d76c33bd63f87cdeeb25c94e17ac2c392f9",
+      "mtimeUtc": "2026-10-18T22:52:38.138165+00:00"
+    },
+    {
+      "path": "ending-archive-choice-saved-0.png",
+      "sha256": "49cb442cdeaa37d57f626eae3efb05855ff832b26184b0443f498f9acccbd040",
+      "mtimeUtc": "2026-10-18T22:52:35.434398+00:00"
+    },
+    {
+      "path": "ending-archive-choice-saved-1.png",
+      "sha256": "440d4dc11d0d6275fbe84ee24155cdd9b6d3d7f9d541c15a8879137af5430113",
+      "mtimeUtc": "2026-10-18T22:52:36.869541+00:00"
+    },
+    {
+      "path": "ending-archive-choice-saved-2.png",
+      "sha256": "ded316413352833c906d89f0929fd71ee3c7626a5be5c1408ca357b2e7cd6525",
+      "mtimeUtc": "2026-10-18T22:52:40.299982+00:00"
+    },
+    {
+      "path": "ending-archive-choice-saved-3.png",
+      "sha256": "c5b23a50d9ef0bc3377be6f0824fb907e387e925f0c25842143205d6358c1f2e",
+      "mtimeUtc": "2026-10-18T22:52:38.586539+00:00"
+    },
+    {
+      "path": "ending-archive-failure-full-frame.png",
+      "sha256": "1b14991569acc1bae132c946b085efa483fdeff710a16cbd1b8da0377ffe1087",
+      "mtimeUtc": "2026-10-18T22:53:40.719832+00:00"
+    },
+    {
+      "path": "ending-archive-home-new-local-en.png",
+      "sha256": "eeb1433e80cbda592d17092f8f9b6ba18f7c41a030b88207dae45c1f5c25af7f",
+      "mtimeUtc": "2026-10-18T22:53:18.110679+00:00"
+    },
+    {
+      "path": "ending-archive-home-new-local-zh.png",
+      "sha256": "bbbf9a7b82302517ad8ff5571b07c6f2ebd909e25947f09f2eedadcf09d74f02",
+      "mtimeUtc": "2026-10-18T22:53:04.791264+00:00"
+    },
+    {
+      "path": "ending-archive-home-real-source-zh.png",
+      "sha256": "3571da9d60a99d57816a72b71032ea9c9e6e7fa513046996ff5b4ed9047fd797",
+      "mtimeUtc": "2026-10-18T22:52:12.266042+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_copies-new-local-en.png",
+      "sha256": "ea3f164ac439aca144a9fa927cddc30e6ac61a18c3c0f81edd45b6447d3c150b",
+      "mtimeUtc": "2026-10-18T22:53:29.791943+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_copies-new-local-zh.png",
+      "sha256": "ea3f164ac439aca144a9fa927cddc30e6ac61a18c3c0f81edd45b6447d3c150b",
+      "mtimeUtc": "2026-10-18T22:53:15.706002+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_copies-real-source-zh.png",
+      "sha256": "ea3f164ac439aca144a9fa927cddc30e6ac61a18c3c0f81edd45b6447d3c150b",
+      "mtimeUtc": "2026-10-18T22:52:24.114334+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_open_door-new-local-en.png",
+      "sha256": "80f799f7fad450ec961a06a7682de599eae8c087fb1929f53f132dfe405e55d4",
+      "mtimeUtc": "2026-10-18T22:53:28.591190+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_open_door-new-local-zh.png",
+      "sha256": "80f799f7fad450ec961a06a7682de599eae8c087fb1929f53f132dfe405e55d4",
+      "mtimeUtc": "2026-10-18T22:53:14.799531+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_open_door-real-source-zh.png",
+      "sha256": "80f799f7fad450ec961a06a7682de599eae8c087fb1929f53f132dfe405e55d4",
+      "mtimeUtc": "2026-10-18T22:52:22.869851+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_unpressed_button-new-local-en.png",
+      "sha256": "0de6faa1bef3b695ca6506c61e3535632ae4d6ed45ee27f0839d934ddae9c820",
+      "mtimeUtc": "2026-10-18T22:53:30.944321+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_unpressed_button-new-local-zh.png",
+      "sha256": "0de6faa1bef3b695ca6506c61e3535632ae4d6ed45ee27f0839d934ddae9c820",
+      "mtimeUtc": "2026-10-18T22:53:16.833658+00:00"
+    },
+    {
+      "path": "ending-archive-letter-zhou_unpressed_button-real-source-zh.png",
+      "sha256": "0de6faa1bef3b695ca6506c61e3535632ae4d6ed45ee27f0839d934ddae9c820",
+      "mtimeUtc": "2026-10-18T22:52:25.181360+00:00"
+    },
+    {
+      "path": "ending-final-completion-save-failed-zh.png",
+      "sha256": "1d9a709cb65d45673523f78b3b1e620db5566c4c0b4b2b33ae84291ef30d6fe7",
+      "mtimeUtc": "2026-10-18T22:52:56.733265+00:00"
+    },
+    {
+      "path": "ending-final-read-to-end-zh.png",
+      "sha256": "bcf15d75aedf1d476652c21999b8a55ab0ce07b815129a4a6964caf4d3cd8fe5",
+      "mtimeUtc": "2026-10-18T22:52:55.952155+00:00"
+    },
+    {
+      "path": "ending-final-real-title-return.png",
+      "sha256": "2bb68b52a10a82b3de5eba33f52d4c2c48b6b6b6e029b1ca64856ddead7df9e8",
+      "mtimeUtc": "2026-10-18T22:53:04.372968+00:00"
+    },
+    {
+      "path": "EvidenceCopy/chapter-one.sav",
+      "sha256": "9a538c1ae24be0ae4d250f608437628ed149ae5025b9c8d79fd2c05ec162415b",
+      "mtimeUtc": "2026-10-18T21:57:23.764906+00:00",
+      "money": 1094514.1274594516,
+      "lastSeenUnix": 1792360643,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": "epilogue:08e66e41d5ad4cf08491ca7b2a7c2208"
+    },
+    {
+      "path": "EvidenceCopy/chapter-one.sav.bak",
+      "sha256": "97ea7a166e71bb6c44f449ee1bd4fde77ad0e277b39cf1962ece700989ab78a2",
+      "mtimeUtc": "2026-10-18T21:57:12.853073+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360632,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": "epilogue:08e66e41d5ad4cf08491ca7b2a7c2208"
+    },
+    {
+      "path": "EvidenceCopy/chapters/6/chapter-one.sav",
+      "sha256": "3176f06c446131e10128dd8d7d43833bc90dfb4dbcf98adfc1a38913bec948b3",
+      "mtimeUtc": "2026-10-18T21:57:22.700315+00:00",
+      "money": 1094274.1610479355,
+      "lastSeenUnix": 1792360632,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": "epilogue:08e66e41d5ad4cf08491ca7b2a7c2208"
+    },
+    {
+      "path": "EvidenceCopy/night-after-reload.json",
+      "sha256": "eb565a84ac352e3d682ba3da8b1f5180670fe7c4886bb79ed3e8d0d9e0821fc3",
+      "mtimeUtc": "2026-10-18T21:51:50.429625+00:00"
+    },
+    {
+      "path": "EvidenceCopy/night-before-reload.json",
+      "sha256": "436c028dac314236b3482f7cd40db77c8e2c9f1496207809790845a3b3a39583",
+      "mtimeUtc": "2026-10-18T21:51:50.428103+00:00"
+    },
+    {
+      "path": "EvidenceCopy/slots/3/chapter-one.sav",
+      "sha256": "8f367bf9e0820b1acb2ea191005c492495be6047e6e73afc4a7c8d85a6712bc6",
+      "mtimeUtc": "2026-10-18T21:51:35.965255+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360295,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": ""
+    },
+    {
+      "path": "EvidenceCopy/slots/3/chapter-one.sav.bak",
+      "sha256": "315e43c84e3d62377f869fea26a019198975129da0734c29f128963fd56d0089",
+      "mtimeUtc": "2026-10-18T21:51:34.149871+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360293,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": ""
+    },
+    {
+      "path": "EvidenceCopy/slots/4/chapter-one.sav",
+      "sha256": "0acbee5e296279e0fbe0f44b62f865eaeda1c74b4ffe2c8e2d48e897ff5c5be8",
+      "mtimeUtc": "2026-10-18T21:51:41.031352+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360300,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": ""
+    },
+    {
+      "path": "EvidenceCopy/slots/6/chapter-one.sav",
+      "sha256": "9a538c1ae24be0ae4d250f608437628ed149ae5025b9c8d79fd2c05ec162415b",
+      "mtimeUtc": "2026-10-18T21:57:23.781025+00:00",
+      "money": 1094514.1274594516,
+      "lastSeenUnix": 1792360643,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": "epilogue:08e66e41d5ad4cf08491ca7b2a7c2208"
+    },
+    {
+      "path": "EvidenceCopy/slots/6/chapter-one.sav.bak",
+      "sha256": "b64524e88fc1fc9fda129f621bf7b430aae997b650af4fa850e5750e8e5ae2dd",
+      "mtimeUtc": "2026-10-18T21:51:48.996450+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360308,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": ""
+    },
+    {
+      "path": "lifecycle-00.txt",
+      "sha256": "af3d036ed72300397382e8f363ba686a4e6e504cf4c4ed5ebf164ba34ce5d90a",
+      "mtimeUtc": "2026-10-18T22:52:28.447894+00:00"
+    },
+    {
+      "path": "lifecycle-01.txt",
+      "sha256": "f426a1eeb6d0cc5715cdd7f149d881f65b68a4bde3a4b423b227e3cf37765de4",
+      "mtimeUtc": "2026-10-18T22:52:28.973217+00:00"
+    },
+    {
+      "path": "lifecycle-02.txt",
+      "sha256": "6d794a970d08997c42ceeaa7f991b07367918218b4df47126b1cf8f11450dd56",
+      "mtimeUtc": "2026-10-18T22:52:32.839739+00:00"
+    },
+    {
+      "path": "lifecycle-03.txt",
+      "sha256": "9702d7657103b4df0cd40befdfa49d44a6d1c6134d1fa71fbc1ae2bd74a00520",
+      "mtimeUtc": "2026-10-18T22:52:33.668280+00:00"
+    },
+    {
+      "path": "report.json",
+      "sha256": "95e866dd37b3e1899b648a1381d54bce35eaf11c9bf2262ef91b7f42a4ab53f2",
+      "mtimeUtc": "2026-10-18T22:53:42.976755+00:00"
+    },
+    {
+      "path": "Save/chapter-one.sav",
+      "sha256": "2e84192869ad3ca8a371d98cd8a888e5dbbf95a0bff437bbe585d082d10b3403",
+      "mtimeUtc": "2026-10-18T22:53:02.482418+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363982,
+      "branch": "",
+      "checkpoint": "0c9417a0f9424a048490177f5afa423c",
+      "completionReceipt": "epilogue:31f5b053f7a44d5f949f35fd8b5a5473"
+    },
+    {
+      "path": "Save/chapter-one.sav.bak",
+      "sha256": "83b34f8f31a5d00bb81af0b4b942ca0984ac03510cfc8e059bd16de715e7f1cf",
+      "mtimeUtc": "2026-10-18T22:52:56.774083+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363976,
+      "branch": "",
+      "checkpoint": "0c9417a0f9424a048490177f5afa423c",
+      "completionReceipt": "epilogue:31f5b053f7a44d5f949f35fd8b5a5473"
+    },
+    {
+      "path": "Save/chapters/6/chapter-one.sav",
+      "sha256": "3176f06c446131e10128dd8d7d43833bc90dfb4dbcf98adfc1a38913bec948b3",
+      "mtimeUtc": "2026-10-18T21:57:22.700315+00:00",
+      "money": 1094274.1610479355,
+      "lastSeenUnix": 1792360632,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": "epilogue:08e66e41d5ad4cf08491ca7b2a7c2208"
+    },
+    {
+      "path": "Save/endings/branches/022c76614e164e1180c83b63f209ec55/chapter-one.sav",
+      "sha256": "e289968ab02c376a372a0a064d38d6b23aaec7b8b3d70df41d941574a111868f",
+      "mtimeUtc": "2026-10-18T22:53:40.558430+00:00",
+      "money": 1094556.6773014963,
+      "lastSeenUnix": 1792364020,
+      "branch": "022c76614e164e1180c83b63f209ec55",
+      "checkpoint": "0c9417a0f9424a048490177f5afa423c",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/branches/022c76614e164e1180c83b63f209ec55/chapter-one.sav.bak",
+      "sha256": "e0f1e0e23b310bc0c3f736dbff058057d2d0cb35bf34a0172f8e6e76691eeb73",
+      "mtimeUtc": "2026-10-18T22:53:32.210338+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792364012,
+      "branch": "022c76614e164e1180c83b63f209ec55",
+      "checkpoint": "0c9417a0f9424a048490177f5afa423c",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/branches/022c76614e164e1180c83b63f209ec55/chapters/6/chapter-one.sav",
+      "sha256": "7afe4262a5f8af3c915347a73db56366ca93237ab97bd8dbc65aee2af037d453",
+      "mtimeUtc": "2026-10-18T22:53:39.503605+00:00",
+      "money": 1094280.0,
+      "lastSeenUnix": 1792364012,
+      "branch": "022c76614e164e1180c83b63f209ec55",
+      "checkpoint": "0c9417a0f9424a048490177f5afa423c",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/checkpoints/0c9417a0f9424a048490177f5afa423c/chapter-one.sav",
+      "sha256": "597218d9787f43f5cddf6145310cde48488e095b1435122fe6263f257c99aa4e",
+      "mtimeUtc": "2026-10-18T22:52:40.002626+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363959,
+      "branch": "",
+      "checkpoint": "0c9417a0f9424a048490177f5afa423c",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/checkpoints/0e502e442486447ea8968017458c6875/chapter-one.sav",
+      "sha256": "aa69e14d2475d9fc25e3461cba15a1e0bcd9e9a9f100239648fe8b51ebd03d77",
+      "mtimeUtc": "2026-10-18T22:52:36.324931+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363955,
+      "branch": "",
+      "checkpoint": "0e502e442486447ea8968017458c6875",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/checkpoints/1bbd6db4dd954ca2ad2d544f21d2c0b9/chapter-one.sav",
+      "sha256": "47a37d6bbb96f853d3f21743d5e77acf97b3fa579be50126bda0a1ae67f5938a",
+      "mtimeUtc": "2026-10-18T22:52:36.654120+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363956,
+      "branch": "",
+      "checkpoint": "1bbd6db4dd954ca2ad2d544f21d2c0b9",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/checkpoints/2e300f9a2c3146bbb8cfc4ae35d777c8/chapter-one.sav",
+      "sha256": "952ac1564bcf9e05db920e0f95e2b954d49de8edb7c143816f199db46326eeef",
+      "mtimeUtc": "2026-10-18T22:52:38.319760+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363957,
+      "branch": "",
+      "checkpoint": "2e300f9a2c3146bbb8cfc4ae35d777c8",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/checkpoints/3e96facd23954b32a7126617d938cc29/chapter-one.sav",
+      "sha256": "a0459eb7b9f6cc502b742f619b79f89294a9c15e9a351259e1bdc84f1fac26ff",
+      "mtimeUtc": "2026-10-18T22:52:37.930604+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363956,
+      "branch": "",
+      "checkpoint": "3e96facd23954b32a7126617d938cc29",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/checkpoints/7daab1c4c3654ee49addcc1c1307e407/chapter-one.sav",
+      "sha256": "19494e16353bac52ece2c531df71b537bc0d17bc6ad96c0ade5eb55ee5ab0f5a",
+      "mtimeUtc": "2026-10-18T22:52:34.901736+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363953,
+      "branch": "",
+      "checkpoint": "7daab1c4c3654ee49addcc1c1307e407",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/checkpoints/7f9e8a119ea9426591326425e6c86279/chapter-one.sav",
+      "sha256": "79e6c888974a5fcbe52041e9373a9e865fa4f09eab747b1c435d385dff3d3652",
+      "mtimeUtc": "2026-10-18T22:52:39.587630+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363958,
+      "branch": "",
+      "checkpoint": "7f9e8a119ea9426591326425e6c86279",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/endings/checkpoints/ad1b9076abd74534af55aaf9a9a43357/chapter-one.sav",
+      "sha256": "05153208859e99e0b268c3a95977a0e5ca16dc6a36c3947735ac25c84985c41f",
+      "mtimeUtc": "2026-10-18T22:52:35.226277+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792363954,
+      "branch": "",
+      "checkpoint": "ad1b9076abd74534af55aaf9a9a43357",
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/night-after-reload.json",
+      "sha256": "eb565a84ac352e3d682ba3da8b1f5180670fe7c4886bb79ed3e8d0d9e0821fc3",
+      "mtimeUtc": "2026-10-18T21:51:50.429625+00:00"
+    },
+    {
+      "path": "Save/night-before-reload.json",
+      "sha256": "436c028dac314236b3482f7cd40db77c8e2c9f1496207809790845a3b3a39583",
+      "mtimeUtc": "2026-10-18T21:51:50.428103+00:00"
+    },
+    {
+      "path": "Save/slots/3/chapter-one.sav",
+      "sha256": "8f367bf9e0820b1acb2ea191005c492495be6047e6e73afc4a7c8d85a6712bc6",
+      "mtimeUtc": "2026-10-18T21:51:35.965255+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360295,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/slots/3/chapter-one.sav.bak",
+      "sha256": "315e43c84e3d62377f869fea26a019198975129da0734c29f128963fd56d0089",
+      "mtimeUtc": "2026-10-18T21:51:34.149871+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360293,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/slots/4/chapter-one.sav",
+      "sha256": "0acbee5e296279e0fbe0f44b62f865eaeda1c74b4ffe2c8e2d48e897ff5c5be8",
+      "mtimeUtc": "2026-10-18T21:51:41.031352+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360300,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": ""
+    },
+    {
+      "path": "Save/slots/6/chapter-one.sav",
+      "sha256": "9a538c1ae24be0ae4d250f608437628ed149ae5025b9c8d79fd2c05ec162415b",
+      "mtimeUtc": "2026-10-18T21:57:23.781025+00:00",
+      "money": 1094514.1274594516,
+      "lastSeenUnix": 1792360643,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": "epilogue:08e66e41d5ad4cf08491ca7b2a7c2208"
+    },
+    {
+      "path": "Save/slots/6/chapter-one.sav.bak",
+      "sha256": "b64524e88fc1fc9fda129f621bf7b430aae997b650af4fa850e5750e8e5ae2dd",
+      "mtimeUtc": "2026-10-18T21:51:48.996450+00:00",
+      "money": 1000000.0,
+      "lastSeenUnix": 1792360308,
+      "branch": null,
+      "checkpoint": null,
+      "completionReceipt": ""
+    },
+    {
+      "path": "source-report.json",
+      "sha256": "7415ee6631bd47248ac4b259134eca96005b1a415d46472a33d141374aeb311b",
+      "mtimeUtc": "2026-10-18T21:57:27.440401+00:00"
+    },
+    {
+      "path": "source-sha256.txt",
+      "sha256": "afb7f017bdf12ecd059773a6a8239bf25ef4348df4e462641efeb72b1ac705ee",
+      "mtimeUtc": "2026-10-18T22:51:53.742295+00:00"
+    }
+  ],
+  "limitation": "No marker pre-value or per-file pre-branch ledger was persisted by the failed run. Timestamps support, but do not prove, primary/checkpoint preservation. This is a read-only audit; runtime was not rerun."
+}

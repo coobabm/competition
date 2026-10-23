@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "file": "Assets/LocalBuild/Editor/EndingArchiveActualUiChecks.cs",
+      "base_sha256": "126339187bc71a4dfd91a9ad89462760d3e369c27fb3a94c0abc38a3dbf077f2",
+      "candidate_sha256": "0aca7ea330f40f9d2ee9d033c16282456a59920caee5c7fe51d51d0bf3b2f2af"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/EndingArchiveActualUiRunner.cs",
+      "base_sha256": "1b73c592b441719fc9d58e64710c003ba0638f9e2d026ab22fee6ebebb1af25a",
+      "candidate_sha256": "b61711017daff2eb67991e1441cc35377e4845df1923e8b0fe53b59ac0ea96ad"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

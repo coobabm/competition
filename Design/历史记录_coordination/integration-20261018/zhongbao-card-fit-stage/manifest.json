@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "file": "Assets/LingGuangV05/XingGuang/Desktop/XgContractsPage.cs",
+      "base_sha256": "c2690d66999ba83c5e80079fa4b127c9f370f27ad447bb0db06aa3092a336ef0",
+      "candidate_sha256": "5b81ab22f32b9e319b93dce3f22af9eb0428d4a1ac3f7c9a324f8d8fad721ba1"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/ZhongbaoBusinessUiChecks.cs",
+      "base_sha256": "61c005c320945974fc519c8e7c9a31d0231330407054c51305fcc0da6c9f52bb",
+      "candidate_sha256": "8aa40fce257e9f903b42503037cfa37f50f81b75c62e50c9ddf1949900cf1ab6"
+    }
+  ],
+  "new_tests": 0,
+  "updated_legacy_tests": 1,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": []
+}

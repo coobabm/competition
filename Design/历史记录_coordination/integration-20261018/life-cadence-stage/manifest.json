@@ -1,0 +1,9 @@
+{
+  "base_sha256": {
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.LifeEvents.cs": "52a10b3bec30a398b3e598efff9c198d363d8421d557b3b9e134a078c086ce10",
+    "Assets/LingGuangV05/XingGuang/Core/XgSim.LifeData.cs": "be8eec52c1eee7dd3532273c5742aa0f5c5a77e1a15179c1997a0a499e097df6",
+    "Assets/LingGuangV05/XingGuang/Desktop/XgLifeEventCard.cs": "85e460bdf8438adea1046c8a59d96bb93389d30ef45414e7b31e53a605f40552"
+  },
+  "production_modified": false,
+  "unity_executed": false
+}

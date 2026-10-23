@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "arrangements": 810000,
+  "pairwise_button_checks": 4860000,
+  "min_axis_separation": 1.9999962,
+  "independent_stacked_core_moves": 112,
+  "core_state_unchanged_by_layout": true,
+  "unity_started": false,
+  "actual_unity_raycast_verified": false
+}

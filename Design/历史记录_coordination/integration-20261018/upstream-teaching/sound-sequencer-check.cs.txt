@@ -1,0 +1,22 @@
+public static class AdaptedSoundSequence {
+        public const float ComboSoundWindow = 3f;
+        static float comboSoundAt = -100;
+        static int comboSoundStep, comboSoundLast;
+
+        /// <summary>
+        /// The step the next combo sound plays: one higher per hit, in order (a trick card's +2 or two hits seen in one
+        /// frame never skip a step), back to 1 after <see cref="ComboSoundWindow"/> without a hit or when the combo broke.
+        /// 0: the same hit reported twice (ignore it).
+        /// </summary>
+        public static int NextComboSoundStep(int combo, float now)
+        {
+            bool same = combo == comboSoundLast && now - comboSoundAt < .05f;
+            if (same) return 0;
+            bool goesOn = combo > comboSoundLast && comboSoundLast > 0 && now - comboSoundAt <= ComboSoundWindow;
+            comboSoundStep = goesOn ? comboSoundStep + 1 : 1;
+            comboSoundLast = combo; comboSoundAt = now;
+            return comboSoundStep;
+        }
+
+
+}

@@ -1,0 +1,186 @@
+[
+  {
+    "path": "Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs",
+    "sha256": "743C8DC105A50525A971F80CF028E817ACE719B81567BCA56A914A4C046F6E88"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs.meta",
+    "sha256": "C678A115164CB5783DECECEF5962A6914AF723E170657B5854E78FA91C7308F8"
+  },
+  {
+    "path": "Assets/LingGuangV05/Core/Forum/LaoZhouQuestions.cs",
+    "sha256": "1F5133CFA51DB6DEA2E25415502D6892E9A3F1D5579E09532EBDB46E61E9EC18"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+    "sha256": "3B56E8F90BC23E1C3587EB72F73684E639A0F2442A3D506007847FBC24DD3741"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Games/GameHubView.cs",
+    "sha256": "8DB6668463AECC386551D01E72641C42CDDFA78BA742E9F31055BDD582DC8480"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs",
+    "sha256": "5A3291CD7D0EE63D0311652B1BA037CF74F2C1B201F27FC6C08EEADA7844B653"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs.meta",
+    "sha256": "642D0151217E1E897B4571FC7DD05F0163E33B6B1BCFD3CC7CE08739AB78D6EA"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+    "sha256": "659E5343C1CEF9227016459071797426336E7AE9946DBB8D41B9A6CE546DA6C5"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset",
+    "sha256": "5427FAE9AEAD94B8B9C0BB9EE83E6A82DEF1CE13955C060D26148F6CF30C893D"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/GROUP_CHAT_PHOTO_CREDITS.txt",
+    "sha256": "71E7AA94CCB8DD73A519C2C8C799F34E728E31992435EF0AADA7962DF13B69EA"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/PHOTO_CREDITS.txt",
+    "sha256": "E617CE65C38E3688CC93E8FC48859AAF60E0D0ABD0225B224C33C71CAB622B9A"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg",
+    "sha256": "C0D5F114F120E7717254E345D94D9BAC03F006A6348682CD281C7BDAE83B9D77"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_cafe.jpg.meta",
+    "sha256": "47FB3066E73227B28287D3342164095A0494EAA696D84C24E4B66BE703CCF3D7"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg",
+    "sha256": "8F0B351CBEF0B8A32A4D2ADEE8F8C71849070CEDD5AAADEAFF586BD3F93EA95F"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_desk.jpg.meta",
+    "sha256": "8303352D82C66FB035717A3B1D320E8ABB7E9F26FC4228F2E0E6C709FF333F2E"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg",
+    "sha256": "8BD4FFCF327BF38D4F6ADCB1176C6AEE044A33EA3C56922F2740CB82DC407226"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_dw_iphone.jpg.meta",
+    "sha256": "763CFC153596E9CA249E6B9D5178DD680B12743FB2D78B6C017AAA8731F227BD"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg",
+    "sha256": "1426E464AD5B65F6E21DC78A87048DBB1CDD210EF288CC949795D7371D7B8D62"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_grad.jpg.meta",
+    "sha256": "F1E2807A97555C4A5C5158DA3BF7F9FB5924CC6A0AC4D419E60F0CE5CE1F469B"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg",
+    "sha256": "3847E7F4FE2C70FDAA8ABBAF889702E2A9D2B8B34438756E3CFCCF6876939F91"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_gulangyu.jpg.meta",
+    "sha256": "A2D1A90B2F36990D6C05583ABA2631ABBB9C08DF98A07698AA1C7FCDF27F094D"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg",
+    "sha256": "C15BC8CAAB7FD243239D5349CC906060A432699086BFE6C97CEA630E3B40992F"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_parcels.jpg.meta",
+    "sha256": "11F7757C0D739D200B6FD2836F1C978EF44D6BB254093A230C9677EC7E2FC98B"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg",
+    "sha256": "2A9FC6708F5BEA53D4592C726D52A50EA1D530C08C3B2C3326A0C66FF2102C00"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_ticket.jpg.meta",
+    "sha256": "D5629EF33740A720B43FA2C98E16E4B136F425E8F64E09DF1371567B45C046DA"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg",
+    "sha256": "4C2C866CF0F0CD83BE3F3C685A9A5AE25E01C495A478023C0625D2D5F916833F"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_lili_westlake.jpg.meta",
+    "sha256": "F992982183787F21D1A06D63F520D90EB3384D184CB97F7703EBED6DA21F948F"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg",
+    "sha256": "3BBABC34A3462C1528C7A6F7791CA989DA104E538F1E501DFAB9C25E1B0CF021"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_dawn.jpg.meta",
+    "sha256": "381399755C87D88B13A340EFB431A839A05FD289375287DB8A684BE1BDEEF247"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg",
+    "sha256": "B40605C3A644AD1F20B28C789A4068EE71C0931BAEB2D260534CAB6E66B38FAE"
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_xg_tv.jpg.meta",
+    "sha256": "58E1C1B1372AB69D1415E45EADBEEED0601F15D39AFC6488D78091DE236816C7"
+  },
+  {
+    "path": "Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs",
+    "sha256": "0B4A4C43AC35F2801229EBC270260DE5F3746B7425613DCC13A90EA62389C002"
+  },
+  {
+    "path": "Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs.meta",
+    "sha256": "CE7E7BC51A120B531854C00DA6F37BFC8CCA24DDC2BEB9851CC12E7C1DF90B79"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgIcons.cs",
+    "sha256": "1B86328B2C3230A4CFCCDA9BE1DB5B6E6F87D321C8A8238A36799C0F85C7325F"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+    "sha256": "82465E8F68041392ECB111EC7B11B0807477128AC2A16075A737289276481473"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs",
+    "sha256": "A5F5EF1EE15E077076709B98E4912C63F6AC65C5857A519A5FDFD43D6A6F230F"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/PublicReadingInteractionUiChecks.cs",
+    "sha256": "25A38B301814BBC467EBE52BD0F7B7F90A9451988CCFF699582FE9D60BD5A2C9"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/SidebarLayoutChecks.cs",
+    "sha256": "24B63B437ED2878D92C764FDB523985F963AC6A1AFD6DBA858189A78985E22AD"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/TeachingFullRoundChecks.Actions.cs",
+    "sha256": "1256469BE8F765E288E752167AC5B55C98D6A0205987108ADE484CD0004DDC0F"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/TeachingFullRoundChecks.cs",
+    "sha256": "C8C9E736A64BA309DC6D6BD13BC1CA17507FB6D1DB452EDFA23CB6148F6D0F37"
+  },
+  {
+    "path": "Design/老周公共资讯短评_新增对白_20261019.md",
+    "sha256": "EEB204D5A20E4D8B6D35F61077A1CFBC43E4A1D920AE53A92F9AB39D83F3E19B"
+  },
+  {
+    "path": "Design/六小时整合决策记录_20261019.md",
+    "sha256": "10C42C555D3BEF15870B31D99F8FFD49312A04274587B01B584F6D3ACBEF665E"
+  },
+  {
+    "path": "Design/素材源码/group-chat/draw_chat_scenes.py",
+    "sha256": "0ECC0E14EC8A91BE1EDB3D9A6240B8875FDC9BB82A5A004E6571D084B64EEA9A"
+  },
+  {
+    "path": "Design/素材源码/group-chat/manifest.json",
+    "sha256": "A70CB79B529B93389374F4F8FDF0E794D78A7AD72BEF7ADDF880A84F517A2A72"
+  },
+  {
+    "path": "Design/整合记录.md",
+    "sha256": "8C3CE61FFAC6FA7A557338EC929C02943DDAF4580DF3BACBB1D6B5552B53405F"
+  },
+  {
+    "path": "Design/Claude主导协作交接_20261019.md",
+    "sha256": "4A7A57BD34667D1417592438B1E0082D2F09E9BEC8CB57C9AF741883F4672B59"
+  }
+]

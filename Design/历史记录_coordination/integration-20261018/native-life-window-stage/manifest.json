@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Assets/LocalBuild/Editor/NativeLifeWindowBuild.cs",
+    "sha256": "f0488a1cc037dc11afb2a86dadbed69d7ce358603a86a357324696674ef1a926"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/NativeLifeWindowBuild.cs.meta",
+    "sha256": "a4e64ceeb9b7151d665e3a1f34a2933a8ca970316092e7d8477ad1973728ed1f"
+  },
+  {
+    "path": "Assets/LocalBuild/NativeLifeWindowProbe.cs",
+    "sha256": "f4539aaad173bd40ce60591e2401a1a6e959fdadbd51f7d07f6ab749d0f340c6"
+  },
+  {
+    "path": "Assets/LocalBuild/NativeLifeWindowProbe.cs.meta",
+    "sha256": "1c8d12a440b8cdb271c83341ffa3cb63120c3adf6018041f56237fd68cb74bfb"
+  }
+]

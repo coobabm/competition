@@ -1,0 +1,12 @@
+# Train rare-item entry — source frozen
+
+Confirmed original catalog: XgRelics.All contains 24 entries, including angel_term (天使轮投资意向书). XgBackpackPage is the existing equip/inventory/collection UI. Generic items routes to the technology growth shelf and is not the requested collection.
+
+Added XgTrainPage.Relics.cs (+meta), one BuildSide call, and RefreshTrainingParts call/sidebar visibility. Compact 60px independent card is first in the existing scrolling sidebar. Uses XgUi Button / XgButtonPressFeedback and existing Click sound. Shows real owned count /24 and equipped count /purchased capacity. Rechecks existing backpack and routed home gates on click. Locked states show a disabled button with localized opening/chat/first-item reason. Catalog, core rules, prices, unlocks, saves, slots and inventory unchanged. Opening the existing backpack retains its original mark-as-viewed behavior.
+
+Verification entry: SidebarLayoutChecks.RunRelics (existing isolated Play runner), RelicExpansionUiChecks.Frames. Extended four zh/en × 960x600/1400x900 fixtures to validate empty gate, stale callback, hidden summary independence, real catalog/count, unified feedback, actual LCD pointer route to original backpack, unchanged serialized state/money. Screenshots train-relic-entry-{zh|en}-{small|large}. Existing slot expansion/purchase/chooser tests continue; corrected obsolete profileOverview reflection to actual player-name home NavButton.
+
+Static Roslyn parse and git diff --check passed. Unity semantic compilation and Play checks intentionally deferred to parent; no Unity run, no commits. Formal sources frozen.
+
+## Relic QA fixture correction
+The original failure remains at LocalVerification/SidebarLayout/20261019-172753-825/report.json and relics-ui-01.log. StageQuiz correctly intercepted the LCD pointer: the new fixture set stage2 but had not declared stage-entry teaching complete. Only RelicExpansionUiChecks.cs changed: CompletedStageEntryTeachingFixture records stage_enter quiz answers through the fixture stage, removes only already-answered queued entries and sets trainingLessonObservedStage. It does not hide/disable any product modal or grant quiz bonuses. Before the actual pointer click, the suite now explicitly asserts no pending quiz/knowledge or open lesson modal. This is a declared navigation fixture, not a natural-progression claim. Roslyn parse/diff check passed; source frozen for parent Unity rerun.

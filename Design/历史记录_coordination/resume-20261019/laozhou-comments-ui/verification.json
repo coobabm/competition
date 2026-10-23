@@ -1,0 +1,127 @@
+{
+  "status": "static_checks_passed_not_compiled_or_run",
+  "checks": [
+    {
+      "name": "no direct action, forced input/probe or runner mutation: .onClick.Invoke",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: ShareNewsWithZhou(",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: LaoZhouQuestions.Accept(",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: inputEnabled =",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: inputEnabled=",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: StoryFocus.Probe=",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: StoryFocus.Probe =",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: ClearRequest",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: SessionState.",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: EditorApplication.EnterPlaymode",
+      "passed": true
+    },
+    {
+      "name": "no direct action, forced input/probe or runner mutation: Process.Start",
+      "passed": true
+    },
+    {
+      "name": "real LCD click helper reused",
+      "passed": true
+    },
+    {
+      "name": "existing idle predicate inspected, not overridden",
+      "passed": true
+    },
+    {
+      "name": "three topics",
+      "passed": true
+    },
+    {
+      "name": "two languages and two actual contact routes",
+      "passed": true
+    },
+    {
+      "name": "expected 24 taps and 4 real acceptances",
+      "passed": true
+    },
+    {
+      "name": "real read and teach action assertions",
+      "passed": true
+    },
+    {
+      "name": "full QA and both channel counts guarded",
+      "passed": true
+    },
+    {
+      "name": "both browser and native chat captures",
+      "passed": true
+    },
+    {
+      "name": "cross-language persisted-state review",
+      "passed": true
+    },
+    {
+      "name": "finally restores fixture owner and enabled flags",
+      "passed": true
+    },
+    {
+      "name": "no production replacement",
+      "passed": true
+    },
+    {
+      "name": "only isolated new helper and metadata: Assets/LocalBuild/Editor/LaoZhouNewsCommentsUiChecks.cs",
+      "passed": true
+    },
+    {
+      "name": "only isolated new helper and metadata: Assets/LocalBuild/Editor/LaoZhouNewsCommentsUiChecks.cs.meta",
+      "passed": true
+    },
+    {
+      "name": "git apply --check only, no changes",
+      "passed": true
+    },
+    {
+      "name": "git apply --stat",
+      "passed": true
+    }
+  ],
+  "files": [
+    {
+      "path": "Assets/LocalBuild/Editor/LaoZhouNewsCommentsUiChecks.cs",
+      "sha256": "36257cc0db3afcb09d0db9eb9be899be4d0df9b5b1e10669a51a28936885b513"
+    },
+    {
+      "path": "Assets/LocalBuild/Editor/LaoZhouNewsCommentsUiChecks.cs.meta",
+      "sha256": "c843b62f6895c656827fafea2c652ed9f007e09cadd5693c9be7ad7fedf15d74"
+    }
+  ],
+  "patch_sha256": "caafa9a33868c0406791791700f62810703edcee06ffc15ff8928a6805eaf12f",
+  "not_run": [
+    "Unity",
+    "C# compile",
+    "LCD suite",
+    "model",
+    "build"
+  ]
+}

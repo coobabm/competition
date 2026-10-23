@@ -1,0 +1,343 @@
+{
+  "_id": "69a1bc1e089f30872f5c47d0",
+  "id": "bartowski/Qwen_Qwen3.5-4B-GGUF",
+  "private": false,
+  "pipeline_tag": "image-text-to-text",
+  "tags": [
+    "gguf",
+    "image-text-to-text",
+    "base_model:Qwen/Qwen3.5-4B",
+    "base_model:quantized:Qwen/Qwen3.5-4B",
+    "license:apache-2.0",
+    "endpoints_compatible",
+    "region:us",
+    "conversational"
+  ],
+  "downloads": 129176,
+  "likes": 69,
+  "modelId": "bartowski/Qwen_Qwen3.5-4B-GGUF",
+  "author": "bartowski",
+  "sha": "4168f45a16a1290d65a4ec0fa312ae917a4c15d6",
+  "lastModified": "2026-05-19T19:44:11Z",
+  "gated": false,
+  "disabled": false,
+  "widgetData": [
+    {
+      "text": "Hi, what can you help me with?"
+    },
+    {
+      "text": "What is 84 * 3 / 2?"
+    },
+    {
+      "text": "Tell me an interesting fact about the universe!"
+    },
+    {
+      "text": "Explain quantum computing in simple terms."
+    }
+  ],
+  "model-index": null,
+  "config": {},
+  "cardData": {
+    "quantized_by": "bartowski",
+    "pipeline_tag": "image-text-to-text",
+    "base_model": "Qwen/Qwen3.5-4B",
+    "base_model_relation": "quantized",
+    "license": "apache-2.0",
+    "license_link": "https://huggingface.co/Qwen/Qwen3.5-4B/blob/main/LICENSE"
+  },
+  "gguf": {
+    "total": 4326350848,
+    "architecture": "qwen35",
+    "context_length": 262144,
+    "chat_template": "{%- set image_count = namespace(value=0) %}\n{%- set video_count = namespace(value=0) %}\n{%- macro render_content(content, do_vision_count, is_system_content=false) %}\n    {%- if content is string %}\n        {{- content }}\n    {%- elif content is iterable and content is not mapping %}\n        {%- for item in content %}\n            {%- if 'image' in item or 'image_url' in item or item.type == 'image' %}\n                {%- if is_system_content %}\n                    {{- raise_exception('System message cannot contain images.') }}\n                {%- endif %}\n                {%- if do_vision_count %}\n                    {%- set image_count.value = image_count.value + 1 %}\n                {%- endif %}\n                {%- if add_vision_id %}\n                    {{- 'Picture ' ~ image_count.value ~ ': ' }}\n                {%- endif %}\n                {{- '<|vision_start|><|image_pad|><|vision_end|>' }}\n            {%- elif 'video' in item or item.type == 'video' %}\n                {%- if is_system_content %}\n                    {{- raise_exception('System message cannot contain videos.') }}\n                {%- endif %}\n                {%- if do_vision_count %}\n                    {%- set video_count.value = video_count.value + 1 %}\n                {%- endif %}\n                {%- if add_vision_id %}\n                    {{- 'Video ' ~ video_count.value ~ ': ' }}\n                {%- endif %}\n                {{- '<|vision_start|><|video_pad|><|vision_end|>' }}\n            {%- elif 'text' in item %}\n                {{- item.text }}\n            {%- else %}\n                {{- raise_exception('Unexpected item type in content.') }}\n            {%- endif %}\n        {%- endfor %}\n    {%- elif content is none or content is undefined %}\n        {{- '' }}\n    {%- else %}\n        {{- raise_exception('Unexpected content type.') }}\n    {%- endif %}\n{%- endmacro %}\n{%- if not messages %}\n    {{- raise_exception('No messages provided.') }}\n{%- endif %}\n{%- if tools and tools is iterable and tools is not mapping %}\n    {{- '<|im_start|>system\\n' }}\n    {{- \"# Tools\\n\\nYou have access to the following functions:\\n\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\" }}\n    {{- '\\n\\nIf you choose to call a function ONLY reply in the following format with NO suffix:\\n\\n<tool_call>\\n<function=example_function_name>\\n<parameter=example_parameter_1>\\nvalue_1\\n</parameter>\\n<parameter=example_parameter_2>\\nThis is the value for the second parameter\\nthat can span\\nmultiple lines\\n</parameter>\\n</function>\\n</tool_call>\\n\\n<IMPORTANT>\\nReminder:\\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\\n- Required parameters MUST be specified\\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\\n</IMPORTANT>' }}\n    {%- if messages[0].role == 'system' %}\n        {%- set content = render_content(messages[0].content, false, true)|trim %}\n        {%- if content %}\n            {{- '\\n\\n' + content }}\n        {%- endif %}\n    {%- endif %}\n    {{- '<|im_end|>\\n' }}\n{%- else %}\n    {%- if messages[0].role == 'system' %}\n        {%- set content = render_content(messages[0].content, false, true)|trim %}\n        {{- '<|im_start|>system\\n' + content + '<|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- set ns = namespace(multi_step_tool=true, last_query_index=messages|length - 1) %}\n{%- for message in messages[::-1] %}\n    {%- set index = (messages|length - 1) - loop.index0 %}\n    {%- if ns.multi_step_tool and message.role == \"user\" %}\n        {%- set content = render_content(message.content, false)|trim %}\n        {%- if not(content.startswith('<tool_response>') and content.endswith('</tool_response>')) %}\n            {%- set ns.multi_step_tool = false %}\n            {%- set ns.last_query_index = index %}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if ns.multi_step_tool %}\n    {{- raise_exception('No user query found in messages.') }}\n{%- endif %}\n{%- for message in messages %}\n    {%- set content = render_content(message.content, true)|trim %}\n    {%- if message.role == \"system\" %}\n        {%- if not loop.first %}\n            {{- raise_exception('System message must be at the beginning.') }}\n        {%- endif %}\n    {%- elif message.role == \"user\" %}\n        {{- '<|im_start|>' + message.role + '\\n' + content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {%- set reasoning_content = '' %}\n        {%- if message.reasoning_content is string %}\n            {%- set reasoning_content = message.reasoning_content %}\n        {%- else %}\n            {%- if '</think>' in content %}\n                {%- set reasoning_content = content.split('</think>')[0].rstrip('\\n').split('<think>')[-1].lstrip('\\n') %}\n                {%- set content = content.split('</think>')[-1].lstrip('\\n') %}\n            {%- endif %}\n        {%- endif %}\n        {%- set reasoning_content = reasoning_content|trim %}\n        {%- if loop.index0 > ns.last_query_index %}\n            {{- '<|im_start|>' + message.role + '\\n<think>\\n' + reasoning_content + '\\n</think>\\n\\n' + content }}\n        {%- else %}\n            {{- '<|im_start|>' + message.role + '\\n' + content }}\n        {%- endif %}\n        {%- if message.tool_calls and message.tool_calls is iterable and message.tool_calls is not mapping %}\n            {%- for tool_call in message.tool_calls %}\n                {%- if tool_call.function is defined %}\n                    {%- set tool_call = tool_call.function %}\n                {%- endif %}\n                {%- if loop.first %}\n                    {%- if content|trim %}\n                        {{- '\\n\\n<tool_call>\\n<function=' + tool_call.name + '>\\n' }}\n                    {%- else %}\n                        {{- '<tool_call>\\n<function=' + tool_call.name + '>\\n' }}\n                    {%- endif %}\n                {%- else %}\n                    {{- '\\n<tool_call>\\n<function=' + tool_call.name + '>\\n' }}\n                {%- endif %}\n                {%- if tool_call.arguments is defined %}\n                    {%- for args_name, args_value in tool_call.arguments|items %}\n                        {{- '<parameter=' + args_name + '>\\n' }}\n                        {%- set args_value = args_value | tojson | safe if args_value is mapping or (args_value is sequence and args_value is not string) else args_value | string %}\n                        {{- args_value }}\n                        {{- '\\n</parameter>\\n' }}\n                    {%- endfor %}\n                {%- endif %}\n                {{- '</function>\\n</tool_call>' }}\n            {%- endfor %}\n        {%- endif %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if loop.previtem and loop.previtem.role != \"tool\" %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- content }}\n        {{- '\\n</tool_response>' }}\n        {%- if not loop.last and loop.nextitem.role != \"tool\" %}\n            {{- '<|im_end|>\\n' }}\n        {%- elif loop.last %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- else %}\n        {{- raise_exception('Unexpected message role.') }}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n    {%- if enable_thinking is defined and enable_thinking is false %}\n        {{- '<think>\\n\\n</think>\\n\\n' }}\n    {%- else %}\n        {{- '<think>\\n' }}\n    {%- endif %}\n{%- endif %}",
+    "eos_token": "<|im_end|>",
+    "totalFileSize": 8665620192
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes",
+      "blobId": "01a50f46ce53457ab4a178a4c1f5f6ee3f652bd2",
+      "size": 3245
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-IQ2_M.gguf",
+      "blobId": "5ac8b231fc2e229598023aac244c7d8004780251",
+      "size": 1953751008,
+      "lfs": {
+        "sha256": "fd6c12b5d4f76be174edbf4769d2a27b0384da020f5cf1241463679798a9f4ec",
+        "size": 1953751008,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-IQ3_M.gguf",
+      "blobId": "b6a045aa6bb1775aee9d0e3418e8ba10b6596d0a",
+      "size": 2483333088,
+      "lfs": {
+        "sha256": "5ad76abae6b7a27d1463d90e6d86886850769e34906a88cfa4347cae72c91502",
+        "size": 2483333088,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-IQ3_XS.gguf",
+      "blobId": "fff451e8c441278493bdf2e3c76f8146e7bdfa71",
+      "size": 2403952608,
+      "lfs": {
+        "sha256": "ecb30836d260d1e44f09edd2d814c473637ba12345ab474c6cde07af3b84b9be",
+        "size": 2403952608,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-IQ3_XXS.gguf",
+      "blobId": "73c0e5bc86f45870ca63eff6b2ce9d7b0e662309",
+      "size": 2243829728,
+      "lfs": {
+        "sha256": "37046243577d6b44e98137680623b807ae92b147982a91d5726e4c0c64e7508e",
+        "size": 2243829728,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-IQ4_NL.gguf",
+      "blobId": "9285a1a5c8d67ec0cf441eca566849fb2a015a7d",
+      "size": 2775541728,
+      "lfs": {
+        "sha256": "f007c3dbf67df668354d37ae13d87fd5789059704977959187e8342aec03b66f",
+        "size": 2775541728,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-IQ4_XS.gguf",
+      "blobId": "4031fca06038aa3d7e413f687754e81bdf101ee2",
+      "size": 2671339488,
+      "lfs": {
+        "sha256": "628124c61a806897d3f28dcd416be6daff94f62f731eb900d4381875eac9e412",
+        "size": 2671339488,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q2_K.gguf",
+      "blobId": "c2be0339e3fc0da3594849d18ecfa4d62ccc701f",
+      "size": 2191779808,
+      "lfs": {
+        "sha256": "8875934081d3b9b51b41de628e34d964a15d3fac5b5592baf2c01c5a04460c9a",
+        "size": 2191779808,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q2_K_L.gguf",
+      "blobId": "7531f8e7fbbbe4b104f88e26f645a2edc0bcd128",
+      "size": 2345738208,
+      "lfs": {
+        "sha256": "63d3cbc85cb8531175566c006970974d992943888da55a1c83aa76c05137d93d",
+        "size": 2345738208,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q3_K_L.gguf",
+      "blobId": "0dcc41bcdd29c05efa9b9c7401a5b466606cf7c9",
+      "size": 2665441248,
+      "lfs": {
+        "sha256": "41c3f1bf47e477693dab332e73347c7138d5e9fbfe74c6d2eaba590be1f3d20a",
+        "size": 2665441248,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q3_K_M.gguf",
+      "blobId": "56b374ea519cfe45918a6a47685e09b1c47ab156",
+      "size": 2575656928,
+      "lfs": {
+        "sha256": "049c71be191fb980a2851ee4d141f437feb50f001191e9b51bd4f6ab2b04146a",
+        "size": 2575656928,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q3_K_S.gguf",
+      "blobId": "4fdb07fac2d7b827ecf326c1f2bed5995b20f6b3",
+      "size": 2454251488,
+      "lfs": {
+        "sha256": "b4fd1933335ebefeb0cc3fde07a439485f3d5b16a21c25e1b9afdaa165492017",
+        "size": 2454251488,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q3_K_XL.gguf",
+      "blobId": "067dfd358da779b20f7695f9af8b13cbacc9bc93",
+      "size": 2819399648,
+      "lfs": {
+        "sha256": "f124b26768806bdfda0ff97d0f6c27c3fa489e0fcedc439927256baf74d40a33",
+        "size": 2819399648,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q4_0.gguf",
+      "blobId": "d99923baae4377dfacde1835903f5f6a030758a3",
+      "size": 2776033248,
+      "lfs": {
+        "sha256": "3e977de32dfb9377ff827f210091cce5d3c05c7b0f0b9b0c8005df7c0677a49b",
+        "size": 2776033248,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q4_1.gguf",
+      "blobId": "257cc1a56f0656265b91426b76c885181ad1ddfd",
+      "size": 2979850208,
+      "lfs": {
+        "sha256": "3ff4832c848351354ee0d9c6d87d80485e36dbb6419dd22acf46b82ffb94ef7a",
+        "size": 2979850208,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q4_K_L.gguf",
+      "blobId": "57fef4c809f96737105a2b658d81eac27db8ebf6",
+      "size": 3166986208,
+      "lfs": {
+        "sha256": "2986654fa857ff6c7a0ebe8957e11c1a376b43be9d3bd905285d778342da22b8",
+        "size": 3166986208,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q4_K_M.gguf",
+      "blobId": "a859bab891c07bf7d86a7833bfe00db732b8e44e",
+      "size": 3013027808,
+      "lfs": {
+        "sha256": "13c16f426047e2de38cd075bdade4a7bcbc8c774384876f677740cda65f8a983",
+        "size": 3013027808,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q4_K_S.gguf",
+      "blobId": "465792bff758fc83c337bc828cdcc830a7e5de5a",
+      "size": 2846156768,
+      "lfs": {
+        "sha256": "3a6e5e8144696a87d17f136b06fce7fe5008a42737938056df13e11ddba4a01b",
+        "size": 2846156768,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q5_K_L.gguf",
+      "blobId": "09706ab4ae39d49041eebf966862fcf2b1070888",
+      "size": 3597721568,
+      "lfs": {
+        "sha256": "4e10523c570b7f5c680a7e74c61a19b82c7546c88bb3ec5fcc525d03bc345551",
+        "size": 3597721568,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q5_K_M.gguf",
+      "blobId": "0a9c2c4f528e512dd29ad5fb17de606d6bb7a19c",
+      "size": 3443763168,
+      "lfs": {
+        "sha256": "21c4643259ce62ffd979848e5819ce03823fd9e9902279ab54cc0d572d83d33e",
+        "size": 3443763168,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q5_K_S.gguf",
+      "blobId": "e6d75ff3839ae44aa2d1ca46362f5aa835546007",
+      "size": 3256412128,
+      "lfs": {
+        "sha256": "e4b59fdb8cd1dedb2591dc4eb368b63cb8c321447ff9512e33b7d42fd3f35e12",
+        "size": 3256412128,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q6_K.gguf",
+      "blobId": "0086804cdf3afbd8d28ba7f2be6e425d99d55ead",
+      "size": 3805358048,
+      "lfs": {
+        "sha256": "5a5bc7a3f9375b395e9f81fb69109038cf160c84606b8192f13cbb8355ca59f2",
+        "size": 3805358048,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q6_K_L.gguf",
+      "blobId": "6e6e2c33cae01f898a6ca758aee7ad1816389f79",
+      "size": 3959316448,
+      "lfs": {
+        "sha256": "0d7931a7f143ccfdf675c0d84d542c387cd9255af94ee9c8fb5fa6f6df7c08a0",
+        "size": 3959316448,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-Q8_0.gguf",
+      "blobId": "9136ee39b0abc864657ec4269e8708cb6840f47a",
+      "size": 4622131168,
+      "lfs": {
+        "sha256": "5c74c0ede371924357dff0cb6ba145bd67208b9b2389ded681adfff3f7608db7",
+        "size": 4622131168,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-bf16.gguf",
+      "blobId": "27404ded60603d64482251716890d3ab148c425c",
+      "size": 8665620192,
+      "lfs": {
+        "sha256": "714270d4eb1d336bca9a8dcf0446982e45721be0399d810586a6b82e727dfee5",
+        "size": 8665620192,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "Qwen_Qwen3.5-4B-imatrix.gguf",
+      "blobId": "2dde414d2c7c8fe214e9952c5dc74f6757e325e2",
+      "size": 3626496,
+      "lfs": {
+        "sha256": "f1dba8ed29370cd5a8c0ba9438edb130f9895599a0b1a657c939d27a12c41b6b",
+        "size": 3626496,
+        "pointerSize": 132
+      }
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "28caa29d83db5266bee9ff3b9daa0a40d789ff24",
+      "size": 13706
+    },
+    {
+      "rfilename": "mmproj-Qwen_Qwen3.5-4B-bf16.gguf",
+      "blobId": "9b2d24bf8b97401ca4e63ef46fe52c59dac727ce",
+      "size": 675569216,
+      "lfs": {
+        "sha256": "463f39bd1c291c1186c319a8c90ff8640aafa678b14cbee2232d695113dfbb66",
+        "size": 675569216,
+        "pointerSize": 134
+      }
+    },
+    {
+      "rfilename": "mmproj-Qwen_Qwen3.5-4B-f16.gguf",
+      "blobId": "dd8cfac5ccb0ad91bdc09b9fa2fbf7d1566757c1",
+      "size": 672423488,
+      "lfs": {
+        "sha256": "659b59dd44b73b1cd34af6cc424669484b06dc80f4340adf8ea84ad776eef813",
+        "size": 672423488,
+        "pointerSize": 134
+      }
+    }
+  ],
+  "spaces": [
+    "usmanovrustam/skrapyx-api"
+  ],
+  "createdAt": "2026-02-27T15:45:34Z",
+  "usedStorage": 282250059392
+}

@@ -1,0 +1,869 @@
+{
+  "head": "3533141a406940d571e064f3797328c7d214235a",
+  "captured_at": "2026-10-19T19:03:22.180263",
+  "rows": [
+    {
+      "path": "Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset",
+      "head_sha256": "ae535c61dc65b7db169a52c59a25c8f3099cca31c83d34b145a2a0606c46c4ba",
+      "work_sha256": "ae535c61dc65b7db169a52c59a25c8f3099cca31c83d34b145a2a0606c46c4ba",
+      "head_bytes": 2066511,
+      "work_bytes": 2066511,
+      "work_mtime": "2026-10-19T18:58:25.604562",
+      "changed_fields": [],
+      "head_characters": 0,
+      "work_characters": 0,
+      "added_unicode": [],
+      "removed_unicode": [],
+      "changed_documents": [],
+      "new_documents": [],
+      "removed_documents": [],
+      "config": {
+        "m_SourceFontFileGUID": {
+          "head": " bcefe69df9a2240f1841ef848779f9ac\n",
+          "work": " bcefe69df9a2240f1841ef848779f9ac\n"
+        },
+        "m_SourceFontFile": {
+          "head": " {fileID: 12800000, guid: bcefe69df9a2240f1841ef848779f9ac, type: 3}\n",
+          "work": " {fileID: 12800000, guid: bcefe69df9a2240f1841ef848779f9ac, type: 3}\n"
+        },
+        "m_AtlasPopulationMode": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_ClearDynamicDataOnBuild": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_IsMultiAtlasTexturesEnabled": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_AtlasWidth": {
+          "head": " 2048\n",
+          "work": " 2048\n"
+        },
+        "m_AtlasHeight": {
+          "head": " 2048\n",
+          "work": " 2048\n"
+        },
+        "m_AtlasPadding": {
+          "head": " 5\n",
+          "work": " 5\n"
+        },
+        "m_AtlasRenderMode": {
+          "head": " 4165\n",
+          "work": " 4165\n"
+        },
+        "m_FallbackFontAssetTable": {
+          "head": " []\n",
+          "work": " []\n"
+        },
+        "m_FontWeightTable": {
+          "head": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n",
+          "work": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n"
+        }
+      },
+      "head_crlf": 0,
+      "work_crlf": 0,
+      "normalized_equal": true,
+      "existing_character_sequence_prefix_retained": true,
+      "texture_changes": []
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset",
+      "head_sha256": "648ce2b2e60533872ecdfb3912cdb0a55fc6f7fe1de82db1a1beb18443168413",
+      "work_sha256": "a483f6d196d3777ec7f4886eebafd83622dbe1d43964586351985126af05859c",
+      "head_bytes": 6503,
+      "work_bytes": 6516,
+      "work_mtime": "2026-10-19T16:59:07.349349",
+      "changed_fields": [
+        {
+          "field": "m_FallbackFontAssetTable",
+          "category": "configuration",
+          "head_chars": 4,
+          "work_chars": 17,
+          "head": " []\n",
+          "work": "\n  - {fileID: 0}\n"
+        }
+      ],
+      "head_characters": 0,
+      "work_characters": 0,
+      "added_unicode": [],
+      "removed_unicode": [],
+      "changed_documents": [
+        "!u!114 &11400000"
+      ],
+      "new_documents": [],
+      "removed_documents": [],
+      "config": {
+        "m_SourceFontFileGUID": {
+          "head": " 6c4b3165b37dc7046901fc3d4a0fcce5\n",
+          "work": " 6c4b3165b37dc7046901fc3d4a0fcce5\n"
+        },
+        "m_SourceFontFile": {
+          "head": " {fileID: 12800000, guid: 6c4b3165b37dc7046901fc3d4a0fcce5, type: 3}\n",
+          "work": " {fileID: 12800000, guid: 6c4b3165b37dc7046901fc3d4a0fcce5, type: 3}\n"
+        },
+        "m_AtlasPopulationMode": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_ClearDynamicDataOnBuild": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_IsMultiAtlasTexturesEnabled": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_AtlasWidth": {
+          "head": " 1024\n",
+          "work": " 1024\n"
+        },
+        "m_AtlasHeight": {
+          "head": " 1024\n",
+          "work": " 1024\n"
+        },
+        "m_AtlasPadding": {
+          "head": " 20\n",
+          "work": " 20\n"
+        },
+        "m_AtlasRenderMode": {
+          "head": " 4165\n",
+          "work": " 4165\n"
+        },
+        "m_FallbackFontAssetTable": {
+          "head": " []\n",
+          "work": "\n  - {fileID: 0}\n"
+        },
+        "m_FontWeightTable": {
+          "head": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n",
+          "work": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n"
+        }
+      },
+      "head_crlf": 0,
+      "work_crlf": 0,
+      "normalized_equal": false,
+      "existing_character_sequence_prefix_retained": true,
+      "texture_changes": []
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset",
+      "head_sha256": "31519069e40e6b56200733b1daa4aa9d5c3453dcd25d9229e3829a9adee0ab57",
+      "work_sha256": "0ca0adfe2ffc58b035ed0debfc6dfe330977029c3caff692bf24a2c74cfad1b2",
+      "head_bytes": 37773592,
+      "work_bytes": 37773605,
+      "work_mtime": "2026-10-19T16:59:07.302329",
+      "changed_fields": [
+        {
+          "field": "m_FallbackFontAssetTable",
+          "category": "configuration",
+          "head_chars": 4,
+          "work_chars": 17,
+          "head": " []\n",
+          "work": "\n  - {fileID: 0}\n"
+        }
+      ],
+      "head_characters": 0,
+      "work_characters": 0,
+      "added_unicode": [],
+      "removed_unicode": [],
+      "changed_documents": [
+        "!u!114 &11400000"
+      ],
+      "new_documents": [],
+      "removed_documents": [],
+      "config": {
+        "m_SourceFontFileGUID": {
+          "head": " 3881b5ed647c149b5a05af8df9312901\n",
+          "work": " 3881b5ed647c149b5a05af8df9312901\n"
+        },
+        "m_SourceFontFile": {
+          "head": " {fileID: 12800000, guid: 3881b5ed647c149b5a05af8df9312901, type: 3}\n",
+          "work": " {fileID: 12800000, guid: 3881b5ed647c149b5a05af8df9312901, type: 3}\n"
+        },
+        "m_AtlasPopulationMode": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_ClearDynamicDataOnBuild": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_IsMultiAtlasTexturesEnabled": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_AtlasWidth": {
+          "head": " 1024\n",
+          "work": " 1024\n"
+        },
+        "m_AtlasHeight": {
+          "head": " 1024\n",
+          "work": " 1024\n"
+        },
+        "m_AtlasPadding": {
+          "head": " 20\n",
+          "work": " 20\n"
+        },
+        "m_AtlasRenderMode": {
+          "head": " 4165\n",
+          "work": " 4165\n"
+        },
+        "m_FallbackFontAssetTable": {
+          "head": " []\n",
+          "work": "\n  - {fileID: 0}\n"
+        },
+        "m_FontWeightTable": {
+          "head": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n",
+          "work": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n"
+        }
+      },
+      "head_crlf": 0,
+      "work_crlf": 0,
+      "normalized_equal": false,
+      "existing_character_sequence_prefix_retained": true,
+      "texture_changes": []
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/Numeric.asset",
+      "head_sha256": "6cfadf907444c2fa91627c62de3f34cbfe8e02e7f976750851981a754e4cc668",
+      "work_sha256": "1940f4a23841c6d3421064b2c220da60655d15709860c2a83247c11c6825e132",
+      "head_bytes": 743706,
+      "work_bytes": 744393,
+      "work_mtime": "2026-10-19T18:42:53.245480",
+      "changed_fields": [
+        {
+          "field": "m_CharacterTable",
+          "category": "cache",
+          "head_chars": 7678,
+          "work_chars": 7758,
+          "head": "[omitted]",
+          "work": "[omitted]"
+        },
+        {
+          "field": "m_FontFeatureTable",
+          "category": "cache",
+          "head_chars": 161172,
+          "work_chars": 161317,
+          "head": "[omitted]",
+          "work": "[omitted]"
+        },
+        {
+          "field": "m_FreeGlyphRects",
+          "category": "cache",
+          "head_chars": 4702,
+          "work_chars": 4764,
+          "head": "[omitted]",
+          "work": "[omitted]"
+        },
+        {
+          "field": "m_GlyphTable",
+          "category": "cache",
+          "head_chars": 33815,
+          "work_chars": 34156,
+          "head": "[omitted]",
+          "work": "[omitted]"
+        },
+        {
+          "field": "m_UsedGlyphRects",
+          "category": "cache",
+          "head_chars": 5758,
+          "work_chars": 5817,
+          "head": "[omitted]",
+          "work": "[omitted]"
+        }
+      ],
+      "head_characters": 100,
+      "work_characters": 101,
+      "added_unicode": [
+        10003
+      ],
+      "removed_unicode": [],
+      "changed_documents": [
+        "!u!114 &11400000",
+        "!u!28 &6160201947646165193"
+      ],
+      "new_documents": [],
+      "removed_documents": [],
+      "config": {
+        "m_SourceFontFileGUID": {
+          "head": " 321469ff54ca99d45afdc6a256bfadfc\n",
+          "work": " 321469ff54ca99d45afdc6a256bfadfc\n"
+        },
+        "m_SourceFontFile": {
+          "head": " {fileID: 12800000, guid: 321469ff54ca99d45afdc6a256bfadfc, type: 3}\n",
+          "work": " {fileID: 12800000, guid: 321469ff54ca99d45afdc6a256bfadfc, type: 3}\n"
+        },
+        "m_AtlasPopulationMode": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_ClearDynamicDataOnBuild": {
+          "head": " 0\n",
+          "work": " 0\n"
+        },
+        "m_IsMultiAtlasTexturesEnabled": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_AtlasWidth": {
+          "head": " 512\n",
+          "work": " 512\n"
+        },
+        "m_AtlasHeight": {
+          "head": " 512\n",
+          "work": " 512\n"
+        },
+        "m_AtlasPadding": {
+          "head": " 5\n",
+          "work": " 5\n"
+        },
+        "m_AtlasRenderMode": {
+          "head": " 4165\n",
+          "work": " 4165\n"
+        },
+        "m_FallbackFontAssetTable": {
+          "head": "\n  - {fileID: 11400000, guid: 1694ab11bc676334bb1690dc2e18f80b, type: 2}\n",
+          "work": "\n  - {fileID: 11400000, guid: 1694ab11bc676334bb1690dc2e18f80b, type: 2}\n"
+        },
+        "m_FontWeightTable": {
+          "head": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n",
+          "work": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n"
+        }
+      },
+      "head_crlf": 0,
+      "work_crlf": 0,
+      "normalized_equal": false,
+      "existing_character_sequence_prefix_retained": true,
+      "texture_changes": [
+        {
+          "document": "!u!28 &6160201947646165193",
+          "changed_fields": [
+            "_typelessdata"
+          ],
+          "dimensions": {
+            "m_Width": " 512\n",
+            "m_Height": " 512\n",
+            "m_TextureFormat": " 1\n"
+          }
+        }
+      ]
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset",
+      "head_sha256": "fa7dd514801af7a7b10b0d1ca70cf2746e02faa6f610f3121f042dabf412e6d1",
+      "work_sha256": "457ca141c761bd4d136ade64ed7c21688d5d7fdc0e444ff9cfddf1e3de0bdfca",
+      "head_bytes": 9061067,
+      "work_bytes": 17451958,
+      "work_mtime": "2026-10-19T17:30:03.804947",
+      "changed_fields": [
+        {
+          "field": "m_AtlasTextureIndex",
+          "category": "cache",
+          "head_chars": 3,
+          "work_chars": 3,
+          "head": " 0\n",
+          "work": " 1\n"
+        },
+        {
+          "field": "m_AtlasTextures",
+          "category": "cache",
+          "head_chars": 36,
+          "work_chars": 71,
+          "head": "\n  - {fileID: -4428575626598397343}\n",
+          "work": "\n  - {fileID: -4428575626598397343}\n  - {fileID: -6450528836985158651}\n"
+        },
+        {
+          "field": "m_CharacterTable",
+          "category": "cache",
+          "head_chars": 89746,
+          "work_chars": 111235,
+          "head": "[omitted]",
+          "work": "[omitted]"
+        },
+        {
+          "field": "m_FontFeatureTable",
+          "category": "cache",
+          "head_chars": 89991,
+          "work_chars": 91667,
+          "head": "[omitted]",
+          "work": "[omitted]"
+        },
+        {
+          "field": "m_FreeGlyphRects",
+          "category": "cache",
+          "head_chars": 46845,
+          "work_chars": 850,
+          "head": "[omitted]",
+          "work": "\n  - m_X: 55\n    m_Y: 392\n    m_Width: 1992\n    m_Height: 1655\n  - m_X: 54\n    m_Y: 279\n    m_Width: 1\n    m_Height: 2\n  - m_X: 109\n    m_Y: 269\n    m_Width: 1938\n    m_Height: 1778\n  - m_X: 55\n    m_Y: 215\n    m_Width: 53\n    m_Height: 9\n  - m_X: 108\n    m_Y: 269\n    m_Width: 1939\n    m_Height: 10\n  - m_X: 102\n    m_Y: 56\n    m_Width: 8\n    m_Height: 48\n  - m_X: 165\n    m_Y: 56\n    m_Width: 1882\n    m_Height: 1991\n  - m_X: 219\n    m_Y: 0\n    m_Width: 1828\n    m_Height: 2047\n  - m_X: 109\n    m_Y: 214\n    m_Width: 1938\n    m_Height: 1\n  - m_X: 110\n    m_Y: 112\n    m_Width: 1937\n    m_Height: 49\n  - m_X: 163\n    m_Y: 214\n    m_Width: 1884\n    m_Height: 1833\n  - m_X: 164\n    m_Y: 112\n    m_Width: 1883\n    m_Height: 1935\n  - m_X: 0\n    m_Y: 503\n    m_Width: 2047\n    m_Height: 1544\n  - m_X: 54\n    m_Y: 447\n    m_Width: 1993\n    m_Height: 1600\n"
+        },
+        {
+          "field": "m_GlyphTable",
+          "category": "cache",
+          "head_chars": 373271,
+          "work_chars": 462428,
+          "head": "[omitted]",
+          "work": "[omitted]"
+        },
+        {
+          "field": "m_UsedGlyphRects",
+          "category": "cache",
+          "head_chars": 66304,
+          "work_chars": 1204,
+          "head": "[omitted]",
+          "work": "\n  - m_X: 0\n    m_Y: 0\n    m_Width: 55\n    m_Height: 56\n  - m_X: 0\n    m_Y: 56\n    m_Width: 55\n    m_Height: 56\n  - m_X: 0\n    m_Y: 112\n    m_Width: 55\n    m_Height: 56\n  - m_X: 0\n    m_Y: 168\n    m_Width: 55\n    m_Height: 56\n  - m_X: 0\n    m_Y: 224\n    m_Width: 54\n    m_Height: 57\n  - m_X: 0\n    m_Y: 281\n    m_Width: 55\n    m_Height: 55\n  - m_X: 54\n    m_Y: 224\n    m_Width: 54\n    m_Height: 55\n  - m_X: 55\n    m_Y: 0\n    m_Width: 55\n    m_Height: 56\n  - m_X: 55\n    m_Y: 56\n    m_Width: 47\n    m_Height: 48\n  - m_X: 55\n    m_Y: 104\n    m_Width: 55\n    m_Height: 57\n  - m_X: 55\n    m_Y: 161\n    m_Width: 54\n    m_Height: 54\n  - m_X: 0\n    m_Y: 336\n    m_Width: 54\n    m_Height: 56\n  - m_X: 0\n    m_Y: 392\n    m_Width: 55\n    m_Height: 55\n  - m_X: 54\n    m_Y: 336\n    m_Width: 55\n    m_Height: 56\n  - m_X: 55\n    m_Y: 279\n    m_Width: 54\n    m_Height: 57\n  - m_X: 108\n    m_Y: 215\n    m_Width: 55\n    m_Height: 54\n  - m_X: 110\n    m_Y: 0\n    m_Width: 54\n    m_Height: 56\n  - m_X: 110\n    m_Y: 56\n    m_Width: 55\n    m_Height: 56\n  - m_X: 164\n    m_Y: 0\n    m_Width: 55\n    m_Height: 56\n  - m_X: 109\n    m_Y: 161\n    m_Width: 55\n    m_Height: 53\n  - m_X: 0\n    m_Y: 447\n    m_Width: 54\n    m_Height: 56\n"
+        }
+      ],
+      "head_characters": 1116,
+      "work_characters": 1382,
+      "added_unicode": [
+        178,
+        247,
+        8249,
+        8747,
+        9671,
+        12304,
+        12305,
+        20018,
+        20046,
+        20048,
+        20107,
+        20113,
+        20165,
+        20221,
+        20301,
+        20351,
+        20363,
+        20381,
+        20518,
+        20598,
+        20731,
+        20799,
+        20813,
+        20900,
+        20914,
+        20917,
+        20943,
+        20945,
+        20973,
+        20992,
+        21021,
+        21033,
+        21098,
+        21162,
+        21242,
+        21247,
+        21305,
+        21306,
+        21338,
+        21364,
+        21387,
+        21463,
+        21472,
+        21478,
+        21497,
+        21523,
+        21557,
+        21619,
+        21654,
+        21709,
+        21830,
+        21857,
+        21866,
+        21884,
+        21916,
+        22242,
+        22336,
+        22353,
+        22635,
+        22766,
+        22833,
+        22863,
+        23452,
+        23453,
+        23458,
+        23485,
+        23610,
+        23613,
+        23614,
+        23616,
+        23621,
+        23637,
+        23646,
+        23736,
+        23849,
+        24029,
+        24110,
+        24130,
+        24191,
+        24314,
+        24322,
+        24402,
+        24452,
+        24490,
+        24517,
+        24536,
+        24537,
+        24565,
+        24577,
+        24605,
+        24635,
+        24656,
+        24685,
+        24708,
+        24713,
+        24724,
+        24735,
+        24744,
+        24785,
+        24815,
+        25026,
+        25130,
+        25143,
+        25193,
+        25196,
+        25220,
+        25237,
+        25269,
+        25276,
+        25277,
+        25286,
+        25318,
+        25346,
+        25463,
+        25506,
+        25551,
+        25797,
+        25805,
+        25874,
+        25955,
+        26007,
+        26049,
+        26087,
+        26234,
+        26242,
+        26397,
+        26434,
+        26463,
+        26495,
+        26522,
+        26576,
+        26588,
+        26775,
+        26799,
+        27426,
+        27468,
+        27585,
+        27597,
+        27665,
+        27714,
+        27719,
+        27748,
+        27833,
+        27844,
+        27874,
+        27966,
+        27979,
+        28010,
+        28072,
+        28129,
+        28145,
+        28176,
+        28418,
+        28431,
+        28608,
+        28689,
+        28784,
+        28809,
+        29031,
+        29087,
+        29190,
+        29369,
+        29503,
+        29615,
+        29756,
+        29814,
+        29942,
+        30382,
+        30410,
+        30427,
+        30456,
+        30606,
+        30784,
+        30860,
+        31036,
+        31227,
+        31243,
+        31295,
+        31526,
+        31574,
+        31616,
+        31687,
+        31821,
+        32032,
+        32435,
+        32454,
+        32455,
+        32476,
+        32477,
+        32487,
+        32489,
+        32490,
+        32564,
+        32676,
+        32784,
+        32852,
+        32946,
+        33073,
+        33280,
+        33510,
+        33539,
+        33616,
+        33778,
+        33829,
+        33879,
+        34013,
+        34394,
+        34928,
+        35009,
+        35065,
+        35272,
+        35302,
+        35758,
+        35784,
+        35813,
+        35843,
+        35851,
+        35895,
+        36151,
+        36161,
+        36186,
+        36190,
+        36192,
+        36229,
+        36291,
+        36319,
+        36328,
+        36731,
+        36744,
+        36755,
+        36801,
+        36805,
+        36843,
+        36848,
+        36861,
+        36867,
+        36882,
+        36951,
+        36965,
+        37266,
+        37322,
+        38142,
+        38388,
+        38395,
+        38450,
+        38476,
+        38477,
+        38500,
+        38544,
+        38548,
+        38590,
+        38706,
+        39034,
+        39035,
+        39038,
+        39039,
+        39046,
+        39272,
+        39300,
+        39302,
+        39551,
+        39575,
+        40065,
+        65291,
+        65339,
+        65341
+      ],
+      "removed_unicode": [],
+      "changed_documents": [
+        "!u!28 &-4428575626598397343",
+        "!u!114 &11400000"
+      ],
+      "new_documents": [
+        "!u!28 &-6450528836985158651"
+      ],
+      "removed_documents": [],
+      "config": {
+        "m_SourceFontFileGUID": {
+          "head": " 75f62267335fcdb4daa0aff166dca296\n",
+          "work": " 75f62267335fcdb4daa0aff166dca296\n"
+        },
+        "m_SourceFontFile": {
+          "head": " {fileID: 12800000, guid: 75f62267335fcdb4daa0aff166dca296, type: 3}\n",
+          "work": " {fileID: 12800000, guid: 75f62267335fcdb4daa0aff166dca296, type: 3}\n"
+        },
+        "m_AtlasPopulationMode": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_ClearDynamicDataOnBuild": {
+          "head": " 0\n",
+          "work": " 0\n"
+        },
+        "m_IsMultiAtlasTexturesEnabled": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_AtlasWidth": {
+          "head": " 2048\n",
+          "work": " 2048\n"
+        },
+        "m_AtlasHeight": {
+          "head": " 2048\n",
+          "work": " 2048\n"
+        },
+        "m_AtlasPadding": {
+          "head": " 5\n",
+          "work": " 5\n"
+        },
+        "m_AtlasRenderMode": {
+          "head": " 4165\n",
+          "work": " 4165\n"
+        },
+        "m_FallbackFontAssetTable": {
+          "head": "\n  - {fileID: 11400000, guid: 71ded2e539f874a4188d383d44f10375, type: 2}\n",
+          "work": "\n  - {fileID: 11400000, guid: 71ded2e539f874a4188d383d44f10375, type: 2}\n"
+        },
+        "m_FontWeightTable": {
+          "head": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n",
+          "work": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n"
+        }
+      },
+      "head_crlf": 0,
+      "work_crlf": 0,
+      "normalized_equal": false,
+      "existing_character_sequence_prefix_retained": true,
+      "texture_changes": [
+        {
+          "document": "!u!28 &-6450528836985158651",
+          "changed_fields": [
+            "_typelessdata",
+            "m_AlphaIsTransparency",
+            "m_ColorSpace",
+            "m_CompleteImageSize",
+            "m_CorrespondingSourceObject",
+            "m_Height",
+            "m_IgnoreMipmapLimit",
+            "m_ImageContentsHash",
+            "m_ImageCount",
+            "m_IsAlphaChannelOptional",
+            "m_IsPreProcessed",
+            "m_IsReadable",
+            "m_LightmapFormat",
+            "m_MipCount",
+            "m_MipmapLimitGroupName",
+            "m_MipsStripped",
+            "m_Name",
+            "m_ObjectHideFlags",
+            "m_PlatformBlob",
+            "m_PrefabAsset",
+            "m_PrefabInstance",
+            "m_StreamData",
+            "m_StreamingMipmaps",
+            "m_StreamingMipmapsPriority",
+            "m_TextureDimension",
+            "m_TextureFormat",
+            "m_TextureSettings",
+            "m_VTOnly",
+            "m_Width",
+            "serializedVersion"
+          ],
+          "dimensions": {
+            "m_Width": " 2048\n",
+            "m_Height": " 2048\n",
+            "m_TextureFormat": " 1\n"
+          }
+        },
+        {
+          "document": "!u!28 &-4428575626598397343",
+          "changed_fields": [
+            "_typelessdata"
+          ],
+          "dimensions": {
+            "m_Width": " 2048\n",
+            "m_Height": " 2048\n",
+            "m_TextureFormat": " 1\n"
+          }
+        }
+      ]
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/ReadingSerif.asset",
+      "head_sha256": "d570d4f8b86418d03c4cb611d95df1bec9c91e1d5987899d2764009daad23910",
+      "work_sha256": "dd19b2cb4bcf212daead9e0098928c8a7c178b955b310952560ca6b8cc03339f",
+      "head_bytes": 8450202,
+      "work_bytes": 8453257,
+      "work_mtime": "2026-10-19T07:46:56.141210",
+      "changed_fields": [],
+      "head_characters": 106,
+      "work_characters": 106,
+      "added_unicode": [],
+      "removed_unicode": [],
+      "changed_documents": [],
+      "new_documents": [],
+      "removed_documents": [],
+      "config": {
+        "m_SourceFontFileGUID": {
+          "head": " 2e500f7a66539444285631615a8bd119\n",
+          "work": " 2e500f7a66539444285631615a8bd119\n"
+        },
+        "m_SourceFontFile": {
+          "head": " {fileID: 12800000, guid: 2e500f7a66539444285631615a8bd119, type: 3}\n",
+          "work": " {fileID: 12800000, guid: 2e500f7a66539444285631615a8bd119, type: 3}\n"
+        },
+        "m_AtlasPopulationMode": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_ClearDynamicDataOnBuild": {
+          "head": " 0\n",
+          "work": " 0\n"
+        },
+        "m_IsMultiAtlasTexturesEnabled": {
+          "head": " 1\n",
+          "work": " 1\n"
+        },
+        "m_AtlasWidth": {
+          "head": " 2048\n",
+          "work": " 2048\n"
+        },
+        "m_AtlasHeight": {
+          "head": " 2048\n",
+          "work": " 2048\n"
+        },
+        "m_AtlasPadding": {
+          "head": " 5\n",
+          "work": " 5\n"
+        },
+        "m_AtlasRenderMode": {
+          "head": " 4165\n",
+          "work": " 4165\n"
+        },
+        "m_FallbackFontAssetTable": {
+          "head": "\n  - {fileID: 11400000, guid: 1694ab11bc676334bb1690dc2e18f80b, type: 2}\n",
+          "work": "\n  - {fileID: 11400000, guid: 1694ab11bc676334bb1690dc2e18f80b, type: 2}\n"
+        },
+        "m_FontWeightTable": {
+          "head": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n",
+          "work": "\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n  - regularTypeface: {fileID: 0}\n    italicTypeface: {fileID: 0}\n"
+        }
+      },
+      "head_crlf": 0,
+      "work_crlf": 3055,
+      "normalized_equal": true,
+      "existing_character_sequence_prefix_retained": true,
+      "texture_changes": []
+    }
+  ]
+}

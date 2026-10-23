@@ -1,0 +1,32 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.AutoModel.cs",
+    "baseline_sha256": "f809bae8b9458f0ceb16ecac5820c672dae3462c7d0a223e9e12e3de54b30fe9",
+    "candidate_sha256": "26995f262b6dc9e2e3b1c551033dea9fd7c7347bf971086c8ea523d821e8ac3a"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgTrainPage.cs",
+    "baseline_sha256": "c48e6bb25b22650732feeb70afad25ce8fbd5136c3c652a2c1c6ec8a13330f09",
+    "candidate_sha256": "08c2247358349112f77d711ea1d52763c88394fb872ad5d33e6ca30818e5301d"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgTechTreeCopy.cs",
+    "baseline_sha256": "3ccef88b2e6c7d1aefcc54abbf9c54859cd7b740ff75cb711f9606c88a5054ba",
+    "candidate_sha256": "dcae5bcf50735e9c6b2ee8bd5675a3e364179971d871a752bd2490501ee77f03"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgSim.DailyFeedback.cs",
+    "baseline_sha256": "56642772c60922c894724d1ad44d7b76197a839226043c753e2ba89b19f9a995",
+    "candidate_sha256": "1e649e25ce67a2d1bcc61a275e7b15f79b86dbfd705a8048867fe414cbd83d49"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+    "baseline_sha256": "9e0d91dc4ded130ba6eb04431c2b6c51ee6dcf8ed31cc358c629ee94b58d755f",
+    "candidate_sha256": "8dd25c5b93639f102a08b5c4e15e7b182904ca27f93def7569130f641fdb722e"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgDailyFeedbackTests.cs",
+    "baseline_sha256": "bc10ddde788a24a4dbba156b13916ea4435fb4fa5f18b4019c1b00e0e13e2bde",
+    "candidate_sha256": "29dd80287d0a4393b64ecf87d01fadda1bc268451ceb79376b73589c26ca3c1a"
+  }
+]

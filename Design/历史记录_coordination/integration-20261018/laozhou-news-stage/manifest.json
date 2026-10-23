@@ -1,0 +1,36 @@
+{
+  "baseline": "C6 candidate; apply C6 first",
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Browser/browser_news.json",
+      "base_sha256_normalized": "5af2a56f0386c1e10ee902b6dcf374d3685c186978f5481f7d9fd5e15f1d56ef",
+      "candidate_sha256_normalized": "d2ec68d356c21c9fd106e9df620aaf9fd3edf29efa2d8a2f86bf0ea54260dea1"
+    },
+    {
+      "path": "Design/data/browser_news.json",
+      "base_sha256_normalized": "5af2a56f0386c1e10ee902b6dcf374d3685c186978f5481f7d9fd5e15f1d56ef",
+      "candidate_sha256_normalized": "d2ec68d356c21c9fd106e9df620aaf9fd3edf29efa2d8a2f86bf0ea54260dea1"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/Era/era_events.json",
+      "base_sha256_normalized": "b8d28aa51c8fc4856025b6e0730bc78c9a5f60c950e60b7061daccbea056f765",
+      "candidate_sha256_normalized": "e93935dda37f4f9c60d18cb6a3d23c18efc40f56931ef627a93d0ff25a9a6ec2"
+    },
+    {
+      "path": "Assets/LingGuangV05/Resources/LingGuangV05/YY/yy_group_presets.json",
+      "base_sha256_normalized": "606bc2b19b4a97c7bac7ad29254f2a6c9089395166d0c9f9020f23aff3d5fc16",
+      "candidate_sha256_normalized": "849556c28a1af58951d9fae139116225488bf4ec927633b9427c47ed414cfc39"
+    },
+    {
+      "path": "Design/data/yy_group_presets.json",
+      "base_sha256_normalized": "05588d2a59bc76ab2837d0a9710e386f294cc16d1e1c4cda44e97c7592dd36cd",
+      "candidate_sha256_normalized": "372133a4afbd899fb16c58968b4d4ef5c486dfbf0a454cd5f9b61857e7d53463"
+    }
+  ],
+  "patch_sha256": "dfee527aa11dc7aade9fe6068cac6d60f0e4b00ffa9e20fee2c10a646287a3c6",
+  "group_code_dependency": {
+    "path": "Assets/LingGuangV05/YY2016/YYChatHub.GroupPresets.cs",
+    "sha256_normalized": "e759e57edd57ddd33999e2990863a83be5e57b08cc9fc3491c524f660c68cc9c",
+    "source": "C6 candidate; not overwritten by this patch"
+  }
+}

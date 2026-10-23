@@ -1,0 +1,14 @@
+[
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XingGuangView.Profile.cs",
+    "sha256": "C72D1677A0FC9C981E928FE23922705F2952EC652A735A56AF75B7A768386934"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Desktop/XgEndingPreparationHost.ProfileMemories.cs",
+    "sha256": "CF5B4A014BE320EA5FC92CB274C6B469109AB18AD8C464C9DE67B637BE32CD6F"
+  },
+  {
+    "path": "Assets/LocalBuild/Editor/ProfileMemoriesUiChecks.cs",
+    "sha256": "34E51EC43D8B062F4892B2AC02E275EE65AD2F99C581C5E00E36ED88863203D3"
+  }
+]

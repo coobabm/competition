@@ -1,0 +1,87 @@
+[
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.cs",
+    "baselineSha256": "e4fa888db78072df7f9757faca5983955e8fe38f51cd4b4ef6c90e403454238a",
+    "candidateSha256": "e33c77999fcfab385c5bd639eccd1146f419cbd2ad8d5d141484fb5aeb91a223"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.PublicDiscourse.cs",
+    "baselineSha256": null,
+    "candidateSha256": "1ac0ba6b6f24aff8b2991074322257f43f325c40d2be9f984d244b020316d4a6"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.PublicDiscourse.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "920e16073925027ae51d616205ae1838fc8b3f195e5d730f8c4816b632076a90"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.cs",
+    "baselineSha256": "2b0b52612a4b7ee13a1d77fcdf0547d180a3687473853be6dc1d22cb3ed3e747",
+    "candidateSha256": "7838340ac4451b92aa65ae00ebc168b3d717a51d9f05fbc5e13aa351b094e419"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.PublicDiscourse.cs",
+    "baselineSha256": null,
+    "candidateSha256": "2c1e481a191ec37e8b9f37b5f80b4a0e80936cd4279794a6603dc41d3582fb4e"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Miaoyu/MiaoyuView.PublicDiscourse.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "b7c9f6b4c2655c8e9f75862491ad2119a7c64f682344eb32a940ec6ff45e2cb8"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/XgPublicDiscourseDesktop.cs",
+    "baselineSha256": null,
+    "candidateSha256": "c1a6d5f43e6a27971fe257771045faedba47aa11678be2b0524ad09e677c0eeb"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Story/XgPublicDiscourseDesktop.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "2d83b5606ee784e52681f45512614e35114eb6ff2a43fd420e49095de1f6c99d"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.cs",
+    "baselineSha256": "91447e7be576657a898094724763213d41c4dc857d4784c8e3d4b7ddf52126dd",
+    "candidateSha256": "f8dc4d8e2bc8489194850c6169ae313cfcafc2a588c264bedab0617a6a793461"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.PublicDiscourse.cs",
+    "baselineSha256": null,
+    "candidateSha256": "104bdd10b459f99daeecb19dcdc67778eab2cbbdb58bc9bdf801d3cb6dbb412f"
+  },
+  {
+    "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaView.PublicDiscourse.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "7592dcbd7cac22827fc296db5629a9ba253b243946f698e965440f055e6048e1"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Core/XgPublicDiscourseCatalog.cs",
+    "baselineSha256": "66fdf966cd23e1525919d9fc3e175dc1de80f0f4877ce4fb43b62f1adf3baced",
+    "candidateSha256": "e3c295ac8d4b56a815b068512a677e4a051c07e3f361664dd8532ae4ed8d4de4"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicDiscourseResourceTests.cs",
+    "baselineSha256": null,
+    "candidateSha256": "7eb0340078facaf3bfc12f796718f7d7f81931c8ea6b9f8b195fedc5b67cb21e"
+  },
+  {
+    "path": "Assets/LingGuangV05/XingGuang/Tests/Editor/XgPublicDiscourseResourceTests.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "362fca52a08515477f40d66c5d675b58c91c6fdc9a6be294f1178191026be176"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.cs",
+    "baselineSha256": "781c91ad4dba446d6eab928eb488c9f9e08de517cbfe66dab184d6a72dfd8db1",
+    "candidateSha256": "3481dd708acfdac329ae30697539980b873f329110bd3d5b31c1ccdae6870213"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.PublicDiscourse.cs",
+    "baselineSha256": null,
+    "candidateSha256": "defd2ce5296e7a124b2d971f8d21a35b66170aef0f6dcea0f45a622b98e15fd6"
+  },
+  {
+    "path": "Assets/LingGuangV05/YY2016/YYChatView.PublicDiscourse.cs.meta",
+    "baselineSha256": null,
+    "candidateSha256": "c1b73ab5d9766c9b004b9156ad0b751aa0e9b2116aa7fa02e1b29167895ac7f9"
+  }
+]

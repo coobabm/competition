@@ -1,0 +1,26 @@
+{
+  "report": "C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\LocalVerification\\DailyFeedbackActual\\20261018-232507-685\\report.json",
+  "status": "failed",
+  "failure": "System.InvalidOperationException: Daily feedback actual UI: native Minimize hides lab\r\n  at DailyFeedbackActualUiChecks.Need (System.Boolean value, System.String message) [0x00020] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\DailyFeedbackActualUiChecks.cs:27 \r\n  at DailyFeedbackActualUiChecks+<Frames>d__18.MoveNext () [0x00778] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\DailyFeedbackActualUiChecks.cs:131 \r\n  at DailyFeedbackActualUiRunner.Tick () [0x000b8] in C:\\Users\\xomem\\Documents\\ChatGPT\\games\\competition-latest-20261016\\Assets\\LocalBuild\\Editor\\DailyFeedbackActualUiRunner.cs:185 ",
+  "assertions": 191,
+  "errors": [],
+  "cleanupErrors": [],
+  "screenshots_exist": true,
+  "evidence_sha256": {
+    "daily-feedback-failure-full-frame.png": "59d0bbe3686f513f478974e0ce66e789c0a06c33b71c2fe4e4879b0e4481978f",
+    "daily-forecast-en.png": "4fa9edb385990a385d8694b90168f862863f89d4c7b8e08541429a12db7536ca",
+    "daily-forecast-zh.png": "9390d2b04bb5de88b87b7278f4e3962be23ec7caa5baa2047c7e1883991a6379",
+    "daily-guide-after-fold.png": "dc3d4391a6ff9102b7da41932562b23cb56ae7bd4b1a286937a8b266856aee83",
+    "daily-guide-before-fold.png": "dc3d4391a6ff9102b7da41932562b23cb56ae7bd4b1a286937a8b266856aee83",
+    "daily-rhythm-en-fallback.png": "6b22fc40692687a47e80b3e97c1b7658a95fe42876e44105bc0233cf751a126c",
+    "daily-rhythm-zh-fallback.png": "aa5e8983e798b76bced56735626ca6b5d994e337bf531ea42c4c43b73c4ea7bd",
+    "DesktopProfile/Apps.json": "34eed5543c9d603e5763ffb69a0d3762c1bfa67d2786ed1e0c44777496ca373b",
+    "DesktopProfile/DateAndTime.json": "76901b72bbac8f26b2d05541c842c30b69904e0d84bc42b54b938dcb3b32f511",
+    "DesktopProfile/Network.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "DesktopProfile/System.json": "ec3956eb5d7ff911bbbd633305696dba6276b99afe0d904b6eec1fa7c0bc9a50",
+    "DesktopProfile/User.json": "803a8e98294fd5b3d115b108611873161154b07121f5e58787c53c05bf35314b",
+    "report.json": "35ddb2994642b5aade8ef50fc2e672555d7b7be563c6655d4fb3f178f014dc15"
+  },
+  "runtime_run": false,
+  "historical_status_changed": false
+}

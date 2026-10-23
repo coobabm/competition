@@ -1,0 +1,83 @@
+--- old-base
++++ new-main
+@@ -83,7 +83,7 @@
+         void OnBreakthrough(string id)
+         {
+-            // Old saves still finish the old research project; since design v1.1 stage 6 and the finale follow instead.
+-            if (id == "transformer") { if (bound.EndingAvailable) EmitOnce("lg.project", "completed"); }
+-            else EmitOnce("lg.breakthrough", id);
++            // The old research project's ending (退稿信, then 「你后悔教我吗」) is gone for every save: stage 6 and the finale follow
++            // instead, and the finale talk is the only place that question is asked.
++            if (id != "transformer") EmitOnce("lg.breakthrough", id);
+             EmitOnce("lg.stage", bound.S.stage.ToString());
+             controller.runtime.MarkDirty();
+@@ -99,5 +99,6 @@
+             controller.runtime.MarkDirty();
+         }
+-        void OnEnding(bool regret) { EmitOnce("lg.ending", regret ? "yes" : "no"); controller.runtime.MarkDirty(); }
++        /// <summary>The old ending question was answered (an old save closing it silently, see <see cref="RecoverPendingSignals"/>): no title cards, the finale asks it again.</summary>
++        void OnEnding(bool regret) { controller.runtime.MarkDirty(); }
+         void OnAssessed(XgAssessment assessment)
+         { if (assessment != null && assessment.reward + assessment.gradeBonus > 0) EmitOnce("lg.paidAssessment"); }
+@@ -107,4 +108,6 @@
+             if (bound != null && signal == "gpu.bought" && arg == LingGuangV05.Core.Hardware.HardwareCatalog.TitanXp) bound.EarnSecret("life.hw.titan");
+             if (bound != null && signal == "breaker.tripped" && controller.runtime.Sim.S.pcieBurned) bound.EarnSecret("life.hw.burn");
++            // The origin film says 「跳了N次闸」 from this count (XgSim.Origin.cs, XgState.breakerTrips).
++            if (bound != null && signal == "breaker.tripped") bound.S.breakerTrips++;
+             if (signal != "story.delivered" || string.IsNullOrEmpty(arg) || bound == null) return;
+             bound.MarkIntroDelivered(arg);
+@@ -117,4 +120,7 @@
+             controller.runtime.MarkDirty();
+         }
++        /// <summary>Beats of the old research-project ending (signals lg.project:completed and lg.ending). Their data stays loadable; they just never fire.</summary>
++        static readonly string[] LegacyEndingBeats = { "ending_reject", "ending_card", "ending_title_yes", "ending_title_no" };
++
+         void ApplyMigration()
+         {
+@@ -122,4 +128,5 @@
+             migrationApplied = true;
+             var story = controller.runtime.Sim.S.story;
++            foreach (string legacy in LegacyEndingBeats) if (!story.HasFired(legacy)) story.MarkFired(legacy);
+             foreach (string beat in bound.S.migratedBeats)
+                 if (director.Library.Get(beat) != null) story.MarkFired(beat);
+@@ -150,10 +157,9 @@
+             if (bound.S.paidAssessmentReached && !bound.S.treeIntroDelivered) EmitOnce("lg.paidAssessment");
+             if (bound.ProjectAwaitingAnswer) EmitOnce("lg.project", (bound.S.project.experiments + 1).ToString());
+-            if (bound.EndingAvailable && !story.HasFired("ending_reject")) EmitOnce("lg.project", "completed");
+-            if (bound.EndingAvailable && story.HasFired("ending_reject") && story.GetFlag("delivered.ending_card") <= 0)
+-            { story.Unfire("ending_card"); EmitOnce("story.next", "ending_card"); }
+-            // Only the legacy 「你后悔教我吗」 ending has these title cards. The rules endings (S.ending set) close in
+-            // PrologueDirector.PlayEnding; emitting here too would play two endings at once.
+-            if (bound.S.endingReflectionAnswered && bound.S.ending.Length == 0 && story.GetFlag("chapter_one_ending_shown") <= 0) EmitOnce("lg.ending", bound.S.endingRegret ? "yes" : "no");
++            // The old research-project ending (退稿信 → 「你后悔教我吗」 → title cards) never plays any more, not even for a save that
++            // finished the old project: the question is asked once, in the finale talk. Such a save has its pending answer closed
++            // silently (the answer was never given, so it is recorded as no regret) and the old beats are marked as played.
++            foreach (string legacy in LegacyEndingBeats) if (!story.HasFired(legacy)) story.MarkFired(legacy);
++            if (bound.EndingAvailable) bound.EndingAnswer(false);
+         }
+         string ReadText(string name)
+@@ -200,13 +206,20 @@
+             {
+                 case "aiName": return sim.Profile.name.Length > 0 ? sim.Profile.name : LingGuangV05.Core.AppNames.AiZh;
+-                case "firstChoicePick": return sim.FirstTrack == "vision" ? "[阿杰] 它点了 A。哈，先学看图！" : "[小刚] 它点了 B，读弹幕。我就说吧。";
++                case "firstChoicePick":
++                    if (LingGuangV05.Runtime.GameText.IsEnglish) return sim.FirstTrack == "vision" ? "[Ajie] It picked A. Ha, pictures first!" : "[Xiaogang] It picked B, reading danmaku. Told you.";
++                    return sim.FirstTrack == "vision" ? "[阿杰] 它点了 A。哈，先学看图！" : "[小刚] 它点了 B，读弹幕。我就说吧。";
+                 case "firstDayAnswer":
+                     int answer = sim.FirstDayAnswer;
++                    if (LingGuangV05.Runtime.GameText.IsEnglish) return answer > 0 ? "You taught me: yes." : answer < 0 ? "You taught me: no." : "You didn't teach me. I lit up “no” on my own.";
+                     return answer > 0 ? "你教我：是。" : answer < 0 ? "你教我：否。" : "你没教。我自己亮了「否」。";
+                 case "wishQuote":
+                     string wish = sim.Profile.personality ?? "";
+-                    if (wish.Length == 0) return "你什么都没写。";
+-                    return "「" + (wish.Length > 18 ? wish.Substring(0, 18) + "……" : wish) + "」";
+-                case "wishVerdict": return sim.Profile.personality.Length == 0 ? "那我就长成你喂的样子。" : sim.WishDrifted ? "不太像。我被喂歪了。" : "我在学。";
++                    if (wish.Length == 0) return LingGuangV05.Runtime.GameText.IsEnglish ? "You wrote nothing." : "你什么都没写。";
++                    return LingGuangV05.Runtime.GameText.IsEnglish ? "“" + (wish.Length > 30 ? wish.Substring(0, 30) + "…" : wish) + "”" : "「" + (wish.Length > 18 ? wish.Substring(0, 18) + "……" : wish) + "」";
++                case "wishVerdict":
++                    if (LingGuangV05.Runtime.GameText.IsEnglish) return sim.Profile.personality.Length == 0 ? "Then I'll grow into whatever you feed me." : sim.WishDrifted ? "Not quite. I was fed crooked." : "I'm learning.";
++                    return sim.Profile.personality.Length == 0 ? "那我就长成你喂的样子。" : sim.WishDrifted ? "不太像。我被喂歪了。" : "我在学。";
++                case "originEpochs": return sim.S.epochs.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
++                case "originSamples": return XgSim.SamplesText(sim.TrainedSamples);
+                 case "garble1": return sim.GarbleLine(0);
+                 case "garble2": return sim.GarbleLine(1);

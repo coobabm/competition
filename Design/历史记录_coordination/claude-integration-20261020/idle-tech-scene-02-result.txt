@@ -1,0 +1,9 @@
+FAIL: System.Exception: Chain board.logic1 level 0: professional chain term
+  at SkillTreeCopyChecks.Check (System.Boolean condition, System.String message) [0x0001a] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\SkillTreeCopyChecks.cs:30 
+  at SkillTreeCopyChecks+<>c__DisplayClass13_2.<Chains>b__0 () [0x001f5] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\SkillTreeCopyChecks.cs:269 
+  at SkillTreeCopyChecks.ReadOnly (LingGuangV05.XingGuang.XgSim sim, System.Action read, System.String context) [0x0000b] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\SkillTreeCopyChecks.cs:39 
+  at SkillTreeCopyChecks.Chains (System.Boolean english) [0x000dc] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\SkillTreeCopyChecks.cs:261 
+  at SkillTreeCopyChecks.Run () [0x0005b] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\SkillTreeCopyChecks.cs:59 
+  at DesignWallpaperSmoke+<TechSceneSteps>d__113.MoveNext () [0x0009e] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.Tech.cs:70 
+  at DesignWallpaperSmoke.TickTech (LingGuangV05.Desktop.XingGuang.XingGuangController controller, LingGuangV05.Runtime.ChapterOneRuntime runtime, LingGuangV05.Desktop.XingGuang.XgBrainWallpaper brain) [0x0009b] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.Tech.cs:56 
+  at DesignWallpaperSmoke.Update () [0x005ee] in C:\Users\xomem\Documents\ChatGPT\games\competition-claude-integration-20261020\Assets\LocalBuild\Editor\DesignWallpaperSmoke.cs:197 

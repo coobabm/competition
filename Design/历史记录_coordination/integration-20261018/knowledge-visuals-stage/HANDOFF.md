@@ -1,0 +1,9 @@
+# Knowledge visual handoff (D01 §3 + D02 §8)
+Apply knowledge-visuals.patch with --ignore-space-change, then separately copy KnowledgeVisualsQa.cs to Assets/LocalBuild/Editor. Core/UI and isolated QA assemblies independently compile; 8 standalone Core checks pass (checks.log). No Unity run performed here.
+
+- Portrait card adapts to app height; amber bold Chinese/English technical terms, original Grokking/Emergence terms retained. Body no longer includes early self-talk.
+- First collection persists atlas ownership/unread flag before cosmetic animation; card clone shrinks and flies to actual Tech nav position through common ancestor. Hidden/owner-swapped UI cleans clone and releases modal; no repeated animation/voice on atlas review. Tech red badge survives save and clears upon opening Tech.
+- After flight, prescribed self-talk queues text only. InnerVoice gets a default-compatible optional voiced parameter; this route sets false, so no protagonist recording is played.
+- ObserveTrainingEpoch stores the exact finite historical series when a new curve-related card is discovered. Halo uses the actual plotted coordinate and only when the currently selected dataset/track and whole recorded history match. No invented point for legacy saves, replaced/later curves, NaN values, noise or emergence. Stored arrays are at most nine bounded training histories; new fields null-repaired. Broad future curve-history matching deliberately omitted rather than guessing location.
+
+Unity Run KnowledgeVisualsQa.Run from Edit Mode: isolated Main fixture, controlled .3→.5 history passed through production observer, actual modal/button/flight/Tech badge/English review/TMP geometry and JsonUtility checks. This does not claim natural 20-point emergence or screenshots. QA also verifies no audio request on this self-talk. Root should check default-height portrait overflow and animation trajectory visually if batch rendering cannot provide screenshots.

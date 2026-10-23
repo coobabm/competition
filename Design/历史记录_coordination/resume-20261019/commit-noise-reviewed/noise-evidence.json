@@ -1,0 +1,244 @@
+[
+  {
+    "path": "Packages/Aura/.gitignore",
+    "headSha256": "72bce0513a337544103616e51e8e0ecacb8554eb3b3cbb9a8d60a81fe5d1e919",
+    "workSha256": "72bce0513a337544103616e51e8e0ecacb8554eb3b3cbb9a8d60a81fe5d1e919",
+    "headBytes": 75,
+    "workBytes": 75,
+    "headCRLF": 0,
+    "workCRLF": 0,
+    "normalizedEqual": true,
+    "indexEqualsHead": true
+  },
+  {
+    "path": "Assets/LingGuangV05/Localization/Fonts/Desktop CJK.asset",
+    "headSha256": "ae535c61dc65b7db169a52c59a25c8f3099cca31c83d34b145a2a0606c46c4ba",
+    "workSha256": "ae535c61dc65b7db169a52c59a25c8f3099cca31c83d34b145a2a0606c46c4ba",
+    "headBytes": 2066511,
+    "workBytes": 2066511,
+    "headCRLF": 0,
+    "workCRLF": 0,
+    "normalizedEqual": true,
+    "indexEqualsHead": true,
+    "headDocuments": [
+      "!u!28 &-3399487904631298651",
+      "!u!21 &-742579690549009936",
+      "!u!114 &11400000"
+    ],
+    "workDocuments": [
+      "!u!28 &-3399487904631298651",
+      "!u!21 &-742579690549009936",
+      "!u!114 &11400000"
+    ],
+    "fontChangedFields": [],
+    "fontStableConfig": {
+      "m_SourceFontFileGUID": " bcefe69df9a2240f1841ef848779f9ac\n",
+      "m_CreationSettings": "\n    sourceFontFileName: \n    sourceFontFileGUID: \n    faceIndex: 0\n    pointSizeSamplingMode: 0\n    pointSize: 0\n    padding: 0\n    paddingMode: 0\n    packingMode: 0\n    atlasWidth: 0\n    atlasHeight: 0\n    characterSetSelectionMode: 0\n    characterSequence: \n    referencedFontAssetGUID: \n    referencedTextAssetGUID: \n    fontStyle: 0\n    fontStyleModifier: 0\n    renderMode: 0\n    includeFontFeatures: 0\n",
+      "m_SourceFontFile": " {fileID: 12800000, guid: bcefe69df9a2240f1841ef848779f9ac, type: 3}\n",
+      "m_SourceFontFilePath": " \n",
+      "m_AtlasPopulationMode": " 1\n",
+      "m_IsMultiAtlasTexturesEnabled": " 1\n",
+      "m_ClearDynamicDataOnBuild": " 1\n",
+      "m_AtlasWidth": " 2048\n",
+      "m_AtlasHeight": " 2048\n",
+      "m_FallbackFontAssetTable": " []\n",
+      "fallbackFontAssets": " []\n"
+    }
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginMono SDF.asset",
+    "headSha256": "648ce2b2e60533872ecdfb3912cdb0a55fc6f7fe1de82db1a1beb18443168413",
+    "workSha256": "a483f6d196d3777ec7f4886eebafd83622dbe1d43964586351985126af05859c",
+    "headBytes": 6503,
+    "workBytes": 6516,
+    "headCRLF": 0,
+    "workCRLF": 0,
+    "normalizedEqual": false,
+    "indexEqualsHead": true,
+    "headDocuments": [
+      "!u!28 &-2047653475194328019",
+      "!u!21 &-981572184575693024",
+      "!u!114 &11400000"
+    ],
+    "workDocuments": [
+      "!u!28 &-2047653475194328019",
+      "!u!21 &-981572184575693024",
+      "!u!114 &11400000"
+    ],
+    "fontChangedFields": [
+      {
+        "key": "m_FallbackFontAssetTable",
+        "headLength": 4,
+        "workLength": 17,
+        "head": " []\n",
+        "work": "\n  - {fileID: 0}\n"
+      }
+    ],
+    "fontStableConfig": {
+      "m_SourceFontFileGUID": " 6c4b3165b37dc7046901fc3d4a0fcce5\n",
+      "m_CreationSettings": "\n    sourceFontFileName: \n    sourceFontFileGUID: \n    faceIndex: 0\n    pointSizeSamplingMode: 0\n    pointSize: 0\n    padding: 0\n    paddingMode: 0\n    packingMode: 0\n    atlasWidth: 0\n    atlasHeight: 0\n    characterSetSelectionMode: 0\n    characterSequence: \n    referencedFontAssetGUID: \n    referencedTextAssetGUID: \n    fontStyle: 0\n    fontStyleModifier: 0\n    renderMode: 0\n    includeFontFeatures: 0\n",
+      "m_SourceFontFile": " {fileID: 12800000, guid: 6c4b3165b37dc7046901fc3d4a0fcce5, type: 3}\n",
+      "m_SourceFontFilePath": " \n",
+      "m_AtlasPopulationMode": " 1\n",
+      "m_IsMultiAtlasTexturesEnabled": " 1\n",
+      "m_ClearDynamicDataOnBuild": " 1\n",
+      "m_AtlasWidth": " 1024\n",
+      "m_AtlasHeight": " 1024\n",
+      "fallbackFontAssets": " []\n"
+    }
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/OriginSerif SDF.asset",
+    "headSha256": "31519069e40e6b56200733b1daa4aa9d5c3453dcd25d9229e3829a9adee0ab57",
+    "workSha256": "0ca0adfe2ffc58b035ed0debfc6dfe330977029c3caff692bf24a2c74cfad1b2",
+    "headBytes": 37773592,
+    "workBytes": 37773605,
+    "headCRLF": 0,
+    "workCRLF": 0,
+    "normalizedEqual": false,
+    "indexEqualsHead": true,
+    "headDocuments": [
+      "!u!28 &-9205093989757367643",
+      "!u!28 &-9006259960628466369",
+      "!u!28 &-8665959566091444029",
+      "!u!28 &-8591176950145732408",
+      "!u!28 &-7103479141172810684",
+      "!u!28 &-4800216761360625215",
+      "!u!28 &-3932598174048687721",
+      "!u!28 &-3772351535582173920",
+      "!u!28 &-3513130201304620785",
+      "!u!28 &-2871972894183631275",
+      "!u!28 &-2723418079038596163",
+      "!u!114 &11400000",
+      "!u!28 &113821386155787362",
+      "!u!28 &546461297358859882",
+      "!u!28 &1887166240200149410",
+      "!u!28 &2387564616061065569",
+      "!u!21 &2625284227469486842",
+      "!u!28 &6888507890974022653",
+      "!u!28 &7118421465858507969",
+      "!u!28 &7451254991712076543",
+      "!u!28 &9064020694535356124"
+    ],
+    "workDocuments": [
+      "!u!28 &-9205093989757367643",
+      "!u!28 &-9006259960628466369",
+      "!u!28 &-8665959566091444029",
+      "!u!28 &-8591176950145732408",
+      "!u!28 &-7103479141172810684",
+      "!u!28 &-4800216761360625215",
+      "!u!28 &-3932598174048687721",
+      "!u!28 &-3772351535582173920",
+      "!u!28 &-3513130201304620785",
+      "!u!28 &-2871972894183631275",
+      "!u!28 &-2723418079038596163",
+      "!u!114 &11400000",
+      "!u!28 &113821386155787362",
+      "!u!28 &546461297358859882",
+      "!u!28 &1887166240200149410",
+      "!u!28 &2387564616061065569",
+      "!u!21 &2625284227469486842",
+      "!u!28 &6888507890974022653",
+      "!u!28 &7118421465858507969",
+      "!u!28 &7451254991712076543",
+      "!u!28 &9064020694535356124"
+    ],
+    "fontChangedFields": [
+      {
+        "key": "m_FallbackFontAssetTable",
+        "headLength": 4,
+        "workLength": 17,
+        "head": " []\n",
+        "work": "\n  - {fileID: 0}\n"
+      }
+    ],
+    "fontStableConfig": {
+      "m_SourceFontFileGUID": " 3881b5ed647c149b5a05af8df9312901\n",
+      "m_CreationSettings": "\n    sourceFontFileName: \n    sourceFontFileGUID: \n    faceIndex: 0\n    pointSizeSamplingMode: 0\n    pointSize: 0\n    padding: 0\n    paddingMode: 0\n    packingMode: 0\n    atlasWidth: 0\n    atlasHeight: 0\n    characterSetSelectionMode: 0\n    characterSequence: \n    referencedFontAssetGUID: \n    referencedTextAssetGUID: \n    fontStyle: 0\n    fontStyleModifier: 0\n    renderMode: 0\n    includeFontFeatures: 0\n",
+      "m_SourceFontFile": " {fileID: 12800000, guid: 3881b5ed647c149b5a05af8df9312901, type: 3}\n",
+      "m_SourceFontFilePath": " \n",
+      "m_AtlasPopulationMode": " 1\n",
+      "m_IsMultiAtlasTexturesEnabled": " 1\n",
+      "m_ClearDynamicDataOnBuild": " 1\n",
+      "m_AtlasWidth": " 1024\n",
+      "m_AtlasHeight": " 1024\n",
+      "fallbackFontAssets": " []\n"
+    }
+  },
+  {
+    "path": "Assets/LingGuangV05/Resources/LingGuangV05/Fonts/UiV4/UiSans.asset",
+    "headSha256": "fa7dd514801af7a7b10b0d1ca70cf2746e02faa6f610f3121f042dabf412e6d1",
+    "workSha256": "e99d9bbb01610d8e89e37ee9a4a3ec763ba53ad9f9d124f0102779f406c34dc9",
+    "headBytes": 9061067,
+    "workBytes": 17451427,
+    "headCRLF": 0,
+    "workCRLF": 0,
+    "normalizedEqual": false,
+    "indexEqualsHead": true,
+    "headDocuments": [
+      "!u!28 &-4428575626598397343",
+      "!u!114 &11400000",
+      "!u!21 &1995013124708197906"
+    ],
+    "workDocuments": [
+      "!u!28 &-6450528836985158651",
+      "!u!28 &-4428575626598397343",
+      "!u!114 &11400000",
+      "!u!21 &1995013124708197906"
+    ],
+    "fontChangedFields": [
+      {
+        "key": "m_AtlasTextureIndex",
+        "headLength": 3,
+        "workLength": 3,
+        "head": " 0\n",
+        "work": " 1\n"
+      },
+      {
+        "key": "m_AtlasTextures",
+        "headLength": 36,
+        "workLength": 71,
+        "head": "\n  - {fileID: -4428575626598397343}\n",
+        "work": "\n  - {fileID: -4428575626598397343}\n  - {fileID: -6450528836985158651}\n"
+      },
+      {
+        "key": "m_CharacterTable",
+        "headLength": 89746,
+        "workLength": 111154
+      },
+      {
+        "key": "m_FontFeatureTable",
+        "headLength": 89991,
+        "workLength": 91667
+      },
+      {
+        "key": "m_FreeGlyphRects",
+        "headLength": 46845,
+        "workLength": 788
+      },
+      {
+        "key": "m_GlyphTable",
+        "headLength": 373271,
+        "workLength": 462097
+      },
+      {
+        "key": "m_UsedGlyphRects",
+        "headLength": 66304,
+        "workLength": 1147
+      }
+    ],
+    "fontStableConfig": {
+      "m_SourceFontFileGUID": " 75f62267335fcdb4daa0aff166dca296\n",
+      "m_CreationSettings": "\n    sourceFontFileName: \n    sourceFontFileGUID: \n    faceIndex: 0\n    pointSizeSamplingMode: 0\n    pointSize: 0\n    padding: 0\n    paddingMode: 0\n    packingMode: 0\n    atlasWidth: 0\n    atlasHeight: 0\n    characterSetSelectionMode: 0\n    characterSequence: \n    referencedFontAssetGUID: \n    referencedTextAssetGUID: \n    fontStyle: 0\n    fontStyleModifier: 0\n    renderMode: 0\n    includeFontFeatures: 0\n",
+      "m_SourceFontFile": " {fileID: 12800000, guid: 75f62267335fcdb4daa0aff166dca296, type: 3}\n",
+      "m_SourceFontFilePath": " \n",
+      "m_AtlasPopulationMode": " 1\n",
+      "m_IsMultiAtlasTexturesEnabled": " 1\n",
+      "m_ClearDynamicDataOnBuild": " 0\n",
+      "m_AtlasWidth": " 2048\n",
+      "m_AtlasHeight": " 2048\n",
+      "m_FallbackFontAssetTable": "\n  - {fileID: 11400000, guid: 71ded2e539f874a4188d383d44f10375, type: 2}\n",
+      "fallbackFontAssets": " []\n"
+    }
+  }
+]

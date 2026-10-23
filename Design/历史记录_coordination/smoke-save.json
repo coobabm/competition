@@ -1,0 +1,79 @@
+{
+    "chapter": 5,
+    "money": 340.04928776241368,
+    "samples": 400.0,
+    "parameters": 4000.0,
+    "steps": 33.0,
+    "skill": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "express": 5,
+    "unlocked": [
+        "structure.fanout",
+        "structure.converge"
+    ],
+    "structures": [],
+    "board": "{\"version\":1,\"nextId\":13,\"chapter\":5,\"layerMode\":false,\"neurons\":[{\"id\":1,\"q\":-5,\"r\":-1,\"kind\":1,\"label\":\"输入1\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":2,\"q\":-5,\"r\":0,\"kind\":1,\"label\":\"输入2\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":3,\"q\":-5,\"r\":1,\"kind\":1,\"label\":\"输入3\",\"charge\":0.0,\"fatigue\":0.5},{\"id\":4,\"q\":5,\"r\":-2,\"kind\":2,\"label\":\"是\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":5,\"q\":5,\"r\":-1,\"kind\":2,\"label\":\"否\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":6,\"q\":-2,\"r\":0,\"kind\":0,\"label\":\"\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":7,\"q\":-1,\"r\":0,\"kind\":0,\"label\":\"\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":8,\"q\":0,\"r\":0,\"kind\":0,\"label\":\"\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":9,\"q\":5,\"r\":0,\"kind\":2,\"label\":\"中立\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":10,\"q\":5,\"r\":1,\"kind\":2,\"label\":\"广告\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":11,\"q\":5,\"r\":2,\"kind\":2,\"label\":\"词语\",\"charge\":0.0,\"fatigue\":0.0},{\"id\":12,\"q\":5,\"r\":3,\"kind\":2,\"label\":\"续写\",\"charge\":0.0,\"fatigue\":0.0}],\"synapses\":[{\"from\":2,\"to\":6,\"conduct\":6,\"idle\":1,\"weight\":0.87},{\"from\":6,\"to\":7,\"conduct\":6,\"idle\":1,\"weight\":0.87},{\"from\":7,\"to\":8,\"conduct\":6,\"idle\":1,\"weight\":0.87},{\"from\":8,\"to\":4,\"conduct\":6,\"idle\":1,\"weight\":0.87}],\"discovered\":[],\"rewardedExams\":[],\"clipboard\":{\"neurons\":[],\"synapses\":[]}}",
+    "gpus": [
+        "9800"
+    ],
+    "mistakes": [],
+    "facts": [],
+    "aiName": "小光",
+    "callMe": "",
+    "tic": "",
+    "personaDesc": "",
+    "temper": 2,
+    "persona": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "exams": [],
+    "skillSamples": [
+        400.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "firsts": [
+        {
+            "key": "card",
+            "text": "邮件：我就围观，不说话\n这是垃圾邮件吗？ 回答：是；信心 56%（估计）",
+            "day": "6-1"
+        },
+        {
+            "key": "corrected",
+            "text": "邮件：我就围观，不说话\n这是垃圾邮件吗？ 标准答案：否",
+            "day": "6-1"
+        }
+    ],
+    "portfolio": [],
+    "fans": 0,
+    "lastSeenUnix": 1791009995,
+    "learningPoints": 40.0,
+    "chatCount": 0,
+    "economy": "{\"version\":1,\"day\":1,\"cases\":1,\"job\":0,\"dataset\":0,\"initialized\":true,\"breaker\":false,\"unpaid\":false,\"expanded\":false,\"airConditioner\":false,\"hosting\":false,\"autoLabel\":false,\"pipeline\":false,\"overclock\":false,\"daySeconds\":30.928461306844839,\"kwh\":0.4206270737730912,\"debt\":0.0,\"temperature\":45.02660442488938,\"threshold\":0.85,\"pollution\":0.0,\"totalEarned\":40.04928776241375,\"cardsDone\":20,\"automaticCards\":0,\"units\":[{\"id\":\"9800\",\"enabled\":true,\"broken\":false}]}",
+    "desktop": "{\"notes\":\"2010 年 6 月\\n\\n老周寄来一个安装包。\\n先让它分清是和否。\\n\",\"crt\":false,\"reduceMotion\":true,\"fastReplies\":true,\"restoredBlueprint\":false,\"greeted\":true,\"messages\":[{\"sender\":\"老周\",\"text\":\"在吗？\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"跟你说个事。我在一个国外论坛上扒到一段代码，帖子是英文的，标题就一个词：the code。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"跑起来以后，它只会回两个字，“是”或者“否”。但是回得特别快，快得有点邪门。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"我这阵子项目上线，天天加班，根本没空弄。你不是闲着吗，帮我看看。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"压缩包发你邮箱了，解开就有个“灵光.exe”。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"你抓紧看看，有问题尽管问我。我回得慢，但一定回。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"对了，先给它起个名字吧。总不能一直叫它“the code”。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"它现在能在一堆选项里挑了？行啊。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"我这周开会开到吐，你自己先折腾，逻辑那关我回头再看。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"刚才那句话是你打的吧？\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"别逗我，它不可能自己说话。\",\"stamp\":\"14:46\"},{\"sender\":\"老周\",\"text\":\"……你把手从键盘上拿开，再让它说一句。\",\"stamp\":\"14:46\"}],\"pending\":[],\"hints\":[]}",
+    "exam": "{\"ledger\":{\"granted\":[false,false,false,false,false],\"outstanding\":[0.0,0.0,0.0,0.0,0.0]},\"offline\":{\"lastReport\":0},\"reviews\":[],\"cooldowns\":[],\"contract\":{\"batch\":0,\"spec\":{\"queues\":[],\"size\":0.0,\"line\":0.0,\"pay\":0.0,\"advance\":0.0,\"days\":7.0},\"persona\":\"\",\"shares\":[],\"done\":[],\"day\":0.0,\"settled\":false,\"result\":{\"id\":\"\",\"grade\":\"\",\"pass\":false,\"score\":0.0}},\"myQuestions\":[\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"myAnswers\":[\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"hot\":[],\"hotIndex\":0,\"pin\":\"\",\"pinNow\":\"\",\"pinPrev\":\"\",\"mine\":\"\",\"draft\":\"\",\"reply\":\"\",\"message\":\"\",\"skillHash\":0,\"epilogue\":false}",
+    "powered": true,
+    "heartbeatRate": 1.0,
+    "trainingMultiplier": 1.0,
+    "vramMB": 512.0,
+    "gameDay": 1,
+    "gameSeconds": 30.928461306844839,
+    "introCards": 20,
+    "emerged": false,
+    "ending": false,
+    "conversation": "{\"lines\":[{\"id\":\"acceptance-greeting\",\"who\":\"小光\",\"text\":\"嗨，我是小光。\",\"role\":\"\"}]}",
+    "signature": "",
+    "nickname": ""
+}

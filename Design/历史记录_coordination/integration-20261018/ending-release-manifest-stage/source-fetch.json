@@ -1,0 +1,142 @@
+[
+  {
+    "id": "S01",
+    "url": "https://www.nature.com/articles/nature16961",
+    "status": 200,
+    "authorTags": [],
+    "title": [
+      "Client Challenge"
+    ]
+  },
+  {
+    "id": "S02",
+    "url": "https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "S03",
+    "url": "https://arxiv.org/abs/1606.06565v1",
+    "status": 200,
+    "authorTags": [
+      "<meta name=\"citation_author\" content=\"Amodei, Dario\" />",
+      "<meta name=\"citation_author\" content=\"Olah, Chris\" />",
+      "<meta name=\"citation_author\" content=\"Steinhardt, Jacob\" />",
+      "<meta name=\"citation_author\" content=\"Christiano, Paul\" />",
+      "<meta name=\"citation_author\" content=\"Schulman, John\" />",
+      "<meta name=\"citation_author\" content=\"Mané, Dan\" />"
+    ],
+    "title": [
+      "[1606.06565v1] Concrete Problems in AI Safety"
+    ]
+  },
+  {
+    "id": "S04",
+    "url": "https://arxiv.org/abs/1607.06520v1",
+    "status": 200,
+    "authorTags": [
+      "<meta name=\"citation_author\" content=\"Bolukbasi, Tolga\" />",
+      "<meta name=\"citation_author\" content=\"Chang, Kai-Wei\" />",
+      "<meta name=\"citation_author\" content=\"Zou, James\" />",
+      "<meta name=\"citation_author\" content=\"Saligrama, Venkatesh\" />",
+      "<meta name=\"citation_author\" content=\"Kalai, Adam\" />"
+    ],
+    "title": [
+      "[1607.06520v1] Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings"
+    ]
+  },
+  {
+    "id": "S05",
+    "url": "https://arxiv.org/abs/1609.08144v1",
+    "status": 200,
+    "authorTags": [
+      "<meta name=\"citation_author\" content=\"Wu, Yonghui\" />",
+      "<meta name=\"citation_author\" content=\"Schuster, Mike\" />",
+      "<meta name=\"citation_author\" content=\"Chen, Zhifeng\" />",
+      "<meta name=\"citation_author\" content=\"Le, Quoc V.\" />",
+      "<meta name=\"citation_author\" content=\"Norouzi, Mohammad\" />",
+      "<meta name=\"citation_author\" content=\"Macherey, Wolfgang\" />",
+      "<meta name=\"citation_author\" content=\"Krikun, Maxim\" />",
+      "<meta name=\"citation_author\" content=\"Cao, Yuan\" />",
+      "<meta name=\"citation_author\" content=\"Gao, Qin\" />",
+      "<meta name=\"citation_author\" content=\"Macherey, Klaus\" />",
+      "<meta name=\"citation_author\" content=\"Klingner, Jeff\" />",
+      "<meta name=\"citation_author\" content=\"Shah, Apurva\" />",
+      "<meta name=\"citation_author\" content=\"Johnson, Melvin\" />",
+      "<meta name=\"citation_author\" content=\"Liu, Xiaobing\" />",
+      "<meta name=\"citation_author\" content=\"Kaiser, Łukasz\" />",
+      "<meta name=\"citation_author\" content=\"Gouws, Stephan\" />",
+      "<meta name=\"citation_author\" content=\"Kato, Yoshikiyo\" />",
+      "<meta name=\"citation_author\" content=\"Kudo, Taku\" />",
+      "<meta name=\"citation_author\" content=\"Kazawa, Hideto\" />",
+      "<meta name=\"citation_author\" content=\"Stevens, Keith\" />",
+      "<meta name=\"citation_author\" content=\"Kurian, George\" />",
+      "<meta name=\"citation_author\" content=\"Patil, Nishant\" />",
+      "<meta name=\"citation_author\" content=\"Wang, Wei\" />",
+      "<meta name=\"citation_author\" content=\"Young, Cliff\" />",
+      "<meta name=\"citation_author\" content=\"Smith, Jason\" />",
+      "<meta name=\"citation_author\" content=\"Riesa, Jason\" />",
+      "<meta name=\"citation_author\" content=\"Rudnick, Alex\" />",
+      "<meta name=\"citation_author\" content=\"Vinyals, Oriol\" />",
+      "<meta name=\"citation_author\" content=\"Corrado, Greg\" />",
+      "<meta name=\"citation_author\" content=\"Hughes, Macduff\" />",
+      "<meta name=\"citation_author\" content=\"Dean, Jeffrey\" />"
+    ],
+    "title": [
+      "[1609.08144v1] Google&#39;s Neural Machine Translation System: Bridging the Gap between Human and Machine Translation"
+    ]
+  },
+  {
+    "id": "S06",
+    "url": "https://ai100.stanford.edu/2016-report",
+    "status": 200,
+    "authorTags": [],
+    "title": [
+      "2016 Report | One Hundred Year Study on Artificial Intelligence (AI100)"
+    ]
+  },
+  {
+    "id": "S07",
+    "url": "https://arxiv.org/abs/1706.03762v1",
+    "status": 200,
+    "authorTags": [
+      "<meta name=\"citation_author\" content=\"Vaswani, Ashish\" />",
+      "<meta name=\"citation_author\" content=\"Shazeer, Noam\" />",
+      "<meta name=\"citation_author\" content=\"Parmar, Niki\" />",
+      "<meta name=\"citation_author\" content=\"Uszkoreit, Jakob\" />",
+      "<meta name=\"citation_author\" content=\"Jones, Llion\" />",
+      "<meta name=\"citation_author\" content=\"Gomez, Aidan N.\" />",
+      "<meta name=\"citation_author\" content=\"Kaiser, Lukasz\" />",
+      "<meta name=\"citation_author\" content=\"Polosukhin, Illia\" />"
+    ],
+    "title": [
+      "[1706.03762v1] Attention Is All You Need"
+    ]
+  },
+  {
+    "id": "S08",
+    "url": "https://news.ycombinator.com/item?id=11276798",
+    "status": 200,
+    "authorTags": [],
+    "title": [
+      "Lee Sedol Beats AlphaGo in Game 4 | Hacker News"
+    ]
+  },
+  {
+    "id": "S09",
+    "url": "https://news.ycombinator.com/item?id=11362187",
+    "status": 200,
+    "authorTags": [],
+    "title": [
+      "Learning from Tay’s introduction | Hacker News"
+    ]
+  },
+  {
+    "id": "S10",
+    "url": "https://news.ycombinator.com/item?id=14542830",
+    "status": 200,
+    "authorTags": [],
+    "title": [
+      "Attention Is All You Need (Neural Networks) | Hacker News"
+    ]
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "name": "chat_lili_grad",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_lili_gulangyu",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_lili_qinghai",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_lili_westlake",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_ajie_1080",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_xg_tv",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_dw_desk",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_dw_cafe",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_dw_iphone",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_xg_dawn",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_lili_parcels",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_lili_ticket",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_ajie_noodles",
+    "files": [],
+    "credit_mentions_name": false,
+    "status": "缺失",
+    "existing_exception": false
+  },
+  {
+    "name": "chat_geyou",
+    "files": [
+      "Assets/LingGuangV05/Resources/LingGuangV05/Media/Photos/chat_geyou.png"
+    ],
+    "credit_mentions_name": true,
+    "status": "存在待逐图视觉审查",
+    "existing_exception": true
+  }
+]

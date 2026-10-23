@@ -1,0 +1,9 @@
+# Universal AI-content footer — main surfaces frozen
+
+Shared Runtime AiContentNotice.Footer returns exact zh/en text: AI 合成内容 · 仅供参考 / AI-generated content · For reference only. CreateFooter(parent,font,color,bottom=0,height=24) creates anchored AiContentNotice/Label; callers reserve space explicitly. BindFooter supports existing labels. New AiContentFooter MonoBehaviour subscribes/unsubscribes GameText.Changed, updates on enable, no model/save ownership. 12px centered auto-size to10px, no raycast.
+
+Implemented: YY all contacts/group chats (reuses existing label, moves from header to below reply history; learning drawer and Lao Zhou choice expansion move it without overlap); Tieba all pages and private/discussion chat (bottom of replies above input, removes duplicate header notice); standalone Reading window (reply viewport ends above fixed footer, chapter controls below; removes conditional response-title notice); teaching labelling workspace including handwriting (footer below Recent, existing body/Recent reserve24px); TeachCompanion reaction has footer before action controls. Removed repeated generated prefix from teaching comment UI; generation logic/data unchanged.
+
+Coordinated: design agent owns narrative/ending/finale/LoveQuestion/TrainingLessons; parent covers browser/news/minigames/other common interactive surfaces.
+
+QA updated: BrainWindowPlayQa.AiDisclosure checks exact shared text, visible glyphs/fit/containment and below-reply/above-input geometry, plus existing visible group in both languages; BookLibraryUiChecks.ReadAll verifies reader footer locale/fit/no-raycast and viewport/control spacing. Static Roslyn parse and git diff --check passed for all owned sources. No Unity run, no commits; parent runs semantic compilation and isolated Play checks. Formal source freeze complete.

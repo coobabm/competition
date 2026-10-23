@@ -1,0 +1,172 @@
+{
+  "status": "static_checks_passed",
+  "checks": [
+    {
+      "label": "production still matches baseline: Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs",
+      "passed": true
+    },
+    {
+      "label": "production still matches baseline: Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs.meta",
+      "passed": true
+    },
+    {
+      "label": "production still matches baseline: Assets/LingGuangV05/Core/Forum/LaoZhouQuestions.cs",
+      "passed": true
+    },
+    {
+      "label": "production still matches baseline: Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+      "passed": true
+    },
+    {
+      "label": "production still matches baseline: Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs",
+      "passed": true
+    },
+    {
+      "label": "production still matches baseline: Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs.meta",
+      "passed": true
+    },
+    {
+      "label": "production still matches baseline: Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs",
+      "passed": true
+    },
+    {
+      "label": "production still matches baseline: Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs.meta",
+      "passed": true
+    },
+    {
+      "label": "exactly three paired topic replies",
+      "passed": true
+    },
+    {
+      "label": "approved bilingual wording: lz2_t01_alphago",
+      "passed": true
+    },
+    {
+      "label": "existing source, body and chronological gates: lz2_t01_alphago",
+      "passed": true
+    },
+    {
+      "label": "approved bilingual wording: lz2_t03_tay",
+      "passed": true
+    },
+    {
+      "label": "existing source, body and chronological gates: lz2_t03_tay",
+      "passed": true
+    },
+    {
+      "label": "approved bilingual wording: lz2_t04_resnet",
+      "passed": true
+    },
+    {
+      "label": "existing source, body and chronological gates: lz2_t04_resnet",
+      "passed": true
+    },
+    {
+      "label": "no inferred/private/automatic path: StartCoroutine",
+      "passed": true
+    },
+    {
+      "label": "no inferred/private/automatic path: DesktopNotifications.Notify",
+      "passed": true
+    },
+    {
+      "label": "no inferred/private/automatic path: View.Open",
+      "passed": true
+    },
+    {
+      "label": "no inferred/private/automatic path: DailyNewsAlreadyRead",
+      "passed": true
+    },
+    {
+      "label": "no inferred/private/automatic path: newsTaught",
+      "passed": true
+    },
+    {
+      "label": "no inferred/private/automatic path: .stage",
+      "passed": true
+    },
+    {
+      "label": "no inferred/private/automatic path: Tick(",
+      "passed": true
+    },
+    {
+      "label": "explicit YY acceptance controls route",
+      "passed": true
+    },
+    {
+      "label": "existing idle guard used",
+      "passed": true
+    },
+    {
+      "label": "same-save guard used",
+      "passed": true
+    },
+    {
+      "label": "git apply --check",
+      "passed": true
+    },
+    {
+      "label": "git apply --stat",
+      "passed": true
+    }
+  ],
+  "files": [
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs",
+      "new": true,
+      "baseline_sha256": null,
+      "candidate_sha256": "743c8dc105a50525a971f80cf028e817ace719b81567bca56a914a4c046f6e88"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouNewsComments.cs.meta",
+      "new": true,
+      "baseline_sha256": null,
+      "candidate_sha256": "d109102fe6cea6c9537addbc6196b3e06de8e99ec09d4c1d8d25333cace8caa5"
+    },
+    {
+      "path": "Assets/LingGuangV05/Core/Forum/LaoZhouQuestions.cs",
+      "new": false,
+      "baseline_sha256": "f0f5c27cb047047af7ca8cdb23f74c91d37feca1fd3531cc7c83a95614792e15",
+      "candidate_sha256": "1f5133cfa51db6dea2e25415502d6892e9a3f1d5579e09532ebdb46e61e9ec18"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Bodu/BoduView.News.cs",
+      "new": false,
+      "baseline_sha256": "ac6aacbdf91f67179d08fe7be5512b9cc342eea8a4c7356028e88be619a703c2",
+      "candidate_sha256": "3b56e8f90bc23e1c3587eb72f73684e639a0f2442a3d506007847fbc24dd3741"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs",
+      "new": true,
+      "baseline_sha256": null,
+      "candidate_sha256": "5a3291cd7d0ee63d0311652b1ba037cf74f2c1b201f27fc6c08eeada7844b653"
+    },
+    {
+      "path": "Assets/LingGuangV05/DesktopBridge/Tieba/TiebaHub.LaoZhouNews.cs.meta",
+      "new": true,
+      "baseline_sha256": null,
+      "candidate_sha256": "5f18cf072c6b580b9564b6fd84e37e028d94f112ca6548c45f343da429f685f8"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs",
+      "new": true,
+      "baseline_sha256": null,
+      "candidate_sha256": "0b4a4c43ac35f2801229ebc270260de5f3746b7425613dcc13a90ea62389c002"
+    },
+    {
+      "path": "Assets/LingGuangV05/Tests/Editor/LaoZhouNewsCommentTests.cs.meta",
+      "new": true,
+      "baseline_sha256": null,
+      "candidate_sha256": "a64a288572f3d12e0484d36b7262c7dc3765bdb3484a339dca4eac9f93cba061"
+    }
+  ],
+  "patch_sha256": "cc222f13257363e33d539ee41400d7d5056633357cbf9810cd692a40e5db9559",
+  "not_run": [
+    "C# compilation",
+    "Unity tests",
+    "actual LCD/UI",
+    "model",
+    "build",
+    "production changes"
+  ]
+}

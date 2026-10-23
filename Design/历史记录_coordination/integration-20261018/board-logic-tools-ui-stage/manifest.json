@@ -1,0 +1,32 @@
+{
+  "files": [
+    {
+      "file": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs",
+      "base_sha256": "34b63a08cb743da2ff1b42f596ae004c1b35af6675af85d2c03b5a19169a3e09",
+      "candidate_sha256": "a2042a5c24c96e35f523ba33d852001991eb1fa0b5159ed44cd16fab67188f25"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.LogicTools.cs",
+      "base_sha256": null,
+      "candidate_sha256": "31c42ba6807b6aa46f4c22ed32d80ddc07eadadd3b55b5bcafec2a78cdb0dda5"
+    },
+    {
+      "file": "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.LogicTools.cs.meta",
+      "base_sha256": null,
+      "candidate_sha256": "926cef54bc9573205c3a0c408ceca6dad39aa5576a4c0cf64a6bc0beaaf5b7c9"
+    }
+  ],
+  "editor_entries": [
+    "BoardGamesUiPlayQa.RunLogicTools",
+    "BoardGamesUiPlayQa.RunWithLogicTools",
+    "BoardGamesUiPlayQa.Run"
+  ],
+  "updated_legacy_tests": 0,
+  "tests_run": false,
+  "unity_run": false,
+  "baseline_drift": [
+    "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.cs",
+    "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.LogicTools.cs",
+    "Assets/LocalBuild/Editor/BoardGamesUiPlayQa.LogicTools.cs.meta"
+  ]
+}

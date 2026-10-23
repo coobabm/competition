@@ -1,0 +1,8 @@
+{
+  "source": "Assets/LingGuangV05/XingGuang/Desktop/XgTreePage.cs",
+  "base_sha256": "b6b9de0cdbb6ab386cc926137e3ff5501e9193749bfd3a32432f4b9ed97cac2f",
+  "candidate_sha256": "848991a562fca3df8ded7972d39d544d2a2497ae1ef75a4bd9c50367e397a3fd",
+  "scope": "Only XgPan class and its summary; all subsequent legacy classes byte-text unchanged.",
+  "unity_executed": false,
+  "production_modified": false
+}
